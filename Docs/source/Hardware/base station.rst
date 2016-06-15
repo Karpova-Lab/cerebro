@@ -62,9 +62,9 @@ Lasercut
 
 Code
 ====
-  - :download:`baseStation.ino<../../../Arduino/baseStation/baseStation.ino>`
-  - :download:`Cerebro.h<../../../Arduino/libraries/Cerebro/Cerebro.h>`
-  - :download:`Cerebro.cpp<../../../Arduino/libraries/Cerebro/Cerebro.cpp>`
+  - :download:`baseStation.ino<../../../Arduino/Cerebro_Sketches/baseStation/baseStation.ino>`
+  - :download:`Cerebro.h<../../../Arduino/Cerebro/Cerebro.h>`
+  - :download:`Cerebro.cpp<../../../Arduino/Cerebro/Cerebro.cpp>`
 
 Build Instructions
 ==================

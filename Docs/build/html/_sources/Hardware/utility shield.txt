@@ -64,7 +64,7 @@ Setting up Arduino IDE
 
 3. Download and unzip :download:`Arduino_cererbo.zip<Arduino_cerebro.zip>`
 
-4. Transfer the "Cerebro Sketches" and "Hardware" folders into your Arduino Sketchbook folder
+4. Transfer the "Cerebro_sketches" and "Hardware" folders into your Arduino Sketchbook folder
 
 .. figure:: photos/Setup_photos/transfer_sketches_hardware.png
     :align: center

@@ -105,7 +105,7 @@ PCB
 
 Code
 ====
-  - :download:`Cerebro.ino<../../../Arduino/cerebro/cerebro.ino>`
+  - :download:`Cerebro.ino<../../../Arduino/Cerebro_Sketches/cerebro/cerebro.ino>`
 
 Build Instructions
 ==================

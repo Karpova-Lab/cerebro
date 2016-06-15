@@ -6,6 +6,9 @@ Welcome! This is the hardware and software documentation of a system used for wi
 As an `open-source <http://www.oshwa.org/definition/>`_ project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.
 
+A GitHub repository with all relevant files can be found `here <https://github.com/alustig3/Cerebro>`_
+------------------------------------------------------------------------------------------------------
+
 This project was developed by Andy Lustig in the `Karpova Lab at Janelia Research Campus <https://www.janelia.org/lab/karpova-lab>`_.
 If you have any questions you can contact him at lustiga@janelia.hhmi.org
 

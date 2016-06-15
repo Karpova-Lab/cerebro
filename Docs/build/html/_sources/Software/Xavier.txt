@@ -20,7 +20,7 @@ System Requirements
 Download Instructions
 =====================
 1. Download and install `Anaconda Python 2.7 Distribution <http://continuum.io/downloads>`_
-2. Download and unzip :download:`Xavier Deployment Folder<../../../QT/CCS/Deployment.zip>`
+2. Download and unzip :download:`Xavier Deployment Folder<Deployment.zip>`
 3. Open up Xavier.exe
 
 .. figure:: photos/Install/Xavier_open.png

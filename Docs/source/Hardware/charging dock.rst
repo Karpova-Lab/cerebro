@@ -50,7 +50,7 @@ PCB
 
 Code
 `````
-  - :download:`chargingDock.ino<../../../Arduino/chargingDock/chargingDock.ino>`
+  - :download:`chargingDock.ino<../../../Arduino/Cerebro_Sketches/chargingDock/chargingDock.ino>`
 
 .. IR Remote
 .. =========
