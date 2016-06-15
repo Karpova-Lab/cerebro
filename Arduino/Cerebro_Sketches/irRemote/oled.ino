@@ -1,0 +1,55 @@
+void displaySetup(){
+   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
+  display.begin(SSD1306_SWITCHCAPVCC);
+  // Clear the buffer.
+  display.clearDisplay();
+//  testdrawchar(mode);
+  draw(isEditMode);
+  display.display();
+}
+
+void draw(bool _mode) {
+  display.setTextColor(1,0);
+  display.setTextSize(1);
+  display.setCursor(0,0);
+  display.print(labels[1]);//Cerebro label
+  display.print(params[1]);//Cerebro#
+  fillExcess(params[1],3);
+  display.print(labels[2]);//LD label
+  display.println(params[2]);//LD#
+  display.println();
+  display.println();
+  if (!_mode){
+    for (int i = 4; i<9; i++){
+      display.setTextColor(highlight!=(1<<(i-4)),highlight==(1<<(i-4)));
+      display.print(labels[i]);
+      display.setTextColor(1,0);
+      display.print(": ");
+      display.print(params[i]);
+      fillExcess(params[i],5);
+    }
+  }
+  else{
+    for (int i = 4; i<9; i++){
+      display.setTextColor(1,0);
+      display.print(labels[i]);
+      display.print(": ");
+      display.setTextColor(highlight!=(1<<(i-4)),highlight==(1<<(i-4)));
+      display.print(params[i]);
+      fillExcess(params[i],5);
+    }
+  }
+  display.display();
+}
+
+void fillExcess(unsigned int tempParam,byte wanted){
+  byte numDigits = 1;
+  display.setTextColor(1,0);
+  while(tempParam/10>0){
+    numDigits++;
+    tempParam = tempParam/10;
+  }
+  for (int i = 0; i < wanted-numDigits; i++){
+    display.print(" ");
+  }
+}

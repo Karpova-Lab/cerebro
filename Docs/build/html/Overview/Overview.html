@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>System Overview &mdash; Cerebro 0.0.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Cerebro 0.0.3 documentation" href="../index.html"/>
+        <link rel="next" title="Cerebro" href="../Hardware/cerebro.html"/>
+        <link rel="prev" title="Cerebro Wireless Optogenetics System" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Cerebro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">System Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cerebro">Cerebro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#head-implant">Head Implant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#base-station">Base Station</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-shield">Utility Shield</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#charging-dock">Charging Dock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ir-remote">IR Remote</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloader-cord">Downloader Cord</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xavier">Xavier</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/cerebro.html">Cerebro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/implant.html">Head Implant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/base station.html">Base Station</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/utility shield.html">Utility Shield</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/charging dock.html">Charging Dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/remote.html">IR Remote</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Cerebro</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>System Overview</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Overview/Overview.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="system-overview">
+<h1>System Overview<a class="headerlink" href="#system-overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="cerebro">
+<h2>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/cerebro.jpg"><img alt="../_images/cerebro.jpg" class="align-center" src="../_images/cerebro.jpg" style="width: 486.4px; height: 257.2px;" /></a>
+<p>Cerebro is a rechargable wireless receiver that connnects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span>Base Station</span></a> and delivers power to
+the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
+intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="../Software/Xavier.html#pulse-change-header"><span>How to change Pulse Parameters</span></a>).
+All commands sent to Cerebro are saved along with timestamps to onboard non-volatile memory.</p>
+<p><a class="reference internal" href="../Hardware/cerebro.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="head-implant">
+<h2>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/implant.jpg"><img alt="../_images/implant.jpg" class="align-center" src="../_images/implant.jpg" style="width: 243.2px; height: 219.3px;" /></a>
+<p>The head implant assembly consists of two laser diodes coupled to optical fibers. Also included is a light dependent resistor (LDR) that is used as feedback
+to maintain a constant light output.</p>
+<p><a class="reference internal" href="../Hardware/implant.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="base-station">
+<span id="id1"></span><h2>Base Station<a class="headerlink" href="#base-station" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/base_station.jpg"><img alt="../_images/base_station.jpg" class="align-center" src="../_images/base_station.jpg" style="width: 350.25px; height: 398.1px;" /></a>
+<p>The Base Station is responsible for emitting infrared light signals to communicate wirelessly with Cerebro (exactly like a TV remote).
+It is connected by USB to a Windows computer, where commands can be sent and events can be logged using <a class="reference internal" href="#xavier"><span>Xavier</span></a>.
+Base Station can also be controlled directly by <a class="reference external" href="https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels">TTL</a> signals going into
+its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger signal to be emitted, and a high TTL signal on pin2 causes
+a stop signal to be emitted. Events will still be logged by Xavier even when triggered by a TTL.</p>
+<p><a class="reference internal" href="../Hardware/implant.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="utility-shield">
+<span id="id2"></span><h2>Utility Shield<a class="headerlink" href="#utility-shield" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/utility_shield.jpg"><img alt="../_images/utility_shield.jpg" class="align-center" src="../_images/utility_shield.jpg" style="width: 452.55px; height: 340.95px;" /></a>
+<p>The Utility Shield connects to an <a class="reference external" href="https://www.arduino.cc/en/main/arduinoBoardUno">Arduino Uno</a> and is used to flash programs to a variety of AVR microcontrollers.
+It can flash the ATtiny84 DIP used by the IR Remote and Charging Dock, the ATtiny84 SOIC used by Cerebro, the ATtiny85 DIP used by the Base Station,, and the ATmega328P
+used by the IR Remote. The shield also provides a charging port for Cerebro that has a green/red charging indicator light.</p>
+<p><a class="reference internal" href="../Hardware/utility shield.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="charging-dock">
+<h2>Charging Dock<a class="headerlink" href="#charging-dock" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/charging_dock.jpg"><img alt="../_images/charging_dock.jpg" class="align-center" src="../_images/charging_dock.jpg" style="width: 400.8px; height: 441.8px;" /></a>
+<p>The Charging Dock provides ports for charging up to 4 Cerebro receivers at one time. A 2-digit display shows
+the voltage of a Cerebro when the corresponding button is pressed. When Cerebro becomes fully charged (~4.2v) an
+indicator led changes from red to green.</p>
+<p><a class="reference internal" href="../Hardware/charging dock.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="ir-remote">
+<h2>IR Remote<a class="headerlink" href="#ir-remote" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/IR_remote.jpg"><img alt="../_images/IR_remote.jpg" class="align-center" src="../_images/IR_remote.jpg" style="width: 446.0px; height: 325.0px;" /></a>
+<p>The IR Remote is a handheld remote that can be used to send commands to Cerebro.
+Information including battery status, current parameters, and ID number can be checked by plugging a Cerebro Receiver into the IR Remote.</p>
+<p><a class="reference internal" href="../Hardware/remote.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="downloader-cord">
+<span id="cord"></span><h2>Downloader Cord<a class="headerlink" href="#downloader-cord" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/downloader.jpg"><img alt="../_images/downloader.jpg" class="align-center" src="../_images/downloader.jpg" style="width: 648.0px; height: 186.9px;" /></a>
+<p>The Downloader Cord is used for serial communication between a computer and Cerebro. Once connected to Cerebro&#8217;s
+micro usb port, it can be used for downloading log data off of Cerebro&#8217;s EEPROM, or it can be used to display
+messages when Cerebro is in debugging mode.</p>
+<p><a class="reference internal" href="../Hardware/downloader cord.html"><em>More info...</em></a></p>
+</div>
+<div class="section" id="xavier">
+<span id="id3"></span><h2>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="../_images/xavier.png"><img alt="../_images/xavier.png" class="align-center" src="../_images/xavier.png" style="width: 683.2px; height: 476.8px;" /></a>
+<p>Xavier is a GUI for sending and logging Base Station commands. Since communication between Cerebro and Base Station is unidirectional, in order to truly know what occurs throughout an experiment,
+every event that is received by Cerebro is also saved to an onboard log.  After an experiment is complete, Cerebro&#8217;s onboard logfile can be
+downloaded into Xavier. The two log files can then be saved and analyzed to confirm that everything that was sent by Base Station was in fact received and executed by Cerebro.
+Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.</p>
+<p><a class="reference internal" href="../Software/Xavier.html"><em>More info...</em></a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Hardware/cerebro.html" class="btn btn-neutral float-right" title="Cerebro" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Cerebro Wireless Optogenetics System" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015-2016, Andy Lustig.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+Utility Shield
+===============
+.. include:: isogrk1.txt
+
+Required Tools
+``````````````
+
+Bill of Materials
+``````````````````
+
++-----+----------------------------------+-----------------------------------------------------------------+--------------------------------------------------------+
+| Qty | Description                      | Datasheet                                                       | Vendor                                                 |
++=====+==================================+=================================================================+========================================================+
+| 1   | Utility Shield PCB               |                                                                 | OSH Park                                               |
++-----+----------------------------------+-----------------------------------------------------------------+--------------------------------------------------------+
+| 1   | Arduino Uno                      | :download:`ATmega328<Datasheets/ATmega328.pdf>`                 | `Octopart <https://octopart.com/bom-lookup/n5svTbJz>`_ |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | 22 pin ZIF socket                | :download:`222-3343-00-0602J<Datasheets/222-3343-00-0602J.pdf>` |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | Male micro USB vertical plug     | :download:`ZX20-B-5S<Datasheets/ZX20-B-5S.pdf>`                 |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | Male micro USB shielding         | :download:`ZX20-B-SLDC<Datasheets/ZX20-B-5S.pdf>`               |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | Female micro USB vertical socket | :download:`1051330011<Datasheets/1051330011.pdf>`               |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | Lipo charger IC                  | :download:`MCP73831T<Datasheets/MCP73831T.pdf>`                 |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | 1206 red/green LED               | :download:`5977703607F<Datasheets/5977703607F.pdf>`             |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 2   | 0805 100 |OHgr| Resistor         |                                                                 |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | 0805 27 k\ |OHgr| Resistor       |                                                                 |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 2   | 0805 4.7 |mgr|\F Capacitor       |                                                                 |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+                                                        +
+| 1   | 0805 10 |mgr|\F Capacitor        |                                                                 |                                                        |
++-----+----------------------------------+-----------------------------------------------------------------+--------------------------------------------------------+
+
+Design Files
+````````````
+
+PCB
+	- :download:`Utility Shield 1.2.brd<../../../PCB Files/Utility Shield 1.2/Utility Shield 1.2.brd>`
+	- :download:`Utility Shield 1.2.sch<../../../PCB Files/Utility Shield 1.2/Utility Shield 1.2.sch>`
+	- :download:`Schematic.pdf<../../../PCB Files/Utility Shield 1.2/Utility Shield 1.2 schematic.pdf>`
+
+
+.. _utility shield setup:
+
+Setting up Arduino IDE
+``````````````````````
+
+1. Download and install `Arduino Software <https://www.arduino.cc/en/Main/Software>`_
+
+2. Open up your Arduino Sketchbook folder. It should be located in your main "Documents" folder with the name "Arduino". If you cannot find it, open the Arduino Application and go to **File -> Preferences**. The location of your Sketchbook folder is shown at the top of the preferences window. Your Sketchbook folder will have your current projects and a "libraries" folder.
+
+ .. figure:: photos/Setup_photos/sketchbook_location.png
+     :align: center
+     :scale: 100%
+
+ .. figure:: photos/Setup_photos/sketchbook.png
+     :align: center
+     :scale: 75%
+
+3. Download and unzip :download:`Arduino_cererbo.zip<Arduino_cerebro.zip>`
+
+4. Transfer the "Cerebro_sketches" and "Hardware" folders into your Arduino Sketchbook folder
+
+.. figure:: photos/Setup_photos/transfer_sketches_hardware.png
+    :align: center
+    :scale: 100%
+
+5. Transfer the remaining library folders into the "libraries" folder
+
+.. figure:: photos/Setup_photos/transfer_libraries.png
+    :align: center
+    :scale: 100%
+
+Setting up Utility Shield
+`````````````````````````
+To upload firmware, we will be using an Arduino Uno as an In-System Programmer (ISP).
+The Utility Shield connects to the Arduino Uno to route the programming signals to the
+correct pins on various AVR microcontrollers.
+
+1. Disconnect the :ref:`utility shield` from your Arduino Uno
+2. Open Arduino, go to **File -> Examples -> ArduinoISP**
+
+.. figure:: photos/Setup_photos/arduinoISP.png
+    :align: center
+    :scale: 80%
+
+3. Make the following selections under the **Tools** menu:
+
+| **Board:** Arduino UNO
+| **Port:** COMXX (Arduino Uno)
+|
+
+.. figure:: photos/Setup_photos/ISP_config.png
+    :align: center
+    :scale: 80%
+
+5. Upload the firmware by clicking the upload arrow
+
+.. figure:: photos/Setup_photos/upload.png
+    :align: center
+    :scale: 100%
+
+6. Connect the :ref:`utility shield` to your Arduino Uno

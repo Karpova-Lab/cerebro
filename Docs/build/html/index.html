@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Cerebro Wireless Optogenetics System &mdash; Cerebro 0.0.3 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Cerebro 0.0.3 documentation" href="#"/>
+        <link rel="next" title="System Overview" href="Overview/Overview.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> Cerebro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/implant.html">Head Implant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/utility shield.html">Utility Shield</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/remote.html">IR Remote</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Software/Xavier.html">Xavier</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">Cerebro</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Cerebro Wireless Optogenetics System</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cerebro-wireless-optogenetics-system">
+<h1>Cerebro Wireless Optogenetics System<a class="headerlink" href="#cerebro-wireless-optogenetics-system" title="Permalink to this headline">¶</a></h1>
+<p>Welcome! This is the hardware and software documentation of a system used for wireless <a class="reference external" href="https://en.wikipedia.org/wiki/Optogenetics">optogenetic</a> stimulation.
+As an <a class="reference external" href="http://www.oshwa.org/definition/">open-source</a> project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
+study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.</p>
+<p>This project was developed by Andy Lustig in the <a class="reference external" href="https://www.janelia.org/lab/karpova-lab">Karpova Lab at Janelia Research Campus</a>.
+If you have any questions you can contact him at <a class="reference external" href="mailto:lustiga&#37;&#52;&#48;janelia&#46;hhmi&#46;org">lustiga<span>&#64;</span>janelia<span>&#46;</span>hhmi<span>&#46;</span>org</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This documentation is very much a work in progress. Please understand that there will porbably be typos and missing</p>
+</div>
+<div class="section" id="system-highlights">
+<h2>System Highlights<a class="headerlink" href="#system-highlights" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Open Source = Flexible</dt>
+<dd>All code and CAD is available so you can make changes and improvements to anything you want!</dd>
+<dt>Low Latency</dt>
+<dd>Less than 3ms latency between a trigger command being sent and the laser diodes being powered on.</dd>
+<dt>Wirelessly Adjustable aveforms</dt>
+<dd>Cerebro can be produce <a class="reference internal" href="Software/Xavier.html#waveform-parameters"><span>customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</dd>
+<dt>High Power Laser Diodes</dt>
+<dd>Up to 15 mW per laser diode or 450 mW/mm<sup>2</sup> (tested with 520 nm laser diodes coupled to 200 μm fibers)</dd>
+<dt>Low Material Cost</dt>
+<dd>Hardware BOMs are provided, at total estimated cost of $300. The software is free.</dd>
+</dl>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Subsystem</th>
+<th class="head">Material Cost ($)</th>
+<th class="head">Assembly Time (hours)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Cerebro</td>
+<td>30</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>Head Implant (bilateral)</td>
+<td>190</td>
+<td>4</td>
+</tr>
+<tr class="row-even"><td>Base Station</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>IR Remote</td>
+<td>40</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>Arduino + Utility Shield</td>
+<td>30</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>Downloader Cord</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>Xavier</td>
+<td>FREE</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><strong>Total</strong></td>
+<td><strong>$300</strong></td>
+<td><strong>9 hours</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commercial-alternatives">
+<h2>Commercial Alternatives<a class="headerlink" href="#commercial-alternatives" title="Permalink to this headline">¶</a></h2>
+<p>Here are some commercial products that also provide wireless optogenetics:</p>
+<div class="line-block">
+<div class="line"><a class="reference external" href="https://eicomusa.com/teleopto/">Eicom Teleopto</a></div>
+<div class="line"><a class="reference external" href="http://www.kendallresearchsys.com/">Kendall Research Systems</a></div>
+<div class="line"><a class="reference external" href="http://www.neurolux.org/products/">Neurolux</a></div>
+<div class="line"><a class="reference external" href="http://www.trianglebiosystems.com/s-series-systems.html">Triangle Biosystems</a></div>
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation-contents">
+<h1>Documentation Contents:<a class="headerlink" href="#documentation-contents" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/implant.html">Head Implant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/utility shield.html">Utility Shield</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/remote.html">IR Remote</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Software/Xavier.html">Xavier</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="licenses">
+<h1>Licenses<a class="headerlink" href="#licenses" title="Permalink to this headline">¶</a></h1>
+<p>The MIT License (MIT)</p>
+<p>Copyright (c) 2015-2016 Andy Lustig</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &#8220;Software&#8221;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &#8220;AS IS&#8221;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<a class="reference internal image-reference" href="_images/oshw_logo.png"><img alt="_images/oshw_logo.png" class="align-left" src="_images/oshw_logo.png" style="width: 83.72px; height: 87.92px;" /></a>
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+<br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Cerebro Wireless Optogenetics System</span> by
+<a xmlns:cc="http://creativecommons.org/ns#" href="https://www.janelia.org/lab/karpova-lab" property="cc:attributionName" rel="cc:attributionURL">
+Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a></div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Overview/Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015-2016, Andy Lustig.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
