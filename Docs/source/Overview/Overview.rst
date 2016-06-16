@@ -12,7 +12,7 @@ Cerebro
   :align: center
   :scale: 20 %
 
-Cerebro is a rechargable wireless receiver that connnects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
+Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
 intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (:ref:`How to change Pulse Parameters <pulse change header>`).
 All commands sent to Cerebro are saved along with timestamps to onboard non-volatile memory.
@@ -105,7 +105,7 @@ messages when Cerebro is in debugging mode.
 Xavier
 ------
 
-.. image:: xavier.png
+.. image:: xavier_demo.png
     :align: center
     :scale: 80 %
 

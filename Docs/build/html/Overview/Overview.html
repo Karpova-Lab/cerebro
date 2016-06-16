@@ -96,10 +96,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/implant.html">Head Implant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Hardware/downloader cord.html">Downloader Cord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/utility shield.html">Utility Shield</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/charging dock.html">Charging Dock</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/remote.html">IR Remote</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/downloader cord.html">Downloader Cord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
 </ul>
 
@@ -150,7 +150,7 @@
 <div class="section" id="cerebro">
 <h2>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h2>
 <a class="reference internal image-reference" href="../_images/cerebro.jpg"><img alt="../_images/cerebro.jpg" class="align-center" src="../_images/cerebro.jpg" style="width: 486.4px; height: 257.2px;" /></a>
-<p>Cerebro is a rechargable wireless receiver that connnects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span>Base Station</span></a> and delivers power to
+<p>Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span>Base Station</span></a> and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
 intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="../Software/Xavier.html#pulse-change-header"><span>How to change Pulse Parameters</span></a>).
 All commands sent to Cerebro are saved along with timestamps to onboard non-volatile memory.</p>
@@ -206,7 +206,7 @@ messages when Cerebro is in debugging mode.</p>
 </div>
 <div class="section" id="xavier">
 <span id="id3"></span><h2>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h2>
-<a class="reference internal image-reference" href="../_images/xavier.png"><img alt="../_images/xavier.png" class="align-center" src="../_images/xavier.png" style="width: 683.2px; height: 476.8px;" /></a>
+<a class="reference internal image-reference" href="../_images/xavier_demo.png"><img alt="../_images/xavier_demo.png" class="align-center" src="../_images/xavier_demo.png" style="width: 683.2px; height: 476.8px;" /></a>
 <p>Xavier is a GUI for sending and logging Base Station commands. Since communication between Cerebro and Base Station is unidirectional, in order to truly know what occurs throughout an experiment,
 every event that is received by Cerebro is also saved to an onboard log.  After an experiment is complete, Cerebro&#8217;s onboard logfile can be
 downloaded into Xavier. The two log files can then be saved and analyzed to confirm that everything that was sent by Base Station was in fact received and executed by Cerebro.

@@ -22,7 +22,7 @@ Bill of Materials
 +-----+----------------------------------+-----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Qty | Description                      | Datasheet                                                       | Vendor                                                                                                                                                             |
 +=====+==================================+=================================================================+====================================================================================================================================================================+
-| 1   | Implant PCB                      |                                                                 | OSH Park                                                                                                                                                           |
+| 1   | Implant PCB                      |                                                                 | `OSH Park <https://oshpark.com/shared_projects/5K1XYmmy>`_                                                                                                         |
 +-----+----------------------------------+-----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 2   | Laser Diodes                     | :download:`PLT5 520<Datasheets/PLT5 520.pdf>`                   | `World Star Tech <http://worldstartech.com/products/description/25/index>`_                                                                                        |
 +-----+----------------------------------+-----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -62,6 +62,7 @@ Calibration Instructions
 ========================
 The is variation in head implant assemblies. Laser diodes, coupling efficency, LDR postion in relation to the laser diodes. In order to compensate for all of this variability, each assembly must be calibrated
 so we know the relation betwee our power variable in our code and the actual light power being produced at the fiber tips.
+
 1. Follow the :ref:`instructions <cerebro upload>` for uploading Cerebro Firmware. Delete line 37's preceding '//' to uncomment '#define CALIBRATE' before uploading the firmware.
 
 .. figure:: photos/Calibration_photos/define.png

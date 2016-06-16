@@ -79,10 +79,10 @@ Documentation Contents:
   Hardware/cerebro.rst
   Hardware/implant.rst
   Hardware/base station.rst
-  Hardware/downloader cord.rst
   Hardware/utility shield.rst
   Hardware/charging dock.rst
   Hardware/remote.rst
+  Hardware/downloader cord.rst
   Software/Xavier.rst
 
 Licenses
