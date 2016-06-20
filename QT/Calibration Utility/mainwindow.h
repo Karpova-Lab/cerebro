@@ -12,8 +12,9 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 private:
-     QAction*           gotoSettings,*openDir;
-     QMenu*             fileMenu,*goMenu;
+     QAction*           gotoDocs,*about;
+     QMessageBox*       aboutDialog;
+     QMenu*             fileMenu,*helpMenu;
      QGroupBox*         chooseBox;
      QPushButton*       pickFile_btn;
      QGridLayout*       chooseLayout,*mainLayout;
@@ -25,6 +26,7 @@ private:
 private slots:
     void chooseFile();
     void slideValueUpdate(int newVal);
+    void openDocs();
 };
 
 #endif // MAINWINDOW_H

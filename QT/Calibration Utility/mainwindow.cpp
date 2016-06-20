@@ -4,14 +4,18 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("Calibration Utilty");
-//    fileMenu = menuBar()->addMenu("File");
-//        gotoSettings = new QAction(this);
-//        gotoSettings->setText("Settings...");
-//    fileMenu->addAction(gotoSettings);
-//    goMenu = menuBar()->addMenu("Go To");
-//        openDir = new QAction(this);
-//        openDir->setText("Default Save Directory");
-//    goMenu->addAction(openDir);
+    helpMenu = menuBar()->addMenu("Help");
+        gotoDocs = new QAction(this);
+        gotoDocs->setText("User Guide");
+    helpMenu->addAction(gotoDocs);
+        about = new QAction(this);
+        about->setText("About...");
+    helpMenu->addAction(about);
+    aboutDialog = new QMessageBox();
+        aboutDialog->setWindowTitle("About");
+        aboutDialog->setText("Version:\t1.1.0\nUpdated:\t6/20/2016");
+        aboutDialog->setStandardButtons(QMessageBox::Close);
+
 
     chooseBox = new QGroupBox();
         chooseLayout = new QGridLayout();
@@ -50,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(pickFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
+    connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
+    connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
 }
 
 MainWindow::~MainWindow()
@@ -65,7 +71,7 @@ void MainWindow::slideValueUpdate(int newVal){
 void MainWindow::chooseFile(){
     fileLabel->setText("");
     codeTextBox->clear();
-    QString calibrateDataPath = QFileDialog::getOpenFileName(this,tr("Set Default Directory"),QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),tr("(*.txt)"));
+    QString calibrateDataPath = QFileDialog::getOpenFileName(this,tr("Select Power Meter Data"),QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),tr("(*.txt)"));
     if(!calibrateDataPath.isEmpty()){
         // Run python script to summarize data from base station and cerebro logs
         QProcess *process = new QProcess(this);
@@ -83,19 +89,21 @@ void MainWindow::chooseFile(){
         alert.setText("The calibration vector has\nbeen copied to your clipboard");
         alert.exec();
         fileLabel->setText("<h3>"+calibrateDataPath+"</h3>");
-    //    if (errorString.isEmpty()){
-    //        alert.setWindowTitle("Session Summary");
-    //        alert.setText(resultString);
-    //        alert.exec();
-    //    }
-    //    else{
+//        if (errorString.isEmpty()){
+//            alert.setWindowTitle("Session Summary");
+//            alert.setText(resultString);
+//            alert.exec();
+//        }
+//        else{
 //            alert.setWindowTitle("Error");
 //            alert.setText(errorString);
 //            alert.exec();
-//            QFile file3(tempPath + "/" + ratNumber + "/" + saveTime.toString("yyyyMMMdd_hhmm")+"_errorText.txt");
-//            file3.open(QIODevice::WriteOnly | QIODevice::Text);
-//            QTextStream out3(&file3);
-//            out3 << errorString;
-    //    }
+//        }
     }
+}
+
+void MainWindow::openDocs(){
+//    opens readthedocs.com documentation
+    QUrl site = QUrl::fromEncoded( "http://cerebro.readthedocs.io/en/latest/Hardware/implant.html#calibration-instructions");
+    QDesktopServices::openUrl(site);
 }

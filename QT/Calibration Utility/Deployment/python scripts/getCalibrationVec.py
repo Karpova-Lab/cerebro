@@ -21,4 +21,6 @@ if showGraph>0:
 	plt.show()
 
 getCalVector(wantedLevel,LD,trimmedInputs,lightout)
+saveSummary(saveName,trimmedInputs,lightout,LD)
+
 

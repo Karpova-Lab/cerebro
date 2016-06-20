@@ -106,9 +106,9 @@ def saveGraphs(_sourceName,_saveName,bokehGraph):
     bk.save(bokehGraph)
     shutil.copy(_sourceName,'Calibrations/{}'.format(_saveName)) #put a copy of the .txt log file in the local folder
 
-def saveSummary(_saveName,_trimmedSoftVals,lightOut):
+def saveSummary(_saveName,_trimmedSoftVals,lightOut,LD):
     ######### Write summary to file###################
-    target = open("Calibrations/{0}/{0}_summary.txt".format(_saveName), 'w')
+    target = open("{0}_summary.txt".format(_saveName), 'w')
     for i in range(len(_trimmedSoftVals)):
         target.write("{},{}\n".format(_trimmedSoftVals[i],lightOut[i]))
     print
