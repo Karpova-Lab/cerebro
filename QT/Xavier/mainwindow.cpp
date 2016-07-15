@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.17.2\nUpdated:\t6/14/2016");
+        aboutDialog->setText("Version:\t1.18.0\nUpdated:\t7/15/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -70,21 +70,12 @@ MainWindow::MainWindow(QWidget *parent)
             equipmentLayout->addWidget(rat_lbl,0,2,Qt::AlignCenter);
                 cerebro_lbl = new QLabel("Cerebro #");
             equipmentLayout->addWidget(cerebro_lbl,0,3,Qt::AlignCenter);
-                rigCombo = new QComboBox();
-                rigCombo->setEditable(true);
-                rigCombo->setMinimumWidth(50);
-                rigCombo->setInsertPolicy(QComboBox::NoInsert);
-            equipmentLayout->addWidget(rigCombo,1,1);
-                ratCombo = new QComboBox();
-                ratCombo->setEditable(true);
-                ratCombo->setMinimumWidth(50);
-                ratCombo->setInsertPolicy(QComboBox::NoInsert);
-            equipmentLayout->addWidget(ratCombo,1,2,Qt::AlignCenter);
-                cerebroCombo = new QComboBox();
-                cerebroCombo->setEditable(true);
-                cerebroCombo->setMinimumWidth(50);
-                cerebroCombo->setInsertPolicy(QComboBox::NoInsert);
-            equipmentLayout->addWidget(cerebroCombo,1,3);
+                rigSelect = new QListWidget();
+            equipmentLayout->addWidget(rigSelect,1,1,2,1,Qt::AlignTop);
+                ratSelect = new QListWidget();
+            equipmentLayout->addWidget(ratSelect,1,2,2,1,Qt::AlignTop);
+                cerebroSelect = new QListWidget();
+            equipmentLayout->addWidget(cerebroSelect,1,3,2,1,Qt::AlignTop);
                 connectBS_label = new QLabel("Base Station Serial Port");
             equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
                 refresh_btn = new QPushButton("Rescan");
@@ -94,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
             equipmentLayout->addWidget(serialPortList,1,6,1,2);
                 connect_btn = new QPushButton("Start Session");
                 connect_btn->setCheckable(true);
-            equipmentLayout->addWidget(connect_btn,2,1,1,7);
+            equipmentLayout->addWidget(connect_btn,3,1,1,7);
             equipmentLayout->setColumnStretch(0,1);
             equipmentLayout->setColumnStretch(8,1);
         equipmentBox->setLayout(equipmentLayout);
@@ -300,12 +291,12 @@ MainWindow::MainWindow(QWidget *parent)
             dropDownsLayout->addWidget(rigLabel,0,0,1,2,Qt::AlignCenter);
                 rigVals = new QListWidget();
             dropDownsLayout->addWidget(rigVals,2,0,1,2);
-                add1_btn= new QPushButton("Add Item");
+                add1_btn= new QPushButton("Add Rig #");
                 add1_btn->setFocusPolicy(Qt::NoFocus);
             dropDownsLayout->addWidget(add1_btn,1,1);
                 newItem1 = new QLineEdit();
             dropDownsLayout->addWidget(newItem1,1,0);
-                rmv1_btn= new QPushButton("Remove Selected Item");
+                rmv1_btn= new QPushButton("Remove Selected Rig #");
                 rmv1_btn->setFocusPolicy(Qt::NoFocus);
             dropDownsLayout->addWidget(rmv1_btn,3,0,1,2);
             //2nd listbox//
@@ -314,12 +305,12 @@ MainWindow::MainWindow(QWidget *parent)
                 ratVals = new QListWidget();
                 ratVals->addItems(rigList);
             dropDownsLayout->addWidget(ratVals,2,2,1,2);
-                add2_btn= new QPushButton("Add Item");
+                add2_btn= new QPushButton("Add Rat ID");
                 add2_btn->setFocusPolicy(Qt::NoFocus);
             dropDownsLayout->addWidget(add2_btn,1,3);
                 newItem2 = new QLineEdit();
             dropDownsLayout->addWidget(newItem2,1,2);
-                rmv2_btn= new QPushButton("Remove Selected Item");
+                rmv2_btn= new QPushButton("Remove Selected Rat ID");
                 rmv2_btn->setFocusPolicy(Qt::NoFocus);
             dropDownsLayout->addWidget(rmv2_btn,3,2,1,2);
             //3rd listbox//
@@ -328,12 +319,12 @@ MainWindow::MainWindow(QWidget *parent)
                 cerebroVals = new QListWidget();
                 cerebroVals->addItems(rigList);
             dropDownsLayout->addWidget(cerebroVals,2,4,1,2);
-                add3_btn= new QPushButton("Add Item");
+                add3_btn= new QPushButton("Add Cerebro #");
                 add3_btn->setFocusPolicy(Qt::NoFocus);
             dropDownsLayout->addWidget(add3_btn,1,5);
                 newItem3 = new QLineEdit();
             dropDownsLayout->addWidget(newItem3,1,4);
-                rmv3_btn= new QPushButton("Remove Selected Item");
+                rmv3_btn= new QPushButton("Remove Selected Cerebro #");
                 rmv3_btn->setFocusPolicy(Qt::NoFocus);
             dropDownsLayout->addWidget(rmv3_btn,3,4,1,2);
         dropDownsBox->setLayout(dropDownsLayout);
@@ -359,7 +350,7 @@ MainWindow::MainWindow(QWidget *parent)
                 rmvAlias_btn= new QPushButton("Remove Selected Label");
                 rmvAlias_btn->setFocusPolicy(Qt::NoFocus);
             portEditLayout->addWidget(rmvAlias_btn,5,0,1,3);
-        portEditBox->setLayout(portEditLayout);        
+        portEditBox->setLayout(portEditLayout);
 
         editLabelDialog = new QDialog();
             editLayout = new QGridLayout();
@@ -405,7 +396,7 @@ MainWindow::MainWindow(QWidget *parent)
     fillPortsInfo();
     fillPortsInfo2();
     isConnected = false;
-    isConnected2 = false;    
+    isConnected2 = false;
     inTestloop = false;
     testCount = 0;
     timer = new QTimer(this);
@@ -543,31 +534,25 @@ void MainWindow::fillPortsInfo2()
 void MainWindow::connectPort()
 {
     gotoSettings->setEnabled(isConnected);
-//    if(ratCombo->currentText()=="Koloblok"){
-//        QMessageBox alert;
-//        alert.setText("Koloblok!");
-//        alert.exec();
-//    }
-//    else
-    if((rigCombo->currentText()=="") & !isConnected){
+    if((rigSelect->selectedItems().size()==0) & !isConnected){
         QMessageBox alert;
-        alert.setText("Please fill in the Rig # to continue");
+        alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rig #");
         alert.exec();
         connect_btn->setChecked(false);
         }
-    else if((ratCombo->currentText()=="") & !isConnected){
+    else if((ratSelect->selectedItems().size()==0) & !isConnected){
         QMessageBox alert;
-        alert.setText("Please fill in the Rat ID to continue");
+        alert.setText("Please select a Rat ID to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rat ID");
         alert.exec();
         connect_btn->setChecked(false);
     }
-    else if((cerebroCombo->currentText()=="") & !isConnected){
+    else if((cerebroSelect->selectedItems().size()==0) & !isConnected){
         QMessageBox alert;
-        alert.setText("Please fill in the Cerebro # to continue");
+        alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Cerebro #");
         alert.exec();
@@ -577,9 +562,9 @@ void MainWindow::connectPort()
         rig_lbl->setEnabled(isConnected);
         rat_lbl->setEnabled(isConnected);
         cerebro_lbl->setEnabled(isConnected);
-        rigCombo->setEnabled(isConnected);
-        ratCombo->setEnabled(isConnected);
-        cerebroCombo->setEnabled(isConnected);
+        rigSelect->setEnabled(isConnected);
+        ratSelect->setEnabled(isConnected);
+        cerebroSelect->setEnabled(isConnected);
         connectBS_label->setEnabled(isConnected);
         serialPortList->setEnabled(isConnected);
         refresh_btn->setEnabled(isConnected);
@@ -603,7 +588,7 @@ void MainWindow::connectPort()
             serial->setFlowControl(QSerialPort::NoFlowControl);
             serial->open(QIODevice::ReadWrite);
             connect_btn->setText("Disconnect");
-            setWindowTitle("Rig " + rigCombo->currentText() + " Rat " + ratCombo->currentText() );
+            setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );
             QString rst = "R";
             serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
@@ -672,7 +657,7 @@ void MainWindow::connectDownloadPort()
 void MainWindow::sendTime()
 {
     QString time = QDate::currentDate().toString() + " " + QTime::currentTime().toString();
-    QString startup = QString("%1,%2,%3,%4,").arg(time,rigCombo->currentText(),ratCombo->currentText(),cerebroCombo->currentText());
+    QString startup = QString("%1,%2,%3,%4,").arg(time,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
     serial->write(startup.toLocal8Bit());
     clearBase_btn->setEnabled(true);
 }
@@ -802,7 +787,14 @@ void MainWindow::trainChecked()
 void MainWindow::saveFile()
 {
     //warn if there is no rat # to indicate which folder to save to
-    QString ratNumber = ratCombo->currentText();
+    QString ratNumber;
+    if(debugOn){
+        ratNumber = "9999";
+    }
+    else{
+        ratNumber = ratSelect->currentItem()->text();
+    }
+    qDebug()<<debugOn;
     bool continueSaving = true;
     if(ratNumber==""){
         QMessageBox alert;
@@ -826,7 +818,7 @@ void MainWindow::saveFile()
         QMessageBox newFolder;
         QPushButton *connectButton = newFolder.addButton(tr("Yes, Create new folder"), QMessageBox::YesRole);
         newFolder.addButton(QMessageBox::Cancel);
-        newFolder.setText(ratNumber + "' folder does not currently exist in the '" + tempPath + "' directory. Would you like to create one?");
+        newFolder.setText("'" + ratNumber + "' folder does not currently exist in the '" + tempPath + "' directory. Would you like to create one?");
         newFolder.exec();
         if (newFolder.clickedButton() == connectButton) {
             // connect
@@ -855,9 +847,9 @@ void MainWindow::saveFile()
                     connectPort();
                     fillPortsInfo();
                 }
-                rigCombo->clearEditText();
-                ratCombo->clearEditText();
-                cerebroCombo->clearEditText();
+                rigSelect->clearSelection();
+                ratSelect->clearSelection();
+                cerebroSelect->clearSelection();
                 baseMonitor->clear();
                 debugOn = false;
                 showDebug();
@@ -992,15 +984,15 @@ void MainWindow::trainDur(){
 void MainWindow::showDebug(){
     if (debugOn){
         bugBox->show();
-        rigCombo->setCurrentText("8.7");
-        ratCombo->setCurrentText("9999");
-        cerebroCombo->setCurrentText("321");
+        rigSelect->setCurrentRow(0);
+        ratSelect->setCurrentRow(0);
+        cerebroSelect->setCurrentRow(0);
     }
     else{
         bugBox->hide();
-        rigCombo->setCurrentText("");
-        ratCombo->setCurrentText("");
-        cerebroCombo->setCurrentText("");
+        rigSelect->clearSelection();
+        ratSelect->clearSelection();
+        cerebroSelect->clearSelection();
     }
 }
 
@@ -1089,20 +1081,17 @@ void MainWindow::refreshDrops()
         // populate the listwidgets in the settings dialog with the items in the lists we got from memory
         for (int i = 0;i< rigList.count(); i++){
             rigVals->addItem(rigList.value(i));
-        }        
+        }
         for (int i = 0;i< ratList.count(); i++){
             ratVals->addItem(ratList.value(i));
-        }   
+        }
         for (int i = 0;i< cerebroList.count(); i++){
             cerebroVals->addItem(cerebroList.value(i));
         }
         //populate the combo boxes as well
-        rigCombo->addItem("");
-        rigCombo->addItems(rigList);
-        ratCombo->addItem("");
-        ratCombo->addItems(ratList);
-        cerebroCombo->addItem("");
-        cerebroCombo->addItems(cerebroList);
+        rigSelect->addItems(rigList);
+        ratSelect->addItems(ratList);
+        cerebroSelect->addItems(cerebroList);
     }
     else //exiting settings dialog
     {
@@ -1110,25 +1099,23 @@ void MainWindow::refreshDrops()
         for (int i = 0;i< rigVals->count(); i++){ //fill the combo box list with items (as strings) from the settings dialog listwidget
             rigList << rigVals->item(i)->text();
         }
-        rigCombo->clear();              //empty the combo box
-        rigCombo->addItem("");          //insert a blank item
-        rigCombo->addItems(rigList);    //insert the updated combo box list
+        rigSelect->clear();              //empty the combo box
+        rigSelect->addItems(rigList);    //insert the updated combo box list
 
         ratList.clear();
         for (int i = 0;i< ratVals->count(); i++){
             ratList << ratVals->item(i)->text();
         }
-        ratCombo->clear();
-        ratCombo->addItem("");
-        ratCombo->addItems(ratList);
+        ratSelect->clear();
+        ratSelect->addItems(ratList);
 
         cerebroList.clear();
         for (int i = 0;i< cerebroVals->count(); i++){
             cerebroList << cerebroVals->item(i)->text();
         }
-        cerebroCombo->clear();
-        cerebroCombo->addItem("");
-        cerebroCombo->addItems(cerebroList);
+        cerebroSelect->clear();
+        cerebroSelect->addItems(cerebroList);
+
         //Update the Qsettings with the new values
         QSettings settings("Bobcat Engineering","CCS");
         settings.beginGroup("Dropdowns");
@@ -1148,6 +1135,11 @@ void MainWindow::refreshDrops()
     }
     fillPortsInfo();
     fillPortsInfo2();
+    int itemHeight = 25;
+    int itemWidth = 75;
+    rigSelect->setMaximumSize(itemWidth,itemHeight*rigSelect->count());
+    ratSelect->setMaximumSize(itemWidth,itemHeight*ratSelect->count());
+    cerebroSelect->setMaximumSize(itemWidth,itemHeight*cerebroSelect->count());
 }
 
 void MainWindow::openSettings()

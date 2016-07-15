@@ -75,7 +75,7 @@ private:
     QCheckBox*              trigger_checkbox;
     QComboBox*              serialPortList;
     QComboBox*              serialPortList2;
-    QComboBox*              rigCombo,*ratCombo,*cerebroCombo;
+    QListWidget*            rigSelect,*ratSelect,*cerebroSelect;
     QStringList             rigList,ratList,cerebroList;
     QPlainTextEdit*         baseMonitor;
     QPlainTextEdit*         downloadMonitor;

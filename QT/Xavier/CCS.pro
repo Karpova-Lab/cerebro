@@ -17,7 +17,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h
 
-RESOURCES += \
-    files.qrc
+RESOURCES +=
 
 DISTFILES +=
