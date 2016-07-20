@@ -8,7 +8,7 @@
 class Cerebro{
 public:
   Cerebro(byte emitter);
-  void trigger();
+  void trigger(bool isContinuation = 0);
   void stop();
   void test();
   void saveEEPROM();
@@ -26,5 +26,6 @@ private:
   char bitIndex = 15;
   void pulseIR(unsigned int pulses);
   void sendMark(bool data);
+  void interrupt();
 };
 #endif
