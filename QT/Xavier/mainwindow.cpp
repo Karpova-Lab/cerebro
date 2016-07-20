@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.19.0\nUpdated:\t7/20/2016");
+        aboutDialog->setText("Version:\t1.19.1\nUpdated:\t7/20/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -732,7 +732,12 @@ void MainWindow::set()
     QString msg = powerLevel +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
     serial->write(msg.toLocal8Bit());
     last_settings->setText("Last Settings Sent:\n" + powerLevel  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
-    baseFilter_spn->setValue(qMax(onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked(),trainDuration_spn->value()));
+    if (singleShot->isChecked()){
+        baseFilter_spn->setValue(onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked());
+    }
+    else{
+        baseFilter_spn->setValue(trainDuration_spn->value());
+    }
     QTimer::singleShot(500, this, SLOT(updateFilter()));
 
 }
