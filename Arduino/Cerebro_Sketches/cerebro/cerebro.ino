@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 29;
+byte version = 30;
 byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
@@ -457,26 +457,24 @@ void save2EEPROM(){
   eepromWriteByte(1,address & 255);
 }
 
-void printEEPROM(){
+void readAddresses(int start, int finish){
   long stamp;
   long first;
   unsigned int second;
   byte third;
-  mySerial.print(F("Ver,"));
-  mySerial.print(version);
-  mySerial.print('\r');
-  for (int k = 12; k < (eepromReadByte(0)<<8|eepromReadByte(1)) ; k++) {  //print the list of events.
+  for (int k = start; k < finish ; k++) {  //print the list of events.
     first = eepromReadByte(k+1);
     second = eepromReadByte(k+2);
+    third = eepromReadByte(k+3);
     if(char(eepromReadByte(k))=='T'){
-      stamp = first<<16|second<<8|eepromReadByte(k+3);                    //combine bytes to get timestamp
+      stamp = first<<16|second<<8|third;                    //combine bytes to get timestamp
       mySerial.print(stamp);
       mySerial.print(",");
       mySerial.print(F("trigger\r"));
       k+=3;
     }
     else if (char(eepromReadByte(k))=='A'){
-      stamp = first<<16|second<<8|eepromReadByte(k+3);
+      stamp = first<<16|second<<8|third;
       mySerial.print(stamp);
       mySerial.print(",");
       mySerial.print(F("abort\r"));
@@ -497,11 +495,23 @@ void printEEPROM(){
       mySerial.println(F("error"));
     }
   }
+}
+
+void printEEPROM(){
+  mySerial.print(F("Ver,"));
+  mySerial.print(version);
+  mySerial.print('\r');
+  unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
+  readAddresses(12,endingAddress);   //print the list of events
   for (int i = 0; i<NUMPARAM; i++){
     strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
     mySerial.print(buffer);
     mySerial.print(waveform[i]);
     mySerial.print('\r');
+  }
+  if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
+    mySerial.println("Remaining Memory Contents:");
+    readAddresses(endingAddress,8100); //print the remaining contents
   }
 }
 
