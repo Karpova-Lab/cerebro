@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 31;
+byte version = 32;
 byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
@@ -250,6 +250,7 @@ void triggerEvent(unsigned int desiredPower){
         trigMatch = false;
       }
       else if (stopMatch){
+        fade();
         laserEnabled = laserOFF();
         mySerial.println("abort");
         if (address < memorySize) {       //record abort event
