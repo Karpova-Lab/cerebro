@@ -63,7 +63,7 @@ private:
 
     QPushButton*            refresh_btn,*connect_btn,*startSession_btn;
     QPushButton*            refresh2_btn,*connect2_btn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*filter_btn,*macro_btn;;
     QPushButton*            eeprom_btn;
     QPushButton*            sendSettings_btn;
     QPushButton*            clearBase_btn;
@@ -80,10 +80,10 @@ private:
     QPlainTextEdit*         baseMonitor;
     QPlainTextEdit*         downloadMonitor;
     QLineEdit*              macroText;
-    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*power_spn,*fade_spn,*trials_spn;
+    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*power_spn,*fade_spn,*trials_spn,*baseFilter_spn;
     QRadioButton*           singleShot,*pulseTrain;
     QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*power_lbl,*fade_label;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*power_lbl,*fade_label,*filterLabel;
     QLabel*                 serial_title;
     QLabel*                 download_title;
     QLabel*                 last_settings;
@@ -104,6 +104,7 @@ private:
     QGridLayout*            serialMonitorLayout;
     QGridLayout*            logLayout;
     QGridLayout*            triggTestLayout;
+    QGridLayout*            baseSettingLayout;
 
     QGroupBox*              startscreenBox;
     QGroupBox*              equipmentBox;
@@ -112,6 +113,7 @@ private:
     QGroupBox*              bugBox;
     QGroupBox*              baseBox;
     QGroupBox*              downloaderBox;
+    QGroupBox*              baseSettingsBox;
 
     QSerialPort*            serial;
     QSerialPort*            serial2;
@@ -166,6 +168,7 @@ private slots:
     void sendTrigger();
     void abort();
     void EEPROM();
+    void updateFilter();
     void lamp();
     void macro();
     void saveFile();

@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("Xavier");
-//    qDebug()<<"hello"<<QSysInfo::macVersion()<<"goodbye"<< QSysInfo::windowsVersion();
+    qApp->setStyleSheet("QListWidget::item:selected { background-color: gold; color: black}");
 
     //Menu bar
     fileMenu = menuBar()->addMenu("File");
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.18.0\nUpdated:\t7/15/2016");
+        aboutDialog->setText("Version:\t1.19.0\nUpdated:\t7/20/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -85,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
             equipmentLayout->addWidget(serialPortList,1,6,1,2);
                 connect_btn = new QPushButton("Start Session");
                 connect_btn->setCheckable(true);
+//                connect_btn->setStyleSheet("background-color: green; color:white");
             equipmentLayout->addWidget(connect_btn,3,1,1,7);
             equipmentLayout->setColumnStretch(0,1);
             equipmentLayout->setColumnStretch(8,1);
@@ -108,7 +109,7 @@ MainWindow::MainWindow(QWidget *parent)
         baseBox->setLayout(serialMonitorLayout);
 
         //Pulse parameter adjustment box
-        adjustBox = new QGroupBox("Adjust Waveform Parameters");
+        adjustBox = new QGroupBox("Cerebro's Waveform Parameters");
             adjustmentLayout = new QGridLayout();
                 power_spn = new QSpinBox();
                 power_spn->setRange(0,65535);
@@ -176,6 +177,24 @@ MainWindow::MainWindow(QWidget *parent)
         adjustBox->setLayout(adjustmentLayout);
         adjustBox->setMinimumWidth(235);
 
+        //Base station Settings
+        baseSettingsBox = new QGroupBox("Base Station Control");
+            baseSettingLayout = new QGridLayout();
+                filterLabel = new QLabel("Command Filter");
+                filterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            baseSettingLayout->addWidget(filterLabel,0,0);
+                baseFilter_spn = new QSpinBox();
+                baseFilter_spn->setRange(0,65535);
+                baseFilter_spn->setSingleStep(250);
+                baseFilter_spn->setSuffix(" ms");
+                baseFilter_spn->setAlignment(Qt::AlignCenter);
+            baseSettingLayout->addWidget(baseFilter_spn,0,1);
+                filter_btn = new QPushButton("Update Filter");
+            baseSettingLayout->addWidget(filter_btn,1,0,1,2);
+                lamp_btn = new QPushButton("Toggle IR Lamp");
+            baseSettingLayout->addWidget(lamp_btn,2,0,1,2);
+        baseSettingsBox->setLayout(baseSettingLayout);
+
 
         //Triggering & debugging
         bugBox = new QGroupBox("Debug");
@@ -233,7 +252,7 @@ MainWindow::MainWindow(QWidget *parent)
                 clearDownload_btn->setEnabled(false);
             connectionLayout2->addWidget(clearDownload_btn,3,2,Qt::AlignRight);
                 downloadMonitor = new QPlainTextEdit();
-                downloadMonitor->setMinimumWidth(250);
+                downloadMonitor->setMinimumWidth(275);
                 downloadMonitor->setEnabled(false);
             connectionLayout2->addWidget(downloadMonitor,4,0,1,3);
             connectionLayout2->setRowStretch(4,1);
@@ -250,18 +269,17 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout = new QGridLayout();
 //    mainLayout->addWidget(picLabel,0,0,1,3);
     mainLayout->addWidget(equipmentBox,0,0,1,3);
-    mainLayout->addWidget(adjustBox,1,0,1,1);
-        lamp_btn = new QPushButton("Toggle IR Lamp");
-        lamp_btn->setEnabled(false);
-    mainLayout->addWidget(lamp_btn,2,0);
+    mainLayout->addWidget(baseSettingsBox,1,0);
+    mainLayout->addWidget(adjustBox,2,0,1,1);
     mainLayout->addWidget(bugBox,3,0,1,1);
     mainLayout->addWidget(baseBox,1,1,4,2);
     mainLayout->setColumnStretch(2,1);
     mainLayout->addWidget(downloaderBox,0,3,5,1);
-    mainLayout->setRowStretch(4,1);
+    mainLayout->setRowStretch(5,1);
     adjustBox->setEnabled(false);
     bugBox->setEnabled(false);
     baseBox->setEnabled(false);
+    baseSettingsBox->setEnabled(false);
 
     QWidget *window = new QWidget();
     window->setLayout(mainLayout);
@@ -450,6 +468,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
     connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
     connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
+    connect(filter_btn,SIGNAL(clicked()),this,SLOT(updateFilter()));
 
 
 }
@@ -569,9 +588,8 @@ void MainWindow::connectPort()
         serialPortList->setEnabled(isConnected);
         refresh_btn->setEnabled(isConnected);
         adjustBox->setEnabled(!isConnected);
-        lamp_btn->setEnabled(!isConnected);
+        baseSettingsBox->setEnabled(!isConnected);
         bugBox->setEnabled(!isConnected);
-        baseBox->setEnabled(!isConnected);
         baseBox->setEnabled(!isConnected);
         connect_btn->setChecked(!isConnected);\
         if(!isConnected){
@@ -588,6 +606,7 @@ void MainWindow::connectPort()
             serial->setFlowControl(QSerialPort::NoFlowControl);
             serial->open(QIODevice::ReadWrite);
             connect_btn->setText("Disconnect");
+//            connect_btn->setStyleSheet("background-color: grey; color:black");
             setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );
             QString rst = "R";
             serial->write(rst.toLocal8Bit());
@@ -604,6 +623,7 @@ void MainWindow::connectPort()
             baseMonitor->textCursor().insertText(time);
             serial->close();
             connect_btn->setText("Start Session");
+//            connect_btn->setStyleSheet("background-color: green; color:white");
             setWindowTitle("Xavier");
             isConnected = 0;
         }
@@ -650,8 +670,6 @@ void MainWindow::connectDownloadPort()
             fillPortsInfo2();
         }
     }
-    qDebug()<<connect2_btn->isChecked();
-    qDebug()<<connect2_btn->isDown();
 }
 
 void MainWindow::sendTime()
@@ -698,6 +716,7 @@ void MainWindow::clearMonitor2()
 
 void MainWindow::set()
 {
+
     QString onTime = QString::number(onTime_spn->value());
     QString offTime = "0";
     QString trainDur = "0";
@@ -713,6 +732,9 @@ void MainWindow::set()
     QString msg = powerLevel +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
     serial->write(msg.toLocal8Bit());
     last_settings->setText("Last Settings Sent:\n" + powerLevel  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
+    baseFilter_spn->setValue(qMax(onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked(),trainDuration_spn->value()));
+    QTimer::singleShot(500, this, SLOT(updateFilter()));
+
 }
 
 void MainWindow::sendTrigger()
@@ -902,7 +924,7 @@ void MainWindow::saveFile()
 
 void MainWindow::errorMsg()
 {
-    qDebug()<<serial->error();
+    qDebug()<<"serial error:"<<serial->error();
     if (((serial->error()==11)|(serial->error()==7)|(serial->error()==8)|(serial->error()==9)&& errorThrown==false)){                //http://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
         errorThrown = true;
         baseMonitor->textCursor().insertText("ERROR\r");
@@ -925,6 +947,12 @@ void MainWindow::setPath(){
         settings.endGroup();
         directoryLabel->setText("<b>Current Directory:</b><br>" + savePath);
     }
+}
+
+void MainWindow::updateFilter(){
+    QString msg = "F,"+ QString::number(baseFilter_spn->value());
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<"sent";
 }
 
 void MainWindow::lamp(){
