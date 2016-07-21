@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.19.1\nUpdated:\t7/20/2016");
+        aboutDialog->setText("Version:\t1.19.2\nUpdated:\t7/21/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -219,7 +219,7 @@ MainWindow::MainWindow(QWidget *parent)
                 testProgress->setValue(0);
                 testProgress->setVisible(false);
             triggerLayout->addWidget(testProgress,2,0,1,2);
-                abort_btn = new QPushButton("Start/Stop Test");
+                abort_btn = new QPushButton("Stop");
             triggerLayout->addWidget(abort_btn,3,0,1,2);
                 macroText = new QLineEdit();
                 macroText->setFixedWidth(40);
@@ -406,6 +406,15 @@ MainWindow::MainWindow(QWidget *parent)
     settingsDialog->setMaximumHeight(300);
     settingsDialog->setLayout(settingsLayout);
 
+
+#ifdef _WIN32   //--------Windows USB parse settings------------
+    usbTag = "COM";
+    usbDescription = "USB Serial Port";
+#elif __APPLE__ //---------Mac USB parse settings---------------
+    usbTag  = "cu.usbserial";
+    usbDescription = "FT230X Basic UART";
+#endif
+
     //program setup
     serial = new QSerialPort(this);
     serial2 = new QSerialPort(this);
@@ -509,7 +518,10 @@ void MainWindow::fillPortsInfo()
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         if (!info.isBusy()){
-            if(info.description()=="USB Serial Port"){
+            qDebug()<<info.description();
+            if(info.description()==usbDescription){
+
+
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
                     if (!aliasStringList.filter(info.portName())[0].contains("Downloader",Qt::CaseInsensitive)){
                         list << aliasStringList.filter(info.portName())[0];
@@ -533,7 +545,7 @@ void MainWindow::fillPortsInfo2()
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         if (!info.isBusy()){
-            if(info.description()=="USB Serial Port"){
+            if(info.description()==usbDescription){
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
                     if (!aliasStringList.filter(info.portName())[0].contains("Base",Qt::CaseInsensitive)){
                         list << aliasStringList.filter(info.portName())[0];
@@ -595,7 +607,7 @@ void MainWindow::connectPort()
         if(!isConnected){
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
-            tempPortName.remove(0,tempPortName.indexOf("(COM")+1);
+            tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
             //open serial connection
             serial->setPortName(tempPortName);
@@ -650,7 +662,7 @@ void MainWindow::connectDownloadPort()
         saveMonitor_btn->setEnabled(!isConnected2);
         if(!isConnected2){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
-            tempPortName.remove(0,tempPortName.indexOf("(COM")+1);
+            tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
             //open serial connection
             serial2->setPortName(tempPortName);
@@ -972,7 +984,7 @@ void MainWindow::EEPROM(){
     showDownloader();
 }
 void MainWindow::abort(){
-    QString msg = "D";
+    QString msg = "S";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
@@ -989,16 +1001,14 @@ void MainWindow::gotoDir(){
     QString tempPath = settings.value("DefaultDir").toString();
     settings.endGroup();
     if(tempPath.isEmpty()){
-        tempPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        tempPath = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     }
-    QProcess *process = new QProcess(this);
-    process->start("explorer.exe", QStringList() << QDir::toNativeSeparators(tempPath));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(tempPath));
 }
 
 void MainWindow::gotoAppLocation(){
-    QString tempPath = QCoreApplication::applicationDirPath();
-    QProcess *process = new QProcess(this);
-    process->start("explorer.exe", QStringList() << QDir::toNativeSeparators(tempPath));
+    QString tempPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
+    QDesktopServices::openUrl(QUrl::fromLocalFile(tempPath));
 }
 
 
@@ -1192,7 +1202,7 @@ void MainWindow::openSettings()
         static const QString blankString = QObject::tr("N/A");
         foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
             QStringList list;
-            if(info.description()=="USB Serial Port"){
+            if(info.description()==usbDescription){
                 list << info.portName();
                 portDropdown->addItem(list.first(), list);
             }
@@ -1209,7 +1219,8 @@ void MainWindow::addAlias()
     bool fromChangeLabel;
     if (sender()==changeLabel_btn){
         tempCOM = editLabelDialog->windowTitle();
-        tempCOM = tempCOM.mid(tempCOM.indexOf(" COM")+1,tempCOM.indexOf(" label")-tempCOM.indexOf(" COM")-1);
+        qDebug()<<tempCOM;
+        tempCOM = tempCOM.mid(tempCOM.indexOf(" "+usbTag)+1,tempCOM.indexOf(" label")-tempCOM.indexOf(" "+ usbTag)-1);
         labelText = editText->text();
         fromChangeLabel = true;
     }
@@ -1323,7 +1334,7 @@ void MainWindow::editLabel(){
     //isolate the COMXX part of the port name
     QString COMbeingEdited = aliasWidget->currentItem()->text();
     editText->setText(COMbeingEdited.left(COMbeingEdited.indexOf(" (")));
-    COMbeingEdited.remove(0,COMbeingEdited.indexOf("(COM")+1);
+    COMbeingEdited.remove(0,COMbeingEdited.indexOf("("+usbTag)+1);
     COMbeingEdited.remove(QChar (')'));
     editText->setFocus();
     editLabelDialog->setWindowTitle("Edit "+ COMbeingEdited + " label");

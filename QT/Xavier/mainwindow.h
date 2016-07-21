@@ -45,6 +45,7 @@ private:
     QString                 location;
     QString                 saveName1;
     QString                 saveName2;
+    QString                 usbTag,usbDescription;
     bool                    isConnected;
     bool                    isConnected2;
     bool                    repeatOn;
@@ -153,6 +154,7 @@ private:
     QGroupBox*              featuresBox;
     QGridLayout*            featuresLayout;
     QCheckBox*              pythonCheckbox;
+
 
 
 
