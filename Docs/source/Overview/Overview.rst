@@ -57,7 +57,7 @@ Utility Shield
   :scale: 15 %
 
 The Utility Shield connects to an `Arduino Uno <https://www.arduino.cc/en/main/arduinoBoardUno>`_ and is used to flash programs to a variety of AVR microcontrollers.
-It can flash the ATtiny84 DIP used by the IR Remote and Charging Dock, the ATtiny84 SOIC used by Cerebro, the ATtiny85 DIP used by the Base Station,, and the ATmega328P
+It can flash the ATtiny84 DIP used by the IR Remote and Charging Dock, the ATtiny84 SOIC used by Cerebro, the ATtiny85 DIP used by the Base Station, and the ATmega328P
 used by the IR Remote. The shield also provides a charging port for Cerebro that has a green/red charging indicator light.
 
 :doc:`More info... <../Hardware/utility shield>`

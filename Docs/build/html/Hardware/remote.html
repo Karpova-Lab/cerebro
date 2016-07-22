@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>IR Remote &mdash; Cerebro 0.0.3 documentation</title>
+  <title>IR Remote &mdash; Cerebro 0.0.4 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="Cerebro 0.0.3 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.4 documentation" href="../index.html"/>
         <link rel="next" title="Downloader Cord" href="downloader cord.html"/>
         <link rel="prev" title="Charging Dock" href="charging dock.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.3
+                0.0.4
               </div>
             
           
@@ -97,11 +97,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#demonstration-video">Demonstration Video</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#checking-cerebro-s-waveform-parameters">Checking Cerebro&#8217;s Waveform Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#checking-battery-status">Checking Battery Status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sending-new-parameters">Sending New Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#triggering-cerebro">Triggering Cerebro</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#stopping-cerebro">Stopping Cerebro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#editing-and-sending-waveform-parameters">Editing and Sending Waveform Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#triggering-a-light-pulse">Triggering a light pulse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-a-light-pulse">Stopping a light pulse</a></li>
 </ul>
 </li>
 </ul>
@@ -245,20 +245,40 @@
 </div>
 <div class="section" id="user-guide">
 <h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="demonstration-video">
+<h3>Demonstration Video<a class="headerlink" href="#demonstration-video" title="Permalink to this headline">¶</a></h3>
+<iframe src="https://player.vimeo.com/video/175858239" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p><a href="https://vimeo.com/175858239">IR Remote Demonstration</a></p></div>
 <div class="section" id="checking-cerebro-s-waveform-parameters">
 <span id="remote-check"></span><h3>Checking Cerebro&#8217;s Waveform Parameters<a class="headerlink" href="#checking-cerebro-s-waveform-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Turn on the IR Remote</li>
+<li>With Cerebro turned off, plug it into the IR Remote</li>
+<li>Switch on Cerebro. The current waveform parameters as well as the battery voltage will be displayed.</li>
+</ol>
 </div>
-<div class="section" id="checking-battery-status">
-<h3>Checking Battery Status<a class="headerlink" href="#checking-battery-status" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="editing-and-sending-waveform-parameters">
+<span id="remote-send"></span><h3>Editing and Sending Waveform Parameters<a class="headerlink" href="#editing-and-sending-waveform-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Use the rotary knob to highlight the parameter that you would like to edit</li>
+<li>Click down the rotary knob to begin editing the parameters</li>
+<li>Rotate the knob to make coarse adjustments (clockwise to increase, counterclockwise to decrease)</li>
+<li>Press, hold and rotate to make fine adjustments.</li>
+<li>Click the rotary knob again to return to highlighting parameters</li>
+<li>When finished editing, Press and hold the &#8220;B&#8221; button to send the new parameters to Cerebro. The display will show &#8220;Parameters Sent&#8221;</li>
+</ol>
 </div>
-<div class="section" id="sending-new-parameters">
-<span id="remote-send"></span><h3>Sending New Parameters<a class="headerlink" href="#sending-new-parameters" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="triggering-a-light-pulse">
+<h3>Triggering a light pulse<a class="headerlink" href="#triggering-a-light-pulse" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Press and release the &#8220;A&#8221; button. The display will show &#8220;Trigger Sent&#8221;</li>
+</ol>
 </div>
-<div class="section" id="triggering-cerebro">
-<h3>Triggering Cerebro<a class="headerlink" href="#triggering-cerebro" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="stopping-cerebro">
-<h3>Stopping Cerebro<a class="headerlink" href="#stopping-cerebro" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="stopping-a-light-pulse">
+<h3>Stopping a light pulse<a class="headerlink" href="#stopping-a-light-pulse" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Press and release the &#8220;B&#8221; button. The display will show &#8220;Stop Sent&#8221;</li>
+</ol>
 </div>
 </div>
 </div>
@@ -304,7 +324,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.3',
+            VERSION:'0.0.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

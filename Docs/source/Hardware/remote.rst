@@ -50,27 +50,44 @@ Uploading Firmware
 ------------------
 
 
-
-
-
 User Guide
 ==========
+
+Demonstration Video
+-------------------
+
+.. raw:: html
+
+	<iframe src="https://player.vimeo.com/video/175858239" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+	<p><a href="https://vimeo.com/175858239">IR Remote Demonstration</a></p>
 
 .. _remote check:
 
 Checking Cerebro's Waveform Parameters
 --------------------------------------
 
-Checking Battery Status
------------------------
+#. Turn on the IR Remote
+#. With Cerebro turned off, plug it into the IR Remote
+#. Switch on Cerebro. The current waveform parameters as well as the battery voltage will be displayed.
 
 .. _remote send:
 
-Sending New Parameters
+Editing and Sending Waveform Parameters
+---------------------------------------
+
+#. Use the rotary knob to highlight the parameter that you would like to edit
+#. Click down the rotary knob to begin editing the parameters
+#. Rotate the knob to make coarse adjustments (clockwise to increase, counterclockwise to decrease)
+#. Press, hold and rotate to make fine adjustments.
+#. Click the rotary knob again to return to highlighting parameters
+#. When finished editing, Press and hold the "B" button to send the new parameters to Cerebro. The display will show "Parameters Sent"
+
+Triggering a light pulse
+------------------------
+
+#. Press and release the "A" button. The display will show "Trigger Sent"
+
+Stopping a light pulse
 ----------------------
 
-Triggering Cerebro
-------------------
-
-Stopping Cerebro
-----------------
+#. Press and release the "B" button. The display will show "Stop Sent"

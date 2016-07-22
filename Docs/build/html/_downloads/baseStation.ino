@@ -40,12 +40,13 @@ SoftwareSerial mySerial(3,4);
 #define stopIn_reg    PINB
 #define triggerIn   2              //pin 7 on 85
 #define stopIn      0              //pin 5 on 85
+#define continuation 1
 String startupMsg;
 unsigned long timeOffset;
 byte values[numParameters][6];
-byte version = 18;
+byte version = 19;
 unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
-unsigned long triggerClock = 0;
+long triggerClock = 0;
 unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
                           We don't want Base Station's log file to be filled with "Stop Sent" events that weren't applicable to Cerebro.
                           Therefore, Base Station filters Bcontrol commands, only emitting stop signals to Cerebro if we think
@@ -59,6 +60,7 @@ void setup()   {
   pinMode(stopIn, INPUT);
   mySerial.begin(9600);
   spamFilter = EEPROM.read(0)<<8 | EEPROM.read(1); //recall spamFilter from memory
+  triggerClock = -spamFilter;
 
   //setup time synchronization//
   byte msgLength = 0;
@@ -203,20 +205,32 @@ void parseMsg(byte numValues){
 }
 
 void triggerFromBase(){
-  if ((millis()-triggerClock)>spamFilter){
+  unsigned long tSinceTrigger = millis() - triggerClock;
+  if (tSinceTrigger>spamFilter){
     cerebro.trigger();
     triggerClock = millis();
     mySerial.print(triggerClock - timeOffset);
     mySerial.print(F(",Trigger Sent\r"));
   }
+  else{
+    cerebro.trigger(continuation);
+    triggerClock = millis();
+    mySerial.print(triggerClock - timeOffset);
+    mySerial.print(F(",Continue Sent,"));
+    mySerial.print(tSinceTrigger);
+    mySerial.print("\r");
+  }
 }
 
 void stopFromBase(){
-  if ((millis()-triggerClock)<spamFilter){
+  unsigned long tSinceTrigger = millis() - triggerClock;
+  if (tSinceTrigger<spamFilter){
     cerebro.stop();
     mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Stop Sent\r"));
-    triggerClock = 0; //prevents back to back stop signals from being sent
+    mySerial.print(F(",Stop Sent,"));
+    mySerial.print(tSinceTrigger);
+    mySerial.print("\r");
+    triggerClock = -spamFilter; //prevents back to back stop signals from being sent
   }
 }
 

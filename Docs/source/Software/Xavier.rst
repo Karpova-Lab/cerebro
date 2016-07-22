@@ -76,12 +76,12 @@ Power Level
   Level of light output. Each laser diode assembly is calibrated to provide a range of power level values that correspond with known light power (mW) outputs.
 On Time (ms)
   Duration the laser is on at the given Power Level
-Ramp down (ms) [Single Shot mode only]
-  Time it takes for the laser to linearly reduce its output from Power Level to completely off. Must be a mulitple of 100 ms.
-Off Time (ms) [Pulse Train mode only]
+Off Time (ms) [Pulse Train mode]
   Duration the laser is off
-Train Duration (ms) [Pulse Train mode only]
+Train Duration (ms) [Pulse Train mode]
   Duration that the on-off cycles are repeated
+Ramp down (ms) [Single Shot mode]
+  Time it takes for the laser to linearly reduce its output from Power Level to completely off. Must be a mulitple of 100 ms.
 
 .. image:: photos/Edit_waveform/parameter_diagram.png
     :align: center

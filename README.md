@@ -1,6 +1,6 @@
 #Cerebro Wireless Optogenetics System
 
-This repository contains all files needed to replicate a wireless optogenetics system that was developed by Andy Lustig in the [Karpova Lab ](https://www.janelia.org/lab/karpova-lab) at HHMI's Janelia Research Campus.
+This repository contains all files needed to replicate a wireless optogenetics system that was developed in the [Karpova Lab ](https://www.janelia.org/lab/karpova-lab) at HHMI's Janelia Research Campus.
 
 
 

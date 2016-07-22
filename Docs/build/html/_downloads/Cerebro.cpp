@@ -26,17 +26,29 @@ Cerebro::Cerebro(byte emitter)  //
 byte Cerebro::getEmitterType(){
   return _emitter;
 }
-void Cerebro::trigger()
+void Cerebro::trigger(bool isContinuation)
 {
+  if (isContinuation){
+    interrupt();
+  }
   sendMark(true);
   sendMark(false);
   sendMark(true);
   sendMark(false);
 }
-void Cerebro::stop()
+
+void Cerebro::stop(){
+  interrupt();
+  sendMark(false);
+  sendMark(true);
+  sendMark(true);
+  sendMark(false);
+}
+
+void Cerebro::interrupt()
 {
-  pulseIR(200);
-  delay(10);       //assurance that back to back stop signals aren't mistaken for 1 trigger signal
+  pulseIR(12);
+  delay(1);       //assurance that back to back stop signals aren't mistaken for 1 trigger signal
 }
 
 void Cerebro::test()

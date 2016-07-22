@@ -6,6 +6,7 @@ Welcome! This is the hardware and software documentation of a system used for wi
 As an `open-source <http://www.oshwa.org/definition/>`_ project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.
 
+
 A GitHub repository with all relevant files can be found `here <https://github.com/alustig3/Cerebro>`_
 ------------------------------------------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ High Power Laser Diodes
   Up to 15 mW per laser diode or 450 mW/mm\ :sup:`2` (tested with 520 nm laser diodes coupled to 200 |mgr|\m fibers)
 
 Low Material Cost
-  Hardware BOMs are provided, at total estimated cost of $300. The software is free.
+  Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
 
 .. csv-table::
   :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
@@ -61,13 +62,10 @@ Here are some commercial products that also provide wireless optogenetics:
 ..   :header: "Product", "Cost ($)", "Features"
 ..   :widths: 1,1,1
 ..
-..   `Cambridge NeuroTech <http://www.cambridgeneurotech.com/wireless.htm>`_,, ""
 ..   `Eicom Teleopto <https://eicomusa.com/teleopto/>`_ , "4,500", "Very similar to Cerebro. Uses battery and IR triggering."
 ..   `Kendall Research Systems <http://www.kendallresearchsys.com/>`_ , "20,000", "Uses wireless power. Includes 3-axis accelerometer"
 ..   `Neurolux <http://www.neurolux.org/products/>`_,
-
-
-
+..   `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_,
 
 Documentation Contents:
 =======================
@@ -115,8 +113,8 @@ SOFTWARE.
 
 .. raw:: html
 
-      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-      <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
-      <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Cerebro Wireless Optogenetics System</span> by
-      <a xmlns:cc="http://creativecommons.org/ns#" href="https://www.janelia.org/lab/karpova-lab" property="cc:attributionName" rel="cc:attributionURL">
-      Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+  <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+  <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Cerebro Wireless Optogenetics System</span> by
+  <a xmlns:cc="http://creativecommons.org/ns#" href="https://www.janelia.org/lab/karpova-lab" property="cc:attributionName" rel="cc:attributionURL">
+  Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>

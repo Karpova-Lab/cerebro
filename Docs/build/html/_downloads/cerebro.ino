@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 29;
-byte cerebroNum = 26;
+byte version = 34;
+byte cerebroNum = 16;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
 906 , 906 , 905 , 904 , 903 , 902 , 901 , 901 , 900 , 899 , 898 , 897 , 897 , 896 , 895 ,
@@ -119,8 +119,8 @@ unsigned int waveform[NUMPARAM] = {};
 byte marksReceived;
 unsigned int address = 12;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
                             the final address used in the last session. The next 10 bytes are reserved for waveform parameters*/
-unsigned int stopCount = 0;
-bool keyMatches = false;
+bool trigMatch = false;
+bool stopMatch = false;
 int error;
 const float KP = 0.2;
 const byte interval = 3;
@@ -132,6 +132,8 @@ int DAClevel = 725;
 #else
 int DAClevel = 0;
 #endif
+
+byte listenForIR(int timeout=0);
 
 void setup() {
   ///////////Analog setup////////////////////////////
@@ -190,9 +192,9 @@ void setup() {
 }
 
 void loop() {
-  keyMatches = false;
-  marksReceived = listenForIR();          //wait for IR signal and return the number of marks received
-  if (marksReceived == 4 && keyMatches) { //trigger light upon receiving exactly 4 marks of with durations that match a key
+  marksReceived = listenForIR();      //wait for IR signal and return the number of marks received
+  if (trigMatch) {                    //trigger light upon receiving exactly 4 marks of with durations that match a key
+    trigMatch = false;
     #ifdef CALIBRATE
     calibrateRoutine();
     #else
@@ -229,30 +231,34 @@ void triggerEvent(unsigned int desiredPower){
   bool newPulse = true;      //
   bool triggerRecorded = false;
   onClock=trainClock=millis();              //reset clocks
+  byte rcvd = 0;
   while(laserEnabled){
-    //check if stop signal received
+    //check if another command (abort or continuation) has been sent since the trigger was activated
     if (!(IR_inputReg & (1<<IR_pin))){
-      while(! (IR_inputReg & (1<<IR_pin))){ //how long was the signal?
-        stopCount++;
-        if (stopCount>2500){                //if are able to count past 2500 then it's clear that we are receiving the ~5.5ms stop signal
-          laserEnabled = laserOFF();
-          if (address < memorySize) {       //record abort event
-            #ifdef DEBUG
-            mySerial.print(millis());
-            mySerial.println(",abort");
-            #endif
-            recordEvent('A');
-          }
-          while(! (IR_inputReg & (1<<IR_pin))){
-            //wait until stop pulse is finished
-          }
-          break;                            //exit triggerEvent()
-        }
+      unsigned long timeIT = millis();
+      while(! (IR_inputReg & (1<<IR_pin))){
+        //wait until stop pulse is finished
       }
-      #ifdef DEBUG
-      mySerial.println(stopCount);
-      #endif
-      stopCount = 0;
+      rcvd = listenForIR(5000);
+      if (trigMatch){
+        onClock = millis();
+        trainClock = millis();
+        if (address < memorySize) {       //record continue event
+          recordEvent('C');
+        }
+        trigMatch = false;
+      }
+      else if (stopMatch){
+        if (waveform[4]>0){
+          fade();
+        }
+        laserEnabled = laserOFF();
+        if (address < memorySize) {       //record abort event
+          recordEvent('A');
+        }
+        stopMatch = false;
+      }
+      rcvd = 0;
     }
     //else if onClock hasn't expired, turn on/keep on the laser
     #ifdef CALIBRATE
@@ -301,9 +307,6 @@ void triggerEvent(unsigned int desiredPower){
       mySerial.println(DAClevel);
       #endif
       laserEnabled = laserOFF();
-      #ifdef DEBUG
-      mySerial.println("done");
-      #endif
     }
   }
 }
@@ -342,7 +345,7 @@ void fade(){
   }
 }
 
-byte listenForIR(void) {
+byte listenForIR(int timeout) {
   /*This function builds an array of high pulse and low pulse lengths
   When it receives a pulse, it starts counting in 2 microsecond (the resolution) increments
   then stores that sum in an array. We can later estimate how long a IR pulse was by mulitplying this sum by the resolution.
@@ -358,22 +361,17 @@ byte listenForIR(void) {
     while (IR_inputReg & (1 << IR_pin)) {    //while the pin is high, count how long it is high by adding to spaceLength
       spaceLength++;
       delayMicroseconds(irResolution);
-      if ((pulsePairIndex==4 && marks[0]>highThresh && marks[1]<lowThresh && marks[2]>highThresh && marks[3]<lowThresh )){ //We received a trigger message.
-        keyMatches = true;
-        #ifdef DEBUG
-        mySerial.print("triggered...");
-        #endif
-        return pulsePairIndex;
+      if (pulsePairIndex==4){
+        if (marks[0]>highThresh && marks[1]<lowThresh && marks[2]>highThresh && marks[3]<lowThresh){     //We received a trigger message (High,Low,High,Low)
+          trigMatch = true;
+          return pulsePairIndex;
+        }
+        else if(marks[0]<lowThresh && marks[1]>highThresh && marks[2]>highThresh && marks[3]<lowThresh){ //we received stop message (Low,High,High,Low)
+          stopMatch = true;
+          return pulsePairIndex;
+        }
       }
-      else if(((spaceLength >= maxpulselength) && (pulsePairIndex != 0)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
-        #ifdef DEBUG
-        // mySerial.print("pulsePairIndex:");
-        // mySerial.println(pulsePairIndex);
-        // for (int v=0; v<pulsePairIndex; v++){
-        //   mySerial.print(marks[v]);
-        //   mySerial.println();
-        // }
-        #endif
+      if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
         delayMicroseconds(1);//Don't know why this is needed, but it is....
         if (pulsePairIndex==87 && marks[0]>highThresh && marks[1]>highThresh && marks[2]<lowThresh  && marks[3]<lowThresh  && marks[4]>highThresh && marks[5]<lowThresh && marks[6]>highThresh ){ //We received new Parameters!
           //Record the current pulse parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
@@ -397,11 +395,9 @@ byte listenForIR(void) {
             eepromWriteByte(2*m+3,waveform[m] & 255);
           }
         }
-        #ifdef DEBUG
-        else{ //We received a message that we don't understand
-          mySerial.println("no match");
-        }
-        #endif
+        // else{ //We received a message that we don't understand
+        //   mySerial.println("no match");
+        // }
         return pulsePairIndex;
       }
     }
@@ -413,7 +409,6 @@ byte listenForIR(void) {
     pulsePairIndex++;
   }
 }
-
 
 void recordEvent(byte letter){
   unsigned long temp = millis();
@@ -457,29 +452,34 @@ void save2EEPROM(){
   eepromWriteByte(1,address & 255);
 }
 
-void printEEPROM(){
+void readAddresses(int start, int finish){
   long stamp;
   long first;
   unsigned int second;
   byte third;
-  mySerial.print(F("Ver,"));
-  mySerial.print(version);
-  mySerial.print('\r');
-  for (int k = 12; k < (eepromReadByte(0)<<8|eepromReadByte(1)) ; k++) {  //print the list of events.
+  for (int k = start; k < finish ; k++) {  //print the list of events.
     first = eepromReadByte(k+1);
     second = eepromReadByte(k+2);
+    third = eepromReadByte(k+3);
     if(char(eepromReadByte(k))=='T'){
-      stamp = first<<16|second<<8|eepromReadByte(k+3);                    //combine bytes to get timestamp
+      stamp = first<<16|second<<8|third;                    //combine bytes to get timestamp
       mySerial.print(stamp);
       mySerial.print(",");
       mySerial.print(F("trigger\r"));
       k+=3;
     }
     else if (char(eepromReadByte(k))=='A'){
-      stamp = first<<16|second<<8|eepromReadByte(k+3);
+      stamp = first<<16|second<<8|third;
       mySerial.print(stamp);
       mySerial.print(",");
       mySerial.print(F("abort\r"));
+      k+=3;
+    }
+    else if (char(eepromReadByte(k))=='C'){
+      stamp = first<<16|second<<8|third;
+      mySerial.print(stamp);
+      mySerial.print(",");
+      mySerial.print(F("continue\r"));
       k+=3;
     }
     else if (char(eepromReadByte(k))=='P'){
@@ -497,12 +497,24 @@ void printEEPROM(){
       mySerial.println(F("error"));
     }
   }
+}
+
+void printEEPROM(){
+  mySerial.print(F("Ver,"));
+  mySerial.print(version);
+  mySerial.print('\r');
+  unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
+  readAddresses(12,endingAddress);   //print the list of events
   for (int i = 0; i<NUMPARAM; i++){
     strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
     mySerial.print(buffer);
     mySerial.print(waveform[i]);
     mySerial.print('\r');
   }
+  // if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
+  //   mySerial.println("Remaining Memory Contents:");
+  //   readAddresses(endingAddress,8100); //print the remaining contents
+  // }
 }
 
 void myShift(int val){                  //shifts out data MSB first

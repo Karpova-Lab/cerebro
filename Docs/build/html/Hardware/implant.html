@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Head Implant &mdash; Cerebro 0.0.3 documentation</title>
+  <title>Head Implant &mdash; Cerebro 0.0.4 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="Cerebro 0.0.3 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.4 documentation" href="../index.html"/>
         <link rel="next" title="Base Station" href="base station.html"/>
         <link rel="prev" title="Cerebro" href="cerebro.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.3
+                0.0.4
               </div>
             
           
@@ -246,7 +246,7 @@
 <div class="section" id="calibration-instructions">
 <h2>Calibration Instructions<a class="headerlink" href="#calibration-instructions" title="Permalink to this headline">¶</a></h2>
 <p>The is variation in head implant assemblies. Laser diodes, coupling efficency, LDR postion in relation to the laser diodes. In order to compensate for all of this variability, each assembly must be calibrated
-so we know the relation betwee our power variable in our code and the actual light power being produced at the fiber tips.</p>
+so we know the relation between our power variable in our code and the actual light power being produced at the fiber tips.</p>
 <ol class="arabic simple">
 <li>Follow the <a class="reference internal" href="cerebro.html#cerebro-upload"><span>instructions</span></a> for uploading Cerebro Firmware. Delete line 37&#8217;s preceding &#8216;//&#8217; to uncomment &#8216;#define CALIBRATE&#8217; before uploading the firmware.</li>
 </ol>
@@ -254,13 +254,13 @@ so we know the relation betwee our power variable in our code and the actual lig
 <a class="reference internal image-reference" href="../_images/define.png"><img alt="../_images/define.png" src="../_images/define.png" style="width: 789.0px; height: 981.0px;" /></a>
 </div>
 <ol class="arabic simple" start="2">
-<li>Conect Cerebro to the Head Implant, and secure them in a text fixture with the fibers pointing into a Light Power meter.</li>
+<li>Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a Light Power Meter.</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/fixture.jpg"><img alt="../_images/fixture.jpg" src="../_images/fixture.jpg" style="width: 3394.0px; height: 2420.0px;" /></a>
 </div>
 <ol class="arabic simple" start="3">
-<li>Open up the Light Power meter software and change the following settings:</li>
+<li>Open up the Light Power Meter software and change the following settings:</li>
 </ol>
 <blockquote>
 <div><ul class="simple">
@@ -279,6 +279,7 @@ so we know the relation betwee our power variable in our code and the actual lig
 </div>
 <ol class="arabic simple" start="4">
 <li>Make sure Cerbero is turned on and then click &#8220;Start Log&#8221;</li>
+<li>Using either a Base Station or IR remote, send the following new waveform paratmeters: 0 power, 2000 on , 0 off, 0 train, 0 ramp</li>
 <li>Using either a Base Station or IR remote, send a trigger signal to Cerebro to begin the calibration routine</li>
 <li>Run Python script on the log file to to get calibration summary</li>
 <li>In Cerebro.ino, replace the &#8220;const int levels[100]&#8221; variable with the code found in the calibration summary file</li>
@@ -348,7 +349,7 @@ so we know the relation betwee our power variable in our code and the actual lig
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.3',
+            VERSION:'0.0.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

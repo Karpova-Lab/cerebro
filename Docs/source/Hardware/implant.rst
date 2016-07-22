@@ -61,7 +61,7 @@ Assembly Instructions
 Calibration Instructions
 ========================
 The is variation in head implant assemblies. Laser diodes, coupling efficency, LDR postion in relation to the laser diodes. In order to compensate for all of this variability, each assembly must be calibrated
-so we know the relation betwee our power variable in our code and the actual light power being produced at the fiber tips.
+so we know the relation between our power variable in our code and the actual light power being produced at the fiber tips.
 
 1. Follow the :ref:`instructions <cerebro upload>` for uploading Cerebro Firmware. Delete line 37's preceding '//' to uncomment '#define CALIBRATE' before uploading the firmware.
 
@@ -69,13 +69,13 @@ so we know the relation betwee our power variable in our code and the actual lig
   :align: center
   :scale: 100%
 
-2. Conect Cerebro to the Head Implant, and secure them in a text fixture with the fibers pointing into a Light Power meter.
+2. Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a Light Power Meter.
 
 .. figure:: photos/Calibration_photos/fixture.jpg
   :align: center
   :scale: 100%
 
-3. Open up the Light Power meter software and change the following settings:
+3. Open up the Light Power Meter software and change the following settings:
 
   - Range: 120mW
   - Wave: 520nm
@@ -90,6 +90,7 @@ so we know the relation betwee our power variable in our code and the actual lig
   :scale: 100%
 
 4. Make sure Cerbero is turned on and then click "Start Log"
+#. Using either a Base Station or IR remote, send the following new waveform paratmeters: 0 power, 2000 on , 0 off, 0 train, 0 ramp
 #. Using either a Base Station or IR remote, send a trigger signal to Cerebro to begin the calibration routine
 #. Run Python script on the log file to to get calibration summary
 #. In Cerebro.ino, replace the "const int levels[100]" variable with the code found in the calibration summary file
