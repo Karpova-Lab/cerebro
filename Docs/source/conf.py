@@ -51,7 +51,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'Cerebro'
 copyright = u'2015-2016, Andy Lustig'
-author = u'Karpova Lab'
+author = u'Andy Lustig, Karpova Lab'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -233,8 +233,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'Cerebro.tex', u'Cerebro Documentation',
-   u'Karpova Lab', 'manual'),
+  ('index', 'Cerebro.tex', u'Cerebro Documentation',
+   u'Andy Lustig, Karpova Lab', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

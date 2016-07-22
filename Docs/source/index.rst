@@ -1,5 +1,7 @@
+====================================
 Cerebro Wireless Optogenetics System
 ====================================
+
 .. include:: isogrk1.txt
 
 Welcome! This is the hardware and software documentation of a system used for wireless `optogenetic <https://en.wikipedia.org/wiki/Optogenetics>`_ stimulation.
@@ -7,8 +9,8 @@ As an `open-source <http://www.oshwa.org/definition/>`_ project, this documentat
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.
 
 
-A GitHub repository with all relevant files can be found `here <https://github.com/alustig3/Cerebro>`_
-------------------------------------------------------------------------------------------------------
+A GitHub repository with all relevant files can be found `HERE <https://github.com/alustig3/Cerebro>`_
+
 
 This project was developed by Andy Lustig in the `Karpova Lab at Janelia Research Campus <https://www.janelia.org/lab/karpova-lab>`_.
 If you have any questions you can contact him at lustiga@janelia.hhmi.org
@@ -16,62 +18,9 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
 .. Note::
   This documentation is very much a work in progress. Please understand that there will porbably be typos and missing
 
-System Highlights
------------------
-Open Source = Flexible
-  All code and CAD is available so you can make changes and improvements to anything you want!
-
-Low Latency
-  Less than 3ms latency between a trigger command being sent and the laser diodes being powered on.
-
-Wirelessly Adjustable aveforms
-  Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
-
-High Power Laser Diodes
-  Up to 15 mW per laser diode or 450 mW/mm\ :sup:`2` (tested with 520 nm laser diodes coupled to 200 |mgr|\m fibers)
-
-Low Material Cost
-  Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
-
-.. csv-table::
-  :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
-  :widths: 1,1,1
-
-  Cerebro,30 , 1
-  Head Implant (bilateral),190,4
-  Base Station,5,1
-  IR Remote,40,1
-  Arduino + Utility Shield,30,1
-  Downloader Cord,5,1
-  Xavier, FREE, 0
-  ,
-  **Total**,**$300**,**9 hours**
-
-Commercial Alternatives
------------------------
-
-Here are some commercial products that also provide wireless optogenetics:
-
-| `Eicom Teleopto <https://eicomusa.com/teleopto/>`_
-| `Kendall Research Systems <http://www.kendallresearchsys.com/>`_
-| `Neurolux <http://www.neurolux.org/products/>`_
-| `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_
-|
-
-.. .. csv-table::
-..   :header: "Product", "Cost ($)", "Features"
-..   :widths: 1,1,1
-..
-..   `Eicom Teleopto <https://eicomusa.com/teleopto/>`_ , "4,500", "Very similar to Cerebro. Uses battery and IR triggering."
-..   `Kendall Research Systems <http://www.kendallresearchsys.com/>`_ , "20,000", "Uses wireless power. Includes 3-axis accelerometer"
-..   `Neurolux <http://www.neurolux.org/products/>`_,
-..   `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_,
-
-Documentation Contents:
-=======================
-
 .. toctree::
   :maxdepth: 1
+  :hidden:
 
   Overview/Overview.rst
   Hardware/cerebro.rst
@@ -83,8 +32,7 @@ Documentation Contents:
   Hardware/downloader cord.rst
   Software/Xavier.rst
 
-Licenses
-========
+
 The MIT License (MIT)
 
 Copyright (c) 2015-2016 Andy Lustig
