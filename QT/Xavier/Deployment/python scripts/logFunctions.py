@@ -15,7 +15,7 @@ def readableTime(stamp):
     for i in [1000*60*60, 1000*60, 1000.0]:
         vec.append(stamp/i)
         stamp = stamp%i
-    return '{}h {}m {}s'.format(vec[0],vec[1],vec[2])
+    return '{}h {}m {}s'.format(int(float(vec[0])),int(float(vec[1])),int(float(vec[2])))
 
 
 def parseBaseStation(logFile):
@@ -39,7 +39,8 @@ def parseBaseStation(logFile):
     bLog['bTime'] = bLog['bTime']-first                         #subtract offset from all timestamps
     bLog['bDiff'] = bLog['bTime']-bLog['bTime'].shift(1)        #add column of time between events
     bLog['Clock'] = bLog['bTime'].apply(readableTime)               #add column with readable time 
-    bData = {'numChangesSent':numChangesSent,'setup':setup,'sessionLength':bLog.loc[len(bLog)-1,'Clock']}
+    sessionLength = bLog.loc[len(bLog)-1,'Clock']
+    bData = {'numChangesSent':numChangesSent,'setup':setup,'sessionLength':sessionLength}
     return bLog,bData
 
 def parseCerebroLog(logFile):
@@ -174,13 +175,13 @@ def printSummary(combined,sessionLength,paramRanges,comp):
     summary['sMissed'] = '\t{} Missed: {}'.format(sMissed,missedStopVec)
     summary['paramRanges'] = '\nParameters Throughout Session:\npwr\t\ton\t\toff\t\ttrain\t\tramp\t\t[range]\n{}'.format(paramRanges)
     
-    print summary['lengthSummary']
-    print summary['successSummary']
-    print summary['tIgnored']
-    print summary['tMissed']
-    print summary['abortSummary']
-    print summary['sMissed']
-    print summary['paramRanges']
+    print (summary['lengthSummary'])
+    print (summary['successSummary'])
+    print (summary['tIgnored'])
+    print (summary['tMissed'])
+    print (summary['abortSummary'])
+    print (summary['sMissed'])
+    print (summary['paramRanges'])
     
     summary['tMissed'] = summary['tMissed'].replace("\t",'\t\t')
     summary['sMissed'] = summary['sMissed'].replace("\t",'\t\t')
@@ -205,7 +206,7 @@ def writeSummary(cerebroLogPath,bData,cData,summary,combined):
     target.write('\n{}'.format(summary['paramRanges']))
     target.write('\n')
     target.close()
-    combined.to_csv('{}summary.csv'.format(cerebroLogPath[:-14]),',')
+    combined.to_csv('{}combined_log.csv'.format(cerebroLogPath[:-14]),',')  #save csv file
     target = open('{}summary.html'.format(cerebroLogPath[:-14]), 'w')
     target.write('{}'.format(combined.to_html()))
     target.close()
@@ -226,8 +227,8 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     
     #plot points
     plt.figure(figsize=(17,11))
-    bPlot, = plt.plot(xrange(len(bothDF)),bothDF['bDiff']/60000,'g',label="Base Station")
-    cPlot, = plt.plot(xrange(len(bothDF)),bothDF['cDiff']/60000,'b',label="Cerebro",alpha = 0.5)
+    bPlot, = plt.plot(range(len(bothDF)),bothDF['bDiff']/60000,'g',label="Base Station")
+    cPlot, = plt.plot(range(len(bothDF)),bothDF['cDiff']/60000,'b',label="Cerebro",alpha = 0.5)
     
     #Display indices of missed signals
     missString = ""
