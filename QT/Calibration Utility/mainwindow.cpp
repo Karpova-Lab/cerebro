@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include "dropbutton.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,15 +15,13 @@ MainWindow::MainWindow(QWidget *parent)
     helpMenu->addAction(about);
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.1.0\nUpdated:\t6/20/2016");
+        aboutDialog->setText("Version:\t1.2.0\nUpdated:\t6/21/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
 
     chooseBox = new QGroupBox();
         chooseLayout = new QGridLayout();
-
             wantedLevel = new QSlider(Qt::Horizontal);
-//            wantedLevel->setMinimum(0);
             wantedLevel->setRange(0,15);
             wantedLevel->setValue(4);
             wantedLevel->setTickPosition(QSlider::TicksBelow);
@@ -30,9 +30,12 @@ MainWindow::MainWindow(QWidget *parent)
         chooseLayout->addWidget(slideLabel,0,0,Qt::AlignCenter);
             showGraph = new QCheckBox("Show Graphs");
         chooseLayout->addWidget(showGraph,0,1,2,1);
-            pickFile_btn = new QPushButton("Select Power Meter\ndata file");
-            pickFile_btn->setCheckable(true);
-        chooseLayout->addWidget(pickFile_btn,0,2,2,1);
+            selectFile_btn = new DropButton;//("Select Power Meter\ndata file");
+            selectFile_btn->setCheckable(true);
+            selectFile_btn->setAcceptDrops(true);
+            selectFile_btn->setCheckable(false);
+            selectFile_btn->setMinimumHeight(75);
+        chooseLayout->addWidget(selectFile_btn,0,2,2,1);
             fileLabel = new QLabel();
         chooseLayout->addWidget(fileLabel,2,0,1,3,Qt::AlignCenter);
             codeTextBox = new QPlainTextEdit();
@@ -42,8 +45,6 @@ MainWindow::MainWindow(QWidget *parent)
         chooseLayout->addWidget(codeTextBox,3,0,1,3);
     chooseBox->setLayout(chooseLayout);
 
-
-
     mainLayout = new QGridLayout();
     mainLayout->addWidget(chooseBox,0,0);
     this->resize(0,0);
@@ -52,7 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     window->setLayout(mainLayout);
     setCentralWidget(window);
 
-    connect(pickFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
+    connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
+    connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
     connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
     connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
@@ -71,34 +73,14 @@ void MainWindow::slideValueUpdate(int newVal){
 void MainWindow::chooseFile(){
     fileLabel->setText("");
     codeTextBox->clear();
-    QString calibrateDataPath = QFileDialog::getOpenFileName(this,tr("Select Power Meter Data"),QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),tr("(*.txt)"));
-    if(!calibrateDataPath.isEmpty()){
+    QString pathFromDialog = QFileDialog::getOpenFileName(this,tr("Select Power Meter Data"),QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),tr("(*.txt)"));
+    qDebug()<<pathFromDialog;
+    if(!pathFromDialog.isEmpty()){
         // Run python script to summarize data from base station and cerebro logs
-        QProcess *process = new QProcess(this);
-        QStringList pythonArgs;
-        pythonArgs<<qApp->applicationDirPath()+"/python scripts/getCalibrationVec.py"<<"\""+calibrateDataPath+"\""<<QString::number(wantedLevel->value())<<QString::number(showGraph->isChecked()); //pass the calibration data into python script
-        process->start("python",pythonArgs);
-        process->waitForFinished(-1);
-        QString errorString = process->readAllStandardError();
-        QString resultString = process->readAll();
-        codeTextBox->insertPlainText(resultString);
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(resultString);
-        QMessageBox alert;
-        alert.setWindowTitle("Results are in!");
-        alert.setText("The calibration vector has\nbeen copied to your clipboard");
-        alert.exec();
-        fileLabel->setText("<h3>"+calibrateDataPath+"</h3>");
-//        if (errorString.isEmpty()){
-//            alert.setWindowTitle("Session Summary");
-//            alert.setText(resultString);
-//            alert.exec();
-//        }
-//        else{
-//            alert.setWindowTitle("Error");
-//            alert.setText(errorString);
-//            alert.exec();
-//        }
+        getCalVals(pathFromDialog);
+    }
+    else{
+        selectFile_btn->clearFocus();
     }
 }
 
@@ -106,4 +88,36 @@ void MainWindow::openDocs(){
 //    opens readthedocs.com documentation
     QUrl site = QUrl::fromEncoded( "http://cerebro.readthedocs.io/en/latest/Hardware/implant.html#calibration-instructions");
     QDesktopServices::openUrl(site);
+}
+
+void MainWindow::useDropped(const QMimeData *mimeData)
+{
+    fileLabel->setText("");
+    codeTextBox->clear();
+    QString dataPath =  mimeData->text().simplified();
+    dataPath.remove("file:///");
+    getCalVals(dataPath);
+}
+
+void MainWindow::getCalVals(QString calibrateDataPath ){
+    QProcess *process = new QProcess(this);
+    QStringList pythonArgs;
+    pythonArgs<<qApp->applicationDirPath()+"/python scripts/getCalibrationVec.py"<<"\""+calibrateDataPath+"\""<<QString::number(wantedLevel->value())<<QString::number(showGraph->isChecked()); //pass the calibration data into python script
+    process->start("python",pythonArgs);
+    process->waitForFinished(-1);
+    QString errorString = process->readAllStandardError();
+    QString resultString = process->readAll();
+    codeTextBox->insertPlainText(resultString);
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(resultString);
+    QMessageBox alert;
+    alert.setWindowTitle("Results are in!");
+    alert.setText("The calibration vector has\nbeen copied to your clipboard");
+    alert.exec();
+    fileLabel->setText("<h3>"+calibrateDataPath+"</h3>");
+    if (!errorString.isEmpty()){
+        alert.setWindowTitle("Error Message from Python");
+        alert.setText(errorString);
+        alert.exec();
+    }
 }

@@ -102,8 +102,6 @@ def saveGraphs(_sourceName,_saveName,bokehGraph):
         os.makedirs('Calibrations/{}'.format(_saveName))
     plt.savefig("Calibrations/{0}/{0}_graph.png".format(_saveName),bbox_inches='tight') 
     plt.savefig("Calibrations/Graphs/{0}_graph.png".format(_saveName),bbox_inches='tight') 
-    bk.output_file("Calibrations/{0}/{0}_graph.html".format(_saveName))
-    bk.save(bokehGraph)
     shutil.copy(_sourceName,'Calibrations/{}'.format(_saveName)) #put a copy of the .txt log file in the local folder
 
 def saveSummary(_saveName,_trimmedSoftVals,lightOut,LD):
