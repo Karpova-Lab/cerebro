@@ -1,4 +1,4 @@
-receiver.name=Cerebro/Charging Dock/IR Remote (ATtiny84)
+receiver.name=Cerebro/Charging Dock (ATtiny84)
 receiver.build.mcu=attiny84
 receiver.build.variant=tiny14
 

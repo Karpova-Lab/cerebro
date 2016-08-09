@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 32;
+byte version = 34;
 byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
@@ -243,16 +243,16 @@ void triggerEvent(unsigned int desiredPower){
       if (trigMatch){
         onClock = millis();
         trainClock = millis();
-        mySerial.println("continue");
         if (address < memorySize) {       //record continue event
           recordEvent('C');
         }
         trigMatch = false;
       }
       else if (stopMatch){
-        fade();
+        if (waveform[4]>0){
+          fade();
+        }
         laserEnabled = laserOFF();
-        mySerial.println("abort");
         if (address < memorySize) {       //record abort event
           recordEvent('A');
         }
@@ -511,10 +511,10 @@ void printEEPROM(){
     mySerial.print(waveform[i]);
     mySerial.print('\r');
   }
-  if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
-    mySerial.println("Remaining Memory Contents:");
-    readAddresses(endingAddress,8100); //print the remaining contents
-  }
+  // if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
+  //   mySerial.println("Remaining Memory Contents:");
+  //   readAddresses(endingAddress,8100); //print the remaining contents
+  // }
 }
 
 void myShift(int val){                  //shifts out data MSB first
