@@ -52,9 +52,9 @@ Bill of Materials
 Design Files
 ============
 PCB
-	- :download:`Base Station 1.7.brd<../../../PCB Files/Base Station 1.7/Base Station 1.7.brd>`
-	- :download:`Base Station 1.7.sch<../../../PCB Files/Base Station 1.7/Base Station 1.7.sch>`
-	- :download:`Schematic.pdf<../../../PCB Files/Base Station 1.7/Base Station 1.7 schematic.pdf>`
+	- :download:`Base Station 1.8.brd<../../../PCB Files/Base Station 1.8/Base Station 1.8.brd>`
+	- :download:`Base Station 1.8.sch<../../../PCB Files/Base Station 1.8/Base Station 1.8.sch>`
+	- :download:`Schematic.pdf<../../../PCB Files/Base Station 1.8/Base Station 1.8 schematic.pdf>`
 
 Lasercut
   - :download:`Behavior box top.dxf<../../../Lasercut/Behavior box top/Behavior box top.dxf>`

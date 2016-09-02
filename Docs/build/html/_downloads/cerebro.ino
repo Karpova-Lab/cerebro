@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 byte version = 34;
-byte cerebroNum = 16;
+byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
 906 , 906 , 905 , 904 , 903 , 902 , 901 , 901 , 900 , 899 , 898 , 897 , 897 , 896 , 895 ,
