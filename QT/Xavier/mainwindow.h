@@ -56,9 +56,8 @@ private:
     bool                    first;
     bool                    debugOn;
 
-    QAction*                gotoSettings,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
+    QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
     QMenu*                  fileMenu,*viewMenu,*toolMenu,*goMenu,*helpMenu;
-    QShortcut*              debugShortcut,*settingsShortcut;
     QMessageBox*            aboutDialog;
     QTimer*                 timer;
 

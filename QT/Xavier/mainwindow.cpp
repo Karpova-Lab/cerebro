@@ -31,8 +31,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Menu bar
     fileMenu = menuBar()->addMenu("File");
+        toggleDebug = new QAction(this);
+        toggleDebug->setText("Toggle Debug Mode");
+        toggleDebug->setShortcut(QKeySequence(tr("Ctrl+D")));
+    fileMenu->addAction(toggleDebug);
         gotoSettings = new QAction(this);
         gotoSettings->setText("Settings...");
+        gotoSettings->setShortcut(QKeySequence(tr("Ctrl+,")));
     fileMenu->addAction(gotoSettings);
     goMenu = menuBar()->addMenu("Go To");
         openDir = new QAction(this);
@@ -53,12 +58,9 @@ MainWindow::MainWindow(QWidget *parent)
         about->setText("About...");
     helpMenu->addAction(about);
 
-    debugShortcut = new QShortcut(QKeySequence(tr("Ctrl+D")),this);
-    settingsShortcut = new QShortcut(QKeySequence(tr("Ctrl+,")),this);
-
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.19.2\nUpdated:\t7/21/2016");
+        aboutDialog->setText("Version:\t1.20.0\nUpdated:\t9/19/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -247,6 +249,7 @@ MainWindow::MainWindow(QWidget *parent)
                 connect2_btn->setCheckable(true);
             connectionLayout2->addWidget(connect2_btn,2,0,1,3);
                 download_title = new QLabel("<h3><u>Download Monitor</u>:");
+                download_title->setEnabled(false);
             connectionLayout2->addWidget(download_title,3,0,1,2);
                 clearDownload_btn = new QPushButton("Clear Monitor");
                 clearDownload_btn->setEnabled(false);
@@ -264,8 +267,6 @@ MainWindow::MainWindow(QWidget *parent)
             connectionLayout2->addWidget(saveMonitor_btn,5,0,1,3);
         downloaderBox->setLayout(connectionLayout2);
         downloaderBox->setVisible(false);
-
-
     mainLayout = new QGridLayout();
 //    mainLayout->addWidget(picLabel,0,0,1,3);
     mainLayout->addWidget(equipmentBox,0,0,1,3);
@@ -472,12 +473,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(rmvAlias_btn,SIGNAL(clicked()),this,SLOT(removeAlias()));
     connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
     connect(graphResults,SIGNAL(triggered(bool)),this,SLOT(getGraphs()));
-    connect(debugShortcut,SIGNAL(activated()),this,SLOT(setDebug()));
-    connect(settingsShortcut,SIGNAL(activated()),this,SLOT(openSettings()));
     connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
     connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
     connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
     connect(filter_btn,SIGNAL(clicked()),this,SLOT(updateFilter()));
+    connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
 
 
 }
@@ -658,6 +658,7 @@ void MainWindow::connectDownloadPort()
         serialPortList2->setEnabled(isConnected2);
         refresh2_btn->setEnabled(isConnected2);
         downloadMonitor->setEnabled(!isConnected2);
+        download_title->setEnabled(!isConnected2);
         clearDownload_btn->setEnabled(!isConnected2);
         saveMonitor_btn->setEnabled(!isConnected2);
         if(!isConnected2){//if it's not connected, we'll connect it
@@ -728,7 +729,6 @@ void MainWindow::clearMonitor2()
 
 void MainWindow::set()
 {
-
     QString onTime = QString::number(onTime_spn->value());
     QString offTime = "0";
     QString trainDur = "0";
@@ -742,16 +742,30 @@ void MainWindow::set()
     }
     QString powerLevel = QString::number(power_spn->value());
     QString msg = powerLevel +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
-    serial->write(msg.toLocal8Bit());
-    last_settings->setText("Last Settings Sent:\n" + powerLevel  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
     if (singleShot->isChecked()){
         baseFilter_spn->setValue(onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked());
     }
     else{
         baseFilter_spn->setValue(trainDuration_spn->value());
     }
-    QTimer::singleShot(500, this, SLOT(updateFilter()));
-
+    QMessageBox confirmUpdate;
+        confirmUpdate.setWindowTitle("Confirm Parameter Change");
+        confirmUpdate.setIcon(QMessageBox::Question);
+        confirmUpdate.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
+        confirmUpdate.setDefaultButton(QMessageBox::Cancel);
+        confirmUpdate.setEscapeButton(QMessageBox::Cancel);
+        confirmUpdate.setText("<b>Are you sure you want to send the following new parameters to Cerebro?</b>");
+        confirmUpdate.setInformativeText("Power Level:\t"+ powerLevel+ " ms\nOn Time:\t" + onTime + " ms\nOff Time:\t" + offTime + " ms\nTrain Duration:\t" + trainDur + " ms\nFade Time:\t" + fadeTime + " ms");
+    if (confirmUpdate.exec() == QMessageBox::Yes){
+        serial->write(msg.toLocal8Bit());
+        last_settings->setText("Last Settings Sent:\n" + powerLevel  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
+        QTimer::singleShot(500, this, SLOT(updateFilter()));
+        QMessageBox baseUpdated;
+            baseUpdated.setWindowTitle("Base Station Updated");
+            baseUpdated.setIcon(QMessageBox::Information);
+            baseUpdated.setText("The command filter has automatically been updated to  <b>" + QString::number(baseFilter_spn->value()) + " ms</b> to match the settings sent to Cerebro");
+        baseUpdated.exec();
+    }
 }
 
 void MainWindow::sendTrigger()
@@ -1077,9 +1091,9 @@ void MainWindow::removeItem()
 
 void MainWindow::addListItem()
 {
-    QListWidget *tempList;
-    QLineEdit *tempTxtbox;
-    QStringList *tempStringList;
+    QListWidget *tempList = 0;
+    QLineEdit *tempTxtbox = 0;
+    QStringList *tempStringList = 0;
     if(sender()== add1_btn || sender()== newItem1){
         tempList = rigVals;
         tempTxtbox = newItem1;
@@ -1104,6 +1118,7 @@ void MainWindow::addListItem()
         tempList->sortItems();
     }
 }
+
 void MainWindow::refreshDrops()
 {
     if (first){ //starting up...
