@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.20.0\nUpdated:\t9/19/2016");
+        aboutDialog->setText("Version:\t1.20.1\nUpdated:\t9/19/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -565,6 +565,7 @@ void MainWindow::fillPortsInfo2()
 void MainWindow::connectPort()
 {
     gotoSettings->setEnabled(isConnected);
+    toggleDebug->setEnabled(isConnected);
     if((rigSelect->selectedItems().size()==0) & !isConnected){
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
@@ -647,7 +648,7 @@ void MainWindow::connectDownloadPort()
     QString tempPortName = serialPortList2->currentText();
     if (tempPortName.isEmpty() & !isConnected2){
         QMessageBox noSerial;
-        noSerial.setText("Make sure an Downloader Cord is connected \nand click ''Rescan''' to see available Serial Ports.");
+        noSerial.setText("Make sure a Downloader Cord is connected \nand click ''Rescan''' to see available Serial Ports.");
         noSerial.setIcon(QMessageBox::Warning);
         noSerial.setWindowTitle("No Available Serial Ports");
         noSerial.exec();
@@ -1044,12 +1045,14 @@ void MainWindow::showDebug(){
         rigSelect->setCurrentRow(0);
         ratSelect->setCurrentRow(0);
         cerebroSelect->setCurrentRow(0);
+        connect_btn->setText("Start Session (Debug Mode)");
     }
     else{
         bugBox->hide();
         rigSelect->clearSelection();
         ratSelect->clearSelection();
         cerebroSelect->clearSelection();
+        connect_btn->setText("Start Session");
     }
 }
 
