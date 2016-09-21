@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 34;
+byte version = 35;
 byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
@@ -86,6 +86,7 @@ and 8 for the former parameters.8192 bytes will provide space for 2730 events to
 #define IR_pin            1       //attiny84 pin12
 //BTN  input//
 #define BTN_dirReg        DDRA
+#define BTN_outputReg     PORTA
 #define BTN_inputReg      PINA
 #define BTN_pin           0       //attiny84 pin13
 //DAC pins setup//
@@ -105,7 +106,7 @@ and 8 for the former parameters.8192 bytes will provide space for 2730 events to
 
 const unsigned int maxpulselength = 1000;//maximum pulse length (in microseconds) that we will listen for. A signal longer than this maxpulselength is not a pulse and indicates the message is over
 const byte NUMPULSES = 88;               //maximum length of the message we can receive
-const byte irResolution = 2;             //# of microseconds that we will delay before checking the state of the IR sensor again
+const byte irResolution = 4;             //# of microseconds that we will delay before checking the state of the IR sensor again
 #define NUMPARAM 5
 const char string_0[] PROGMEM = "Power Level\t,";
 const char string_1[] PROGMEM = "On Time\t,";
@@ -143,12 +144,15 @@ void setup() {
   ////////////Digital setup//////////////////////////
   IR_dirReg &= ~(1<<IR_pin);          //IR sensor pin as input
   BTN_dirReg &= ~(1<<BTN_pin);        //BTN pin as input
+  BTN_outputReg |= (1<<BTN_pin);      //Enable pullup
   DATA_dirReg |= (1<<DATA_pin);       //Output
   CLK_dirReg  |= (1<<CLK_pin);        //Output
   LATCH_dirReg |=  (1<<LATCH_pin);    //Output
   LATCH_outputReg |= (1<<LATCH_pin);  //Set Chip Select HIGH (LOW selects the chip)
   // DUNCE_dirReg |= (1<<DUNCE_pin);     //Output
   // DUNCE_outputReg &= ~(1<<DUNCE_pin); //start Dunce ouput LOW
+  // const byte led = 8; //attiny pin 5, Arduino language pin8
+  // pinMode(led,OUTPUT); //analog output
 
   mySerial.begin(115200);
   TinyWireM.begin();
@@ -168,8 +172,8 @@ void setup() {
   for (int i = 0; i<NUMPARAM; i++){
     waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
   }
-  //if the BTN is pressed (High Signal) when cerebro starts up then print the log from the eeprom
-  if((BTN_inputReg & (1<<BTN_pin))){
+  //if the BTN is pressed (Low Signal) when cerebro starts up then print the log from the eeprom
+  if(!(BTN_inputReg & (1<<BTN_pin))){
     printEEPROM();
   }
   //otherwise just print the waveform parameters
@@ -235,7 +239,6 @@ void triggerEvent(unsigned int desiredPower){
   while(laserEnabled){
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (!(IR_inputReg & (1<<IR_pin))){
-      unsigned long timeIT = millis();
       while(! (IR_inputReg & (1<<IR_pin))){
         //wait until stop pulse is finished
       }
@@ -345,7 +348,7 @@ void fade(){
   }
 }
 
-byte listenForIR(int timeout) {
+byte listenForIR(int timeout=0) {
   /*This function builds an array of high pulse and low pulse lengths
   When it receives a pulse, it starts counting in 2 microsecond (the resolution) increments
   then stores that sum in an array. We can later estimate how long a IR pulse was by mulitplying this sum by the resolution.

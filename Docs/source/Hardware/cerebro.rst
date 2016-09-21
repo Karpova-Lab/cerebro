@@ -98,9 +98,9 @@ Bill of Materials
 CAD Files
 =========
 PCB
-	- :download:`Cerebro 4.7.brd<../../../PCB Files/Cerebro 4.7/Cerebro 4.7.brd>`
-	- :download:`Cerebro 4.7.sch<../../../PCB Files/Cerebro 4.7/Cerebro 4.7.sch>`
-	- :download:`Schematic.pdf<../../../PCB Files/Cerebro 4.7/Cerebro 4.7 schematic.pdf>`
+	- :download:`Cerebro 4.8.brd<../../../PCB Files/Cerebro 4.8/Cerebro 4.8.brd>`
+	- :download:`Cerebro 4.8.sch<../../../PCB Files/Cerebro 4.8/Cerebro 4.8.sch>`
+	- :download:`Schematic.pdf<../../../PCB Files/Cerebro 4.8/Cerebro 4.8 schematic.pdf>`
 
 
 Code

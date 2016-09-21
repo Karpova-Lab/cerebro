@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.3.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3769,10 +3769,9 @@ Single-Supply, MicroAmplifier(TM) Series</description>
 <text x="230.505" y="5.08" size="2.54" layer="94">&gt;SHEET</text>
 <text x="216.916" y="4.953" size="2.54" layer="94">Sheet:</text>
 <frame x1="0" y1="0" x2="260.35" y2="179.07" columns="6" rows="4" layer="94"/>
-<text x="217.17" y="20.32" size="2.54" layer="94">Andy Lustig</text>
-<text x="188.468" y="10.668" size="1.8542" layer="94" font="vector" ratio="15" align="bottom-center">For more information visit:
-
-cerebro.readthedocs.io/en/latest/#</text>
+<text x="217.424" y="20.32" size="2.54" layer="94">Andy Lustig</text>
+<text x="187.96" y="14.224" size="2.54" layer="94" align="center">For more information visit:
+http://cerebro.readthedocs.io/</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -3803,34 +3802,35 @@ DIN A4, landscape with location and doc. field</description>
 </classes>
 <parts>
 <part name="SDF" library="Andy-library" deviceset="TSOP6238TT" device="" value="TSOP6238TT"/>
-<part name="R3" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="2k"/>
+<part name="R3" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="2k"/>
 <part name="C3" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="2.2uF"/>
 <part name="C4" library="SparkFun-Capacitors" deviceset="CAP" device="0805" value="10uF"/>
-<part name="R4" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="12k"/>
+<part name="R4" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="12k"/>
 <part name="MIC2288" library="Andy-library" deviceset="BOOST_CONVERTER" device="" value="BOOST"/>
 <part name="D1" library="Andy-library" deviceset="DIODE" device="POWERMITE" value="MBRM140T3G"/>
 <part name="L1" library="Andy-library" deviceset="INDUCTOR" device="LQH4" value="10uH"/>
 <part name="R5" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="20k"/>
 <part name="INDICATOR_LED" library="led" deviceset="LED" device="CHIP-LED0603" value="LED"/>
 <part name="U$2" library="SparkFun-DigitalIC" deviceset="ATTINY84" device=""/>
-<part name="JP3" library="Andy-library" deviceset="USB_MICROB_PLUG" device="-PTH2"/>
+<part name="LASER_OUTPUT" library="Andy-library" deviceset="USB_MICROB_PLUG" device="-PTH2"/>
 <part name="T1" library="zetex" deviceset="NPNSOT323" device="" value="FJX3904TF"/>
 <part name="IC1" library="burr-brown" deviceset="OPA237" device="N"/>
 <part name="U$1" library="Andy-library" deviceset="DAC_LTC2630" device=""/>
-<part name="R1" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="27"/>
-<part name="R2" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="8.2"/>
+<part name="R1" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="27"/>
+<part name="R2" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="6.8"/>
 <part name="U$4" library="Andy-library" deviceset="EEPROM" device="24C64A"/>
-<part name="R6" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="6.8k"/>
-<part name="R7" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="6.8k"/>
-<part name="U$5" library="Andy-library" deviceset="USB_SOCKET_MICRO_VERT" device="HORIZONTAL"/>
+<part name="R6" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="6.8k"/>
+<part name="R7" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="6.8k"/>
+<part name="SERIAL_SOCKET" library="Andy-library" deviceset="USB_SOCKET_MICRO_VERT" device="REINFORCED" value="USB_SOCKET_MICRO_VERTREINFORCED"/>
 <part name="U$3" library="Andy-library" deviceset="SWITCH-MOMENTARY-NO" device=""/>
-<part name="R8" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="20k"/>
-<part name="R9" library="Andy-library" deviceset="RESISTOR" device="0805-RES" value="12k"/>
+<part name="R8" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="20k"/>
 <part name="R10" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="100"/>
 <part name="C1" library="SparkFun-Capacitors" deviceset="CAP" device="0603-CAP" value=".1uF"/>
-<part name="U$7" library="Andy-library" deviceset="BATT_TERMINAL" device=""/>
+<part name="GROUND" library="Andy-library" deviceset="BATT_TERMINAL" device=""/>
 <part name="U$8" library="Andy-library" deviceset="BATT_TERMINAL" device=""/>
 <part name="S3" library="Andy-library" deviceset="SWITCH-SPDT" device="SMD2"/>
+<part name="INDICATOR_LED1" library="led" deviceset="LED" device="CHIP-LED0603" value="LED"/>
+<part name="R9" library="Andy-library" deviceset="RESISTOR" device="0603-RES" value="20k"/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 </parts>
 <sheets>
@@ -3838,8 +3838,8 @@ DIN A4, landscape with location and doc. field</description>
 <plain>
 <text x="-14.986" y="46.736" size="1.27" layer="91" align="bottom-center">BATTERY CHARGE
 &lt;-----</text>
-<text x="-68.58" y="50.038" size="1.9304" layer="91">+ANODE</text>
-<text x="-68.072" y="52.578" size="1.9304" layer="91">-CATHODE</text>
+<text x="-43.18" y="49.022" size="1.9304" layer="91" rot="R180">Positive</text>
+<text x="-43.18" y="56.642" size="1.9304" layer="91" rot="R180">Negative</text>
 <text x="76.2" y="33.02" size="3.81" layer="94">CURRENT CONTROL</text>
 <text x="-20.32" y="101.6" size="3.81" layer="94">BOOST CIRCUIT</text>
 <text x="26.162" y="53.34" size="1.778" layer="95" align="center-left">LD+</text>
@@ -3862,8 +3862,8 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="R5" gate="G$1" x="-27.94" y="71.12" rot="R270"/>
 <instance part="INDICATOR_LED" gate="G$1" x="-27.94" y="88.9" smashed="yes"/>
 <instance part="U$2" gate="G$1" x="-7.62" y="17.78"/>
-<instance part="JP3" gate="G$1" x="17.78" y="48.26" smashed="yes" rot="MR0">
-<attribute name="NAME" x="22.606" y="56.388" size="1.778" layer="95" rot="MR0"/>
+<instance part="LASER_OUTPUT" gate="G$1" x="17.78" y="48.26" smashed="yes" rot="R180">
+<attribute name="NAME" x="22.606" y="40.132" size="1.778" layer="95" rot="R180"/>
 </instance>
 <instance part="T1" gate="A" x="124.46" y="10.16"/>
 <instance part="IC1" gate="G$1" x="99.06" y="10.16"/>
@@ -3873,18 +3873,19 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="U$4" gate="G$1" x="35.56" y="-10.16" rot="MR0"/>
 <instance part="R6" gate="G$1" x="60.96" y="-5.08"/>
 <instance part="R7" gate="G$1" x="60.96" y="-15.24"/>
-<instance part="U$5" gate="G$1" x="60.96" y="55.88" smashed="yes" rot="MR180">
+<instance part="SERIAL_SOCKET" gate="G$1" x="60.96" y="55.88" smashed="yes" rot="MR180">
 <attribute name="NAME" x="56.134" y="47.752" size="1.778" layer="95" rot="MR180"/>
 </instance>
-<instance part="U$3" gate="G$1" x="17.78" y="-7.62" smashed="yes" rot="R270"/>
+<instance part="U$3" gate="G$1" x="7.62" y="-5.08" smashed="yes" rot="R180"/>
 <instance part="R8" gate="G$1" x="88.9" y="2.54" rot="MR270"/>
-<instance part="R9" gate="G$1" x="0" y="-5.08" rot="MR180"/>
 <instance part="R10" gate="G$1" x="68.58" y="27.94" rot="MR0"/>
 <instance part="C1" gate="G$1" x="63.5" y="22.86" rot="MR0"/>
-<instance part="U$7" gate="G$1" x="-48.26" y="53.34"/>
+<instance part="GROUND" gate="G$1" x="-48.26" y="53.34"/>
 <instance part="U$8" gate="G$1" x="-48.26" y="50.8"/>
 <instance part="S3" gate="1" x="-33.02" y="58.42" rot="MR270"/>
-<instance part="FRAME1" gate="G$1" x="-88.9" y="-50.8"/>
+<instance part="INDICATOR_LED1" gate="G$1" x="38.1" y="33.02" smashed="yes" rot="R180"/>
+<instance part="R9" gate="G$1" x="25.4" y="30.48"/>
+<instance part="FRAME1" gate="G$1" x="-86.36" y="-53.34"/>
 </instances>
 <busses>
 </busses>
@@ -3920,13 +3921,9 @@ DIN A4, landscape with location and doc. field</description>
 <label x="-48.26" y="33.02" size="1.27" layer="95" rot="R180" xref="yes"/>
 <pinref part="U$4" gate="G$1" pin="VCC"/>
 <wire x1="-45.72" y1="33.02" x2="-48.26" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="-15.24" x2="17.78" y2="-15.24" width="0.1524" layer="91"/>
-<wire x1="17.78" y1="-15.24" x2="-45.72" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="-15.24" x2="-45.72" y2="-15.24" width="0.1524" layer="91"/>
 <wire x1="-45.72" y1="-15.24" x2="-45.72" y2="33.02" width="0.1524" layer="91"/>
 <junction x="-45.72" y="33.02"/>
-<pinref part="U$3" gate="G$1" pin="2"/>
-<wire x1="17.78" y1="-12.7" x2="17.78" y2="-15.24" width="0.1524" layer="91"/>
-<junction x="17.78" y="-15.24"/>
 <pinref part="R7" gate="G$1" pin="2"/>
 <wire x1="66.04" y1="-15.24" x2="66.04" y2="-22.86" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="-22.86" x2="22.86" y2="-22.86" width="0.1524" layer="91"/>
@@ -3950,7 +3947,7 @@ DIN A4, landscape with location and doc. field</description>
 <net name="SCK" class="0">
 <segment>
 <label x="50.8" y="58.42" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$5" gate="G$1" pin="P2"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P2"/>
 <wire x1="50.8" y1="58.42" x2="53.34" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -3990,8 +3987,8 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="22.86" y1="93.98" x2="30.48" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="93.98" x2="30.48" y2="53.34" width="0.1524" layer="91"/>
 <label x="30.48" y="93.98" size="1.778" layer="95" xref="yes"/>
-<pinref part="JP3" gate="G$1" pin="P1"/>
-<wire x1="25.4" y1="53.34" x2="30.48" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P5"/>
+<wire x1="30.48" y1="53.34" x2="25.4" y2="53.34" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -4015,19 +4012,19 @@ DIN A4, landscape with location and doc. field</description>
 <net name="RESET" class="0">
 <segment>
 <label x="50.8" y="55.88" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$5" gate="G$1" pin="P3"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P3"/>
 <wire x1="50.8" y1="55.88" x2="53.34" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="(PCINT11/~RESET/DW)PB3"/>
-<label x="22.86" y="33.02" size="1.27" layer="95" xref="yes"/>
-<wire x1="17.78" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
+<label x="25.4" y="33.02" size="1.27" layer="95" xref="yes"/>
+<wire x1="17.78" y1="33.02" x2="25.4" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MISO/TX" class="0">
 <segment>
 <label x="50.8" y="60.96" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$5" gate="G$1" pin="P1"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P1"/>
 <wire x1="50.8" y1="60.96" x2="53.34" y2="60.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -4039,7 +4036,7 @@ DIN A4, landscape with location and doc. field</description>
 <net name="MOSI" class="0">
 <segment>
 <label x="50.8" y="50.8" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$5" gate="G$1" pin="P5"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P5"/>
 <wire x1="50.8" y1="50.8" x2="53.34" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -4083,28 +4080,28 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="-30.48" y1="53.34" x2="-15.24" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="-15.24" y1="53.34" x2="-15.24" y2="63.5" width="0.1524" layer="91"/>
 <junction x="-15.24" y="63.5"/>
-<pinref part="JP3" gate="G$1" pin="P$2"/>
-<pinref part="JP3" gate="G$1" pin="P$1"/>
-<wire x1="20.32" y1="35.56" x2="15.24" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="20.32" y1="35.56" x2="20.32" y2="63.5" width="0.1524" layer="91"/>
-<junction x="20.32" y="35.56"/>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P$2"/>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P$1"/>
+<wire x1="20.32" y1="60.96" x2="15.24" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="60.96" x2="20.32" y2="63.5" width="0.1524" layer="91"/>
+<junction x="20.32" y="60.96"/>
 <junction x="20.32" y="63.5"/>
-<pinref part="JP3" gate="G$1" pin="P2"/>
-<wire x1="0" y1="50.8" x2="25.4" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="U$7" gate="G$1" pin="P$1"/>
+<pinref part="GROUND" gate="G$1" pin="P$1"/>
 <wire x1="10.16" y1="63.5" x2="10.16" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="81.28" x2="5.08" y2="81.28" width="0.1524" layer="91"/>
 <junction x="10.16" y="63.5"/>
 <pinref part="S3" gate="1" pin="S"/>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P4"/>
+<wire x1="25.4" y1="50.8" x2="0" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="GND"/>
 <wire x1="-33.02" y1="2.54" x2="-35.56" y2="2.54" width="0.1524" layer="91"/>
 <label x="-35.56" y="2.54" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="R9" gate="G$1" pin="1"/>
-<wire x1="-5.08" y1="-5.08" x2="-33.02" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="-5.08" x2="-33.02" y2="-5.08" width="0.1524" layer="91"/>
 <wire x1="-33.02" y1="-5.08" x2="-33.02" y2="2.54" width="0.1524" layer="91"/>
 <junction x="-33.02" y="2.54"/>
+<pinref part="U$3" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="SDF" gate="G$1" pin="1"/>
@@ -4137,10 +4134,15 @@ DIN A4, landscape with location and doc. field</description>
 <junction x="88.9" y="-10.16"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="P$1"/>
-<pinref part="U$5" gate="G$1" pin="P$2"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P$1"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P$2"/>
 <wire x1="63.5" y1="68.58" x2="58.42" y2="68.58" width="0.1524" layer="91"/>
 <label x="58.42" y="73.66" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="INDICATOR_LED1" gate="G$1" pin="C"/>
+<wire x1="38.1" y1="38.1" x2="45.72" y2="38.1" width="0.1524" layer="91"/>
+<label x="45.72" y="38.1" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -4190,17 +4192,9 @@ DIN A4, landscape with location and doc. field</description>
 <segment>
 <pinref part="U$2" gate="G$1" pin="(PCINT2/AIN1/ADC2)PA2"/>
 <wire x1="17.78" y1="7.62" x2="33.02" y2="7.62" width="0.1524" layer="91"/>
-<pinref part="JP3" gate="G$1" pin="P3"/>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P3"/>
 <wire x1="33.02" y1="48.26" x2="33.02" y2="7.62" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="48.26" x2="33.02" y2="48.26" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$13" class="0">
-<segment>
-<pinref part="T1" gate="A" pin="C"/>
-<wire x1="127" y1="43.18" x2="127" y2="15.24" width="0.1524" layer="91"/>
-<pinref part="JP3" gate="G$1" pin="P5"/>
-<wire x1="25.4" y1="43.18" x2="127" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -4220,21 +4214,18 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="-35.56" y1="50.8" x2="-43.18" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="-35.56" y1="50.8" x2="-35.56" y2="53.34" width="0.1524" layer="91"/>
 <junction x="-35.56" y="50.8"/>
-<pinref part="JP3" gate="G$1" pin="P4"/>
-<wire x1="-35.56" y1="45.72" x2="25.4" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="U$8" gate="G$1" pin="P$1"/>
 <pinref part="S3" gate="1" pin="O"/>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P2"/>
+<wire x1="-35.56" y1="45.72" x2="25.4" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$7" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="1"/>
 <pinref part="U$2" gate="G$1" pin="(PCINT0/AREF/ADC0)PA0"/>
-<wire x1="17.78" y1="-2.54" x2="17.78" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="R9" gate="G$1" pin="2"/>
-<wire x1="17.78" y1="-2.54" x2="5.08" y2="-2.54" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="-2.54" x2="5.08" y2="-5.08" width="0.1524" layer="91"/>
-<junction x="17.78" y="-2.54"/>
+<wire x1="17.78" y1="2.54" x2="17.78" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="-5.08" x2="12.7" y2="-5.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -4268,11 +4259,33 @@ DIN A4, landscape with location and doc. field</description>
 <segment>
 <pinref part="U$2" gate="G$1" pin="(PCINT7/ICP/OC0B/ADC7)PA7"/>
 <wire x1="17.78" y1="20.32" x2="35.56" y2="20.32" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="P4"/>
+<pinref part="SERIAL_SOCKET" gate="G$1" pin="P4"/>
 <wire x1="35.56" y1="20.32" x2="35.56" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="35.56" y1="53.34" x2="53.34" y2="53.34" width="0.1524" layer="91"/>
 <label x="22.86" y="20.32" size="1.27" layer="95" xref="yes"/>
 <label x="50.8" y="53.34" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="N$17" class="0">
+<segment>
+<pinref part="LASER_OUTPUT" gate="G$1" pin="P1"/>
+<pinref part="T1" gate="A" pin="C"/>
+<wire x1="127" y1="43.18" x2="127" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="43.18" x2="127" y2="43.18" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="U$2" gate="G$1" pin="(PCINT10/INT0/OC0A/CKOUT)PB2"/>
+<pinref part="R9" gate="G$1" pin="1"/>
+<wire x1="20.32" y1="30.48" x2="17.78" y2="30.48" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$18" class="0">
+<segment>
+<pinref part="R9" gate="G$1" pin="2"/>
+<pinref part="INDICATOR_LED1" gate="G$1" pin="A"/>
+<wire x1="38.1" y1="30.48" x2="30.48" y2="30.48" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
