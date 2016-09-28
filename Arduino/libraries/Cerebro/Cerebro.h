@@ -24,6 +24,7 @@ private:
   byte pin;
   unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
   unsigned int decnum[numParameters];
+  void sendBinary(unsigned int value, unsigned char valSize);
   char bitIndex = 15;
   void pulseIR(unsigned int pulses);
   void sendMark(bool data);

@@ -139,7 +139,24 @@ int DAClevel = 725;
 int DAClevel = 0;
 #endif
 
+//---------function prototypes---------//
+void calibrateRoutine();
+void triggerEvent(unsigned int desiredPower);
+void triggerEvent(unsigned int desiredPower);
+void feedback(int setPoint);
+void fade();
 byte listenForIR(int timeout=0);
+void updateParameters(uint16_t (&marks)[NUMPULSES]);
+unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0);
+void recordEvent(byte letter);
+void eepromWriteByte( unsigned int writeAddress, byte data ) ;
+byte eepromReadByte( unsigned int readAddress );
+void save2EEPROM();
+void readAddresses(int start, int finish);
+void printEEPROM();
+void myShift(int val);
+void sendDAC(int value);
+bool laserOFF();
 
 void setup() {
   ///////////Analog setup////////////////////////////
@@ -377,8 +394,6 @@ byte listenForIR(int timeout=0) {
   If at any point the pulse length is too long, we know the there are no more pulses coming for that particular message,
   so we should exit */
   byte pulsePairIndex = 0;
-  byte trueThresh = 225;
-  byte falseThresh = 120;
   uint16_t marks[NUMPULSES];    //array that stores the marks lengths
   while (1) {
     uint16_t spaceLength = 0;
@@ -387,40 +402,21 @@ byte listenForIR(int timeout=0) {
       spaceLength++;
       delayMicroseconds(irResolution);
       if (pulsePairIndex==4){
-        if (marks[0]>trueThresh && marks[1]<falseThresh && marks[2]>trueThresh && marks[3]<falseThresh){     //We received a trigger message (High,Low,High,Low)
+        if (convertBIN(marks)==10){     //We received a trigger message (High,Low,High,Low)
           trigMatch = true;
           return pulsePairIndex;
         }
-        else if(marks[0]<falseThresh && marks[1]>trueThresh && marks[2]>trueThresh && marks[3]<falseThresh){ //we received stop message (Low,High,High,Low)
+        else if(convertBIN(marks)==6){ //we received stop message (Low,High,High,Low)
           stopMatch = true;
           return pulsePairIndex;
         }
       }
       if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
         delayMicroseconds(1);//Don't know why this is needed, but it is....
-        if (pulsePairIndex==87 && marks[0]>trueThresh && marks[1]>trueThresh && marks[2]<falseThresh  && marks[3]<falseThresh  && marks[4]>trueThresh && marks[5]<falseThresh && marks[6]>trueThresh ){ //We received new Parameters!
-          //Record the current pulse parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
-          eepromWriteByte(address,'P');
-          address++;
-          for (byte m = 0; m<NUMPARAM; m++){
-            eepromWriteByte(address,waveform[m]>>8);
-            eepromWriteByte(address+1,waveform[m] & 255);
-            address+=2;
-          }
-          //Convert the received marks into integers and set them as the pulse parameters
-          for (int k = 0; k<NUMPARAM; k++){
-            waveform[k] = 0;
-            for (int i = 0; i <16; i++){
-              waveform[k] = waveform[k]<<1 | marks[7+i + k*16]>225;
-            }
-          }
-          //Save the freshly updated pulse parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
-          for (byte m = 0; m<NUMPARAM; m++){
-            eepromWriteByte(2*m+2,waveform[m]>>8);
-            eepromWriteByte(2*m+3,waveform[m] & 255);
-          }
+        if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received new Parameters!
+          updateParameters(marks);
         }
-        else if (pulsePairIndex==7 && marks[0]<falseThresh && marks[1]<falseThresh && marks[2]>trueThresh  && marks[3]<falseThresh  && marks[4]>trueThresh && marks[5]>trueThresh && marks[6]<falseThresh){
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==22){
           calibrateMode = true;
         }
         // else{ //We received a message that we don't understand
@@ -436,6 +432,35 @@ byte listenForIR(int timeout=0) {
     marks[pulsePairIndex] = markLength;
     pulsePairIndex++;
   }
+}
+
+void updateParameters(uint16_t (&marks)[NUMPULSES]){
+  //Record the current pulse parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
+  eepromWriteByte(address,'P');
+  address++;
+  for (byte m = 0; m<NUMPARAM; m++){
+    eepromWriteByte(address,waveform[m]>>8);
+    eepromWriteByte(address+1,waveform[m] & 255);
+    address+=2;
+  }
+  //Convert the received marks into integers and set them as the pulse parameters
+  for (int k = 0; k<NUMPARAM; k++){
+    waveform[k] = convertBIN(marks,16,7+16*k);
+  }
+  //Save the freshly updated pulse parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
+  for (byte m = 0; m<NUMPARAM; m++){
+    eepromWriteByte(2*m+2,waveform[m]>>8);
+    eepromWriteByte(2*m+3,waveform[m] & 255);
+  }
+}
+
+unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0){
+  byte trueThresh = 225;
+  unsigned int key = 0;
+  for (int i = 0; i <numMarks; i++){
+    key = key<<1 | marks[start + i]>trueThresh;
+  }
+  return key;
 }
 
 void recordEvent(byte letter){
@@ -459,11 +484,11 @@ void eepromWriteByte( unsigned int writeAddress, byte data ) {
   delay(1);
 }
 
-byte eepromReadByte( unsigned int writeAddress ) {  //"Random Read" read operation from FT24C64A Two-Wire Serial EEPROM datasheet
+byte eepromReadByte( unsigned int readAddress ) {  //"Random Read" read operation from FT24C64A Two-Wire Serial EEPROM datasheet
   //dummy write instruction
   TinyWireM.beginTransmission(0x50);
-  TinyWireM.write(writeAddress >> 8);  // MSB
-  TinyWireM.write(writeAddress & 255); // LSB
+  TinyWireM.write(readAddress >> 8);  // MSB
+  TinyWireM.write(readAddress & 255); // LSB
   TinyWireM.endTransmission();
   //"Current Address Read" read operation from datasheet
   TinyWireM.requestFrom(0x50,1);
