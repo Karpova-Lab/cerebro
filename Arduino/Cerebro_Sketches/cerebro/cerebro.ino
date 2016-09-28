@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 35;
+byte version = 37;
 byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
@@ -35,8 +35,10 @@ const int levels[100] PROGMEM = {//LD19 4 mW
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
-// #define CALIBRATE
+#define CALIBRATE
 // #define MCUBE
+// #define STARTDELAY
+// #define OLDBOARD
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
 
@@ -117,6 +119,7 @@ const char string_4[] PROGMEM = "Ramp Down\t,";
 const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
 char buffer[20];            // make sure this is large enough for the largest string it must hold
 unsigned int waveform[NUMPARAM] = {};
+unsigned int onDelay = 2000;
 byte marksReceived;
 unsigned int address = 12;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
                             the final address used in the last session. The next 10 bytes are reserved for waveform parameters*/
@@ -173,7 +176,11 @@ void setup() {
     waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
   }
   //if the BTN is pressed (Low Signal) when cerebro starts up then print the log from the eeprom
+  #ifdef OLDBOARD
+  if((BTN_inputReg & (1<<BTN_pin))){
+  #else
   if(!(BTN_inputReg & (1<<BTN_pin))){
+  #endif
     printEEPROM();
   }
   //otherwise just print the waveform parameters
@@ -230,12 +237,30 @@ void calibrateRoutine(){
 
 void triggerEvent(unsigned int desiredPower){
   isSettled = false;
-  unsigned long onClock,offClock,trainClock,alt=0;
+  unsigned long onClock,offClock,trainClock,delayClock,alt=0;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   bool triggerRecorded = false;
-  onClock=trainClock=millis();              //reset clocks
+  onClock=trainClock=delayClock=millis();              //reset clocks
   byte rcvd = 0;
+  #ifdef STARTDELAY
+  while ((millis()-delayClock)<onDelay){
+    if (!(IR_inputReg & (1<<IR_pin))){
+      while(! (IR_inputReg & (1<<IR_pin))){
+        //wait until stop pulse is finished
+      }
+      rcvd = listenForIR(5000);
+      if (stopMatch){
+        laserEnabled = laserOFF();
+        if (address < memorySize) {       //record abort event
+          recordEvent('A');
+        }
+        stopMatch = false;
+      }
+      rcvd = 0;
+    }
+  }
+  #endif
   while(laserEnabled){
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (!(IR_inputReg & (1<<IR_pin))){
