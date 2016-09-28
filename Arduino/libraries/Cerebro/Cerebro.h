@@ -15,6 +15,7 @@ public:
   void toggle(bool turnON);
   void send(byte readValues[][6]);
   void send(int newVals[]);
+  void calibrate();
   byte getEmitterType();
   int  getParameter(byte paramIndex);
   bool isNormallyOn;

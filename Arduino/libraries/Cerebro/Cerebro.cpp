@@ -2,8 +2,8 @@
 
 Cerebro::Cerebro(byte emitter)  //
 {
-  #define  spikes   6      //number of spikes in burst
-  #define  space    263    //microsecond gap between bursts
+  #define  spikes   7      //number of spikes in burst
+  #define  space    280    //microsecond gap between bursts
   #define  sensorDelay 13
   _emitter = emitter;
   switch (_emitter){  //setup pin outputs and set initialize isNormallyOn
@@ -47,7 +47,7 @@ void Cerebro::stop(){
 
 void Cerebro::interrupt()
 {
-  pulseIR(12);
+  pulseIR(14);
   delay(1);       //assurance that back to back stop signals aren't mistaken for 1 trigger signal
 }
 
@@ -152,6 +152,18 @@ void Cerebro::send(int newVals[])
     }
     bitIndex = 15;
   }
+}
+
+void Cerebro::calibrate()
+{
+  //send key that says that data is to follow
+  sendMark(false);
+  sendMark(false);
+  sendMark(true);
+  sendMark(false);
+  sendMark(true);
+  sendMark(true);
+  sendMark(false);
 }
 
 int Cerebro::getParameter(byte paramIndex)

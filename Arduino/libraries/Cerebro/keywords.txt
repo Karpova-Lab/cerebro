@@ -5,3 +5,4 @@ test        KEYWORD2
 saveEEPROM	KEYWORD2
 toggle      KEYWORD2
 set         KEYWORD2
+calibrate   KEYWORD2

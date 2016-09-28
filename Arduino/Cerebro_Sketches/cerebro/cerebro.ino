@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 37;
+byte version = 38;
 byte cerebroNum = 26;
 byte LD = 19;
 const int levels[100] PROGMEM = {//LD19 4 mW
@@ -35,7 +35,6 @@ const int levels[100] PROGMEM = {//LD19 4 mW
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
-#define CALIBRATE
 // #define MCUBE
 // #define STARTDELAY
 // #define OLDBOARD
@@ -130,6 +129,9 @@ const float KP = 0.2;
 const byte interval = 3;
 bool isSettled = false;
 bool isMaxed = false;
+bool calibrateMode = false;
+const byte indicatorLED = 8; //attiny pin 5, Arduino language pin8
+
 byte definitions = 0;
 #ifdef MCUBE
 int DAClevel = 725;
@@ -154,17 +156,14 @@ void setup() {
   LATCH_outputReg |= (1<<LATCH_pin);  //Set Chip Select HIGH (LOW selects the chip)
   // DUNCE_dirReg |= (1<<DUNCE_pin);     //Output
   // DUNCE_outputReg &= ~(1<<DUNCE_pin); //start Dunce ouput LOW
-  // const byte led = 8; //attiny pin 5, Arduino language pin8
-  // pinMode(led,OUTPUT); //analog output
+  pinMode(indicatorLED,OUTPUT); //analog output'
+  digitalWrite(indicatorLED,LOW);
 
   mySerial.begin(115200);
   TinyWireM.begin();
 
   #ifdef DEBUG
   definitions+=4;
-  #endif
-  #ifdef CALIBRATE
-  definitions+=2;
   #endif
   #ifdef MCUBE
   definitions+=1;
@@ -206,11 +205,13 @@ void loop() {
   marksReceived = listenForIR();      //wait for IR signal and return the number of marks received
   if (trigMatch) {                    //trigger light upon receiving exactly 4 marks of with durations that match a key
     trigMatch = false;
-    #ifdef CALIBRATE
-    calibrateRoutine();
-    #else
     triggerEvent(waveform[0]);
-    #endif
+  }
+  else if(calibrateMode){
+    digitalWrite(indicatorLED,HIGH);
+    calibrateRoutine();
+    calibrateMode = false;
+    digitalWrite(indicatorLED,LOW);
   }
   else if (marksReceived == 26) {         //save data to EEPROM upon receiving exactly 26 marks
     save2EEPROM();
@@ -243,6 +244,7 @@ void triggerEvent(unsigned int desiredPower){
   bool triggerRecorded = false;
   onClock=trainClock=delayClock=millis();              //reset clocks
   byte rcvd = 0;
+  unsigned int onDur = calibrateMode ? 2000 : waveform[1];
   #ifdef STARTDELAY
   while ((millis()-delayClock)<onDelay){
     if (!(IR_inputReg & (1<<IR_pin))){
@@ -289,12 +291,7 @@ void triggerEvent(unsigned int desiredPower){
       rcvd = 0;
     }
     //else if onClock hasn't expired, turn on/keep on the laser
-    #ifdef CALIBRATE
-    else if ((millis()-onClock)<2000)
-    #else
-    else if ((millis()-onClock)<waveform[1])
-    #endif
-    {
+    else if ((millis()-onClock)<onDur){
       #ifdef MCUBE
       sendDAC(waveform[0]);
       #else
@@ -325,15 +322,15 @@ void triggerEvent(unsigned int desiredPower){
       onClock = millis();
     }
     else{
-      #if  !defined(MCUBE) && !defined(CALIBRATE)
-      if (waveform[4]>0){
+      #if  !defined(MCUBE)
+      if (waveform[4]>0 && !calibrateMode){
         fade();
       }
       #endif
-      #ifdef CALIBRATE
-      mySerial.print(",");
-      mySerial.println(DAClevel);
-      #endif
+      if(calibrateMode){
+        mySerial.print(",");
+        mySerial.println(DAClevel);
+      }
       laserEnabled = laserOFF();
     }
   }
@@ -344,14 +341,14 @@ void feedback(int setPoint){
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
   int resistance = ADC;
   error = setPoint-resistance;
-  #ifdef CALIBRATE
-  if (!isSettled && abs(error)<7){
-    isSettled = true;
-    mySerial.print(setPoint);
-    mySerial.print(",");
-    mySerial.print(DAClevel);
+  if(calibrateMode){
+    if (!isSettled && abs(error)<7){
+      isSettled = true;
+      mySerial.print(setPoint);
+      mySerial.print(",");
+      mySerial.print(DAClevel);
+    }
   }
-  #endif
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
     DAClevel = 4095;
@@ -380,8 +377,8 @@ byte listenForIR(int timeout=0) {
   If at any point the pulse length is too long, we know the there are no more pulses coming for that particular message,
   so we should exit */
   byte pulsePairIndex = 0;
-  byte highThresh = 225;
-  byte lowThresh = 120;
+  byte trueThresh = 225;
+  byte falseThresh = 120;
   uint16_t marks[NUMPULSES];    //array that stores the marks lengths
   while (1) {
     uint16_t spaceLength = 0;
@@ -390,18 +387,18 @@ byte listenForIR(int timeout=0) {
       spaceLength++;
       delayMicroseconds(irResolution);
       if (pulsePairIndex==4){
-        if (marks[0]>highThresh && marks[1]<lowThresh && marks[2]>highThresh && marks[3]<lowThresh){     //We received a trigger message (High,Low,High,Low)
+        if (marks[0]>trueThresh && marks[1]<falseThresh && marks[2]>trueThresh && marks[3]<falseThresh){     //We received a trigger message (High,Low,High,Low)
           trigMatch = true;
           return pulsePairIndex;
         }
-        else if(marks[0]<lowThresh && marks[1]>highThresh && marks[2]>highThresh && marks[3]<lowThresh){ //we received stop message (Low,High,High,Low)
+        else if(marks[0]<falseThresh && marks[1]>trueThresh && marks[2]>trueThresh && marks[3]<falseThresh){ //we received stop message (Low,High,High,Low)
           stopMatch = true;
           return pulsePairIndex;
         }
       }
       if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
         delayMicroseconds(1);//Don't know why this is needed, but it is....
-        if (pulsePairIndex==87 && marks[0]>highThresh && marks[1]>highThresh && marks[2]<lowThresh  && marks[3]<lowThresh  && marks[4]>highThresh && marks[5]<lowThresh && marks[6]>highThresh ){ //We received new Parameters!
+        if (pulsePairIndex==87 && marks[0]>trueThresh && marks[1]>trueThresh && marks[2]<falseThresh  && marks[3]<falseThresh  && marks[4]>trueThresh && marks[5]<falseThresh && marks[6]>trueThresh ){ //We received new Parameters!
           //Record the current pulse parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
           eepromWriteByte(address,'P');
           address++;
@@ -423,8 +420,11 @@ byte listenForIR(int timeout=0) {
             eepromWriteByte(2*m+3,waveform[m] & 255);
           }
         }
+        else if (pulsePairIndex==7 && marks[0]<falseThresh && marks[1]<falseThresh && marks[2]>trueThresh  && marks[3]<falseThresh  && marks[4]>trueThresh && marks[5]>trueThresh && marks[6]<falseThresh){
+          calibrateMode = true;
+        }
         // else{ //We received a message that we don't understand
-        //   mySerial.println("no match");
+        //   mySerial.println(pulsePairIndex);
         // }
         return pulsePairIndex;
       }
