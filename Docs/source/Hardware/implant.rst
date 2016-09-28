@@ -14,7 +14,7 @@ Required Tools
   * `Fiber stripper <https://www.thorlabs.com/thorProduct.cfm?partNumber=T12S21>`_
   * `Fiber cleaver <http://www.fiberinstrumentsales.com/fis-lynx-precision-cleaver-with-fiber-basket.html>`_
   * `3-axis fiber launch system <http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M>`_
-  * `Power Meter and sensor <https://www.thorlabs.com/thorproduct.cfm?partnumber=PM121D>`_
+  * `Power meter <https://www.thorlabs.com/thorproduct.cfm?partnumber=PM121D>`_ and `photodiode sensor <https://www.thorlabs.com/thorproduct.cfm?partnumber=S121C>`_
   * `Ultraviolet light adhesive curing gun <https://www.norlandprod.com/lightsourc.html#led200>`_
 
 Bill of Materials
