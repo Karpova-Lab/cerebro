@@ -50,16 +50,16 @@ const byte red = 5;
 const byte blue = 9;
 const byte green = 6;
 
-const unsigned int step[5] = {10,500,500,500,500};
-const unsigned int stepAlt[5] = {1,50,50,50,100};
+const unsigned int step[5] = {500,500,500,500,500};
+const unsigned int stepAlt[5] = {50,50,50,50,100};
 const unsigned int Powers[5] = {1,10,100,1000,10000};
 const byte ledLevels[3] = {0,0,0};
 
 char* labels[9] = { " Version",
                     "Cerebro #",
                     "  LD #",
-                    " Mode",
-                    " Power Level  ",
+                    " Power level = ",
+                    " Strt Dlay(ms)",
                     " On       (ms)",
                     " Off      (ms)",
                     " Train Dur(ms)",
@@ -283,13 +283,22 @@ void sendSave(){
 void showBatteryStatus(bool show){
   display.setTextColor(1,0);
   display.setTextSize(1);
-  display.setCursor(0,8); //column, row
+  display.setCursor(0,0); //column, row
   if(show){
+    display.print(labels[1]);//Cerebro label
+    display.print(params[1]);//Cerebro#
+    fillExcess(params[1],3);
+    display.print(labels[2]);//LD label
+    display.println(params[2]);//LD#
     display.print(F("Battery = "));
     display.print(battLevel);
     display.print(" volts");
+    display.print(labels[3]);//Power label
+    display.print(params[3]);//Power Level
   }
   else{
+    display.print("                     ");
+    display.print("                     ");
     display.print("                     ");
   }
   display.display();

@@ -24,6 +24,7 @@ SOFTWARE.
 byte version = 38;
 byte cerebroNum = 26;
 byte LD = 19;
+unsigned int powerLevel = 800;
 const int levels[100] PROGMEM = {//LD19 4 mW
 906 , 906 , 905 , 904 , 903 , 902 , 901 , 901 , 900 , 899 , 898 , 897 , 897 , 896 , 895 ,
 894 , 893 , 893 , 892 , 891 , 890 , 889 , 888 , 887 , 886 , 884 , 883 , 882 , 881 , 880 ,
@@ -36,7 +37,6 @@ const int levels[100] PROGMEM = {//LD19 4 mW
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
-// #define STARTDELAY
 // #define OLDBOARD
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
@@ -100,27 +100,33 @@ and 8 for the former parameters.8192 bytes will provide space for 2730 events to
 #define LATCH_dirReg      DDRA
 #define LATCH_outputReg   PORTA
 #define LATCH_pin         3       //attiny84 pin10
-// //Output to dunce board setup//
-// #define DUNCE_dirReg      DDRB
-// #define DUNCE_outputReg   PORTB
-// #define DUNCE_pin         2        //attiny84 pin5
+const byte indicatorLED = 8; //attiny pin 5, Arduino language pin8
 
 const unsigned int maxpulselength = 1000;//maximum pulse length (in microseconds) that we will listen for. A signal longer than this maxpulselength is not a pulse and indicates the message is over
 const byte NUMPULSES = 88;               //maximum length of the message we can receive
 const byte irResolution = 4;             //# of microseconds that we will delay before checking the state of the IR sensor again
 #define NUMPARAM 5
-const char string_0[] PROGMEM = "Power Level\t,";
-const char string_1[] PROGMEM = "On Time\t,";
-const char string_2[] PROGMEM = "Off Time\t,";
-const char string_3[] PROGMEM = "Train Duration\t,";
+const char string_0[] PROGMEM = "Start Delay\t,";
+const char string_1[] PROGMEM = "On\t,";
+const char string_2[] PROGMEM = "Off\t,";
+const char string_3[] PROGMEM = "Train Dur\t,";
 const char string_4[] PROGMEM = "Ramp Down\t,";
+const char string_5[] PROGMEM = "Power Level\t,";
+
+#define ON_DELAY  0
+#define ON_TIME   1
+#define OFF_TIME  2
+#define TRAIN_DUR 3
+#define RAMP_DUR  4
+#define PWR_LVL   5
+
 // Then set up a table to refer to your strings.
-const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
+const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4, string_5};
 char buffer[20];            // make sure this is large enough for the largest string it must hold
 unsigned int waveform[NUMPARAM] = {};
 unsigned int onDelay = 2000;
 byte marksReceived;
-unsigned int address = 12;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
+byte address = 12;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
                             the final address used in the last session. The next 10 bytes are reserved for waveform parameters*/
 bool trigMatch = false;
 bool stopMatch = false;
@@ -130,9 +136,7 @@ const byte interval = 3;
 bool isSettled = false;
 bool isMaxed = false;
 bool calibrateMode = false;
-const byte indicatorLED = 8; //attiny pin 5, Arduino language pin8
 
-byte definitions = 0;
 #ifdef MCUBE
 int DAClevel = 725;
 #else
@@ -140,6 +144,7 @@ int DAClevel = 0;
 #endif
 
 //---------function prototypes---------//
+void printParameters();
 void calibrateRoutine();
 void triggerEvent(unsigned int desiredPower);
 void triggerEvent(unsigned int desiredPower);
@@ -171,22 +176,12 @@ void setup() {
   CLK_dirReg  |= (1<<CLK_pin);        //Output
   LATCH_dirReg |=  (1<<LATCH_pin);    //Output
   LATCH_outputReg |= (1<<LATCH_pin);  //Set Chip Select HIGH (LOW selects the chip)
-  // DUNCE_dirReg |= (1<<DUNCE_pin);     //Output
-  // DUNCE_outputReg &= ~(1<<DUNCE_pin); //start Dunce ouput LOW
-  pinMode(indicatorLED,OUTPUT); //analog output'
+  pinMode(indicatorLED,OUTPUT);       //analog output
   digitalWrite(indicatorLED,LOW);
 
   mySerial.begin(115200);
   TinyWireM.begin();
 
-  #ifdef DEBUG
-  definitions+=4;
-  #endif
-  #ifdef MCUBE
-  definitions+=1;
-  #endif
-
-  mySerial.println();
   //Get the saved parameters from EEPROM
   for (int i = 0; i<NUMPARAM; i++){
     waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
@@ -201,20 +196,7 @@ void setup() {
   }
   //otherwise just print the waveform parameters
   else{
-    char delimeter = '~';
-    mySerial.print(version);
-    mySerial.print(delimeter);
-    mySerial.print(cerebroNum);
-    mySerial.print(delimeter);
-    mySerial.print(LD);
-    mySerial.print(delimeter);
-    mySerial.print(definitions, BIN);
-    mySerial.print(delimeter);
-    for (int i  = 0 ; i<NUMPARAM; i++){
-      mySerial.print(waveform[i]);
-      mySerial.print(delimeter) ;
-    }
-    mySerial.println("*");
+    printParameters();
   }
 }
 
@@ -222,7 +204,7 @@ void loop() {
   marksReceived = listenForIR();      //wait for IR signal and return the number of marks received
   if (trigMatch) {                    //trigger light upon receiving exactly 4 marks of with durations that match a key
     trigMatch = false;
-    triggerEvent(waveform[0]);
+    triggerEvent(powerLevel);
   }
   else if(calibrateMode){
     digitalWrite(indicatorLED,HIGH);
@@ -259,27 +241,28 @@ void triggerEvent(unsigned int desiredPower){
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   bool triggerRecorded = false;
-  onClock=trainClock=delayClock=millis();              //reset clocks
+  delayClock=millis();              //reset clocks
   byte rcvd = 0;
-  unsigned int onDur = calibrateMode ? 2000 : waveform[1];
-  #ifdef STARTDELAY
-  while ((millis()-delayClock)<onDelay){
-    if (!(IR_inputReg & (1<<IR_pin))){
-      while(! (IR_inputReg & (1<<IR_pin))){
-        //wait until stop pulse is finished
-      }
-      rcvd = listenForIR(5000);
-      if (stopMatch){
-        laserEnabled = laserOFF();
-        if (address < memorySize) {       //record abort event
-          recordEvent('A');
+  unsigned int onDur = calibrateMode ? 2000 : waveform[ON_TIME];
+  if (waveform[ON_DELAY]>0){
+    while ((millis()-delayClock)<waveform[ON_DELAY]){
+      if (!(IR_inputReg & (1<<IR_pin))){
+        while(! (IR_inputReg & (1<<IR_pin))){
+          //wait until stop pulse is finished
         }
-        stopMatch = false;
+        rcvd = listenForIR(5000);
+        if (stopMatch){
+          laserEnabled = laserOFF();
+          if (address < memorySize) {       //record abort event
+            recordEvent('A');
+          }
+          stopMatch = false;
+        }
+        rcvd = 0;
       }
-      rcvd = 0;
     }
   }
-  #endif
+  onClock=trainClock=millis();
   while(laserEnabled){
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (!(IR_inputReg & (1<<IR_pin))){
@@ -296,7 +279,7 @@ void triggerEvent(unsigned int desiredPower){
         trigMatch = false;
       }
       else if (stopMatch){
-        if (waveform[4]>0){
+        if (waveform[RAMP_DUR]>0){
           fade();
         }
         laserEnabled = laserOFF();
@@ -310,7 +293,7 @@ void triggerEvent(unsigned int desiredPower){
     //else if onClock hasn't expired, turn on/keep on the laser
     else if ((millis()-onClock)<onDur){
       #ifdef MCUBE
-      sendDAC(waveform[0]);
+      sendDAC(powerLevel);
       #else
       sendDAC(DAClevel);                //Laser on
       if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
@@ -328,19 +311,19 @@ void triggerEvent(unsigned int desiredPower){
       offClock = millis();
     }
     //else if offClock hasn't expired, turn off/keep off light
-    else if((millis()-offClock)<waveform[2]){
+    else if((millis()-offClock)<waveform[OFF_TIME]){
       if (newPulse){                   //if the laser is on then turn it off, otherwise do nothing (i.e. leave turned off)
         newPulse = laserOFF();         //laserOn = false
       }
     }
     //else if trainClock hasn't expired, restart the light pulse
-    else if((millis()-trainClock)<waveform[3]){
+    else if((millis()-trainClock)<waveform[TRAIN_DUR]){
       newPulse = true;
       onClock = millis();
     }
     else{
       #if  !defined(MCUBE)
-      if (waveform[4]>0 && !calibrateMode){
+      if (waveform[RAMP_DUR]>0 && !calibrateMode){
         fade();
       }
       #endif
@@ -381,7 +364,7 @@ void fade(){
     fadeClock = millis();
     feedback(pgm_read_word_near(levels + i));
     sendDAC(DAClevel);
-    while((millis()-fadeClock)<(waveform[4]/100)){
+    while((millis()-fadeClock)<(waveform[RAMP_DUR]/100)){
       //wait
     }
   }
@@ -416,7 +399,7 @@ byte listenForIR(int timeout=0) {
         if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received new Parameters!
           updateParameters(marks);
         }
-        else if (pulsePairIndex==7 && convertBIN(marks,7)==22){
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==22){ //enter calibrate mode
           calibrateMode = true;
         }
         // else{ //We received a message that we don't understand
@@ -452,6 +435,7 @@ void updateParameters(uint16_t (&marks)[NUMPULSES]){
     eepromWriteByte(2*m+2,waveform[m]>>8);
     eepromWriteByte(2*m+3,waveform[m] & 255);
   }
+  printParameters();
 }
 
 unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0){
@@ -556,13 +540,17 @@ void printEEPROM(){
   mySerial.print(F("Ver,"));
   mySerial.print(version);
   mySerial.print('\r');
+  strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[PWR_LVL])));
+  mySerial.print(buffer);
+  mySerial.print(powerLevel);
+  mySerial.print('\r');
   unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
   readAddresses(12,endingAddress);   //print the list of events
   for (int i = 0; i<NUMPARAM; i++){
     strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
     mySerial.print(buffer);
     mySerial.print(waveform[i]);
-    mySerial.print('\r');
+    mySerial.print(" ms\r");
   }
   // if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
   //   mySerial.println("Remaining Memory Contents:");
@@ -570,6 +558,22 @@ void printEEPROM(){
   // }
 }
 
+void printParameters(){
+    char delimeter = '~';
+    mySerial.print(version);
+    mySerial.print(delimeter);
+    mySerial.print(cerebroNum);
+    mySerial.print(delimeter);
+    mySerial.print(LD);
+    mySerial.print(delimeter);
+    mySerial.print(powerLevel);
+    mySerial.print(delimeter);
+    for (int i  = 0 ; i<NUMPARAM; i++){
+      mySerial.print(waveform[i]);
+      mySerial.print(delimeter) ;
+    }
+    mySerial.println("*");
+}
 void myShift(int val){                  //shifts out data MSB first
   for (int i = 7; i > -1; i--){
     if(val & (1<<i)){                   //shift high bit

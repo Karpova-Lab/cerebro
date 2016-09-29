@@ -12,11 +12,7 @@ void draw(bool _mode) {
   display.setTextColor(1,0);
   display.setTextSize(1);
   display.setCursor(0,0);
-  display.print(labels[1]);//Cerebro label
-  display.print(params[1]);//Cerebro#
-  fillExcess(params[1],3);
-  display.print(labels[2]);//LD label
-  display.println(params[2]);//LD#
+  display.println();
   display.println();
   display.println();
   if (!_mode){
