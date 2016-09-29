@@ -113,14 +113,14 @@ MainWindow::MainWindow(QWidget *parent)
         //Pulse parameter adjustment box
         adjustBox = new QGroupBox("Cerebro's Waveform Parameters");
             adjustmentLayout = new QGridLayout();
-                power_spn = new QSpinBox();
-                power_spn->setRange(0,65535);
-                power_spn->setSingleStep(10);
-                power_spn->setAlignment(Qt::AlignCenter);
-            adjustmentLayout->addWidget(power_spn,0,1);
-                power_lbl = new QLabel("Power Level");
-                power_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            adjustmentLayout->addWidget(power_lbl,0,0);
+                startDelay_spn = new QSpinBox();
+                startDelay_spn->setRange(0,65535);
+                startDelay_spn->setSingleStep(10);
+                startDelay_spn->setAlignment(Qt::AlignCenter);
+            adjustmentLayout->addWidget(startDelay_spn,0,1);
+                startDelay_lbl = new QLabel("Start Delay");
+                startDelay_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            adjustmentLayout->addWidget(startDelay_lbl,0,0);
                 singleShot = new QRadioButton("Single Shot");
                 singleShot->setChecked(true);
             adjustmentLayout->addWidget(singleShot,1,0,Qt::AlignRight);
@@ -194,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent)
                 filter_btn = new QPushButton("Update Filter");
             baseSettingLayout->addWidget(filter_btn,1,0,1,2);
                 lamp_btn = new QPushButton("Toggle IR Lamp");
-            baseSettingLayout->addWidget(lamp_btn,2,0,1,2);
+//            baseSettingLayout->addWidget(lamp_btn,2,0,1,2);
         baseSettingsBox->setLayout(baseSettingLayout);
 
 
@@ -265,6 +265,9 @@ MainWindow::MainWindow(QWidget *parent)
                 saveMonitor_btn->setMinimumHeight(40);
                 saveMonitor_btn->setEnabled(false);
             connectionLayout2->addWidget(saveMonitor_btn,5,0,1,3);
+                sendCal_btn = new QPushButton("Send Calibration Vector");
+//                sendCal_btn->setCheckable(true);
+            connectionLayout2->addWidget(sendCal_btn,6,0,1,3);
         downloaderBox->setLayout(connectionLayout2);
         downloaderBox->setVisible(false);
     mainLayout = new QGridLayout();
@@ -478,6 +481,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
     connect(filter_btn,SIGNAL(clicked()),this,SLOT(updateFilter()));
     connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
+    connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
+
 
 
 }
@@ -705,6 +710,8 @@ void MainWindow::readLog()
 {
     QByteArray received2;
     downloadMonitor->moveCursor(QTextCursor::End);
+//    QString buffer = serial2->read(2);
+//    startDelay_spn->setValue(buffer.toInt());
     downloadMonitor->insertPlainText(serial2->readAll());
     downloadMonitor->ensureCursorVisible();
 }
@@ -730,6 +737,7 @@ void MainWindow::clearMonitor2()
 
 void MainWindow::set()
 {
+    QString startDelay = QString::number(startDelay_spn->value());
     QString onTime = QString::number(onTime_spn->value());
     QString offTime = "0";
     QString trainDur = "0";
@@ -741,13 +749,12 @@ void MainWindow::set()
     if(fade_checkbox->isChecked()){
         fadeTime = QString::number(fade_spn->value());
     }
-    QString powerLevel = QString::number(power_spn->value());
-    QString msg = powerLevel +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
+    QString msg = startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
     if (singleShot->isChecked()){
-        baseFilter_spn->setValue(onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked());
+        baseFilter_spn->setValue(startDelay_spn->value() + onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked());
     }
     else{
-        baseFilter_spn->setValue(trainDuration_spn->value());
+        baseFilter_spn->setValue(startDelay_spn->value()+ trainDuration_spn->value());
     }
     QMessageBox confirmUpdate;
         confirmUpdate.setWindowTitle("Confirm Parameter Change");
@@ -756,10 +763,11 @@ void MainWindow::set()
         confirmUpdate.setDefaultButton(QMessageBox::Cancel);
         confirmUpdate.setEscapeButton(QMessageBox::Cancel);
         confirmUpdate.setText("<b>Are you sure you want to send the following new parameters to Cerebro?</b>");
-        confirmUpdate.setInformativeText("Power Level:\t"+ powerLevel+ " ms\nOn Time:\t" + onTime + " ms\nOff Time:\t" + offTime + " ms\nTrain Duration:\t" + trainDur + " ms\nFade Time:\t" + fadeTime + " ms");
+        confirmUpdate.setInformativeText("Start Delay:\t"+ startDelay+ " ms\nOn Time:\t" + onTime + " ms\nOff Time:\t" + offTime + " ms\nTrain Duration:\t" + trainDur + " ms\nFade Time:\t" + fadeTime + " ms");
     if (confirmUpdate.exec() == QMessageBox::Yes){
+        qDebug()<<msg;
         serial->write(msg.toLocal8Bit());
-        last_settings->setText("Last Settings Sent:\n" + powerLevel  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
+        last_settings->setText("Last Settings Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
         QTimer::singleShot(500, this, SLOT(updateFilter()));
         QMessageBox baseUpdated;
             baseUpdated.setWindowTitle("Base Station Updated");
@@ -1357,4 +1365,27 @@ void MainWindow::editLabel(){
     editText->setFocus();
     editLabelDialog->setWindowTitle("Edit "+ COMbeingEdited + " label");
     editLabelDialog->exec();
+}
+
+void MainWindow::sendCalVector(){
+    qDebug()<<"Send cal vector pressed";
+    QString msg = "X";
+    serial->write(msg.toLocal8Bit());
+    QTimer::singleShot(500, this, SLOT(sendCalGroups()));
+
+}
+
+void MainWindow::sendCalGroups(){
+    QString calibrationString = downloadMonitor->toPlainText();
+    QStringList calibrationGroups = calibrationString.split("\n",QString::SkipEmptyParts);
+    qDebug()<<calibrationGroups.size();
+    if(calibrationGroups.size()>0){
+//        qDebug()<<"send"<<calibrationGroups.takeFirst();
+        serial->write(calibrationGroups.takeFirst().toLocal8Bit());
+        downloadMonitor->clear();
+        for (int i = 0; i<calibrationGroups.size(); i++){
+            downloadMonitor->insertPlainText(calibrationGroups[i]+"\n");
+        }
+        QTimer::singleShot(475, this, SLOT(sendCalGroups()));
+    }
 }

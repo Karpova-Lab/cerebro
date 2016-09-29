@@ -25,15 +25,6 @@ byte version = 38;
 byte cerebroNum = 26;
 byte LD = 19;
 unsigned int powerLevel = 800;
-const int levels[100] PROGMEM = {//LD19 4 mW
-906 , 906 , 905 , 904 , 903 , 902 , 901 , 901 , 900 , 899 , 898 , 897 , 897 , 896 , 895 ,
-894 , 893 , 893 , 892 , 891 , 890 , 889 , 888 , 887 , 886 , 884 , 883 , 882 , 881 , 880 ,
-878 , 877 , 876 , 874 , 873 , 871 , 870 , 869 , 868 , 866 , 865 , 864 , 863 , 861 , 860 ,
-858 , 856 , 855 , 853 , 851 , 849 , 847 , 845 , 843 , 841 , 839 , 836 , 834 , 831 , 829 ,
-826 , 823 , 821 , 818 , 815 , 813 , 810 , 806 , 802 , 798 , 795 , 792 , 789 , 785 , 782 ,
-775 , 769 , 765 , 760 , 754 , 747 , 739 , 730 , 722 , 714 , 706 , 696 , 681 , 666 , 651 ,
-633 , 615 , 596 , 574 , 552 , 504 , 499 , 499 , 498 , 498 };
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -64,7 +55,7 @@ know which address to stop at by looking at the first 2 bytes of memory.
 listenForIR() function is based on code from Adafruit IR sensor tutorial: https://learn.adafruit.com/ir-sensor/reading-ir-commands
 Adafruit code: https://github.com/adafruit/IR-Commander/blob/master/ircommander.pde
 Detailed explanation of how infrared (IR) remotes work: http://www.sbprojects.com/knowledge/ir/index.php#top
-Directions for uploading can be found at http://cerebro.readthedocs.org/en/latest/#
+Directions for uploading can be found at http://cerebro.readthedocs.io/
 */
 #include <SoftwareSerial.h>
 #include <TinyWireM.h>        // Library for ATtiny hardware I2C communication using the USI pins https://github.com/adafruit/TinyWireM
@@ -79,6 +70,7 @@ const int memorySize =     10000;
 const int memorySize =     8169;   /*The number of bytes we will save to on the EEPROM. Each event recording is 4 bytes of data
 (3 for the timestamp integer and 1 for the event description character). Parameter changes are 9 bytes, 1 for the event description character
 and 8 for the former parameters.8192 bytes will provide space for 2730 events to be recorded.*/
+#define START_ADDRESS 212
 #endif
 
 //IR sensor input//
@@ -126,7 +118,7 @@ char buffer[20];            // make sure this is large enough for the largest st
 unsigned int waveform[NUMPARAM] = {};
 unsigned int onDelay = 2000;
 byte marksReceived;
-byte address = 12;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
+unsigned int address = START_ADDRESS;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
                             the final address used in the last session. The next 10 bytes are reserved for waveform parameters*/
 bool trigMatch = false;
 bool stopMatch = false;
@@ -136,6 +128,8 @@ const byte interval = 3;
 bool isSettled = false;
 bool isMaxed = false;
 bool calibrateMode = false;
+bool receivingCalVector = false;
+byte vectorIndex = 0;
 
 #ifdef MCUBE
 int DAClevel = 725;
@@ -144,7 +138,6 @@ int DAClevel = 0;
 #endif
 
 //---------function prototypes---------//
-void printParameters();
 void calibrateRoutine();
 void triggerEvent(unsigned int desiredPower);
 void triggerEvent(unsigned int desiredPower);
@@ -162,6 +155,9 @@ void printEEPROM();
 void myShift(int val);
 void sendDAC(int value);
 bool laserOFF();
+void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset);
+void printCalVector();
+void printParameters();
 
 void setup() {
   ///////////Analog setup////////////////////////////
@@ -193,6 +189,7 @@ void setup() {
   if(!(BTN_inputReg & (1<<BTN_pin))){
   #endif
     printEEPROM();
+    printCalVector();
   }
   //otherwise just print the waveform parameters
   else{
@@ -360,9 +357,11 @@ void feedback(int setPoint){
 
 void fade(){
   unsigned long fadeClock;
-  for(int i = 0; i<100; i++){
+  unsigned int param1;
+  for (int k = 12; k < 212 ; k+=2) {  //Calibration values are stored in addresses 12-212 (100 values,2 bytes each)
     fadeClock = millis();
-    feedback(pgm_read_word_near(levels + i));
+    param1 = eepromReadByte(k)<<8;
+    feedback(word(param1|eepromReadByte(k+1)));
     sendDAC(DAClevel);
     while((millis()-fadeClock)<(waveform[RAMP_DUR]/100)){
       //wait
@@ -397,10 +396,35 @@ byte listenForIR(int timeout=0) {
       if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
         delayMicroseconds(1);//Don't know why this is needed, but it is....
         if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received new Parameters!
-          updateParameters(marks);
+          if(!receivingCalVector){
+            updateParameters(marks);
+          }
+          else{
+            digitalWrite(indicatorLED, HIGH);
+            updateCalVector(marks,vectorIndex*10);
+            if (vectorIndex<19){ //100 calibration values sent 5 at a time = 20 messages
+              vectorIndex++;
+            }
+            else{
+              receivingCalVector = false;
+              for (int i  = 0; i <3; i++){   // blink three times to indicate done
+                digitalWrite(indicatorLED, LOW);
+                delay(150);
+                digitalWrite(indicatorLED, HIGH);
+                delay(150);
+              }
+              mySerial.print("Calibration Vector Updated:\r");
+              printCalVector();
+            }
+            digitalWrite(indicatorLED, LOW);
+          }
         }
         else if (pulsePairIndex==7 && convertBIN(marks,7)==22){ //enter calibrate mode
           calibrateMode = true;
+        }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==117){ //about to receive calibration vector
+          receivingCalVector = true;
+          vectorIndex = 0;
         }
         // else{ //We received a message that we don't understand
         //   mySerial.println(pulsePairIndex);
@@ -436,6 +460,18 @@ void updateParameters(uint16_t (&marks)[NUMPULSES]){
     eepromWriteByte(2*m+3,waveform[m] & 255);
   }
   printParameters();
+}
+
+void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
+  //Save the freshly updated pulse parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
+  unsigned int calValue  = 0;
+  for (byte m = 0; m<NUMPARAM; m++){
+    calValue = convertBIN(marks,16,7+16*m);
+    eepromWriteByte(2*m+offset+12,calValue>>8);
+    eepromWriteByte(2*m+offset+13,calValue & 255);
+  }
+  // printCalVector();
+  // printParameters();
 }
 
 unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0){
@@ -476,7 +512,6 @@ byte eepromReadByte( unsigned int readAddress ) {  //"Random Read" read operatio
   TinyWireM.endTransmission();
   //"Current Address Read" read operation from datasheet
   TinyWireM.requestFrom(0x50,1);
-  delay(10);
   while(!TinyWireM.available()){
     ;//wait
   }
@@ -540,12 +575,12 @@ void printEEPROM(){
   mySerial.print(F("Ver,"));
   mySerial.print(version);
   mySerial.print('\r');
+  unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
+  readAddresses(START_ADDRESS,endingAddress);   //print the list of events
   strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[PWR_LVL])));
   mySerial.print(buffer);
   mySerial.print(powerLevel);
   mySerial.print('\r');
-  unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
-  readAddresses(12,endingAddress);   //print the list of events
   for (int i = 0; i<NUMPARAM; i++){
     strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
     mySerial.print(buffer);
@@ -558,22 +593,6 @@ void printEEPROM(){
   // }
 }
 
-void printParameters(){
-    char delimeter = '~';
-    mySerial.print(version);
-    mySerial.print(delimeter);
-    mySerial.print(cerebroNum);
-    mySerial.print(delimeter);
-    mySerial.print(LD);
-    mySerial.print(delimeter);
-    mySerial.print(powerLevel);
-    mySerial.print(delimeter);
-    for (int i  = 0 ; i<NUMPARAM; i++){
-      mySerial.print(waveform[i]);
-      mySerial.print(delimeter) ;
-    }
-    mySerial.println("*");
-}
 void myShift(int val){                  //shifts out data MSB first
   for (int i = 7; i > -1; i--){
     if(val & (1<<i)){                   //shift high bit
@@ -609,4 +628,33 @@ bool laserOFF(){
   #endif
   // DUNCE_outputReg &= ~(1<<DUNCE_pin); //Dunce ouput LOW
   return false;
+}
+
+void printCalVector(){
+  for (int k = 12; k < 212 ; k+=NUMPARAM*2) {  //print the list of events.
+    unsigned int param1;
+    for (int i = 0; i<NUMPARAM; i++){
+      param1 = eepromReadByte(k+2*i)<<8;
+      mySerial.print(word(param1|eepromReadByte(k+1+2*i)));
+      mySerial.print(',');
+    }
+    mySerial.print('\r');
+  }
+}
+
+void printParameters(){
+    char delimeter = '~';
+    mySerial.print(version);
+    mySerial.print(delimeter);
+    mySerial.print(cerebroNum);
+    mySerial.print(delimeter);
+    mySerial.print(LD);
+    mySerial.print(delimeter);
+    mySerial.print(powerLevel);
+    mySerial.print(delimeter);
+    for (int i  = 0 ; i<NUMPARAM; i++){
+      mySerial.print(waveform[i]);
+      mySerial.print(delimeter) ;
+    }
+    mySerial.println("*");
 }

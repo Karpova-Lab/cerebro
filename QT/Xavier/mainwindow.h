@@ -62,7 +62,7 @@ private:
     QTimer*                 timer;
 
     QPushButton*            refresh_btn,*connect_btn,*startSession_btn;
-    QPushButton*            refresh2_btn,*connect2_btn;
+    QPushButton*            refresh2_btn,*connect2_btn,*sendCal_btn;
     QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*filter_btn,*macro_btn;;
     QPushButton*            eeprom_btn;
     QPushButton*            sendSettings_btn;
@@ -80,10 +80,10 @@ private:
     QPlainTextEdit*         baseMonitor;
     QPlainTextEdit*         downloadMonitor;
     QLineEdit*              macroText;
-    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*power_spn,*fade_spn,*trials_spn,*baseFilter_spn;
+    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*startDelay_spn,*fade_spn,*trials_spn,*baseFilter_spn;
     QRadioButton*           singleShot,*pulseTrain;
     QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*power_lbl,*fade_label,*filterLabel;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*filterLabel;
     QLabel*                 serial_title;
     QLabel*                 download_title;
     QLabel*                 last_settings;
@@ -197,6 +197,8 @@ private slots:
     void setDebug();
     void shrink();
     void editLabel();
+    void sendCalVector();
+    void sendCalGroups();
 };
 
 

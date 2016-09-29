@@ -107,32 +107,14 @@ void Cerebro::toggle(bool turnON)
   isNormallyOn = !isNormallyOn;
 }
 
-void Cerebro::sendBinary(unsigned int value, unsigned char valSize){
-  while (valSize > 0) {
-    sendMark(bitRead(value, valSize-1));
-    valSize--;
+void Cerebro::sendBinary(unsigned int value, unsigned char bitWidth){
+  while (bitWidth > 0) {
+    sendMark(bitRead(value, bitWidth-1));
+    bitWidth--;
   }
 }
 
-void Cerebro::send(byte readValues[][6])
-{
-  //send key that says that data is to follow
-  sendBinary(101,7);
-  //convert read ascii digits to an integer
-  for( int k=0; k<numParameters; k++){
-      decnum[k] = 0;
-      for (int i = 0; i < readValues[k][5]; i++) {
-        decnum[k] = decnum[k] + (readValues[k][i] - 48) * powers[readValues[k][5] - i - 1];
-      }
-  }
-  //send 10 bytes (5 parameters*16bits) worth of data
-  for (int k = 0; k<numParameters; k++){
-    sendBinary(decnum[k],16);
-  }
-}
-
-
-void Cerebro::send(int newVals[])
+void Cerebro::send(int newVals[]) //ir remote send
 {
   //send key that says that data is to follow
   sendBinary(101,7);
@@ -146,9 +128,4 @@ void Cerebro::calibrate()
 {
   //send key that says that data is to follow
   sendBinary(22,7);
-}
-
-int Cerebro::getParameter(byte paramIndex)
-{
-  return decnum[paramIndex];
 }
