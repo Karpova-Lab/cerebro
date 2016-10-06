@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #include "mainwindow.h"
+#include "dropbutton.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Menu bar
     fileMenu = menuBar()->addMenu("File");
         toggleDebug = new QAction(this);
-        toggleDebug->setText("Toggle Debug Mode");
+        toggleDebug->setText("Enter Debug/Calibrate Mode");
         toggleDebug->setShortcut(QKeySequence(tr("Ctrl+D")));
     fileMenu->addAction(toggleDebug);
         gotoSettings = new QAction(this);
@@ -60,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.20.1\nUpdated:\t9/19/2016");
+        aboutDialog->setText("Version:\t1.21.0\nUpdated:\t10/06/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -85,10 +86,12 @@ MainWindow::MainWindow(QWidget *parent)
                 serialPortList = new QComboBox();
                 serialPortList->setMinimumWidth(150);
             equipmentLayout->addWidget(serialPortList,1,6,1,2);
+                debugCheckbox = new QCheckBox("Debug/Calibrate Mode");
+            equipmentLayout->addWidget(debugCheckbox,3,1,1,2);
                 connect_btn = new QPushButton("Start Session");
                 connect_btn->setCheckable(true);
 //                connect_btn->setStyleSheet("background-color: green; color:white");
-            equipmentLayout->addWidget(connect_btn,3,1,1,7);
+            equipmentLayout->addWidget(connect_btn,3,3,1,5);
             equipmentLayout->setColumnStretch(0,1);
             equipmentLayout->setColumnStretch(8,1);
         equipmentBox->setLayout(equipmentLayout);
@@ -216,20 +219,48 @@ MainWindow::MainWindow(QWidget *parent)
                 trigger_btn = new QPushButton;
                 trigger_btn->setText("Trigger");
                 trigger_btn->setAutoDefault(true);
-            triggerLayout->addWidget(trigger_btn,1,0,1,2);
+            triggerLayout->addWidget(trigger_btn,1,0);
                 testProgress = new QProgressBar();
                 testProgress->setValue(0);
                 testProgress->setVisible(false);
             triggerLayout->addWidget(testProgress,2,0,1,2);
                 abort_btn = new QPushButton("Stop");
-            triggerLayout->addWidget(abort_btn,3,0,1,2);
+            triggerLayout->addWidget(abort_btn,1,1);
                 macroText = new QLineEdit();
                 macroText->setFixedWidth(40);
             triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
                 macro_btn = new QPushButton("Send Text");
             triggerLayout->addWidget(macro_btn,4,1);
         bugBox->setLayout(triggerLayout);
-        bugBox->setVisible(false);
+
+        chooseBox = new QGroupBox("Calibrate");
+            chooseLayout = new QGridLayout();
+                wantedLevel = new QSlider(Qt::Horizontal);
+                wantedLevel->setRange(0,10);
+                wantedLevel->setValue(4);
+                wantedLevel->setTickPosition(QSlider::TicksBelow);
+                wantedLevel->setMaximumWidth(150);
+            chooseLayout->addWidget(wantedLevel,1,0,2,1);
+                slideLabel = new QLabel("Target Power: "+QString::number(wantedLevel->value())+ " mW");
+            chooseLayout->addWidget(slideLabel,0,0,Qt::AlignCenter);
+                showGraph = new QCheckBox("Show Graphs");
+                showGraph->setChecked(true);
+            chooseLayout->addWidget(showGraph,0,1,Qt::AlignCenter);
+                selectFile_btn = new DropButton;//("Select Power Meter\ndata file");
+                selectFile_btn->setCheckable(true);
+                selectFile_btn->setAcceptDrops(true);
+                selectFile_btn->setCheckable(false);
+//                selectFile_btn->setMinimumHeight(75);
+            chooseLayout->addWidget(selectFile_btn,1,1,2,1);
+                codeTextBox = new QPlainTextEdit();
+//                QFont codefont;
+//                codefont.setPointSize(5);
+//                codeTextBox->setFont(codefont);
+            chooseLayout->addWidget(codeTextBox,3,0,1,3);
+            sendCal_btn = new QPushButton("Send Calibration Vector");
+            chooseLayout->addWidget(sendCal_btn,4,0,1,3);
+        chooseBox->setLayout(chooseLayout);
+
 
         QPixmap pictcha(":myFiles/headerpicc.png");
                 picLabel = new QLabel();
@@ -248,7 +279,7 @@ MainWindow::MainWindow(QWidget *parent)
                 connect2_btn = new QPushButton("Connect to Downloader");
                 connect2_btn->setCheckable(true);
             connectionLayout2->addWidget(connect2_btn,2,0,1,3);
-                download_title = new QLabel("<h3><u>Download Monitor</u>:");
+                download_title = new QLabel("<h3><u>Cerebro Monitor</u>:");
                 download_title->setEnabled(false);
             connectionLayout2->addWidget(download_title,3,0,1,2);
                 clearDownload_btn = new QPushButton("Clear Monitor");
@@ -265,25 +296,29 @@ MainWindow::MainWindow(QWidget *parent)
                 saveMonitor_btn->setMinimumHeight(40);
                 saveMonitor_btn->setEnabled(false);
             connectionLayout2->addWidget(saveMonitor_btn,5,0,1,3);
-                sendCal_btn = new QPushButton("Send Calibration Vector");
-//                sendCal_btn->setCheckable(true);
-            connectionLayout2->addWidget(sendCal_btn,6,0,1,3);
         downloaderBox->setLayout(connectionLayout2);
-        downloaderBox->setVisible(false);
+
     mainLayout = new QGridLayout();
 //    mainLayout->addWidget(picLabel,0,0,1,3);
     mainLayout->addWidget(equipmentBox,0,0,1,3);
     mainLayout->addWidget(baseSettingsBox,1,0);
     mainLayout->addWidget(adjustBox,2,0,1,1);
-    mainLayout->addWidget(bugBox,3,0,1,1);
+    mainLayout->addWidget(chooseBox,3,0,1,1);
+    mainLayout->addWidget(bugBox,4,0,1,1);
     mainLayout->addWidget(baseBox,1,1,4,2);
     mainLayout->setColumnStretch(2,1);
     mainLayout->addWidget(downloaderBox,0,3,5,1);
     mainLayout->setRowStretch(5,1);
     adjustBox->setEnabled(false);
+    adjustBox->setPalette(Qt::gray);
     bugBox->setEnabled(false);
+    bugBox->setPalette(Qt::gray);
+    chooseBox->setEnabled(false);
+    chooseBox->setPalette(Qt::gray);
     baseBox->setEnabled(false);
     baseSettingsBox->setEnabled(false);
+    baseSettingsBox->setPalette(Qt::gray);
+    this->setFixedSize(this->maximumSize());
 
     QWidget *window = new QWidget();
     window->setLayout(mainLayout);
@@ -482,6 +517,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(filter_btn,SIGNAL(clicked()),this,SLOT(updateFilter()));
     connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
+    connect(debugCheckbox,SIGNAL(clicked(bool)),this,SLOT(setDebug()));
+
+    //Calibration signal&slots
+    connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
+    connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
+    connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
+    connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
+    connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
 
 
 
@@ -505,12 +548,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
             event->ignore();
         }
         else{
-            downloaderBox->setVisible(false);
             event->accept();
         }
     }
     else{
-        downloaderBox->setVisible(false);
         event->accept();
     }
 }
@@ -605,11 +646,13 @@ void MainWindow::connectPort()
         connectBS_label->setEnabled(isConnected);
         serialPortList->setEnabled(isConnected);
         refresh_btn->setEnabled(isConnected);
+        debugCheckbox->setEnabled(isConnected);
         adjustBox->setEnabled(!isConnected);
         baseSettingsBox->setEnabled(!isConnected);
-        bugBox->setEnabled(!isConnected);
+        bugBox->setEnabled(!isConnected && debugOn);
+        chooseBox->setEnabled(!isConnected && debugOn);
         baseBox->setEnabled(!isConnected);
-        connect_btn->setChecked(!isConnected);\
+        connect_btn->setChecked(!isConnected);
         if(!isConnected){
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
@@ -640,7 +683,12 @@ void MainWindow::connectPort()
             QString time = "\r" + serialPortList->currentText() + " Disconnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
             baseMonitor->textCursor().insertText(time);
             serial->close();
-            connect_btn->setText("Start Session");
+            if (debugOn){
+                connect_btn->setText("Start Session (Debug/Calibrate Mode)");
+            }
+            else{
+                connect_btn->setText("Start Session");
+            }
 //            connect_btn->setStyleSheet("background-color: green; color:white");
             setWindowTitle("Xavier");
             isConnected = 0;
@@ -724,9 +772,7 @@ void MainWindow::clearMonitor()
         serial->write(rst.toLocal8Bit());
         clearBase_btn->setEnabled(false);
     }
-
     QTimer::singleShot(1000, this, SLOT(sendTime()));
-
 }
 
 void MainWindow::clearMonitor2()
@@ -929,8 +975,6 @@ void MainWindow::saveFile()
             out2 << log2;
             file2.close();
             downloadMonitor->clear();
-//            downloadWindow->close();
-            downloaderBox->setVisible(false);
             QTimer::singleShot(0,this,SLOT(shrink()));
             if(pythonEnabled){
                 // Run python script to summarize data from base station and cerebro logs
@@ -1049,18 +1093,18 @@ void MainWindow::trainDur(){
 
 void MainWindow::showDebug(){
     if (debugOn){
-        bugBox->show();
         rigSelect->setCurrentRow(0);
         ratSelect->setCurrentRow(0);
         cerebroSelect->setCurrentRow(0);
-        connect_btn->setText("Start Session (Debug Mode)");
+        connect_btn->setText("Start Session (Debug/Calibrate Mode)");
+        toggleDebug->setText("Exit Debug/Calibrate Mode");
     }
     else{
-        bugBox->hide();
         rigSelect->clearSelection();
         ratSelect->clearSelection();
         cerebroSelect->clearSelection();
         connect_btn->setText("Start Session");
+        toggleDebug->setText("Enter Debug/Calibrate Mode");
     }
 }
 
@@ -1301,7 +1345,6 @@ void MainWindow::showDownloader()
     if (!(connect2_btn->isChecked())){ //prevents download port dropdown text from being cleared if already connected
         fillPortsInfo2();
     }
-    downloaderBox->setVisible(true);
 }
 
 void MainWindow::getGraphs()
@@ -1346,10 +1389,9 @@ void MainWindow::setDebug()
 {
     if (!isConnected){
         debugOn = !debugOn;
+        debugCheckbox->setChecked(debugOn);
         showDebug();
-        downloaderBox->setVisible(debugOn);
     }
-    QTimer::singleShot(0,this,SLOT(shrink()));
 }
 
 void MainWindow::shrink(){
@@ -1376,16 +1418,65 @@ void MainWindow::sendCalVector(){
 }
 
 void MainWindow::sendCalGroups(){
-    QString calibrationString = downloadMonitor->toPlainText();
+    QString calibrationString = codeTextBox->toPlainText();
     QStringList calibrationGroups = calibrationString.split("\n",QString::SkipEmptyParts);
     qDebug()<<calibrationGroups.size();
     if(calibrationGroups.size()>0){
-//        qDebug()<<"send"<<calibrationGroups.takeFirst();
         serial->write(calibrationGroups.takeFirst().toLocal8Bit());
-        downloadMonitor->clear();
+        codeTextBox->clear();
         for (int i = 0; i<calibrationGroups.size(); i++){
-            downloadMonitor->insertPlainText(calibrationGroups[i]+"\n");
+            codeTextBox->insertPlainText(calibrationGroups[i]+"\n");
         }
         QTimer::singleShot(475, this, SLOT(sendCalGroups()));
+    }
+}
+
+/*``````````````````````Calibration functions`````````````````````*/
+void MainWindow::slideValueUpdate(int newVal){
+    wantedLevel->setValue(newVal);
+    slideLabel->setText("Target Power: "+QString::number(wantedLevel->value())+ " mW");
+}
+
+
+void MainWindow::chooseFile(){
+//    fileLabel->setText("");
+    codeTextBox->clear();
+    QString pathFromDialog = QFileDialog::getOpenFileName(this,tr("Select Power Meter Data"),QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),tr("(*.txt)"));
+    qDebug()<<pathFromDialog;
+    if(!pathFromDialog.isEmpty()){
+        // Run python script to summarize data from base station and cerebro logs
+        getCalVals(pathFromDialog);
+    }
+    else{
+        selectFile_btn->clearFocus();
+    }
+}
+
+
+void MainWindow::useDropped(const QMimeData *mimeData)
+{
+//    fileLabel->setText("");
+    codeTextBox->clear();
+    QString dataPath =  mimeData->text().simplified();
+    dataPath.remove("file:///");
+    getCalVals(dataPath);
+}
+
+void MainWindow::getCalVals(QString calibrateDataPath ){
+    QProcess *process = new QProcess(this);
+    QStringList pythonArgs;
+    pythonArgs<<qApp->applicationDirPath()+"/python scripts/getCalibrationVec.py"<<"\""+calibrateDataPath+"\""<<QString::number(wantedLevel->value())<<QString::number(showGraph->isChecked()); //pass the calibration data into python script
+    process->start("python",pythonArgs);
+    process->waitForFinished(-1);
+    QString errorString = process->readAllStandardError();
+    QString resultString = process->readAll();
+    codeTextBox->insertPlainText(resultString);
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(resultString);
+    QMessageBox alert;
+    if (!errorString.isEmpty()){
+        alert.setWindowTitle("Error Message from Python");
+        alert.setText(errorString);
+        alert.exec();
     }
 }

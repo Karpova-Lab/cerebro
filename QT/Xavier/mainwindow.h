@@ -30,6 +30,8 @@ SOFTWARE.
 #include <QSerialPortInfo>
 #include <qtimer.h>
 
+class DropButton;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -62,6 +64,7 @@ private:
     QTimer*                 timer;
 
     QPushButton*            refresh_btn,*connect_btn,*startSession_btn;
+    QCheckBox*              debugCheckbox;
     QPushButton*            refresh2_btn,*connect2_btn,*sendCal_btn;
     QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*filter_btn,*macro_btn;;
     QPushButton*            eeprom_btn;
@@ -154,6 +157,16 @@ private:
     QGridLayout*            featuresLayout;
     QCheckBox*              pythonCheckbox;
 
+    //Calibration Stuff
+    QGroupBox*         chooseBox;
+    QPushButton*       pickFile_btn;
+    QGridLayout*       chooseLayout,*calLayout;
+    QPlainTextEdit*    codeTextBox;
+    QLabel*            slideLabel,*dropLabel;
+    QCheckBox*         showGraph;
+    QSlider*           wantedLevel;
+    DropButton*        selectFile_btn;
+
 
 
 
@@ -199,6 +212,12 @@ private slots:
     void editLabel();
     void sendCalVector();
     void sendCalGroups();
+
+    //Calibration stuff
+    void chooseFile();
+    void getCalVals(QString calibrateDataPath);
+    void slideValueUpdate(int newVal);
+    void useDropped(const QMimeData *mimeData);
 };
 
 
