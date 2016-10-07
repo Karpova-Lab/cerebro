@@ -28,6 +28,22 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
+    int myWindowW = 896;
+    int myWindowH = 644;
+//    int finalH;
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+//    qDebug()<<screenGeometry.height()<<myWindowH;
+//    if (screenGeometry.height()-100<myWindowH+10){
+//        finalH = screenGeometry.height()-100;
+//    }
+//    else{
+//        finalH = myWindowH+10;
+//    }
+    int x = (screenGeometry.width()-myWindowW) / 2;
+    int y = (screenGeometry.height()-myWindowH) / 2;
+    w.move(x, y);
+
+//    w.resize(940,finalH);
     w.show();
     w.setFixedSize(w.size());
 

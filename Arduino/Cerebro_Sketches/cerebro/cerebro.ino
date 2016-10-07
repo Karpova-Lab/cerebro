@@ -24,11 +24,10 @@ SOFTWARE.
 byte version = 38;
 byte cerebroNum = 26;
 byte LD = 19;
-unsigned int powerLevel = 800;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
-// #define OLDBOARD
+#define OLDBOARD
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
 
@@ -130,6 +129,7 @@ bool isMaxed = false;
 bool calibrateMode = false;
 bool receivingCalVector = false;
 byte vectorIndex = 0;
+unsigned int powerLevel;
 
 #ifdef MCUBE
 int DAClevel = 725;
@@ -182,6 +182,8 @@ void setup() {
   for (int i = 0; i<NUMPARAM; i++){
     waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
   }
+  powerLevel = word(eepromReadByte(12)<<8|eepromReadByte(13));
+
   //if the BTN is pressed (Low Signal) when cerebro starts up then print the log from the eeprom
   #ifdef OLDBOARD
   if((BTN_inputReg & (1<<BTN_pin))){
@@ -405,7 +407,7 @@ byte listenForIR(int timeout=0) {
             if (vectorIndex<19){ //100 calibration values sent 5 at a time = 20 messages
               vectorIndex++;
             }
-            else{
+            else{ //after 20th set of values is received
               receivingCalVector = false;
               for (int i  = 0; i <3; i++){   // blink three times to indicate done
                 digitalWrite(indicatorLED, LOW);
@@ -463,13 +465,13 @@ void updateParameters(uint16_t (&marks)[NUMPULSES]){
 }
 
 void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
-  //Save the freshly updated pulse parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
   unsigned int calValue  = 0;
   for (byte m = 0; m<NUMPARAM; m++){
     calValue = convertBIN(marks,16,7+16*m);
     eepromWriteByte(2*m+offset+12,calValue>>8);
     eepromWriteByte(2*m+offset+13,calValue & 255);
   }
+  powerLevel = word(eepromReadByte(12)<<8|eepromReadByte(13));
   // printCalVector();
   // printParameters();
 }
@@ -636,7 +638,9 @@ void printCalVector(){
     for (int i = 0; i<NUMPARAM; i++){
       param1 = eepromReadByte(k+2*i)<<8;
       mySerial.print(word(param1|eepromReadByte(k+1+2*i)));
-      mySerial.print(',');
+      if(i!=NUMPARAM-1){
+        mySerial.print(',');
+      }
     }
     mySerial.print('\r');
   }

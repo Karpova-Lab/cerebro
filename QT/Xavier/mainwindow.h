@@ -68,7 +68,7 @@ private:
     QPushButton*            refresh2_btn,*connect2_btn,*sendCal_btn;
     QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*filter_btn,*macro_btn;;
     QPushButton*            eeprom_btn;
-    QPushButton*            sendSettings_btn;
+    QPushButton*            sendSettings_btn,*newPower_btn;
     QPushButton*            clearBase_btn;
     QPushButton*            clearDownload_btn;
     QPushButton*            changeSettings_btn;
@@ -158,14 +158,15 @@ private:
     QCheckBox*              pythonCheckbox;
 
     //Calibration Stuff
-    QGroupBox*         chooseBox;
-    QPushButton*       pickFile_btn;
-    QGridLayout*       chooseLayout,*calLayout;
-    QPlainTextEdit*    codeTextBox;
-    QLabel*            slideLabel,*dropLabel;
-    QCheckBox*         showGraph;
-    QSlider*           wantedLevel;
-    DropButton*        selectFile_btn;
+    QDialog*                calDialog;
+    QGroupBox*              chooseBox;
+    QPushButton*            pickFile_btn;
+    QGridLayout*            chooseLayout,*calLayout;
+    QPlainTextEdit*         codeTextBox;
+    QLabel*                 slideLabel,*dropLabel;
+    QCheckBox*              showGraph;
+    QSlider*                wantedLevel;
+    DropButton*             selectFile_btn;
 
 
 
