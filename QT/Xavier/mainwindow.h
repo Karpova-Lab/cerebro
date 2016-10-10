@@ -48,6 +48,7 @@ private:
     QString                 saveName1;
     QString                 saveName2;
     QString                 usbTag,usbDescription;
+    QString                 onTimeString,offTimeString;
     bool                    isConnected;
     bool                    isConnected2;
     bool                    repeatOn;

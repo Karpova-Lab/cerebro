@@ -27,6 +27,8 @@ SOFTWARE.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+
+
     setWindowTitle("Xavier");
     qApp->setStyleSheet("QListWidget::item:selected { background-color: gold; color: black}");
     //Menu bar
@@ -60,7 +62,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.23.3\nUpdated:\t10/10/2016");
+        if(QSysInfo::WindowsVersion==48){
+            aboutDialog->setText("Version:\t1.23.4\nUpdated:\t10/10/2016");
+        }
+        else{
+            aboutDialog->setText("Version:\t\t1.23.4\nUpdated:\t10/10/2016");
+        }
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -463,7 +470,7 @@ calDialog->setLayout(chooseLayout);
 #elif __APPLE__ //---------Mac USB parse settings---------------
     usbTag  = "cu.usbserial";
     usbDescription = "FT230X Basic UART";
-#endif
+#endif    
 
     //program setup
     serial = new QSerialPort(this);
@@ -477,6 +484,17 @@ calDialog->setLayout(chooseLayout);
     inTestloop = false;
     testCount = 0;
     timer = new QTimer(this);
+    onTimeString = "";
+    offTimeString = "";
+    if(QSysInfo::WindowsVersion==48){
+        onTimeString = " ms\t\t\nOn Time:\t\t";
+        offTimeString = " ms\nOff Time:\t\t";
+    }
+    else{
+        onTimeString = " ms\t\t\nOn Time:\t";
+        offTimeString = " ms\nOff Time:\t";
+    }
+    qDebug()<<onTimeString<<offTimeString;
 
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo()));
@@ -796,10 +814,10 @@ void MainWindow::readLog()
             showParams.setStandardButtons(QMessageBox::Ok);
             showParams.setText(
                     "Firmware:\t"+ onboardParams[0]+
-                    "\nLaser Diode #:\t"+ onboardParams[2]+
+                    "\nLaser Diode:\t"+ onboardParams[2]+
                     "\n\nStart Delay:\t"+ onboardParams[4]+
-                    " ms\t\t\nOn Time:\t" + onboardParams[5] +
-                    " ms\nOff Time:\t" + onboardParams[6] +
+                    onTimeString + onboardParams[5] +
+                    offTimeString + onboardParams[6] +
                     " ms\nTrain Duration:\t" + onboardParams[7] +
                     " ms\nFade Time:\t" + onboardParams[8] + " ms" +
                     "\n\nPower Level:\t" + onboardParams[3]);
@@ -851,6 +869,7 @@ void MainWindow::set()
     else{
         baseFilter_spn->setValue(startDelay_spn->value()+ trainDuration_spn->value());
     }
+    qDebug()<<onTimeString<<offTimeString;
     QMessageBox confirmUpdate;
         confirmUpdate.setWindowTitle("Confirm Parameter Change");
         confirmUpdate.setIcon(QMessageBox::Question);
@@ -858,7 +877,12 @@ void MainWindow::set()
         confirmUpdate.setDefaultButton(QMessageBox::Cancel);
         confirmUpdate.setEscapeButton(QMessageBox::Cancel);
         confirmUpdate.setText("<b>Are you sure you want to send the following new parameters to Cerebro?</b>");
-        confirmUpdate.setInformativeText("Start Delay:\t"+ startDelay+ " ms\nOn Time:\t" + onTime + " ms\nOff Time:\t" + offTime + " ms\nTrain Duration:\t" + trainDur + " ms\nFade Time:\t" + fadeTime + " ms");
+        confirmUpdate.setInformativeText(
+                    "Start Delay:\t"+ startDelay+
+                    onTimeString + onTime +
+                    offTimeString + offTime +
+                    " ms\nTrain Duration:\t" + trainDur +
+                    " ms\nFade Time:\t" + fadeTime + " ms");
     if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
         last_settings->setText("Last Settings Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
