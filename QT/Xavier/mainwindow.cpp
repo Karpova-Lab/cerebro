@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.23.2\nUpdated:\t10/10/2016");
+        aboutDialog->setText("Version:\t1.23.3\nUpdated:\t10/10/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -257,7 +257,7 @@ calDialog = new QDialog();
                 selectFile_btn->setCheckable(false);
             chooseLayout->addWidget(selectFile_btn,1,1,2,1);
                 codeTextBox = new QPlainTextEdit();
-                codeTextBox->setMaximumHeight(75);
+                codeTextBox->setMinimumHeight(350);
 //                QFont codefont;
 //                codefont.setPointSize(5);
 //                codeTextBox->setFont(codefont);
@@ -792,9 +792,12 @@ void MainWindow::readLog()
             fadeChecked();
         }
         QMessageBox showParams;
-            showParams.setWindowTitle("Cerebro's Parameters");
+            showParams.setWindowTitle("Cerebro #"+onboardParams[1]);
             showParams.setStandardButtons(QMessageBox::Ok);
-            showParams.setText("Start Delay:\t"+ onboardParams[4]+
+            showParams.setText(
+                    "Firmware:\t"+ onboardParams[0]+
+                    "\nLaser Diode #:\t"+ onboardParams[2]+
+                    "\n\nStart Delay:\t"+ onboardParams[4]+
                     " ms\t\t\nOn Time:\t" + onboardParams[5] +
                     " ms\nOff Time:\t" + onboardParams[6] +
                     " ms\nTrain Duration:\t" + onboardParams[7] +
