@@ -44,7 +44,7 @@ SoftwareSerial mySerial(3,4);
 String startupMsg;
 unsigned long timeOffset;
 byte values[numParameters][6];
-byte version = 19;
+byte version = 20;
 unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
 long triggerClock = 0;
 unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
