@@ -1415,13 +1415,17 @@ void MainWindow::getGraphs()
             QString printedString = process->readAll();
             //Display summary in a popup message
             QMessageBox alert;
+            QFont codefont;
+            codefont.setPointSize(6);
             if (!errorString.isEmpty()){
                 alert.setWindowTitle("Python Error");
+                alert.setFont(codefont);
                 alert.setText(errorString);
                 alert.exec();
             }
             else{
                 alert.setWindowTitle("Sesssion Summary");
+                alert.setFont(codefont);
                 alert.setText(printedString);
                 alert.exec();
             }

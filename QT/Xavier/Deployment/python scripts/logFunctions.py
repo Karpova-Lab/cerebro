@@ -47,7 +47,7 @@ def parseCerebroLog(logFile):
     # get cerebro attributes from cerebro log 
     cLog = pd.read_csv(logFile,names=['cTime','Received'])
     firmware = cLog.loc[0,'Received']                                   #get firmware version
-    cLog = cLog[1:]                                                     #remove firwmare row
+    cLog = cLog[1:-20]                                                  #remove firwmare row and calibration vector at the end
     cLog = reIndex(cLog)
     #label events
     paramChangeIndices = cLog[cLog['cTime'].str.contains("Power Level")].index.tolist() #get indices of parameter changes
@@ -173,7 +173,7 @@ def printSummary(combined,sessionLength,paramRanges,comp):
     summary['tMissed'] = '\t{} Missed: {}'.format(tMissed,missedTrigVec)
     summary['abortSummary'] = 'Stop Success Rate:\t{}/{} ({:.2f}%)'.format(sReceived,sSent,sReceived/float(sSent)*100)
     summary['sMissed'] = '\t{} Missed: {}'.format(sMissed,missedStopVec)
-    summary['paramRanges'] = '\nParameters Throughout Session:\npwr\t\ton\t\toff\t\ttrain\t\tramp\t\t[range]\n{}'.format(paramRanges)
+    summary['paramRanges'] = '\nParameters Throughout Session:\ndelay\t\ton\t\toff\t\ttrain\t\tramp\t\t[range]\n{}'.format(paramRanges)
     
     print (summary['lengthSummary'])
     print (summary['successSummary'])
