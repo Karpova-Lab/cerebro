@@ -50,8 +50,8 @@ def parseCerebroLog(logFile):
     cLog = cLog[1:-20]                                                  #remove firwmare row and calibration vector at the end
     cLog = reIndex(cLog)
     #label events
-    paramChangeIndices = cLog[cLog['cTime'].str.contains("Power Level")].index.tolist() #get indices of parameter changes
-    paramNames = ['pwrLevel','onTime','offTime','trainDur','rampdown']
+    paramChangeIndices = cLog[cLog['cTime'].str.contains("Start Delay")].index.tolist() #get indices of parameter changes
+    paramNames = ['delay','onTime','offTime','trainDur','rampdown']
     #get parameters from the parameter rows and then use them to label the events above them that they describe
     for i,paramChangeIndex in enumerate(paramChangeIndices):
         for j,paramName in enumerate(paramNames):

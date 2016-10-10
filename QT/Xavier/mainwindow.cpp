@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.23.0\nUpdated:\t10/10/2016");
+        aboutDialog->setText("Version:\t1.23.1\nUpdated:\t10/10/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -1415,17 +1415,16 @@ void MainWindow::getGraphs()
             QString printedString = process->readAll();
             //Display summary in a popup message
             QMessageBox alert;
-            QFont codefont;
-            codefont.setPointSize(6);
+//            QFont codefont;
+//            codefont.setPointSize(6);
+//            alert.setFont(codefont);
             if (!errorString.isEmpty()){
                 alert.setWindowTitle("Python Error");
-                alert.setFont(codefont);
                 alert.setText(errorString);
                 alert.exec();
             }
             else{
                 alert.setWindowTitle("Sesssion Summary");
-                alert.setFont(codefont);
                 alert.setText(printedString);
                 alert.exec();
             }
