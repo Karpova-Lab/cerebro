@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.22.0\nUpdated:\t10/07/2016");
+        aboutDialog->setText("Version:\t1.23.0\nUpdated:\t10/10/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -622,8 +622,6 @@ void MainWindow::fillPortsInfo2()
 
 void MainWindow::connectPort()
 {
-    gotoSettings->setEnabled(isConnected);
-    toggleDebug->setEnabled(isConnected);
     if((rigSelect->selectedItems().size()==0) & !isConnected){
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
@@ -649,6 +647,8 @@ void MainWindow::connectPort()
         connect_btn->setChecked(false);
     }
     else{
+        gotoSettings->setEnabled(isConnected);
+        toggleDebug->setEnabled(isConnected);
         rig_lbl->setEnabled(isConnected);
         rat_lbl->setEnabled(isConnected);
         cerebro_lbl->setEnabled(isConnected);
@@ -793,6 +793,17 @@ void MainWindow::readLog()
             fade_checkbox->setChecked(true);
             fadeChecked();
         }
+        QMessageBox showParams;
+            showParams.setWindowTitle("Cerebro's Parameters");
+            showParams.setStandardButtons(QMessageBox::Ok);
+            showParams.setText("Start Delay:\t"+ onboardParams[4]+
+                    " ms\t\t\nOn Time:\t" + onboardParams[5] +
+                    " ms\nOff Time:\t" + onboardParams[6] +
+                    " ms\nTrain Duration:\t" + onboardParams[7] +
+                    " ms\nFade Time:\t" + onboardParams[8] + " ms" +
+                    "\n\nPower Level:\t" + onboardParams[3]);
+
+            showParams.exec();
     }
     else{
         downloadMonitor->insertPlainText(buffer);
