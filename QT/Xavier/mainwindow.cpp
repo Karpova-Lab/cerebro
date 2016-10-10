@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        aboutDialog->setText("Version:\t1.23.1\nUpdated:\t10/10/2016");
+        aboutDialog->setText("Version:\t1.23.2\nUpdated:\t10/10/2016");
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
@@ -536,8 +536,6 @@ calDialog->setLayout(chooseLayout);
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
-    connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
-    connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
 
 
 
@@ -1005,6 +1003,7 @@ void MainWindow::saveFile()
                 cerebroSelect->clearSelection();
                 baseMonitor->clear();
                 debugOn = false;
+                debugCheckbox->setChecked(false);
                 showDebug();
             }
         }
