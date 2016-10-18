@@ -62,11 +62,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
+        QString aboutString = "\t1.24.0\nUpdated:\t10/18/2016";
         if(QSysInfo::WindowsVersion==48){
-            aboutDialog->setText("Version:\t1.23.4\nUpdated:\t10/10/2016");
+            aboutDialog->setText("Version:"+aboutString);
         }
         else{
-            aboutDialog->setText("Version:\t\t1.23.4\nUpdated:\t10/10/2016");
+            aboutDialog->setText("Version:\t"+aboutString);
         }
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -237,7 +238,7 @@ MainWindow::MainWindow(QWidget *parent)
                 abort_btn = new QPushButton("Stop");
             triggerLayout->addWidget(abort_btn,1,1);
                 macroText = new QLineEdit();
-                macroText->setFixedWidth(40);
+//                macroText->setFixedWidth(40);
             triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
                 macro_btn = new QPushButton("Send Text");
             triggerLayout->addWidget(macro_btn,4,1);
@@ -247,30 +248,32 @@ calDialog = new QDialog();
     calLayout = new QGridLayout();
 //        chooseBox = new QGroupBox("Calibrate");
             chooseLayout = new QGridLayout();
+                startCal_btn = new QPushButton("Start Calibration Routine");
+            chooseLayout->addWidget(startCal_btn,0,0,1,3);
                 wantedLevel = new QSlider(Qt::Horizontal);
                 wantedLevel->setRange(0,10);
                 wantedLevel->setValue(4);
                 wantedLevel->setTickPosition(QSlider::TicksBelow);
                 wantedLevel->setMaximumWidth(150);
-            chooseLayout->addWidget(wantedLevel,1,0,2,1);
+            chooseLayout->addWidget(wantedLevel,2,0,2,1);
                 slideLabel = new QLabel("Target Power: "+QString::number(wantedLevel->value())+ " mW");
-            chooseLayout->addWidget(slideLabel,0,0,Qt::AlignCenter);
+            chooseLayout->addWidget(slideLabel,1,0,Qt::AlignCenter);
                 showGraph = new QCheckBox("Show Graphs");
                 showGraph->setChecked(true);
-            chooseLayout->addWidget(showGraph,0,1,Qt::AlignCenter);
+            chooseLayout->addWidget(showGraph,1,1,Qt::AlignCenter);
                 selectFile_btn = new DropButton;//("Select Power Meter\ndata file");
                 selectFile_btn->setCheckable(true);
                 selectFile_btn->setAcceptDrops(true);
                 selectFile_btn->setCheckable(false);
-            chooseLayout->addWidget(selectFile_btn,1,1,2,1);
+            chooseLayout->addWidget(selectFile_btn,2,1,2,1);
                 codeTextBox = new QPlainTextEdit();
                 codeTextBox->setMinimumHeight(350);
 //                QFont codefont;
 //                codefont.setPointSize(5);
 //                codeTextBox->setFont(codefont);
-            chooseLayout->addWidget(codeTextBox,3,0,1,3);
+            chooseLayout->addWidget(codeTextBox,4,0,1,3);
             sendCal_btn = new QPushButton("Send Calibration Vector");
-            chooseLayout->addWidget(sendCal_btn,4,0,1,3);
+            chooseLayout->addWidget(sendCal_btn,5,0,1,3);
 //        chooseBox->setLayout(chooseLayout);
 //    calLayout->addWidget(chooseBox);
 calDialog->setWindowFlags(calDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
@@ -486,7 +489,7 @@ calDialog->setLayout(chooseLayout);
     timer = new QTimer(this);
     onTimeString = "";
     offTimeString = "";
-    if(QSysInfo::WindowsVersion==48){
+    if(QSysInfo::WindowsVersion==48){ //If Windows XP
         onTimeString = " ms\t\t\nOn Time:\t\t";
         offTimeString = " ms\nOff Time:\t\t";
     }
@@ -494,7 +497,6 @@ calDialog->setLayout(chooseLayout);
         onTimeString = " ms\t\t\nOn Time:\t";
         offTimeString = " ms\nOff Time:\t";
     }
-    qDebug()<<onTimeString<<offTimeString;
 
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo()));
@@ -554,7 +556,7 @@ calDialog->setLayout(chooseLayout);
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
-
+    connect(startCal_btn,SIGNAL(clicked()),this,SLOT(sendCalStart()));
 
 
 
@@ -589,7 +591,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::fillPortsInfo()
 {
-    qDebug()<<this->size();
     refresh_btn->setDown(1);
     serialPortList->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
@@ -777,58 +778,54 @@ void MainWindow::sendTime()
 
 void MainWindow::readSerial()
 {
-    QByteArray received;
     baseMonitor->moveCursor(QTextCursor::End);
     baseMonitor->insertPlainText(serial->readAll());
     baseMonitor->ensureCursorVisible();
 }
 void MainWindow::readLog()
 {
-    QByteArray received2;
     downloadMonitor->moveCursor(QTextCursor::End);
-    QString buffer = serial2->read(40);
-    qDebug()<<buffer<<buffer.count('~');
-    qDebug()<<buffer.split('~');
-//    startDelay_spn->setValue(buffer.toInt());
-    if (buffer.count('~')==9){
-        QStringList onboardParams = buffer.split('~');
-        startDelay_spn->setValue(onboardParams[4].toInt());
-        onTime_spn->setValue(onboardParams[5].toInt());
-        offTime_spn->setValue(onboardParams[6].toInt());
-        if(onboardParams[7].toInt()){
-            pulseTrain->setChecked(true);
-            trainChecked();
-        }
-        else{
-            singleShot->setChecked(true);
-            trainChecked();
-        }
-        trainDuration_spn->setValue(onboardParams[7].toInt());
-        if (onboardParams[8].toInt()){
-            fade_spn->setValue(onboardParams[8].toInt());
-            fade_checkbox->setChecked(true);
-            fadeChecked();
-        }
-        QMessageBox showParams;
-            showParams.setWindowTitle("Cerebro #"+onboardParams[1]);
+    downloadMonitor->insertPlainText(serial2->readAll());
+    if(downloadMonitor->find("*",QTextDocument::FindBackward)){
+        QString buffer = downloadMonitor->toPlainText();
+        if (buffer.count('~')==9){
+            downloadMonitor->clear();
+            QStringList onboardParams = buffer.split('~');
+            startDelay_spn->setValue(onboardParams[4].toInt());
+            onTime_spn->setValue(onboardParams[5].toInt());
+            offTime_spn->setValue(onboardParams[6].toInt());
+            if(onboardParams[7].toInt()){
+                pulseTrain->setChecked(true);
+                trainChecked();
+            }
+            else{
+                singleShot->setChecked(true);
+                trainChecked();
+            }
+            trainDuration_spn->setValue(onboardParams[7].toInt());
+            if (onboardParams[8].toInt()){
+                fade_spn->setValue(onboardParams[8].toInt());
+                fade_checkbox->setChecked(true);
+                fadeChecked();
+            }
+            QMessageBox showParams;
+            showParams.setWindowTitle("Cerebro #" + onboardParams[1]  + " - LD #" + onboardParams[2]);
             showParams.setStandardButtons(QMessageBox::Ok);
             showParams.setText(
-                    "Firmware:\t"+ onboardParams[0]+
-                    "\nLaser Diode:\t"+ onboardParams[2]+
-                    "\n\nStart Delay:\t"+ onboardParams[4]+
+                    "\nStart Delay:\t"+ onboardParams[4]+
                     onTimeString + onboardParams[5] +
                     offTimeString + onboardParams[6] +
                     " ms\nTrain Duration:\t" + onboardParams[7] +
                     " ms\nFade Time:\t" + onboardParams[8] + " ms" +
-                    "\n\nPower Level:\t" + onboardParams[3]);
-
+                    "\n\nPower Level:\t" + onboardParams[3] +
+                    "\n\nFirmware:\t" + onboardParams[0]);
             showParams.exec();
+        }
     }
-    else{
-        downloadMonitor->insertPlainText(buffer);
-    }
-    downloadMonitor->insertPlainText(serial2->readAll());
+
     downloadMonitor->ensureCursorVisible();
+
+
 }
 
 void MainWindow::clearMonitor()
@@ -882,16 +879,17 @@ void MainWindow::set()
                     onTimeString + onTime +
                     offTimeString + offTime +
                     " ms\nTrain Duration:\t" + trainDur +
-                    " ms\nFade Time:\t" + fadeTime + " ms");
+                    " ms\nFade Time:\t" + fadeTime + " ms"
+                    "\n\nThe command filter will be automatically been updated to " + QString::number(baseFilter_spn->value()) + " ms");
     if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
         last_settings->setText("Last Settings Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
         QTimer::singleShot(500, this, SLOT(updateFilter()));
-        QMessageBox baseUpdated;
-            baseUpdated.setWindowTitle("Base Station Updated");
-            baseUpdated.setIcon(QMessageBox::Information);
-            baseUpdated.setText("The command filter has automatically been updated to  <b>" + QString::number(baseFilter_spn->value()) + " ms</b> to match the settings sent to Cerebro");
-        baseUpdated.exec();
+//        QMessageBox baseUpdated;
+//            baseUpdated.setWindowTitle("Base Station Updated");
+//            baseUpdated.setIcon(QMessageBox::Information);
+//            baseUpdated.setText("The command filter has automatically been updated to  <b>" + QString::number(baseFilter_spn->value()) + " ms</b> to match the settings sent to Cerebro");
+//        baseUpdated.exec();
     }
 }
 
@@ -1108,7 +1106,8 @@ void MainWindow::updateFilter(){
     QString msg = "F,"+ QString::number(baseFilter_spn->value());
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
-}
+    QTimer::singleShot(500, this, SLOT(clearMonitor()));
+ }
 
 void MainWindow::lamp(){
     QString msg = "L";
@@ -1559,4 +1558,11 @@ void MainWindow::getCalVals(QString calibrateDataPath ){
         alert.setText(errorString);
         alert.exec();
     }
+}
+
+void MainWindow::sendCalStart()
+{
+    QString msg = "Z";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
 }

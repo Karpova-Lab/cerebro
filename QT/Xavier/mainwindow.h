@@ -161,7 +161,7 @@ private:
     //Calibration Stuff
     QDialog*                calDialog;
     QGroupBox*              chooseBox;
-    QPushButton*            pickFile_btn;
+    QPushButton*            startCal_btn,*pickFile_btn;
     QGridLayout*            chooseLayout,*calLayout;
     QPlainTextEdit*         codeTextBox;
     QLabel*                 slideLabel,*dropLabel;
@@ -212,14 +212,15 @@ private slots:
     void setDebug();
     void shrink();
     void editLabel();
-    void sendCalVector();
-    void sendCalGroups();
 
     //Calibration stuff
     void chooseFile();
     void getCalVals(QString calibrateDataPath);
     void slideValueUpdate(int newVal);
     void useDropped(const QMimeData *mimeData);
+    void sendCalStart();
+    void sendCalVector();
+    void sendCalGroups();
 };
 
 
