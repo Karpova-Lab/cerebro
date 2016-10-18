@@ -21,9 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 43;
-byte cerebroNum = 26;
-byte LD = 19;
+byte version = 44;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -69,7 +67,9 @@ const int memorySize =     10000;
 const int memorySize =     8169;   /*The number of bytes we will save to on the EEPROM. Each event recording is 4 bytes of data
 (3 for the timestamp integer and 1 for the event description character). Parameter changes are 9 bytes, 1 for the event description character
 and 8 for the former parameters.8192 bytes will provide space for 2730 events to be recorded.*/
-#define START_ADDRESS 212
+#define LOG_START 216
+#define FADE_START 16
+#define HARDWARE_START 12
 #endif
 
 //IR sensor input//
@@ -117,8 +117,7 @@ char buffer[20];            // make sure this is large enough for the largest st
 unsigned int waveform[NUMPARAM] = {};
 unsigned int onDelay = 2000;
 byte marksReceived;
-unsigned int address = START_ADDRESS;  /*start at the thirteenth byte address of eeprom. We reserve the first 2 bytes for an integer indicating
-                            the final address used in the last session. The next 10 bytes are reserved for waveform parameters*/
+unsigned int address = LOG_START;  /*start at the 217th byte address of eeprom. The first 216 bytes are reserved for persistant variables that are recalled from session to session (waveform parameters,hardware parameters,fade vector)*/
 bool trigMatch = false;
 bool stopMatch = false;
 int error;
@@ -128,8 +127,11 @@ bool isSettled = false;
 bool isMaxed = false;
 bool calibrateMode = false;
 bool receivingCalVector = false;
+bool receivingHardwareVector = false;
 byte vectorIndex = 0;
 unsigned int powerLevel;
+unsigned int cerebroNum;
+unsigned int LD;
 
 #ifdef MCUBE
 int DAClevel = 725;
@@ -144,7 +146,7 @@ void triggerEvent(unsigned int desiredPower);
 void feedback(int setPoint);
 void fade();
 byte listenForIR(int timeout=0);
-void updateParameters(uint16_t (&marks)[NUMPULSES]);
+void updateWaveform(uint16_t (&marks)[NUMPULSES]);
 unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0);
 void recordEvent(byte letter);
 void eepromWriteByte( unsigned int writeAddress, byte data ) ;
@@ -156,6 +158,7 @@ void myShift(int val);
 void sendDAC(int value);
 bool laserOFF();
 void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset);
+void updateHardware(uint16_t (&marks)[NUMPULSES]);
 void printCalVector();
 void printParameters();
 
@@ -182,7 +185,9 @@ void setup() {
   for (int i = 0; i<NUMPARAM; i++){
     waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
   }
-  powerLevel = word(eepromReadByte(12)<<8|eepromReadByte(13));
+  cerebroNum = word(eepromReadByte(HARDWARE_START)<<8|eepromReadByte(HARDWARE_START+1));
+  LD = word(eepromReadByte(HARDWARE_START+2)<<8|eepromReadByte(HARDWARE_START+3));
+  powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
 
   //if the BTN is pressed (Low Signal) when cerebro starts up then print the log from the eeprom
   #ifdef OLDBOARD
@@ -360,7 +365,7 @@ void feedback(int setPoint){
 void fade(){
   unsigned long fadeClock;
   unsigned int param1;
-  for (int k = 12; k < 212 ; k+=2) {  //Calibration values are stored in addresses 12-212 (100 values,2 bytes each)
+  for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //Calibration values are stored in addresses 16-216 (100 values,2 bytes each)
     fadeClock = millis();
     param1 = eepromReadByte(k)<<8;
     feedback(word(param1|eepromReadByte(k+1)));
@@ -398,10 +403,7 @@ byte listenForIR(int timeout=0) {
       if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
         delayMicroseconds(1);//Don't know why this is needed, but it is....
         if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received new Parameters!
-          if(!receivingCalVector){
-            updateParameters(marks);
-          }
-          else{
+          if (receivingCalVector){
             digitalWrite(indicatorLED, HIGH);
             updateCalVector(marks,vectorIndex*10);
             if (vectorIndex<19){ //100 calibration values sent 5 at a time = 20 messages
@@ -420,6 +422,14 @@ byte listenForIR(int timeout=0) {
             }
             digitalWrite(indicatorLED, LOW);
           }
+          else if (receivingHardwareVector){
+            updateHardware(marks);
+            receivingHardwareVector = false;
+            digitalWrite(indicatorLED, LOW);
+          }
+          else {
+            updateWaveform(marks);
+          }
         }
         else if (pulsePairIndex==7 && convertBIN(marks,7)==22){ //enter calibrate mode
           calibrateMode = true;
@@ -427,6 +437,10 @@ byte listenForIR(int timeout=0) {
         else if (pulsePairIndex==7 && convertBIN(marks,7)==117){ //about to receive calibration vector
           receivingCalVector = true;
           vectorIndex = 0;
+        }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==97){ //about to receive hardware vector
+          receivingHardwareVector = true;
+          digitalWrite(indicatorLED, HIGH);
         }
         // else{ //We received a message that we don't understand
         //   mySerial.println(pulsePairIndex);
@@ -443,8 +457,8 @@ byte listenForIR(int timeout=0) {
   }
 }
 
-void updateParameters(uint16_t (&marks)[NUMPULSES]){
-  //Record the current pulse parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
+void updateWaveform(uint16_t (&marks)[NUMPULSES]){
+  //Record the current waveform parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
   eepromWriteByte(address,'P');
   address++;
   for (byte m = 0; m<NUMPARAM; m++){
@@ -452,11 +466,11 @@ void updateParameters(uint16_t (&marks)[NUMPULSES]){
     eepromWriteByte(address+1,waveform[m] & 255);
     address+=2;
   }
-  //Convert the received marks into integers and set them as the pulse parameters
+  //Convert the received marks into integers and set them as the waveform parameters
   for (int k = 0; k<NUMPARAM; k++){
     waveform[k] = convertBIN(marks,16,7+16*k);
   }
-  //Save the freshly updated pulse parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
+  //Save the freshly updated waveform parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
   for (byte m = 0; m<NUMPARAM; m++){
     eepromWriteByte(2*m+2,waveform[m]>>8);
     eepromWriteByte(2*m+3,waveform[m] & 255);
@@ -468,12 +482,22 @@ void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
   unsigned int calValue  = 0;
   for (byte m = 0; m<NUMPARAM; m++){
     calValue = convertBIN(marks,16,7+16*m);
-    eepromWriteByte(2*m+offset+12,calValue>>8);
-    eepromWriteByte(2*m+offset+13,calValue & 255);
+    eepromWriteByte(2*m+offset+16,calValue>>8);
+    eepromWriteByte(2*m+offset+17,calValue & 255);
   }
   powerLevel = word(eepromReadByte(12)<<8|eepromReadByte(13));
   // printCalVector();
   // printParameters();
+}
+
+void updateHardware(uint16_t (&marks)[NUMPULSES]){
+  unsigned int calValue  = 0;
+  for (byte m = 0; m<2; m++){   //only care about 2 valuse, Cerebro # and Laser Diode #
+    calValue = convertBIN(marks,16,7+16*m);
+    eepromWriteByte(2*m+12,calValue>>8);
+    eepromWriteByte(2*m+13,calValue & 255);
+  }
+  printParameters();
 }
 
 unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0){
@@ -578,7 +602,7 @@ void printEEPROM(){
   mySerial.print(version);
   mySerial.print('\r');
   unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
-  readAddresses(START_ADDRESS,endingAddress);   //print the list of events
+  readAddresses(LOG_START,endingAddress);   //print the list of events
   strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[PWR_LVL])));
   mySerial.print(buffer);
   mySerial.print(powerLevel);
@@ -633,7 +657,7 @@ bool laserOFF(){
 }
 
 void printCalVector(){
-  for (int k = 12; k < 212 ; k+=NUMPARAM*2) {  //print the list of events.
+  for (int k = FADE_START; k < FADE_START+200 ; k+=NUMPARAM*2) {
     unsigned int param1;
     for (int i = 0; i<NUMPARAM; i++){
       param1 = eepromReadByte(k+2*i)<<8;
