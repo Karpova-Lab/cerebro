@@ -82,6 +82,7 @@ char ltr;
 byte count = 0;
 unsigned long pressedCount = 0;
 bool altStep = false;
+unsigned int msgDelay = 750;
 
 void setup(){
   Serial.begin(115200);
@@ -119,7 +120,7 @@ void loop() {
   else if (tempNow-tempOld<-2){ //CW knob turn
     right();
   }
-  checkButtonPress(triggerButton,triggerSent,green,sendSave,blue);
+  checkButtonPress(triggerButton,triggerSent,green,sendCalibrate,blue);
   checkButtonPress(stopButton,stopSent,red,sendVals,blue);
   newButtonState = digitalRead(encoderSwitchPin);
   if (newButtonState){
@@ -237,12 +238,12 @@ void stopSent(){
   display.clearDisplay();
   display.setTextColor(1,0);
   display.setTextSize(3);
-  display.setCursor(1,10);
-  display.print(F("  Stop"));
+  display.setCursor(30,10);
+  display.print(F("Stop"));
   display.setCursor(30,36);
   display.print(F("Sent"));
   display.display();
-  delay(750);
+  delay(msgDelay);
   display.clearDisplay();
   draw(isEditMode);
   analogWrite(red,255);
@@ -255,12 +256,12 @@ void sendVals(){
   display.clearDisplay();
   display.setTextColor(1,0);
   display.setTextSize(2);
-  display.setCursor(5,10);
+  display.setCursor(5,18);
   display.print(F("Parameters"));
-  display.setCursor(35,36);
+  display.setCursor(40,39);
   display.print(F("Sent"));
   display.display();
-  delay(750);
+  delay(msgDelay);
   display.clearDisplay();
   draw(isEditMode);
 }
@@ -270,12 +271,27 @@ void sendSave(){
   display.clearDisplay();
   display.setTextColor(1,0);
   display.setTextSize(3);
-  display.setCursor(1,10);
-  display.print(F("  Save"));
+  display.setCursor(30,10);
+  display.print(F("Save"));
   display.setCursor(30,36);
   display.print(F("Sent"));
   display.display();
-  delay(750);
+  delay(msgDelay);
+  display.clearDisplay();
+  draw(isEditMode);
+}
+
+void sendCalibrate(){
+  cerebro.calibrate();
+  display.clearDisplay();
+  display.setTextColor(1,0);
+  display.setTextSize(2);
+  display.setCursor(10,18);
+  display.print(F("Calibrate"));
+  display.setCursor(40,39);
+  display.print(F("Sent"));
+  display.display();
+  delay(msgDelay);
   display.clearDisplay();
   draw(isEditMode);
 }
