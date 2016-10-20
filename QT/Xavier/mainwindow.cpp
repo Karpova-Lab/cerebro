@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.25.0\nUpdated:\t10/20/2016";
+        QString aboutString = "\t1.25.1\nUpdated:\t10/20/2016";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -806,8 +806,13 @@ void MainWindow::readLog()
     if(downloadMonitor->find("*",QTextDocument::FindBackward)){
         QString buffer = downloadMonitor->toPlainText();
         if (buffer.count('~')==9){
+            int andIndex = buffer.indexOf("&");
+            int starIndex = buffer.indexOf("*");
             downloadMonitor->clear();
-            QStringList onboardParams = buffer.split('~');
+            if(andIndex>0){
+                downloadMonitor->insertPlainText(buffer.mid(0,andIndex-1));
+            }
+            QStringList onboardParams = buffer.mid(andIndex+1,starIndex).split('~');
             startDelay_spn->setValue(onboardParams[4].toInt());
             onTime_spn->setValue(onboardParams[5].toInt());
             offTime_spn->setValue(onboardParams[6].toInt());
