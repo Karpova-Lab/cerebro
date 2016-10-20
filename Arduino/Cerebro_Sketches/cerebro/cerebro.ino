@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 44;
+byte version = 45;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -411,13 +411,7 @@ byte listenForIR(int timeout=0) {
             }
             else{ //after 20th set of values is received
               receivingCalVector = false;
-              for (int i  = 0; i <3; i++){   // blink three times to indicate done
-                digitalWrite(indicatorLED, LOW);
-                delay(150);
-                digitalWrite(indicatorLED, HIGH);
-                delay(150);
-              }
-              mySerial.print("Calibration Vector Updated:\r");
+              mySerial.print(F("Calibration Vector Updated:\r"));
               printCalVector();
             }
             digitalWrite(indicatorLED, LOW);
@@ -426,6 +420,7 @@ byte listenForIR(int timeout=0) {
             updateHardware(marks);
             receivingHardwareVector = false;
             digitalWrite(indicatorLED, LOW);
+            mySerial.print(F("Hardware Properties Updated:\r"));
           }
           else {
             updateWaveform(marks);
@@ -486,8 +481,6 @@ void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
     eepromWriteByte(2*m+offset+17,calValue & 255);
   }
   powerLevel = word(eepromReadByte(12)<<8|eepromReadByte(13));
-  // printCalVector();
-  // printParameters();
 }
 
 void updateHardware(uint16_t (&marks)[NUMPULSES]){
@@ -497,7 +490,6 @@ void updateHardware(uint16_t (&marks)[NUMPULSES]){
     eepromWriteByte(2*m+12,calValue>>8);
     eepromWriteByte(2*m+13,calValue & 255);
   }
-  printParameters();
 }
 
 unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0){
@@ -672,6 +664,7 @@ void printCalVector(){
 
 void printParameters(){
     char delimeter = '~';
+    // mySerial.print("&");
     mySerial.print(version);
     mySerial.print(delimeter);
     mySerial.print(cerebroNum);

@@ -164,10 +164,13 @@ private:
     QPushButton*            startCal_btn,*pickFile_btn;
     QGridLayout*            chooseLayout,*calLayout;
     QPlainTextEdit*         codeTextBox;
-    QLabel*                 slideLabel,*dropLabel;
+    QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl;
+    QLineEdit*              cerebroNum_edit,*ldNum_edit;
     QCheckBox*              showGraph;
     QSlider*                wantedLevel;
     DropButton*             selectFile_btn;
+    bool                    isFirstTime;
+
 
 
 
@@ -221,6 +224,7 @@ private slots:
     void sendCalStart();
     void sendCalVector();
     void sendCalGroups();
+    void sendHardwareVals();
 };
 
 

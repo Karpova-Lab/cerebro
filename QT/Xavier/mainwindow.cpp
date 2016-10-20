@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.24.0\nUpdated:\t10/18/2016";
+        QString aboutString = "\t1.25.0\nUpdated:\t10/20/2016";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -249,34 +249,50 @@ calDialog = new QDialog();
 //        chooseBox = new QGroupBox("Calibrate");
             chooseLayout = new QGridLayout();
                 startCal_btn = new QPushButton("Start Calibration Routine");
-            chooseLayout->addWidget(startCal_btn,0,0,1,3);
+            chooseLayout->addWidget(startCal_btn,0,0,1,6);
                 wantedLevel = new QSlider(Qt::Horizontal);
                 wantedLevel->setRange(0,10);
                 wantedLevel->setValue(4);
                 wantedLevel->setTickPosition(QSlider::TicksBelow);
                 wantedLevel->setMaximumWidth(150);
-            chooseLayout->addWidget(wantedLevel,2,0,2,1);
+            chooseLayout->addWidget(wantedLevel,2,0,2,2);
                 slideLabel = new QLabel("Target Power: "+QString::number(wantedLevel->value())+ " mW");
-            chooseLayout->addWidget(slideLabel,1,0,Qt::AlignCenter);
+            chooseLayout->addWidget(slideLabel,1,0,1,2,Qt::AlignCenter);
                 showGraph = new QCheckBox("Show Graphs");
                 showGraph->setChecked(true);
-            chooseLayout->addWidget(showGraph,1,1,Qt::AlignCenter);
+            chooseLayout->addWidget(showGraph,1,2,1,4,Qt::AlignCenter);
                 selectFile_btn = new DropButton;//("Select Power Meter\ndata file");
                 selectFile_btn->setCheckable(true);
                 selectFile_btn->setAcceptDrops(true);
                 selectFile_btn->setCheckable(false);
-            chooseLayout->addWidget(selectFile_btn,2,1,2,1);
+            chooseLayout->addWidget(selectFile_btn,2,2,2,4);
                 codeTextBox = new QPlainTextEdit();
                 codeTextBox->setMinimumHeight(350);
 //                QFont codefont;
 //                codefont.setPointSize(5);
 //                codeTextBox->setFont(codefont);
-            chooseLayout->addWidget(codeTextBox,4,0,1,3);
-            sendCal_btn = new QPushButton("Send Calibration Vector");
-            chooseLayout->addWidget(sendCal_btn,5,0,1,3);
+            chooseLayout->addWidget(codeTextBox,4,0,1,6);
+                cerebroNum_lbl = new QLabel("Cerebro #");
+                cerebroNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            chooseLayout->addWidget(cerebroNum_lbl,5,0);
+                cerebroNum_edit = new QLineEdit;
+                cerebroNum_edit->setFixedWidth(40);
+            chooseLayout->addWidget(cerebroNum_edit,5,1);
+                ldNum_lbl = new QLabel("Laser diode #");
+                ldNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            chooseLayout->addWidget(ldNum_lbl,6,0);
+                ldNum_edit = new QLineEdit;
+                ldNum_edit->setFixedWidth(40);
+            chooseLayout->addWidget(ldNum_edit,6,1);
+                sendCal_btn = new QPushButton("Send Calibration Vector");
+                sendCal_btn->setMinimumHeight(40);
+            chooseLayout->addWidget(sendCal_btn,5,2,2,4);
 //        chooseBox->setLayout(chooseLayout);
 //    calLayout->addWidget(chooseBox);
+calDialog->setWindowTitle("Change Power Level");
 calDialog->setWindowFlags(calDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
+calDialog->setMaximumWidth(0);
+calDialog->setMaximumHeight(0);
 calDialog->setLayout(chooseLayout);
 
 
@@ -497,6 +513,7 @@ calDialog->setLayout(chooseLayout);
         onTimeString = " ms\t\t\nOn Time:\t";
         offTimeString = " ms\nOff Time:\t";
     }
+
 
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo()));
@@ -824,8 +841,6 @@ void MainWindow::readLog()
     }
 
     downloadMonitor->ensureCursorVisible();
-
-
 }
 
 void MainWindow::clearMonitor()
@@ -1483,19 +1498,33 @@ void MainWindow::editLabel(){
 }
 
 void MainWindow::sendCalVector(){
-    QMessageBox confirmUpdate;
-        confirmUpdate.setWindowTitle("Confirm Power Level Update");
+    bool cerNumisInt,ldNumisInt;
+    int cerNum = cerebroNum_edit->text().toInt(&cerNumisInt);
+    int ldNum = ldNum_edit->text().toInt(&ldNumisInt);
+    qDebug()<<!cerNumisInt<<!ldNumisInt<<(cerNum<0)<<(ldNum<0);
+    if  (!cerNumisInt || !ldNumisInt || cerNum<0 || ldNum<0){
+        QMessageBox calError;
+        calError.setWindowTitle("Error");
+        calError.setIcon(QMessageBox::Warning);
+        calError.setStandardButtons(QMessageBox::Ok);
+        calError.setText("Please fill in Cerebro# and LD# with postive integers");
+        calError.exec();
+    }
+    else{
+        QMessageBox confirmUpdate;
+        confirmUpdate.setWindowTitle("Confirm Update");
         confirmUpdate.setIcon(QMessageBox::Question);
         confirmUpdate.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
         confirmUpdate.setDefaultButton(QMessageBox::Cancel);
         confirmUpdate.setEscapeButton(QMessageBox::Cancel);
-        confirmUpdate.setText("Are you sure you want to update Cerebro's power level?");
-    if (confirmUpdate.exec() == QMessageBox::Yes){
-        QString msg = "X";
-        serial->write(msg.toLocal8Bit());
-        QTimer::singleShot(500, this, SLOT(sendCalGroups()));
+        confirmUpdate.setText("Are you sure you want to update Cerebro #" + cerebroNum_edit->text() + "'s power level and corresponding fade vector?");
+        if (confirmUpdate.exec() == QMessageBox::Yes){
+            sendCal_btn->setEnabled(false);
+            QString msg = "X";
+            serial->write(msg.toLocal8Bit());
+            QTimer::singleShot(500, this, SLOT(sendCalGroups()));
+        }
     }
-
 }
 
 void MainWindow::sendCalGroups(){
@@ -1508,6 +1537,28 @@ void MainWindow::sendCalGroups(){
             codeTextBox->insertPlainText(calibrationGroups[i]+"\n");
         }
         QTimer::singleShot(475, this, SLOT(sendCalGroups()));
+    }
+    else{
+        isFirstTime = true;
+        QTimer::singleShot(1000,this,SLOT(sendHardwareVals()));
+
+    }
+}
+
+void MainWindow::sendHardwareVals(){
+    if (isFirstTime){
+        QString msg = "H";
+        serial->write(msg.toLocal8Bit());
+        QTimer::singleShot(500, this, SLOT(sendHardwareVals()));
+        isFirstTime = false;
+    }
+    else{
+        QString msg = cerebroNum_edit->text()+"," + ldNum_edit->text() + ",0,0,0";
+        qDebug()<<msg<<"sent";
+        serial->write(msg.toLocal8Bit());
+        cerebroNum_edit->clear();
+        ldNum_edit->clear();
+        sendCal_btn->setEnabled(true);
     }
 }
 

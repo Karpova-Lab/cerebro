@@ -42,7 +42,7 @@
 
 #include <QDragEnterEvent>
 #include <QMimeData>
-QString startText = "Click to Select file\n<drop file here>";
+QString startText = "Select Calibration File";
 
 DropButton::DropButton(QWidget *parent)
     : QPushButton(parent)
