@@ -13,7 +13,7 @@ LD,measuredPowers,saveName = parseMeterFile(sourceName)
 peakIndices,peakVals,threshold = getPeaks(measuredPowers)
 plt.figure(figsize=(17,11))
 rawGraph(measuredPowers,peakIndices,peakVals,LD) #subplot 1
-trimmedInputs,lightout = calibrationCurve(peakIndices,peakVals,wantedLevel,LD) #subplot 2
+trimmedInputs,lightout = calibrationCurve(peakVals,wantedLevel,LD) #subplot 2
 
 if showGraph>0:
 	fig = plt.gcf()

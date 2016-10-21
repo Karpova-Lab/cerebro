@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 46;
+byte version = 47;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -142,7 +142,6 @@ int DAClevel = 0;
 //---------function prototypes---------//
 void calibrateRoutine();
 void triggerEvent(unsigned int desiredPower);
-void triggerEvent(unsigned int desiredPower);
 void feedback(int setPoint);
 void fade();
 byte listenForIR(int timeout=0);
@@ -222,7 +221,7 @@ void loop() {
 }
 
 void calibrateRoutine(){
-  delay(5000);
+  delay(10000);
   for (int b = 500; b<751; b+=50){
     triggerEvent(b);
     delay(15000);
@@ -343,8 +342,8 @@ void triggerEvent(unsigned int desiredPower){
 void feedback(int setPoint){
   ADCSRA |= (1<<ADSC);                    //start analog conversion
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  int resistance = ADC;
-  error = setPoint-resistance;
+  int photocellVoltage = ADC;
+  error = setPoint-photocellVoltage;
   if(calibrateMode){
     if (!isSettled && abs(error)<7){
       isSettled = true;

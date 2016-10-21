@@ -59,17 +59,35 @@ def rawGraph(vec,_peakIndices,_peakVals,LD):
     plt.scatter(_peakIndices,_peakVals,color='red')
 
 
-    title = "LD{} Raw power meter data".format(LD)
+    title = "LD{} Raw Power Meter Data".format(LD)
     ylabel = "Power (mW)"
-    xlabel = 'Samples'
+    xlabel = 'Sample #'
     plt.title(title,fontsize=20)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
     plt.ylim(0,45)
+    plt.xlim(0,150000)
 
-def calibrationCurve(_peakIndices,_peakVals,wantedLevel,LD):
-    plt.subplot(2,1,2)
-    plt.ylim(0,45)
+def calibrationCurve(_peakVals,wantedLevel,LD):
+    fig = plt.gcf()
+    ax1 = fig.add_subplot(212)
+    fig.subplots_adjust(bottom=0.2)
+    ax1.set_ylim(0,45)
+    ax1.set_xlim(450,1050)
+    #http://stackoverflow.com/questions/31803817/how-to-add-second-x-axis-at-the-bottom-of-the-first-one-in-matplotlib
+    ax2 = ax1.twiny()
+    new_tick_locations = np.array(ax1.get_xticks())/1023.0*4.2
+    print (new_tick_locations)
+    ax2.set_xticks(new_tick_locations)
+    ax2.set_xticklabels(np.round(new_tick_locations,1))
+    ax2.set_xlim(np.array(ax1.get_xlim())/1023.0*4.2)
+    ax2.set_xlabel("Photocell Voltage (V)")
+    # Move twinned axis ticks and label from top to bottom
+    ax2.xaxis.set_ticks_position("bottom")
+    ax2.xaxis.set_label_position("bottom")
+    # Offset the twin axis below the host
+    ax2.spines["bottom"].set_position(("axes", -0.15))
+
 
     lightOut = _peakVals[::-1]
     softVals = []
@@ -82,14 +100,14 @@ def calibrationCurve(_peakIndices,_peakVals,wantedLevel,LD):
 
     trimmedSoftVals = softVals[:len(lightOut)]
 
-    plt.scatter(trimmedSoftVals,lightOut,s=50) #plot points
-    plt.plot(trimmedSoftVals,lightOut,'--')    #connect points with dashed line
+    ax1.scatter(trimmedSoftVals,lightOut,s=50) #plot points
+    ax1.plot(trimmedSoftVals,lightOut,'--')    #connect points with dashed line
     calibration =  getCalibration(wantedLevel,trimmedSoftVals,lightOut) #get calibrated value
-    plt.scatter(calibration,wantedLevel,color="red",s=50) #plot calibrated value
-    plt.title("LD{} Calibration Curve".format(LD),fontsize=20)
+    ax1.scatter(calibration,wantedLevel,color="red",s=50) #plot calibrated value
+    ax1.set_title("LD{} Characterization Curve".format(LD),fontsize=20)
     ylabel = "Power (mW)"
-    plt.ylabel(ylabel)
-    plt.xlabel("powerLevel variable")
+    ax1.set_ylabel(ylabel)
+    ax1.set_xlabel("powerLevel variable")
     plt.figtext(.5,0,
                 "For {} mW the calibration value is {}".format(wantedLevel,calibration),
                 fontsize=30,
