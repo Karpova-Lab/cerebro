@@ -130,7 +130,7 @@ PCB Assembly
 Uploading Firmware
 ------------------
 1. Setup Arduino environment and Cerebro Utility Shield if you haven't already done so. :ref:`utility shield setup`
-2. Turn on Cerebro and plug it into the uploader shield as shown.
+2. Turn on Cerebro and plug it into the Utility Shield as shown below.
 
 .. figure:: photos/Setup_photos/cerebro_upload.png
     :align: center
@@ -163,3 +163,6 @@ Uploading Firmware
 .. figure:: photos/Setup_photos/upload.png
     :align: center
     :scale: 100%
+
+Power Level Setup
+-----------------

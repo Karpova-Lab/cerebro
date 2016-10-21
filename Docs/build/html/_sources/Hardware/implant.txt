@@ -5,6 +5,7 @@ Head Implant
 .. include:: mmlalias.txt
 .. include:: isopub.txt
 
+.. _implantTools:
 
 Required Tools
 ==============
@@ -58,24 +59,43 @@ Assembly Instructions
 #. Solder laser diodes onto implant PCB
 
 
-Calibration Instructions
-========================
-The is variation in head implant assemblies. Laser diodes, coupling efficency, LDR postion in relation to the laser diodes. In order to compensate for all of this variability, each assembly must be calibrated
-so we know the relation between our power variable in our code and the actual light power being produced at the fiber tips.
+Characterization
+================
+We want to know and be able to control the amount of light that we deliver to the brain during experiments.
+The light power produced by the laser diodes is a function of current and case temperature:
 
-1. Follow the :ref:`instructions <cerebro upload>` for uploading Cerebro Firmware. Delete line 37's preceding '//' to uncomment '#define CALIBRATE' before uploading the firmware.
+.. figure:: photos/Calibration_photos/laserDiodeResponse.png
+  :align: center
+  :scale: 30%
 
-.. figure:: photos/Calibration_photos/define.png
+Cerebro has precise control of the current being delivered to the laser diode, and can monitor the voltage across the photocell.
+We can use a feeback loop to maintain a constant photocell voltage, and therefore a constant fiber tip light power output
+(assuming the light power at the fiber tip is proportional to the light hitting the photocell).
+
+If the photocell had a linear response to light power, we could just make 1 measurement of the light output at a known photocell voltage
+and find a proportionality constant. However, the photocell doesn't have a linear response:
+
+.. figure:: photos/Calibration_photos/photcellResponse.png
+  :align: center
+  :scale: 25%
+
+We therefore need to measure the light output at the fiber tip across a range of known photocell voltages. Overall, we are trying to
+characterize the relationship between photocell voltage and fiber tip light power, resulting in a graph like the following:
+
+.. figure:: photos/Calibration_photos/characterization.png
   :align: center
   :scale: 100%
 
-2. Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a Light Power Meter.
+
+Gathering Data
+``````````````
+1. Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a :ref:`Light Power Meter<implantTools>`
 
 .. figure:: photos/Calibration_photos/fixture.jpg
   :align: center
-  :scale: 100%
+  :scale: 15%
 
-3. Open up the Light Power Meter software and change the following settings:
+2. Open up the `Thorlabs' Power Meter Software <https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x>`_ and change the following settings:
 
   - Range: 120mW
   - Wave: 520nm
@@ -89,15 +109,23 @@ so we know the relation between our power variable in our code and the actual li
   :align: center
   :scale: 100%
 
-4. Make sure Cerbero is turned on and then click "Start Log"
-#. Using either a Base Station or IR remote, send the following new waveform paratmeters: 0 power, 2000 on , 0 off, 0 train, 0 ramp
-#. Using either a Base Station or IR remote, send a trigger signal to Cerebro to begin the calibration routine
-#. Run Python script on the log file to to get calibration summary
-#. In Cerebro.ino, replace the "const int levels[100]" variable with the code found in the calibration summary file
+3. Open up Xavier and start a new session.  :ref:`How to start a session<start session>`
+4. In the "Cerebro's Waveform Parameters" section, click ``Change Power Level``. A "Change Power Level" window will appear.
 
-.. figure:: photos/Calibration_photos/calVals.png
+.. figure:: photos/Calibration_photos/openCalDialog.png
   :align: center
-  :scale: 100%
+  :scale: 50%
+
+5. Make sure Cerbero is turned on and then click ``Start Calibration Routine`` in the new window.
+Cerebro's amber light will turn on to indicate that the calibration routine has begun.
+Within 10 seconds, click ``Start Log`` in the Light Power Meter software to begin recording light power data.
+
+.. figure:: photos/Calibration_photos/sendCalTrigger.png
+  :align: center
+  :scale: 50%
+
+6. After about 15 minutes, the data will have been collected.
+
 
 Design Files
 ============

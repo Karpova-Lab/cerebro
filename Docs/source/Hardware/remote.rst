@@ -46,9 +46,11 @@ PCB
 Build Instructions
 ==================
 
-Uploading Firmware
-------------------
+.. Uploading Firmware
+.. ------------------
 
+.. todo::
+	How to upload firmware
 
 User Guide
 ==========
@@ -58,8 +60,7 @@ Demonstration Video
 
 .. raw:: html
 
-	<iframe src="https://player.vimeo.com/video/175858239" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-	<p><a href="https://vimeo.com/175858239">IR Remote Demonstration</a></p>
+	<iframe src="https://player.vimeo.com/video/175858239?title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 .. _remote check:
 
@@ -91,3 +92,9 @@ Stopping a light pulse
 ----------------------
 
 #. Press and release the "B" button. The display will show "Stop Sent"
+
+Starting a Calibration Routine
+------------------------------
+
+#. Press and hold the "A" button. The display will show "Calibrate Sent"
+#. The yellow light on Cerebro will turn on, indicating that it has begun its calibration routine

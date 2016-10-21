@@ -40,11 +40,11 @@ SoftwareSerial mySerial(3,4);
 #define stopIn_reg    PINB
 #define triggerIn   2              //pin 7 on 85
 #define stopIn      0              //pin 5 on 85
-#define continuation 1
+#define CONTINUATION 1
 String startupMsg;
 unsigned long timeOffset;
 byte values[numParameters][6];
-byte version = 19;
+byte version = 21;
 unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
 long triggerClock = 0;
 unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
@@ -150,6 +150,12 @@ void parseMsg(byte numValues){
     mySerial.print(millis() - timeOffset);
     mySerial.print(F(",Debug Stop Sent\r"));
   }
+  else if (values[0][0] == 'C') {
+    cerebro.trigger(CONTINUATION);
+    triggerClock = millis();
+    mySerial.print(triggerClock - timeOffset);
+    mySerial.print(F(",Debug Continuation Sent\r"));
+  }
   //received ASCII "E", send save to EEPROM command to cerebro.
   else if (values[0][0] == 'E' ){
     cerebro.saveEEPROM();
@@ -189,16 +195,38 @@ void parseMsg(byte numValues){
     mySerial.print(F("Filter updated to "));
     mySerial.print(spamFilter);
     mySerial.print(" ms\r");
-
+  }
+  else if (values[0][0] == 'X') {
+    cerebro.sendBinary(117,7);
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Calibration Vector Sent\r"));
+  }
+  else if (values[0][0] == 'H') {
+    cerebro.sendBinary(97,7);
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Hardware Vector Sent\r"));
+  }
+  else if (values[0][0] == 'Z') {
+    cerebro.calibrate();
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Calibration Routine Start Sent\r"));
   }
   //received new parameter settings. Send 8 bytes of data to cerebro.
   else if (numValues==numParameters-1){
+    //convert read ascii digits to an integer
+    unsigned int decnum[numParameters];
+    for( int k=0; k<numParameters; k++){
+        decnum[k] = 0;
+        for (int i = 0; i < values[k][5]; i++) {
+          decnum[k] = decnum[k] + (values[k][i] - 48) * powers[values[k][5] - i - 1];
+        }
+    }
     mySerial.print(millis() - timeOffset);
-    cerebro.send(values);
+    cerebro.send(decnum);
     mySerial.print(F(",New Parameters Sent"));
     for (int i = 0; i<numParameters; i++){
       mySerial.print(",");
-      mySerial.print(cerebro.getParameter(i));
+      mySerial.print(decnum[i]);
     }
     mySerial.print("\r");
   }
@@ -213,7 +241,7 @@ void triggerFromBase(){
     mySerial.print(F(",Trigger Sent\r"));
   }
   else{
-    cerebro.trigger(continuation);
+    cerebro.trigger(CONTINUATION);
     triggerClock = millis();
     mySerial.print(triggerClock - timeOffset);
     mySerial.print(F(",Continue Sent,"));

@@ -89,24 +89,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/charging dock.html">Charging Dock</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/remote.html">IR Remote</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/downloader cord.html">Downloader Cord</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Xavier</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Xavier</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#system-requirements">System Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#download-instructions">Download Instructions</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#xavier-user-guide">Xavier User Guide</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#starting-a-new-session">Starting a New Session</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#waveform-parameters">Waveform Parameters</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#parameter-definitions">Parameter Definitions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#changing-parameters">Changing Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-a-new-session">Starting a New Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#waveform-parameters">Waveform Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#checking-current-parameters">Checking Current Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-parameters">Changing Parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#ending-a-session-and-saving-data">Ending a Session and Saving Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#xavier-settings">Xavier Settings</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#edit-default-save-directory">Edit Default Save Directory</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#edit-dropdown-lists">Edit Dropdown Lists</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#labeling-com-ports">Labeling COM Ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ending-a-session-and-saving-data">Ending a Session and Saving Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#settings">Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#edit-default-save-directory">Edit Default Save Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-dropdown-lists">Edit Dropdown Lists</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adding-items">Adding Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#removing-items">Removing Items</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#labeling-com-ports">Labeling COM Ports</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adding-labels">Adding Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#editing-labels">Editing Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#removing-labels">Removing Labels</a></li>
 </ul>
 </li>
 </ul>
@@ -135,7 +141,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -159,7 +165,7 @@
             
   <div class="section" id="xavier">
 <h1>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="../_images/Xavier.png"><img alt="../_images/Xavier.png" class="align-center" src="../_images/Xavier.png" style="width: 460.0px; height: 453.6px;" /></a>
+<a class="reference internal image-reference" href="../_images/Xavier.png"><img alt="../_images/Xavier.png" class="align-center" src="../_images/Xavier.png" style="width: 731.2px; height: 551.2px;" /></a>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="system-requirements">
@@ -167,88 +173,86 @@
 <blockquote>
 <div><ul class="simple">
 <li>Windows XP or newer</li>
-<li><a class="reference external" href="http://www.ftdichip.com/Drivers/VCP.htm">FTDI FT230X Driver</a></li>
-<li><a class="reference external" href="http://continuum.io/downloads">Anaconda Python 2.7 Distribution</a></li>
+<li><a class="reference external" href="http://continuum.io/downloads">Anaconda Python 3.5 Distribution</a></li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="download-instructions">
 <span id="setup-default"></span><h3>Download Instructions<a class="headerlink" href="#download-instructions" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Download and install <a class="reference external" href="http://continuum.io/downloads">Anaconda Python 2.7 Distribution</a></li>
-<li>Download and unzip <a class="reference download internal" href="../_downloads/Deployment.zip"><code class="xref download docutils literal"><span class="pre">Xavier</span> <span class="pre">Deployment</span> <span class="pre">Folder</span></code></a></li>
+<li>Download and install <a class="reference external" href="http://continuum.io/downloads">Anaconda Python 3.5 Distribution</a></li>
+<li>Download and unzip <a class="reference download internal" href="../_downloads/Deployment.zip" download=""><code class="xref download docutils literal"><span class="pre">Xavier</span> <span class="pre">Deployment</span> <span class="pre">Folder</span></code></a></li>
 <li>Open up Xavier.exe</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/Xavier_open.png"><img alt="../_images/Xavier_open.png" src="../_images/Xavier_open.png" style="width: 487.5px; height: 371.25px;" /></a>
 </div>
 <ol class="arabic simple" start="4">
-<li>Setup a <a class="reference internal" href="#edit-default-directory"><span>default directory</span></a> that data will be saved to</li>
+<li>Setup a <a class="reference internal" href="#edit-default-directory"><span class="std std-ref">default directory</span></a> that data will be saved to</li>
 </ol>
 </div>
 </div>
-<div class="section" id="xavier-user-guide">
-<span id="user-guide"></span><h2>Xavier User Guide<a class="headerlink" href="#xavier-user-guide" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="starting-a-new-session">
-<h3>Starting a New Session<a class="headerlink" href="#starting-a-new-session" title="Permalink to this headline">¶</a></h3>
+<span id="start-session"></span><h2>Starting a New Session<a class="headerlink" href="#starting-a-new-session" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>Fill out experimental setup information.</li>
 </ol>
-<a class="reference internal image-reference" href="../_images/rat_info.png"><img alt="../_images/rat_info.png" class="align-center" src="../_images/rat_info.png" style="width: 420.0px; height: 93.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/rat_info.png"><img alt="../_images/rat_info.png" class="align-center" src="../_images/rat_info.png" style="width: 564.0px; height: 136.0px;" /></a>
 <ol class="arabic simple" start="2">
 <li>Select a Base Station Serial Port.</li>
 </ol>
-<a class="reference internal image-reference" href="../_images/com_port.png"><img alt="../_images/com_port.png" class="align-center" src="../_images/com_port.png" style="width: 427.0px; height: 90.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/com_port.png"><img alt="../_images/com_port.png" class="align-center" src="../_images/com_port.png" style="width: 565.0px; height: 136.0px;" /></a>
 <ol class="arabic simple" start="3">
 <li>Click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Session</span></code></li>
 </ol>
-<a class="reference internal image-reference" href="../_images/start_session.png"><img alt="../_images/start_session.png" class="align-center" src="../_images/start_session.png" style="width: 423.0px; height: 89.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/start_session.png"><img alt="../_images/start_session.png" class="align-center" src="../_images/start_session.png" style="width: 564.0px; height: 135.0px;" /></a>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last">The dropdown menus can be <a class="reference internal" href="#add-items"><span>edited</span></a> and COM Ports that appear in the dropdown list can be <a class="reference internal" href="#label-ports"><span>labeled</span></a></p>
+<p class="last">The dropdown menus can be <a class="reference internal" href="#add-items"><span class="std std-ref">edited</span></a> and COM Ports that appear in the dropdown list can be <a class="reference internal" href="#label-ports"><span class="std std-ref">labeled</span></a></p>
 </div>
 </div>
 <div class="section" id="waveform-parameters">
-<span id="id2"></span><h3>Waveform Parameters<a class="headerlink" href="#waveform-parameters" title="Permalink to this headline">¶</a></h3>
-<p>Five waveform parameters (Power Level, On Time, Off Time, Train Duration, Ramp Down) can be changed throughout the session.
+<span id="id2"></span><h2>Waveform Parameters<a class="headerlink" href="#waveform-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Five waveform parameters (Start Delay, On Time, Off Time, Train Duration, Ramp Down) can be wirelessly changed throughout the session.
 The user can make changes using either a <strong>Single Shot</strong> mode with an optional ramp down or <strong>Pulse Train</strong> mode. Non-applicable parameters are automatically set to zero depending on
-options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained eventherefore accessible even after the device is turned off.</p>
-<div class="section" id="parameter-definitions">
-<h4>Parameter Definitions<a class="headerlink" href="#parameter-definitions" title="Permalink to this headline">¶</a></h4>
-<dl class="docutils">
-<dt>Power Level</dt>
-<dd>Level of light output. Each laser diode assembly is calibrated to provide a range of power level values that correspond with known light power (mW) outputs.</dd>
-<dt>On Time (ms)</dt>
-<dd>Duration the laser is on at the given Power Level</dd>
-<dt>Off Time (ms) [Pulse Train mode]</dt>
-<dd>Duration the laser is off</dd>
-<dt>Train Duration (ms) [Pulse Train mode]</dt>
-<dd>Duration that the on-off cycles are repeated</dd>
-<dt>Ramp down (ms) [Single Shot mode]</dt>
-<dd>Time it takes for the laser to linearly reduce its output from Power Level to completely off. Must be a mulitple of 100 ms.</dd>
-</dl>
-<a class="reference internal image-reference" href="../_images/parameter_diagram.png"><img alt="../_images/parameter_diagram.png" class="align-center" src="../_images/parameter_diagram.png" style="width: 1188.0px; height: 1170.0px;" /></a>
+options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained between sessions.</p>
+<a class="reference internal image-reference" href="../_images/parameter_diagram.png"><img alt="../_images/parameter_diagram.png" class="align-center" src="../_images/parameter_diagram.png" style="width: 5055.0px; height: 4856.0px;" /></a>
+<div class="section" id="checking-current-parameters">
+<span id="pulse-change-header"></span><h3>Checking Current Parameters<a class="headerlink" href="#checking-current-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Select the appropriate Downloader Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_downloader.png"><img alt="../_images/connect_downloader.png" class="align-center" src="../_images/connect_downloader.png" style="width: 308.0px; height: 208.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>With Cerebro turned off, plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
+<li>Turn on Cerebro.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_plug.jpg"><img alt="../_images/connect_plug.jpg" class="align-center" src="../_images/connect_plug.jpg" style="width: 469.20000000000005px; height: 250.0px;" /></a>
+<ol class="arabic simple" start="4">
+<li>A dialog box with all of Cerebro&#8217;s parameters will appear. Xavier&#8217;s &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section will automatically be updated to match the parameters currently on Cerebro.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/parameters_popup.png"><img alt="../_images/parameters_popup.png" class="align-center" src="../_images/parameters_popup.png" style="width: 322.3px; height: 357.50000000000006px;" /></a>
 </div>
 <div class="section" id="changing-parameters">
-<span id="pulse-change-header"></span><h4>Changing Parameters<a class="headerlink" href="#changing-parameters" title="Permalink to this headline">¶</a></h4>
+<h3>Changing Parameters<a class="headerlink" href="#changing-parameters" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>In the &#8220;Adjust Pulse Parameters&#8221; section, select desired pulse options and modify the parameters</li>
+<li>In the &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section, select desired pulse options and modify the parameters</li>
 </ol>
-<a class="reference internal image-reference" href="../_images/parameter_change.png"><img alt="../_images/parameter_change.png" class="align-center" src="../_images/parameter_change.png" style="width: 639.6px; height: 276.4px;" /></a>
+<a class="reference internal image-reference" href="../_images/parameter_change.png"><img alt="../_images/parameter_change.png" class="align-center" src="../_images/parameter_change.png" style="width: 614.8000000000001px; height: 301.6px;" /></a>
 <ol class="arabic simple" start="2">
 <li>Click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">New</span> <span class="pre">Parameters</span></code>. The last sent parameters will be displayed at the bottom</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/last_sent.png"><img alt="../_images/last_sent.png" src="../_images/last_sent.png" style="width: 319.95px; height: 317.25px;" /></a>
+<a class="reference internal image-reference" href="../_images/last_sent.png"><img alt="../_images/last_sent.png" src="../_images/last_sent.png" style="width: 319.95000000000005px; height: 317.25px;" /></a>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last">The IR Remote can be used as an alternative to <a class="reference internal" href="../Hardware/remote.html#remote-send"><span>send new parameters</span></a>. Additionally, it is capable of <a class="reference internal" href="../Hardware/remote.html#remote-check"><span>checking the current parameters</span></a>  saved to Cerebro&#8217;s memory.</p>
+<p class="last">The IR Remote can be used as an alternative to <a class="reference internal" href="../Hardware/remote.html#remote-send"><span class="std std-ref">send new parameters</span></a>. Additionally, it is capable of <a class="reference internal" href="../Hardware/remote.html#remote-check"><span class="std std-ref">checking the current parameters</span></a>  saved to Cerebro&#8217;s memory.</p>
 </div>
 </div>
 </div>
 <div class="section" id="ending-a-session-and-saving-data">
-<span id="upload-header"></span><h3>Ending a Session and Saving Data<a class="headerlink" href="#ending-a-session-and-saving-data" title="Permalink to this headline">¶</a></h3>
+<span id="upload-header"></span><h2>Ending a Session and Saving Data<a class="headerlink" href="#ending-a-session-and-saving-data" title="Permalink to this headline">¶</a></h2>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <ol class="last arabic simple">
@@ -258,17 +262,17 @@ options selected. Once the parameters are sent to and received by Cerebro, they 
 <a class="reference internal image-reference" href="../_images/end_session.png"><img alt="../_images/end_session.png" class="align-center" src="../_images/end_session.png" style="width: 277.0px; height: 389.0px;" /></a>
 <ol class="arabic simple" start="2">
 <li>Turn off Cerebro and disconnect it from the rat&#8217;s head implant</li>
-<li>Make sure the <a class="reference internal" href="../Overview/Overview.html#cord"><span>Downloader Cord</span></a> is plugged into the computer</li>
-<li>A &#8220;Download Monitor&#8221; tab should have automatically appeared after step 1. In this tab, select the appropriate Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
+<li>Make sure the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> is plugged into the computer</li>
+<li>Select the appropriate Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
 </ol>
-<a class="reference internal image-reference" href="../_images/connect_uploader.png"><img alt="../_images/connect_uploader.png" class="align-center" src="../_images/connect_uploader.png" style="width: 294.0px; height: 562.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/connect_downloader1.png"><img alt="../_images/connect_downloader1.png" class="align-center" src="../_images/connect_downloader1.png" style="width: 308.0px; height: 208.0px;" /></a>
 <ol class="arabic simple" start="5">
-<li>Plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span>Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
+<li>Plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
 <li>Press and hold the download button</li>
 <li>While still holding down the download button, switch Cerebro on. The event log will be printed to the Download Monitor.
 You may release the download button once events have begun being printed to the Cerebro Monitor.</li>
 </ol>
-<a class="reference internal image-reference" href="../_images/upload1.png"><img alt="../_images/upload1.png" class="align-center" src="../_images/upload1.png" style="width: 443.2px; height: 309.4px;" /></a>
+<a class="reference internal image-reference" href="../_images/upload1.png"><img alt="../_images/upload1.png" class="align-center" src="../_images/upload1.png" style="width: 443.20000000000005px; height: 309.40000000000003px;" /></a>
 <ol class="arabic simple" start="8">
 <li>Click <code class="docutils literal"><span class="pre">Save</span> <span class="pre">Session</span></code> button.</li>
 </ol>
@@ -278,8 +282,8 @@ You may release the download button once events have begun being printed to the 
 </ol>
 <a class="reference internal image-reference" href="../_images/summary.png"><img alt="../_images/summary.png" class="align-center" src="../_images/summary.png" style="width: 497.0px; height: 224.0px;" /></a>
 </div>
-<div class="section" id="xavier-settings">
-<h3>Xavier Settings<a class="headerlink" href="#xavier-settings" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
 <p>Access Xavier Settings by navigating to <strong>File-&gt;Settings..</strong> or by pressing <code class="kbd docutils literal"><span class="pre">Ctrl</span></code> + <code class="kbd docutils literal"><span class="pre">,</span></code></p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/settings_dialog.png"><img alt="../_images/settings_dialog.png" src="../_images/settings_dialog.png" style="width: 577.0px; height: 109.0px;" /></a>
@@ -289,7 +293,7 @@ You may release the download button once events have begun being printed to the 
 <p class="last">Settings cannot be changed in the middle of a session</p>
 </div>
 <div class="section" id="edit-default-save-directory">
-<span id="edit-default-directory"></span><h4>Edit Default Save Directory<a class="headerlink" href="#edit-default-save-directory" title="Permalink to this headline">¶</a></h4>
+<span id="edit-default-directory"></span><h3>Edit Default Save Directory<a class="headerlink" href="#edit-default-save-directory" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li>Click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Directory</span></code> to setup a new save location.</li>
 </ol>
@@ -310,25 +314,25 @@ You may release the download button once events have begun being printed to the 
 </div>
 </div>
 <div class="section" id="edit-dropdown-lists">
-<span id="add-items"></span><h4>Edit Dropdown Lists<a class="headerlink" href="#edit-dropdown-lists" title="Permalink to this headline">¶</a></h4>
+<span id="add-items"></span><h3>Edit Dropdown Lists<a class="headerlink" href="#edit-dropdown-lists" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="adding-items">
-<h5>Adding Items<a class="headerlink" href="#adding-items" title="Permalink to this headline">¶</a></h5>
+<h4>Adding Items<a class="headerlink" href="#adding-items" title="Permalink to this headline">¶</a></h4>
 <p>Type new items into dropdown list textboxes and click <code class="docutils literal"><span class="pre">Add</span> <span class="pre">Item</span></code> (or press <code class="kbd docutils literal"><span class="pre">Enter</span></code>)</p>
 <a class="reference internal image-reference" href="../_images/additem.gif"><img alt="../_images/additem.gif" class="align-center" src="../_images/additem.gif" style="width: 462.0px; height: 526.0px;" /></a>
 </div>
 <div class="section" id="removing-items">
-<h5>Removing Items<a class="headerlink" href="#removing-items" title="Permalink to this headline">¶</a></h5>
+<h4>Removing Items<a class="headerlink" href="#removing-items" title="Permalink to this headline">¶</a></h4>
 <p>Select the item from list you want to remove and click <code class="docutils literal"><span class="pre">Remove</span> <span class="pre">Selected</span></code></p>
 <a class="reference internal image-reference" href="../_images/removeitem.gif"><img alt="../_images/removeitem.gif" class="align-center" src="../_images/removeitem.gif" style="width: 462.0px; height: 524.0px;" /></a>
 </div>
 </div>
 <div class="section" id="labeling-com-ports">
-<span id="label-ports"></span><h4>Labeling COM Ports<a class="headerlink" href="#labeling-com-ports" title="Permalink to this headline">¶</a></h4>
+<span id="label-ports"></span><h3>Labeling COM Ports<a class="headerlink" href="#labeling-com-ports" title="Permalink to this headline">¶</a></h3>
 <p>When multiple usb devices are connected to the computer, it can be hard to keep track of which COM Port belongs to which device. To minimize confusion when connecting
 to serial ports, Xavier allows you to label COM Ports.</p>
 <a class="reference internal image-reference" href="../_images/port_labeling.png"><img alt="../_images/port_labeling.png" class="align-center" src="../_images/port_labeling.png" style="width: 6075.0px; height: 938.0px;" /></a>
 <div class="section" id="adding-labels">
-<h5>Adding Labels<a class="headerlink" href="#adding-labels" title="Permalink to this headline">¶</a></h5>
+<h4>Adding Labels<a class="headerlink" href="#adding-labels" title="Permalink to this headline">¶</a></h4>
 <ol class="arabic simple">
 <li>From the dropdown box, select the COM Port you want to add a label to</li>
 <li>Type the new label into the textbox and click <code class="docutils literal"><span class="pre">Add/Edit</span> <span class="pre">Label</span></code> (or press <code class="kbd docutils literal"><span class="pre">Enter</span></code>)</li>
@@ -336,7 +340,7 @@ to serial ports, Xavier allows you to label COM Ports.</p>
 <a class="reference internal image-reference" href="../_images/addlabel.gif"><img alt="../_images/addlabel.gif" class="align-center" src="../_images/addlabel.gif" style="width: 460.0px; height: 524.0px;" /></a>
 </div>
 <div class="section" id="editing-labels">
-<h5>Editing Labels<a class="headerlink" href="#editing-labels" title="Permalink to this headline">¶</a></h5>
+<h4>Editing Labels<a class="headerlink" href="#editing-labels" title="Permalink to this headline">¶</a></h4>
 <ol class="arabic simple">
 <li>Double-click the labeled COM Port from the list that you want to edit. A label editing dialog will appear.</li>
 <li>Type the new label into the textbox and click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Label</span></code></li>
@@ -344,10 +348,9 @@ to serial ports, Xavier allows you to label COM Ports.</p>
 <a class="reference internal image-reference" href="../_images/editlabel.gif"><img alt="../_images/editlabel.gif" class="align-center" src="../_images/editlabel.gif" style="width: 460.0px; height: 614.0px;" /></a>
 </div>
 <div class="section" id="removing-labels">
-<h5>Removing Labels<a class="headerlink" href="#removing-labels" title="Permalink to this headline">¶</a></h5>
+<h4>Removing Labels<a class="headerlink" href="#removing-labels" title="Permalink to this headline">¶</a></h4>
 <p>Select the labeled COM Port from the list that you want to remove and click <code class="docutils literal"><span class="pre">Remove</span> <span class="pre">Selected</span></code></p>
 <a class="reference internal image-reference" href="../_images/removelabel.gif"><img alt="../_images/removelabel.gif" class="align-center" src="../_images/removelabel.gif" style="width: 462.0px; height: 524.0px;" /></a>
-</div>
 </div>
 </div>
 </div>
@@ -371,7 +374,7 @@ to serial ports, Xavier allows you to label COM Ports.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2016, Andy Lustig.
-      Last updated on Sep 28, 2016.
+      Last updated on Oct 21, 2016.
 
     </p>
   </div>

@@ -88,20 +88,18 @@
 <li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility shield.html">Utility Shield</a></li>
 <li class="toctree-l1"><a class="reference internal" href="charging dock.html">Charging Dock</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">IR Remote</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">IR Remote</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#required-tools">Required Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#design-files">Design Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#demonstration-video">Demonstration Video</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#checking-cerebro-s-waveform-parameters">Checking Cerebro&#8217;s Waveform Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#editing-and-sending-waveform-parameters">Editing and Sending Waveform Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#triggering-a-light-pulse">Triggering a light pulse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stopping-a-light-pulse">Stopping a light pulse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-a-calibration-routine">Starting a Calibration Routine</a></li>
 </ul>
 </li>
 </ul>
@@ -130,7 +128,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -181,7 +179,7 @@
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Rotary encoder</td>
-<td><a class="reference download internal" href="../_downloads/rotary_encoder.pdf"><code class="xref download docutils literal"><span class="pre">A14-LC-TT</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/rotary_encoder.pdf" download=""><code class="xref download docutils literal"><span class="pre">A14-LC-TT</span></code></a></td>
 <td><a class="reference external" href="https://www.sparkfun.com/products/10982">Sparkfun</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
@@ -191,36 +189,36 @@
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>ATmega328</td>
-<td><a class="reference download internal" href="../_downloads/ATMEGA328P-AU.pdf"><code class="xref download docutils literal"><span class="pre">ATMEGA328P-AU</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/ATMEGA328P-AU.pdf" download=""><code class="xref download docutils literal"><span class="pre">ATMEGA328P-AU</span></code></a></td>
 <td rowspan="8"><a class="reference external" href="https://octopart.com/bom-lookup/KZkJVKbQ">Octopart</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>16 MHz Resonator</td>
-<td><a class="reference download internal" href="../_downloads/CSTLS16M0X53-A0.pdf"><code class="xref download docutils literal"><span class="pre">CSTLS16M0X53-A0</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/CSTLS16M0X53-A0.pdf" download=""><code class="xref download docutils literal"><span class="pre">CSTLS16M0X53-A0</span></code></a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Male micro USB vertical plug</td>
-<td><a class="reference download internal" href="../_downloads/ZX20-B-5S.pdf"><code class="xref download docutils literal"><span class="pre">ZX20-B-5S</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/ZX20-B-5S.pdf" download=""><code class="xref download docutils literal"><span class="pre">ZX20-B-5S</span></code></a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Male micro USB shielding</td>
-<td><a class="reference download internal" href="../_downloads/ZX20-B-5S.pdf"><code class="xref download docutils literal"><span class="pre">ZX20-B-SLDC</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/ZX20-B-5S.pdf" download=""><code class="xref download docutils literal"><span class="pre">ZX20-B-SLDC</span></code></a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Female micro USB horizontal socket</td>
-<td><a class="reference download internal" href="../_downloads/10118193-0001LF.pdf"><code class="xref download docutils literal"><span class="pre">10118193-0001LF</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/10118193-0001LF.pdf" download=""><code class="xref download docutils literal"><span class="pre">10118193-0001LF</span></code></a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Toggle switch</td>
-<td><a class="reference download internal" href="../_downloads/ATE1D-2M3-10-Z.pdf"><code class="xref download docutils literal"><span class="pre">ATE1D-2M3-10-Z</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/ATE1D-2M3-10-Z.pdf" download=""><code class="xref download docutils literal"><span class="pre">ATE1D-2M3-10-Z</span></code></a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>IR LED</td>
-<td><a class="reference download internal" href="../_downloads/OED-EL-1L2.pdf"><code class="xref download docutils literal"><span class="pre">OED-EL-1L2</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/OED-EL-1L2.pdf" download=""><code class="xref download docutils literal"><span class="pre">OED-EL-1L2</span></code></a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>JST battery connector</td>
-<td><a class="reference download internal" href="../_downloads/S2B-PH-K-S(LF)(SN).pdf"><code class="xref download docutils literal"><span class="pre">S2B-PH-K-S(LF)(SN)</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/S2B-PH-K-S(LF)(SN).pdf" download=""><code class="xref download docutils literal"><span class="pre">S2B-PH-K-S(LF)(SN)</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -230,25 +228,25 @@
 <dl class="docutils">
 <dt>PCB</dt>
 <dd><ul class="first last simple">
-<li><a class="reference download internal" href="../_downloads/IR remote 2.1.brd"><code class="xref download docutils literal"><span class="pre">IR</span> <span class="pre">remote</span> <span class="pre">2.1.brd</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/IR remote 2.1.sch"><code class="xref download docutils literal"><span class="pre">IR</span> <span class="pre">remote</span> <span class="pre">2.1.sch</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/IR remote 2.1 schematic.pdf"><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/IR remote 2.1.brd" download=""><code class="xref download docutils literal"><span class="pre">IR</span> <span class="pre">remote</span> <span class="pre">2.1.brd</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/IR remote 2.1.sch" download=""><code class="xref download docutils literal"><span class="pre">IR</span> <span class="pre">remote</span> <span class="pre">2.1.sch</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/IR remote 2.1 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="build-instructions">
 <h2>Build Instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="uploading-firmware">
-<h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">How to upload firmware</p>
 </div>
 </div>
 <div class="section" id="user-guide">
 <h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="demonstration-video">
 <h3>Demonstration Video<a class="headerlink" href="#demonstration-video" title="Permalink to this headline">¶</a></h3>
-<iframe src="https://player.vimeo.com/video/175858239" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p><a href="https://vimeo.com/175858239">IR Remote Demonstration</a></p></div>
+<iframe src="https://player.vimeo.com/video/175858239?title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>
 <div class="section" id="checking-cerebro-s-waveform-parameters">
 <span id="remote-check"></span><h3>Checking Cerebro&#8217;s Waveform Parameters<a class="headerlink" href="#checking-cerebro-s-waveform-parameters" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
@@ -280,6 +278,13 @@
 <li>Press and release the &#8220;B&#8221; button. The display will show &#8220;Stop Sent&#8221;</li>
 </ol>
 </div>
+<div class="section" id="starting-a-calibration-routine">
+<h3>Starting a Calibration Routine<a class="headerlink" href="#starting-a-calibration-routine" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Press and hold the &#8220;A&#8221; button. The display will show &#8220;Calibrate Sent&#8221;</li>
+<li>The yellow light on Cerebro will turn on, indicating that it has begun its calibration routine</li>
+</ol>
+</div>
 </div>
 </div>
 
@@ -303,7 +308,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2016, Andy Lustig.
-      Last updated on Sep 28, 2016.
+      Last updated on Oct 20, 2016.
 
     </p>
   </div>

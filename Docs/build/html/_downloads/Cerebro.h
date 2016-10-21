@@ -13,17 +13,15 @@ public:
   void test();
   void saveEEPROM();
   void toggle(bool turnON);
-  void send(byte readValues[][6]);
   void send(int newVals[]);
+  void calibrate();
+  void sendBinary(unsigned int value, unsigned char valSize);
   byte getEmitterType();
-  int  getParameter(byte paramIndex);
   bool isNormallyOn;
 private:
   int _emitter;
   byte pin;
   unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
-  unsigned int decnum[numParameters];
-  char bitIndex = 15;
   void pulseIR(unsigned int pulses);
   void sendMark(bool data);
   void interrupt();

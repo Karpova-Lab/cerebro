@@ -84,11 +84,14 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Head Implant</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Head Implant</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#required-tools">Required Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#assembly-instructions">Assembly Instructions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#calibration-instructions">Calibration Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#characterization">Characterization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gathering-data">Gathering Data</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#design-files">Design Files</a></li>
 </ul>
 </li>
@@ -120,7 +123,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -145,7 +148,7 @@
   <div class="section" id="head-implant">
 <h1>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="required-tools">
-<h2>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h2>
+<span id="implanttools"></span><h2>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
 <li>Ruler</li>
@@ -183,12 +186,12 @@
 </tr>
 <tr class="row-odd"><td>2</td>
 <td>Laser Diodes</td>
-<td><a class="reference download internal" href="../_downloads/PLT5 520.pdf"><code class="xref download docutils literal"><span class="pre">PLT5</span> <span class="pre">520</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/PLT5 520.pdf" download=""><code class="xref download docutils literal"><span class="pre">PLT5</span> <span class="pre">520</span></code></a></td>
 <td><a class="reference external" href="http://worldstartech.com/products/description/25/index">World Star Tech</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Fiber</td>
-<td><a class="reference download internal" href="../_downloads/FP200URT.pdf"><code class="xref download docutils literal"><span class="pre">FP200URT</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/FP200URT.pdf" download=""><code class="xref download docutils literal"><span class="pre">FP200URT</span></code></a></td>
 <td><a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=FP200URT">ThorLabs</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
@@ -198,12 +201,12 @@
 </tr>
 <tr class="row-even"><td>2</td>
 <td>Ferrule</td>
-<td><a class="reference download internal" href="../_downloads/MM-FER2007C-2500.pdf"><code class="xref download docutils literal"><span class="pre">MM-FER2007C-2500</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/MM-FER2007C-2500.pdf" download=""><code class="xref download docutils literal"><span class="pre">MM-FER2007C-2500</span></code></a></td>
 <td><a class="reference external" href="http://www.precisionfiberproducts.com/pfp-lc-1-25mm-od-multimode-ceramic-zirconia-ferrules/">Precision Fiber Products</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Epoxy</td>
-<td><a class="reference download internal" href="../_downloads/T120-023-CX.pdf"><code class="xref download docutils literal"><span class="pre">T120-023-CX</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/T120-023-CX.pdf" download=""><code class="xref download docutils literal"><span class="pre">T120-023-CX</span></code></a></td>
 <td><a class="reference external" href="http://www.fiberinstrumentsales.com/fis-room-cure-epoxy-2-grams.html">FIS</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
@@ -213,12 +216,12 @@
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Photocell</td>
-<td><a class="reference download internal" href="../_downloads/PDV-P9005-1.pdf"><code class="xref download docutils literal"><span class="pre">PDV-P9005-1</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/PDV-P9005-1.pdf" download=""><code class="xref download docutils literal"><span class="pre">PDV-P9005-1</span></code></a></td>
 <td rowspan="3"><a class="reference external" href="https://octopart.com/bom-lookup/HBO7aiJs">Octopart</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Female micro USB vertical socket</td>
-<td><a class="reference download internal" href="../_downloads/105133-001.pdf"><code class="xref download docutils literal"><span class="pre">105133-001</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/105133-001.pdf" download=""><code class="xref download docutils literal"><span class="pre">105133-001</span></code></a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>0805 6.8 kΩ Resistor</td>
@@ -243,24 +246,36 @@
 <li>Solder laser diodes onto implant PCB</li>
 </ol>
 </div>
-<div class="section" id="calibration-instructions">
-<h2>Calibration Instructions<a class="headerlink" href="#calibration-instructions" title="Permalink to this headline">¶</a></h2>
-<p>The is variation in head implant assemblies. Laser diodes, coupling efficency, LDR postion in relation to the laser diodes. In order to compensate for all of this variability, each assembly must be calibrated
-so we know the relation between our power variable in our code and the actual light power being produced at the fiber tips.</p>
+<div class="section" id="characterization">
+<h2>Characterization<a class="headerlink" href="#characterization" title="Permalink to this headline">¶</a></h2>
+<p>We want to know and be able to control the amount of light that we deliver to the brain during experiments.
+The light power produced by the laser diodes is a function of current and case temperature:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/laserDiodeResponse.png"><img alt="../_images/laserDiodeResponse.png" src="../_images/laserDiodeResponse.png" style="width: 258.59999999999997px; height: 324.9px;" /></a>
+</div>
+<p>Cerebro has precise control of the current being delivered to the laser diode, and can monitor the voltage across the photocell.
+We can use a feeback loop to maintain a constant photocell voltage, and therefore a constant fiber tip light power output
+(assuming the light power at the fiber tip is proportional to the light hitting the photocell).</p>
+<p>If the photocell had a linear response to light power, we could just make 1 measurement of the light output at a known photocell voltage
+and find a proportionality constant. However, the photocell doesn&#8217;t have a linear response:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/photcellResponse.png"><img alt="../_images/photcellResponse.png" src="../_images/photcellResponse.png" style="width: 377.5px; height: 267.0px;" /></a>
+</div>
+<p>We therefore need to measure the light output at the fiber tip across a range of known photocell voltages. Overall, we are trying to
+characterize the relationship between photocell voltage and fiber tip light power, resulting in a graph like the following:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/characterization.png"><img alt="../_images/characterization.png" src="../_images/characterization.png" style="width: 1108.0px; height: 371.0px;" /></a>
+</div>
+<div class="section" id="gathering-data">
+<h3>Gathering Data<a class="headerlink" href="#gathering-data" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Follow the <a class="reference internal" href="cerebro.html#cerebro-upload"><span>instructions</span></a> for uploading Cerebro Firmware. Delete line 37&#8217;s preceding &#8216;//&#8217; to uncomment &#8216;#define CALIBRATE&#8217; before uploading the firmware.</li>
+<li>Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a <a class="reference internal" href="#implanttools"><span class="std std-ref">Light Power Meter</span></a></li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/define.png"><img alt="../_images/define.png" src="../_images/define.png" style="width: 789.0px; height: 981.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/fixture.jpg"><img alt="../_images/fixture.jpg" src="../_images/fixture.jpg" style="width: 509.09999999999997px; height: 363.0px;" /></a>
 </div>
 <ol class="arabic simple" start="2">
-<li>Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a Light Power Meter.</li>
-</ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/fixture.jpg"><img alt="../_images/fixture.jpg" src="../_images/fixture.jpg" style="width: 3394.0px; height: 2420.0px;" /></a>
-</div>
-<ol class="arabic simple" start="3">
-<li>Open up the Light Power Meter software and change the following settings:</li>
+<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs&#8217; Power Meter Software</a> and change the following settings:</li>
 </ol>
 <blockquote>
 <div><ul class="simple">
@@ -277,15 +292,22 @@ so we know the relation between our power variable in our code and the actual li
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/settings_combined.png"><img alt="../_images/settings_combined.png" src="../_images/settings_combined.png" style="width: 2256.0px; height: 1159.0px;" /></a>
 </div>
-<ol class="arabic simple" start="4">
-<li>Make sure Cerbero is turned on and then click &#8220;Start Log&#8221;</li>
-<li>Using either a Base Station or IR remote, send the following new waveform paratmeters: 0 power, 2000 on , 0 off, 0 train, 0 ramp</li>
-<li>Using either a Base Station or IR remote, send a trigger signal to Cerebro to begin the calibration routine</li>
-<li>Run Python script on the log file to to get calibration summary</li>
-<li>In Cerebro.ino, replace the &#8220;const int levels[100]&#8221; variable with the code found in the calibration summary file</li>
+<ol class="arabic simple" start="3">
+<li>Open up Xavier and start a new session.  <a class="reference internal" href="../Software/Xavier.html#start-session"><span class="std std-ref">How to start a session</span></a></li>
+<li>In the &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section, click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Power</span> <span class="pre">Level</span></code>. A &#8220;Change Power Level&#8221; window will appear.</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/calVals.png"><img alt="../_images/calVals.png" src="../_images/calVals.png" style="width: 789.0px; height: 981.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/openCalDialog.png"><img alt="../_images/openCalDialog.png" src="../_images/openCalDialog.png" style="width: 298.0px; height: 236.5px;" /></a>
+</div>
+<p>5. Make sure Cerbero is turned on and then click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Calibration</span> <span class="pre">Routine</span></code> in the new window.
+Cerebro&#8217;s amber light will turn on to indicate that the calibration routine has begun.
+Within 10 seconds, click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Log</span></code> in the Light Power Meter software to begin recording light power data.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/sendCalTrigger.png"><img alt="../_images/sendCalTrigger.png" src="../_images/sendCalTrigger.png" style="width: 320.0px; height: 178.5px;" /></a>
+</div>
+<ol class="arabic simple" start="6">
+<li>After about 15 minutes, the data will have been collected.</li>
+</ol>
 </div>
 </div>
 <div class="section" id="design-files">
@@ -293,15 +315,15 @@ so we know the relation between our power variable in our code and the actual li
 <dl class="docutils">
 <dt>PCB</dt>
 <dd><ul class="first last simple">
-<li><a class="reference download internal" href="../_downloads/Implant 4.4.brd"><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.brd</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Implant 4.4.sch"><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.sch</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Implant 4.4 schematic.pdf"><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Implant 4.4.brd" download=""><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.brd</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Implant 4.4.sch" download=""><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.sch</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Implant 4.4 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
 </ul>
 </dd>
 <dt>Lasercut</dt>
 <dd><ul class="first last simple">
-<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.dxf"><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.dxf</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.ai"><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.ai</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.dxf" download=""><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.dxf</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.ai" download=""><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.ai</span></code></a></li>
 </ul>
 </dd>
 </dl>
@@ -328,7 +350,7 @@ so we know the relation between our power variable in our code and the actual li
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2016, Andy Lustig.
-      Last updated on Sep 28, 2016.
+      Last updated on Oct 21, 2016.
 
     </p>
   </div>

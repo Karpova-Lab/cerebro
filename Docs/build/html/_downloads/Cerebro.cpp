@@ -2,8 +2,8 @@
 
 Cerebro::Cerebro(byte emitter)  //
 {
-  #define  spikes   6      //number of spikes in burst
-  #define  space    263    //microsecond gap between bursts
+  #define  spikes   7      //number of spikes in burst
+  #define  space    280    //microsecond gap between bursts
   #define  sensorDelay 13
   _emitter = emitter;
   switch (_emitter){  //setup pin outputs and set initialize isNormallyOn
@@ -47,7 +47,7 @@ void Cerebro::stop(){
 
 void Cerebro::interrupt()
 {
-  pulseIR(12);
+  pulseIR(14);
   delay(1);       //assurance that back to back stop signals aren't mistaken for 1 trigger signal
 }
 
@@ -107,54 +107,25 @@ void Cerebro::toggle(bool turnON)
   isNormallyOn = !isNormallyOn;
 }
 
-void Cerebro::send(byte readValues[][6])
-{
-  //send key that says that data is to follow
-  sendMark(true);
-  sendMark(true);
-  sendMark(false);
-  sendMark(false);
-  sendMark(true);
-  sendMark(false);
-  sendMark(true);
-  //convert read ascii digits to an integer
-  for( int k=0; k<numParameters; k++){
-      decnum[k] = 0;
-      for (int i = 0; i < readValues[k][5]; i++) {
-        decnum[k] = decnum[k] + (readValues[k][i] - 48) * powers[readValues[k][5] - i - 1];
-      }
-  }
-  //send 10 bytes (5 parameters*16bits) worth of data
-  for (int k = 0; k<numParameters; k++){
-    while (bitIndex > -1) {
-      sendMark(bitRead(decnum[k], bitIndex));
-      bitIndex--;
-    }
-    bitIndex = 15;
+void Cerebro::sendBinary(unsigned int value, unsigned char bitWidth){
+  while (bitWidth > 0) {
+    sendMark(bitRead(value, bitWidth-1));
+    bitWidth--;
   }
 }
 
-void Cerebro::send(int newVals[])
+void Cerebro::send(int newVals[]) //ir remote send
 {
   //send key that says that data is to follow
-  sendMark(true);
-  sendMark(true);
-  sendMark(false);
-  sendMark(false);
-  sendMark(true);
-  sendMark(false);
-  sendMark(true);
+  sendBinary(101,7);
   //send 10 bytes (5 parameters*16bits) worth of data
   for (int k = 0; k<numParameters; k++){
-    while (bitIndex > -1) {
-      sendMark(bitRead(newVals[k], bitIndex));
-      bitIndex--;
-    }
-    bitIndex = 15;
+    sendBinary(newVals[k],16);
   }
 }
 
-int Cerebro::getParameter(byte paramIndex)
+void Cerebro::calibrate()
 {
-  return decnum[paramIndex];
+  //send key that says that data is to follow
+  sendBinary(22,7);
 }

@@ -32,6 +32,15 @@ Bill of Materials
 | 2               | 0805 27 |OHgr| Resistor            |                                                             |                                                              |
 +-----------------+------------------------------------+-------------------------------------------------------------+--------------------------------------------------------------+
 
+Build Instuctions
+`````````````````
+
+Setting up with Xavier
+``````````````````````
+When you plug the cable into or your computer for the first time, the driver should automatically be downloaded.
+If the USB chip isn't recognized, you can manually download the `FTDI FT230X Driver <http://www.ftdichip.com/Drivers/VCP.htm>`_
+
+
 Design Files
 ````````````
 

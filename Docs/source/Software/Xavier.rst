@@ -7,19 +7,18 @@ Xavier
     :scale: 80%
 
 Installation
-****************
+===================
 
 System Requirements
-===================
+-------------------
   - Windows XP or newer
-  - `FTDI FT230X Driver <http://www.ftdichip.com/Drivers/VCP.htm>`_
-  - `Anaconda Python 2.7 Distribution <http://continuum.io/downloads>`_
+  - `Anaconda Python 3.5 Distribution <http://continuum.io/downloads>`_
 
   .. _setup default:
 
 Download Instructions
-=====================
-1. Download and install `Anaconda Python 2.7 Distribution <http://continuum.io/downloads>`_
+---------------------
+1. Download and install `Anaconda Python 3.5 Distribution <http://continuum.io/downloads>`_
 2. Download and unzip :download:`Xavier Deployment Folder<Deployment.zip>`
 3. Open up Xavier.exe
 
@@ -29,14 +28,7 @@ Download Instructions
 
 4. Setup a :ref:`default directory<edit default directory>` that data will be saved to
 
-.. _User Guide:
-
-Xavier User Guide
-*****************
-.. .. raw:: html
-..
-..   <center><iframe width="420" height="315" src="https://www.youtube.com/embed/SBqYZ3KdAUc" frameborder="0" allowfullscreen></iframe></center>
-
+.. _start session:
 
 Starting a New Session
 ======================
@@ -66,22 +58,24 @@ Starting a New Session
 
 Waveform Parameters
 ===================
-Five waveform parameters (Power Level, On Time, Off Time, Train Duration, Ramp Down) can be changed throughout the session.
+Five waveform parameters (Start Delay, On Time, Off Time, Train Duration, Ramp Down) can be wirelessly changed throughout the session.
 The user can make changes using either a **Single Shot** mode with an optional ramp down or **Pulse Train** mode. Non-applicable parameters are automatically set to zero depending on
-options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained eventherefore accessible even after the device is turned off.
+options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained between sessions.
 
-Parameter Definitions
----------------------
-Power Level
-  Level of light output. Each laser diode assembly is calibrated to provide a range of power level values that correspond with known light power (mW) outputs.
-On Time (ms)
-  Duration the laser is on at the given Power Level
-Off Time (ms) [Pulse Train mode]
-  Duration the laser is off
-Train Duration (ms) [Pulse Train mode]
-  Duration that the on-off cycles are repeated
-Ramp down (ms) [Single Shot mode]
-  Time it takes for the laser to linearly reduce its output from Power Level to completely off. Must be a mulitple of 100 ms.
+.. Parameter Definitions
+.. ---------------------
+.. Power Level
+..   Level of light output. Each laser diode assembly is calibrated to provide a range of power level values that correspond with known light power (mW) outputs.
+.. Start Delay (ms)
+..   Time between receiving a trigger signal, and beginning the light pulse
+.. On Time (ms)
+..   Duration the laser is on at the given Power Level
+.. Off Time (ms) [Pulse Train mode]
+..   Duration the laser is off
+.. Train Duration (ms) [Pulse Train mode]
+..   Duration that the on-off cycles are repeated
+.. Ramp down (ms) [Single Shot mode]
+..   Time it takes for the laser to linearly reduce its output from Power Level to completely off. Must be a mulitple of 100 ms.
 
 .. image:: photos/Edit_waveform/parameter_diagram.png
     :align: center
@@ -89,9 +83,30 @@ Ramp down (ms) [Single Shot mode]
 
 .. _pulse change header:
 
+Checking Current Parameters
+---------------------------
+1. Select the appropriate Downloader Serial Port and click ``Connect to Downloader``
+
+.. image:: photos/check_params/connect_downloader.png
+  :align: center
+  :scale: 100%
+
+2. With Cerebro turned off, plug the :ref:`cord` into Cerebro's micro usb port
+3. Turn on Cerebro.
+
+.. image:: photos/check_params/connect_plug.jpg
+  :align: center
+  :scale: 20%
+
+4. A dialog box with all of Cerebro's parameters will appear. Xavier's "Cerebro's Waveform Parameters" section will automatically be updated to match the parameters currently on Cerebro.
+
+.. image:: photos/check_params/parameters_popup.png
+  :align: center
+  :scale: 110%
+
 Changing Parameters
 -------------------
-1. In the "Adjust Pulse Parameters" section, select desired pulse options and modify the parameters
+1. In the "Cerebro's Waveform Parameters" section, select desired pulse options and modify the parameters
 
 .. image:: photos/Edit_waveform/parameter_change.png
   :align: center
@@ -142,9 +157,9 @@ Ending a Session and Saving Data
 
 2. Turn off Cerebro and disconnect it from the rat's head implant
 3. Make sure the :ref:`cord` is plugged into the computer
-4. A "Download Monitor" tab should have automatically appeared after step 1. In this tab, select the appropriate Serial Port and click ``Connect to Downloader``
+4. Select the appropriate Serial Port and click ``Connect to Downloader``
 
-.. image:: photos/End_session/connect_uploader.png
+.. image:: photos/End_session/connect_downloader.png
   :align: center
   :scale: 100%
 
@@ -170,8 +185,8 @@ Ending a Session and Saving Data
   :scale: 100%
 
 
-Xavier Settings
-===============
+Settings
+========
 Access Xavier Settings by navigating to **File->Settings..** or by pressing :kbd:`Ctrl` + :kbd:`,`
 
 .. figure:: photos/Settings/settings_dialog.png

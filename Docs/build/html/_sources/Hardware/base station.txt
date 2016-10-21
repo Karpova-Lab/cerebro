@@ -63,8 +63,8 @@ Lasercut
 Code
 ====
   - :download:`baseStation.ino<../../../Arduino/Cerebro_Sketches/baseStation/baseStation.ino>`
-  - :download:`Cerebro.h<../../../Arduino/Cerebro/Cerebro.h>`
-  - :download:`Cerebro.cpp<../../../Arduino/Cerebro/Cerebro.cpp>`
+  - :download:`Cerebro.h<../../../Arduino/libraries/Cerebro/Cerebro.h>`
+  - :download:`Cerebro.cpp<../../../Arduino/libraries/Cerebro/Cerebro.cpp>`
 
 Build Instructions
 ==================
@@ -77,7 +77,7 @@ Required Tools
 Uploading Firmware
 ------------------
 
-1. With the notch facing down, place the chip in the lower portion of the Uploader Shield's ZIF socket.
+1. With the notch facing down, place the chip in the lower portion of the :ref:`utility shield`'s ZIF socket.
 
 .. figure:: photos/Setup_photos/85_upload.png
     :align: center
