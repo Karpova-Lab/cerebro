@@ -42,8 +42,6 @@ def getPeaks(vec):
         j-=1
     return indices,vals,threshold
 
-
-
 def getCalibration(desired,xVec,yVec):
     loop = 0
     for i in yVec:
@@ -77,7 +75,6 @@ def calibrationCurve(_peakVals,wantedLevel,LD):
     #http://stackoverflow.com/questions/31803817/how-to-add-second-x-axis-at-the-bottom-of-the-first-one-in-matplotlib
     ax2 = ax1.twiny()
     new_tick_locations = np.array(ax1.get_xticks())/1023.0*4.2
-    print (new_tick_locations)
     ax2.set_xticks(new_tick_locations)
     ax2.set_xticklabels(np.round(new_tick_locations,1))
     ax2.set_xlim(np.array(ax1.get_xlim())/1023.0*4.2)
