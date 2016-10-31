@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 47;
+byte version = 48;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -163,7 +163,7 @@ void printParameters();
 
 void setup() {
   ///////////Analog setup////////////////////////////
-  ADMUX = 2;       //PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13 of datasheet
+  ADMUX = 2;       //Vcc is used as the analog reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13 of datasheet
   ADCSRA |= (1<<ADPS2) | (1<<ADPS1);  //set division factor of 64. ADC frequncy = 8Mhz/64=125khz (ADC needs to be in 50-200khz range)
   ADCSRA |= (1<<ADEN);                //enable the ADC
   ////////////Digital setup//////////////////////////
@@ -221,7 +221,7 @@ void loop() {
 }
 
 void calibrateRoutine(){
-  delay(10000);
+  delay(15000);
   for (int b = 500; b<751; b+=50){
     triggerEvent(b);
     delay(15000);
@@ -231,10 +231,10 @@ void calibrateRoutine(){
     delay(15000);
   }
   for (int b = 905; b<1026; b+=5){
-    if(!isMaxed){
+    // if(!isMaxed){
       triggerEvent(b);
       delay(15000);
-    }
+    // }
   }
 }
 
@@ -246,8 +246,22 @@ void triggerEvent(unsigned int desiredPower){
   bool triggerRecorded = false;
   delayClock=millis();              //reset clocks
   byte rcvd = 0;
-  unsigned int onDur = calibrateMode ? 2000 : waveform[ON_TIME];
-  if (waveform[ON_DELAY]>0){
+  unsigned int onDelay,onTime,offTime,trainDur,rampDur;
+  if (calibrateMode){
+    onDelay = 0;
+    onTime = 2000;
+    offTime = 0;
+    trainDur = 0;
+    rampDur = 0;
+  }
+  else{
+    onDelay = waveform[ON_DELAY];
+    onTime = waveform[ON_TIME];
+    offTime = waveform[OFF_TIME];
+    trainDur = waveform[TRAIN_DUR];
+    rampDur  = waveform[RAMP_DUR];
+  }
+  if (onDelay>0){
     while ((millis()-delayClock)<waveform[ON_DELAY]){
       if (!(IR_inputReg & (1<<IR_pin))){
         while(! (IR_inputReg & (1<<IR_pin))){
@@ -282,7 +296,7 @@ void triggerEvent(unsigned int desiredPower){
         trigMatch = false;
       }
       else if (stopMatch){
-        if (waveform[RAMP_DUR]>0){
+        if (rampDur>0){
           fade();
         }
         laserEnabled = laserOFF();
@@ -294,7 +308,7 @@ void triggerEvent(unsigned int desiredPower){
       rcvd = 0;
     }
     //else if onClock hasn't expired, turn on/keep on the laser
-    else if ((millis()-onClock)<onDur){
+    else if ((millis()-onClock)<onTime){
       #ifdef MCUBE
       sendDAC(powerLevel);
       #else
@@ -314,19 +328,19 @@ void triggerEvent(unsigned int desiredPower){
       offClock = millis();
     }
     //else if offClock hasn't expired, turn off/keep off light
-    else if((millis()-offClock)<waveform[OFF_TIME]){
+    else if((millis()-offClock)<offTime){
       if (newPulse){                   //if the laser is on then turn it off, otherwise do nothing (i.e. leave turned off)
         newPulse = laserOFF();         //laserOn = false
       }
     }
     //else if trainClock hasn't expired, restart the light pulse
-    else if((millis()-trainClock)<waveform[TRAIN_DUR]){
+    else if((millis()-trainClock)<trainDur){
       newPulse = true;
       onClock = millis();
     }
     else{
       #if  !defined(MCUBE)
-      if (waveform[RAMP_DUR]>0 && !calibrateMode){
+      if (rampDur>0 && !calibrateMode){
         fade();
       }
       #endif
