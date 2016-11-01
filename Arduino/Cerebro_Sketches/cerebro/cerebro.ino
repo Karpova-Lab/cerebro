@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 48;
+byte version = 49;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -221,6 +221,7 @@ void loop() {
 }
 
 void calibrateRoutine(){
+  bool firstMax = true;
   delay(15000);
   for (int b = 500; b<751; b+=50){
     triggerEvent(b);
@@ -231,10 +232,14 @@ void calibrateRoutine(){
     delay(15000);
   }
   for (int b = 905; b<1026; b+=5){
-    // if(!isMaxed){
+    if(!isMaxed){
       triggerEvent(b);
       delay(15000);
-    // }
+    }
+    else if(firstMax){
+      triggerEvent(b);
+      firstMax = false;
+    }
   }
 }
 
