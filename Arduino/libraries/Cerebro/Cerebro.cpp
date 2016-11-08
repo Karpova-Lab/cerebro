@@ -137,3 +137,9 @@ void Cerebro::powerTest(unsigned int testLevel)
   unsigned int tempVals[5] = {testLevel,0,0,0,0};
   send(tempVals);
 }
+
+void Cerebro::dumpMemory()
+{
+  //send key that says that data is to follow
+  sendBinary(45,7);
+}

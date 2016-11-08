@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 50;
+byte version = 51;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -126,6 +126,7 @@ const byte interval = 3;
 bool isSettled = false;
 bool isMaxed = false;
 bool calibrateMode = false;
+bool dumpMemoryMode = false;
 bool receivingCalVector = false;
 bool receivingHardwareVector = false;
 bool receivingPowerTest = false;
@@ -221,6 +222,11 @@ void loop() {
   else if (powerTestMode){
     triggerEvent(tempPower);
     powerTestMode = false;
+  }
+  else if (dumpMemoryMode){
+    mySerial.println(F("Memory Contents:"));
+    readAddresses(LOG_START,8100); //print the remaining contents
+    dumpMemoryMode = false;
   }
   else if (marksReceived == 26) {         //save data to EEPROM upon receiving exactly 26 marks
     save2EEPROM();
@@ -470,6 +476,9 @@ byte listenForIR(int timeout=0) {
         else if (pulsePairIndex==7 && convertBIN(marks,7)==36){ //about to receive powerTest level
           receivingPowerTest = true;
         }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==45){ //set dump Memory flag
+          dumpMemoryMode = true;
+        }
         else{ //We received a message that we don't understand
           mySerial.println(pulsePairIndex);
         }
@@ -638,10 +647,6 @@ void printEEPROM(){
     mySerial.print(waveform[i]);
     mySerial.print("\r");
   }
-  // if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
-  //   mySerial.println("Remaining Memory Contents:");
-  //   readAddresses(endingAddress,8100); //print the remaining contents
-  // }
 }
 
 void myShift(int val){                  //shifts out data MSB first

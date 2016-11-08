@@ -15,6 +15,7 @@ public:
   void toggle(bool turnON);
   void send(unsigned int newVals[]);
   void calibrate();
+  void dumpMemory();
   void sendBinary(unsigned int value, unsigned char valSize);
   void powerTest(unsigned int testLevel);
   byte getEmitterType();

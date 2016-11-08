@@ -120,8 +120,8 @@ void loop() {
   else if (tempNow-tempOld<-2){ //CW knob turn
     right();
   }
-  checkButtonPress(triggerButton,triggerSent,greenPin,sendCalibrate,bluePin,sendPower);
-  checkButtonPress(stopButton,stopSent,redPin,sendVals,bluePin,sendSave);
+  checkButtonPress(triggerButton,triggerSent,greenPin,sendCalibrate,bluePin,sendPower); //A button
+  checkButtonPress(stopButton,stopSent,redPin,sendVals,bluePin,sendMemoryDump);         //B Button
   newButtonState = digitalRead(encoderSwitchPin);
   if (newButtonState){
     pressedCount++;
@@ -320,6 +320,25 @@ void sendPower(){
   display.setTextSize(2);
   display.setCursor(37,18);
   display.print(F("Power"));
+  display.setCursor(40,39);
+  display.print(F("Sent"));
+  display.display();
+  delay(msgDelay);
+  display.clearDisplay();
+  draw(isEditMode);
+  analogWrite(bluePin,255);
+}
+
+void sendMemoryDump(){
+  cerebro.dumpMemory();
+  analogWrite(redPin,255);
+  analogWrite(greenPin,255);
+  analogWrite(bluePin,1);
+  display.clearDisplay();
+  display.setTextColor(1,0);
+  display.setTextSize(2);
+  display.setCursor(1,18);
+  display.print(F("Memory Dump"));
   display.setCursor(40,39);
   display.print(F("Sent"));
   display.display();
