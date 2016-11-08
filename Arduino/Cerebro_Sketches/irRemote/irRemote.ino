@@ -46,9 +46,9 @@ volatile int lastEncoded = 0;
 const byte encoderSwitchPin = 4; //push button switch
 const byte triggerButton = 7;
 const byte stopButton = 8;
-const byte red = 5;
-const byte blue = 9;
-const byte green = 6;
+const byte redPin = 5;
+const byte bluePin = 9;
+const byte greenPin = 6;
 
 const unsigned int step[5] = {500,500,500,500,500};
 const unsigned int stepAlt[5] = {50,50,50,50,100};
@@ -92,12 +92,12 @@ void setup(){
   pinMode(triggerButton, INPUT_PULLUP);
   pinMode(stopButton, INPUT_PULLUP);
   pinMode(battery,INPUT);
-  pinMode(red,OUTPUT);
-  pinMode(green,OUTPUT);
-  pinMode(blue,OUTPUT);
-  analogWrite(red,255-ledLevels[0]);
-  analogWrite(green,255-ledLevels[1]);
-  analogWrite(blue,255-ledLevels[2]);
+  pinMode(redPin,OUTPUT);
+  pinMode(greenPin,OUTPUT);
+  pinMode(bluePin,OUTPUT);
+  analogWrite(redPin,255-ledLevels[0]);
+  analogWrite(greenPin,255-ledLevels[1]);
+  analogWrite(bluePin,255-ledLevels[2]);
   Serial.println(F("Setup complete\r\n"));
 }
 
@@ -120,8 +120,8 @@ void loop() {
   else if (tempNow-tempOld<-2){ //CW knob turn
     right();
   }
-  checkButtonPress(triggerButton,triggerSent,green,sendCalibrate,blue);
-  checkButtonPress(stopButton,stopSent,red,sendVals,blue);
+  checkButtonPress(triggerButton,triggerSent,greenPin,sendCalibrate,bluePin,sendPower);
+  checkButtonPress(stopButton,stopSent,redPin,sendVals,bluePin,sendSave);
   newButtonState = digitalRead(encoderSwitchPin);
   if (newButtonState){
     pressedCount++;
@@ -137,31 +137,41 @@ void loop() {
   oldButtonState = newButtonState;
 }
 
-void checkButtonPress( byte buttonPin, void (*fxn_1)(), byte c_1, void (*fxn_2)(), byte c_2 ){
+void checkButtonPress( byte buttonPin, void (*fxn_1)(), byte clr_1, void (*fxn_2)(), byte clr_2, void (*fxn_3)()){
   if (!digitalRead(buttonPin)){ //button pressed.
     delay(20);
     unsigned int holdCount = 0;
-    analogWrite(green,255);
-    analogWrite(red,255);
-    analogWrite(blue,255);
+    analogWrite(greenPin,255);
+    analogWrite(redPin,255);
+    analogWrite(bluePin,255);
     while(!digitalRead(buttonPin) && holdCount<255){
       delay(2);
-      analogWrite(c_1,255-holdCount);
+      analogWrite(clr_1,255-holdCount);
       holdCount++;
     }
-    if (!(holdCount<255)){    //short press
-      analogWrite(c_1,255);
-      analogWrite(c_2,1);
+    if (holdCount==255){      //long press
+      analogWrite(clr_1,255);
+      analogWrite(clr_2,1);
       delay(100);
-      analogWrite(c_2,255);
+      analogWrite(clr_2,255);
       delay(100);
-      analogWrite(c_2,1);
+      analogWrite(clr_2,1);
       delay(100);
-      analogWrite(c_2,255);
+      analogWrite(clr_2,255);
       (*fxn_2)();
     }
-    else{                     //long press
-      (*fxn_1)();
+    else{
+      unsigned int doubleCount = 0;
+      while(digitalRead(buttonPin) && doubleCount<175){
+        delay(1);
+        doubleCount++;
+      }
+      if(doubleCount<175){    //double press
+        (*fxn_3)();
+      }
+      else{                   //single press
+        (*fxn_1)();
+      }
     }
   }
 }
@@ -210,14 +220,14 @@ byte getPos(){
 }
 
 void triggerSent(){
-  analogWrite(green,1);
+  analogWrite(greenPin,1);
   cerebro.trigger();
   display.clearDisplay();
   display.setTextColor(1,0);
-  display.setTextSize(3);
-  display.setCursor(1,10);
+  display.setTextSize(2);
+  display.setCursor(22,18);
   display.print(F("Trigger"));
-  display.setCursor(30,36);
+  display.setCursor(40,39);
   display.print(F("Sent"));
   display.display();
   unsigned long tempTime = millis();
@@ -228,25 +238,25 @@ void triggerSent(){
   }
   display.clearDisplay();
   draw(isEditMode);
-  analogWrite(green,255);
+  analogWrite(greenPin,255);
 }
 
 void stopSent(){
-  analogWrite(green,255);
-  analogWrite(red,1);
+  analogWrite(greenPin,255);
+  analogWrite(redPin,1);
   cerebro.stop();
   display.clearDisplay();
   display.setTextColor(1,0);
-  display.setTextSize(3);
-  display.setCursor(30,10);
+  display.setTextSize(2);
+  display.setCursor(41,18);
   display.print(F("Stop"));
-  display.setCursor(30,36);
+  display.setCursor(40,39);
   display.print(F("Sent"));
   display.display();
   delay(msgDelay);
   display.clearDisplay();
   draw(isEditMode);
-  analogWrite(red,255);
+  analogWrite(redPin,255);
 }
 
 void sendVals(){
@@ -267,18 +277,22 @@ void sendVals(){
 }
 
 void sendSave(){
+  analogWrite(redPin,255);
+  analogWrite(greenPin,255);
+  analogWrite(bluePin,1);
   cerebro.saveEEPROM();
   display.clearDisplay();
   display.setTextColor(1,0);
-  display.setTextSize(3);
-  display.setCursor(30,10);
+  display.setTextSize(2);
+  display.setCursor(41,18);
   display.print(F("Save"));
-  display.setCursor(30,36);
+  display.setCursor(40,39);
   display.print(F("Sent"));
   display.display();
   delay(msgDelay);
   display.clearDisplay();
   draw(isEditMode);
+  analogWrite(bluePin,255);
 }
 
 void sendCalibrate(){
@@ -294,6 +308,25 @@ void sendCalibrate(){
   delay(msgDelay);
   display.clearDisplay();
   draw(isEditMode);
+}
+
+void sendPower(){
+  cerebro.powerTest(params[4]);
+  analogWrite(redPin,255);
+  analogWrite(greenPin,255);
+  analogWrite(bluePin,1);
+  display.clearDisplay();
+  display.setTextColor(1,0);
+  display.setTextSize(2);
+  display.setCursor(37,18);
+  display.print(F("Power"));
+  display.setCursor(40,39);
+  display.print(F("Sent"));
+  display.display();
+  delay(msgDelay);
+  display.clearDisplay();
+  draw(isEditMode);
+  analogWrite(bluePin,255);
 }
 
 void showBatteryStatus(bool show){
