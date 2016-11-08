@@ -114,7 +114,7 @@ void Cerebro::sendBinary(unsigned int value, unsigned char bitWidth){
   }
 }
 
-void Cerebro::send(int newVals[]) //ir remote send
+void Cerebro::send(unsigned int newVals[]) //ir remote send
 {
   //send key that says that data is to follow
   sendBinary(101,7);
@@ -128,4 +128,12 @@ void Cerebro::calibrate()
 {
   //send key that says that data is to follow
   sendBinary(22,7);
+}
+
+void Cerebro::powerTest(unsigned int testLevel)
+{
+  sendBinary(36,7);
+  delay(100);
+  unsigned int tempVals[5] = {testLevel,0,0,0,0};
+  send(tempVals);
 }
