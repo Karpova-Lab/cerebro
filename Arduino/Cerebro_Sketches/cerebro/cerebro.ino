@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 49;
+byte version = 50;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -128,6 +128,9 @@ bool isMaxed = false;
 bool calibrateMode = false;
 bool receivingCalVector = false;
 bool receivingHardwareVector = false;
+bool receivingPowerTest = false;
+bool powerTestMode = false;
+unsigned int tempPower = 0;
 byte vectorIndex = 0;
 unsigned int powerLevel;
 unsigned int cerebroNum;
@@ -214,6 +217,10 @@ void loop() {
     calibrateRoutine();
     calibrateMode = false;
     digitalWrite(indicatorLED,LOW);
+  }
+  else if (powerTestMode){
+    triggerEvent(tempPower);
+    powerTestMode = false;
   }
   else if (marksReceived == 26) {         //save data to EEPROM upon receiving exactly 26 marks
     save2EEPROM();
@@ -420,7 +427,7 @@ byte listenForIR(int timeout=0) {
       }
       if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
         delayMicroseconds(1);//Don't know why this is needed, but it is....
-        if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received new Parameters!
+        if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We're receiving data
           if (receivingCalVector){
             digitalWrite(indicatorLED, HIGH);
             updateCalVector(marks,vectorIndex*10);
@@ -440,6 +447,11 @@ byte listenForIR(int timeout=0) {
             digitalWrite(indicatorLED, LOW);
             mySerial.print(F("Hardware Properties Updated:\r"));
           }
+          else if (receivingPowerTest){
+            powerTestMode = true;
+            receivingPowerTest = false;
+            tempPower = convertBIN(marks,16,7);
+          }
           else {
             updateWaveform(marks);
           }
@@ -455,9 +467,12 @@ byte listenForIR(int timeout=0) {
           receivingHardwareVector = true;
           digitalWrite(indicatorLED, HIGH);
         }
-        // else{ //We received a message that we don't understand
-        //   mySerial.println(pulsePairIndex);
-        // }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==36){ //about to receive powerTest level
+          receivingPowerTest = true;
+        }
+        else{ //We received a message that we don't understand
+          mySerial.println(pulsePairIndex);
+        }
         return pulsePairIndex;
       }
     }
@@ -503,7 +518,7 @@ void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
 
 void updateHardware(uint16_t (&marks)[NUMPULSES]){
   unsigned int calValue  = 0;
-  for (byte m = 0; m<2; m++){   //only care about 2 valuse, Cerebro # and Laser Diode #
+  for (byte m = 0; m<2; m++){   //only care about 2 values, Cerebro # and Laser Diode #
     calValue = convertBIN(marks,16,7+16*m);
     eepromWriteByte(2*m+12,calValue>>8);
     eepromWriteByte(2*m+13,calValue & 255);
@@ -621,7 +636,7 @@ void printEEPROM(){
     strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
     mySerial.print(buffer);
     mySerial.print(waveform[i]);
-    mySerial.print(" ms\r");
+    mySerial.print("\r");
   }
   // if((BTN_inputReg & (1<<BTN_pin))){ //button is still being held even after the session events have been printed
   //   mySerial.println("Remaining Memory Contents:");
