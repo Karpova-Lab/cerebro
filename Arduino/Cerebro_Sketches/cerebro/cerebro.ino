@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 51;
+byte version = 52;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -145,7 +145,7 @@ int DAClevel = 0;
 
 //---------function prototypes---------//
 void calibrateRoutine();
-void triggerEvent(unsigned int desiredPower);
+void triggerEvent(unsigned int desiredPower, bool useFeedback=true);
 void feedback(int setPoint);
 void fade();
 byte listenForIR(int timeout=0);
@@ -236,18 +236,19 @@ void loop() {
 void calibrateRoutine(){
   bool firstMax = true;
   delay(15000);
+  unsigned int dlay = 15000;
   for (int b = 500; b<751; b+=50){
     triggerEvent(b);
-    delay(15000);
+    delay(dlay);
   }
   for (int b = 760; b<901; b+=10){
     triggerEvent(b);
-    delay(15000);
+    delay(dlay);
   }
   for (int b = 905; b<1026; b+=5){
     if(!isMaxed){
       triggerEvent(b);
-      delay(15000);
+      delay(dlay);
     }
     else if(firstMax){
       triggerEvent(b);
@@ -256,7 +257,7 @@ void calibrateRoutine(){
   }
 }
 
-void triggerEvent(unsigned int desiredPower){
+void triggerEvent(unsigned int desiredPower,bool useFeedback){
   isSettled = false;
   unsigned long onClock,offClock,trainClock,delayClock,alt=0;
   bool laserEnabled = true; //set flag for entering waveform loop
@@ -327,20 +328,20 @@ void triggerEvent(unsigned int desiredPower){
     }
     //else if onClock hasn't expired, turn on/keep on the laser
     else if ((millis()-onClock)<onTime){
-      #ifdef MCUBE
-      sendDAC(powerLevel);
-      #else
-      sendDAC(DAClevel);                //Laser on
-      if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
-        feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
+      if(!useFeedback){
+        sendDAC(desiredPower);
       }
-      alt++;
-      #endif
+      else{
+        sendDAC(DAClevel);                //Laser on
+        if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
+          feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
+        }
+        alt++;
+      }
       if (!triggerRecorded){           //event has not yet been recorded
         if (address < memorySize) {    //record trigger event
           recordEvent('T');
         }
-        // DUNCE_outputReg |= (1<<DUNCE_pin); //Dunce ouput HIGH
         triggerRecorded = true;
       }
       offClock = millis();
@@ -356,14 +357,14 @@ void triggerEvent(unsigned int desiredPower){
       newPulse = true;
       onClock = millis();
     }
+    //else the end of the waveform has been reached. turn off the light.
     else{
-      #if  !defined(MCUBE)
-      if (rampDur>0 && !calibrateMode){
-        fade();
+      if (useFeedback){
+        if (rampDur>0 && !calibrateMode){
+          fade();
+        }
       }
-      #endif
       if(calibrateMode){
-        mySerial.print(",");
         mySerial.println(DAClevel);
       }
       laserEnabled = laserOFF();
@@ -376,14 +377,6 @@ void feedback(int setPoint){
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
   int photocellVoltage = ADC;
   error = setPoint-photocellVoltage;
-  if(calibrateMode){
-    if (!isSettled && abs(error)<7){
-      isSettled = true;
-      mySerial.print(setPoint);
-      mySerial.print(",");
-      mySerial.print(DAClevel);
-    }
-  }
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
     DAClevel = 4095;
@@ -682,7 +675,6 @@ bool laserOFF(){
   }
   DAClevel = 0;
   #endif
-  // DUNCE_outputReg &= ~(1<<DUNCE_pin); //Dunce ouput LOW
   return false;
 }
 
