@@ -44,7 +44,7 @@ SoftwareSerial mySerial(3,4);
 String startupMsg;
 unsigned long timeOffset;
 byte values[numParameters][6];
-byte version = 21;
+byte version = 22;
 unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
 long triggerClock = 0;
 unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
@@ -206,12 +206,17 @@ void parseMsg(byte numValues){
     mySerial.print(millis() - timeOffset);
     mySerial.print(F(",Hardware Vector Sent\r"));
   }
+  else if (values[0][0] == 'M') {
+    cerebro.dumpMemory();
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Memory Dump Sent\r"));
+  }
   else if (values[0][0] == 'Z') {
     cerebro.calibrate();
     mySerial.print(millis() - timeOffset);
     mySerial.print(F(",Calibration Routine Start Sent\r"));
   }
-  //received new parameter settings. Send 8 bytes of data to cerebro.
+  //received values to pass along to cerebro. Send 8 bytes of data to cerebro.
   else if (numValues==numParameters-1){
     //convert read ascii digits to an integer
     unsigned int decnum[numParameters];

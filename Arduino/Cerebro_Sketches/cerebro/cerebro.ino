@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 52;
+byte version = 53;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -116,7 +116,7 @@ const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, str
 char buffer[20];            // make sure this is large enough for the largest string it must hold
 unsigned int waveform[NUMPARAM] = {};
 unsigned int onDelay = 2000;
-byte marksReceived;
+char marksReceived;
 unsigned int address = LOG_START;  /*start at the 217th byte address of eeprom. The first 216 bytes are reserved for persistant variables that are recalled from session to session (waveform parameters,hardware parameters,fade vector)*/
 bool trigMatch = false;
 bool stopMatch = false;
@@ -126,7 +126,6 @@ const byte interval = 3;
 bool isSettled = false;
 bool isMaxed = false;
 bool calibrateMode = false;
-bool dumpMemoryMode = false;
 bool receivingCalVector = false;
 bool receivingHardwareVector = false;
 bool receivingPowerTest = false;
@@ -136,6 +135,9 @@ byte vectorIndex = 0;
 unsigned int powerLevel;
 unsigned int cerebroNum;
 unsigned int LD;
+
+const char saveMemoryFlag = -1;
+const char memoryDumpFlag = -2;
 
 #ifdef MCUBE
 int DAClevel = 725;
@@ -205,6 +207,7 @@ void setup() {
   else{
     printParameters();
   }
+  laserOFF();
 }
 
 void loop() {
@@ -223,12 +226,11 @@ void loop() {
     triggerEvent(tempPower);
     powerTestMode = false;
   }
-  else if (dumpMemoryMode){
+  else if (marksReceived==memoryDumpFlag){
     mySerial.println(F("Memory Contents:"));
     readAddresses(LOG_START,8100); //print the remaining contents
-    dumpMemoryMode = false;
   }
-  else if (marksReceived == 26) {         //save data to EEPROM upon receiving exactly 26 marks
+  else if (marksReceived == saveMemoryFlag) {         //save data to EEPROM upon receiving exactly 26 marks
     save2EEPROM();
   }
 }
@@ -424,9 +426,9 @@ byte listenForIR(int timeout=0) {
           return pulsePairIndex;
         }
       }
-      if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over. Either we received a message with new paramters or we received a message that we don't understand
+      if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over.
         delayMicroseconds(1);//Don't know why this is needed, but it is....
-        if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We're receiving data
+        if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received data.
           if (receivingCalVector){
             digitalWrite(indicatorLED, HIGH);
             updateCalVector(marks,vectorIndex*10);
@@ -451,7 +453,7 @@ byte listenForIR(int timeout=0) {
             receivingPowerTest = false;
             tempPower = convertBIN(marks,16,7);
           }
-          else {
+          else {  //recieved new waveform values
             updateWaveform(marks);
           }
         }
@@ -470,11 +472,14 @@ byte listenForIR(int timeout=0) {
           receivingPowerTest = true;
         }
         else if (pulsePairIndex==7 && convertBIN(marks,7)==45){ //set dump Memory flag
-          dumpMemoryMode = true;
+          return memoryDumpFlag;
         }
-        else{ //We received a message that we don't understand
-          mySerial.println(pulsePairIndex);
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==76){ //set saveMemory flag
+          return saveMemoryFlag;
         }
+        // else{ //We received a message that we don't understand
+        //   mySerial.println(pulsePairIndex);
+        // }
         return pulsePairIndex;
       }
     }
