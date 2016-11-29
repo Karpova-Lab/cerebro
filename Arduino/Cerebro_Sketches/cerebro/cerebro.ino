@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 53;
+byte version = 54;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
@@ -223,8 +223,14 @@ void loop() {
     digitalWrite(indicatorLED,LOW);
   }
   else if (powerTestMode){
+    #ifdef MCUBE
+    eepromWriteByte(FADE_START,tempPower>>8);
+    eepromWriteByte(FADE_START+1,tempPower & 255);
+    powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
+    #else
     triggerEvent(tempPower);
     powerTestMode = false;
+    #endif
   }
   else if (marksReceived==memoryDumpFlag){
     mySerial.println(F("Memory Contents:"));
@@ -515,12 +521,12 @@ void updateWaveform(uint16_t (&marks)[NUMPULSES]){
 
 void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
   unsigned int calValue  = 0;
-  for (byte m = 0; m<NUMPARAM; m++){
+  for (byte m = 0; m<NUMPARAM; m++){    //write values to eeprom
     calValue = convertBIN(marks,16,7+16*m);
-    eepromWriteByte(2*m+offset+16,calValue>>8);
-    eepromWriteByte(2*m+offset+17,calValue & 255);
+    eepromWriteByte(FADE_START+offset+2*m,calValue>>8);
+    eepromWriteByte(FADE_START+offset+2*m+1,calValue & 255);
   }
-  powerLevel = word(eepromReadByte(12)<<8|eepromReadByte(13));
+  powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1)); //read powerLevel from eeprom
 }
 
 void updateHardware(uint16_t (&marks)[NUMPULSES]){
