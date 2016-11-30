@@ -53,7 +53,7 @@ class DropButton : public QPushButton
     Q_OBJECT
 
 public:
-    DropButton(QWidget *parent = 0);
+    DropButton(QString buttonText = "",QWidget *parent = 0 );
 
 public slots:
     void clear();

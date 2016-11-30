@@ -21,9 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 54;
+byte version = 55;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// #define DEBUG       //uncomment for DEBUG MODE
 // #define MCUBE
 // #define OLDBOARD
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,10 +58,6 @@ Directions for uploading can be found at http://cerebro.readthedocs.io/
 #include <avr/pgmspace.h>
 SoftwareSerial mySerial(7,5); //rx,tx pin6 pin8 on attiny84
 
-#ifdef DEBUG
-//---------------DEBUG PARAMETERS-----------------------
-const int memorySize =     10000;
-#else
 //--------------OPERATING PARAMETERS--------------------
 const int memorySize =     8169;   /*The number of bytes we will save to on the EEPROM. Each event recording is 4 bytes of data
 (3 for the timestamp integer and 1 for the event description character). Parameter changes are 9 bytes, 1 for the event description character
@@ -70,7 +65,6 @@ and 8 for the former parameters.8192 bytes will provide space for 2730 events to
 #define LOG_START 216
 #define FADE_START 16
 #define HARDWARE_START 12
-#endif
 
 //IR sensor input//
 #define IR_dirReg         DDRA
@@ -125,8 +119,9 @@ const float KP = 0.2;
 const byte interval = 3;
 bool isSettled = false;
 bool isMaxed = false;
-bool calibrateMode = false;
-bool receivingCalVector = false;
+bool implantMode = false;
+bool diodeMode = false;
+bool receivingFadeVector = false;
 bool receivingHardwareVector = false;
 bool receivingPowerTest = false;
 bool powerTestMode = false;
@@ -146,7 +141,7 @@ int DAClevel = 0;
 #endif
 
 //---------function prototypes---------//
-void calibrateRoutine();
+void characterizeRoutine();
 void triggerEvent(unsigned int desiredPower, bool useFeedback=true);
 void feedback(int setPoint);
 void fade();
@@ -162,9 +157,9 @@ void printEEPROM();
 void myShift(int val);
 void sendDAC(int value);
 bool laserOFF();
-void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset);
+void updateFadeVector(uint16_t (&marks)[NUMPULSES],byte offset);
 void updateHardware(uint16_t (&marks)[NUMPULSES]);
-void printCalVector();
+void printFadeVector();
 void printParameters();
 
 void setup() {
@@ -201,7 +196,7 @@ void setup() {
   if(!(BTN_inputReg & (1<<BTN_pin))){
   #endif
     printEEPROM();
-    printCalVector();
+    printFadeVector();
   }
   //otherwise just print the waveform parameters
   else{
@@ -216,17 +211,20 @@ void loop() {
     trigMatch = false;
     triggerEvent(powerLevel);
   }
-  else if(calibrateMode){
+  else if(implantMode || diodeMode){
     digitalWrite(indicatorLED,HIGH);
-    calibrateRoutine();
-    calibrateMode = false;
+    characterizeRoutine();
+    implantMode = false;
+    diodeMode = false;
     digitalWrite(indicatorLED,LOW);
   }
   else if (powerTestMode){
     #ifdef MCUBE
     eepromWriteByte(FADE_START,tempPower>>8);
     eepromWriteByte(FADE_START+1,tempPower & 255);
+    delay(100);
     powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
+    printParameters();
     #else
     triggerEvent(tempPower);
     powerTestMode = false;
@@ -241,10 +239,13 @@ void loop() {
   }
 }
 
-void calibrateRoutine(){
+void characterizeRoutine(){
   bool firstMax = true;
-  delay(15000);
   unsigned int dlay = 15000;
+  if (!implantMode){
+    dlay = 500;
+  }
+  delay(dlay);
   for (int b = 500; b<751; b+=50){
     triggerEvent(b);
     delay(dlay);
@@ -274,9 +275,16 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
   delayClock=millis();              //reset clocks
   byte rcvd = 0;
   unsigned int onDelay,onTime,offTime,trainDur,rampDur;
-  if (calibrateMode){
+  if (implantMode){
     onDelay = 0;
     onTime = 2000;
+    offTime = 0;
+    trainDur = 0;
+    rampDur = 0;
+  }
+  else if(diodeMode){
+    onDelay = 0;
+    onTime = 300;
     offTime = 0;
     trainDur = 0;
     rampDur = 0;
@@ -368,11 +376,11 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     //else the end of the waveform has been reached. turn off the light.
     else{
       if (useFeedback){
-        if (rampDur>0 && !calibrateMode){
+        if (rampDur>0 && !implantMode && !diodeMode){
           fade();
         }
       }
-      if(calibrateMode){
+      if(implantMode || diodeMode){
         mySerial.println(DAClevel);
       }
       laserEnabled = laserOFF();
@@ -397,7 +405,7 @@ void feedback(int setPoint){
 void fade(){
   unsigned long fadeClock;
   unsigned int param1;
-  for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //Calibration values are stored in addresses 16-216 (100 values,2 bytes each)
+  for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
     fadeClock = millis();
     param1 = eepromReadByte(k)<<8;
     feedback(word(param1|eepromReadByte(k+1)));
@@ -435,16 +443,16 @@ byte listenForIR(int timeout=0) {
       if((spaceLength >= (maxpulselength + timeout) && (pulsePairIndex != -1*timeout)) || pulsePairIndex == NUMPULSES) { //if the space is too long, the message is over.
         delayMicroseconds(1);//Don't know why this is needed, but it is....
         if (pulsePairIndex==87 && convertBIN(marks,7)==101){ //We received data.
-          if (receivingCalVector){
+          if (receivingFadeVector){
             digitalWrite(indicatorLED, HIGH);
-            updateCalVector(marks,vectorIndex*10);
-            if (vectorIndex<19){ //100 calibration values sent 5 at a time = 20 messages
+            updateFadeVector(marks,vectorIndex*10);
+            if (vectorIndex<19){ //100 fade values sent 5 at a time = 20 messages
               vectorIndex++;
             }
             else{ //after 20th set of values is received
-              receivingCalVector = false;
-              mySerial.print(F("Calibration Vector Updated:\r"));
-              printCalVector();
+              receivingFadeVector = false;
+              mySerial.print(F("Fade Vector Updated:\r"));
+              printFadeVector();
             }
             digitalWrite(indicatorLED, LOW);
           }
@@ -463,11 +471,14 @@ byte listenForIR(int timeout=0) {
             updateWaveform(marks);
           }
         }
-        else if (pulsePairIndex==7 && convertBIN(marks,7)==22){ //enter calibrate mode
-          calibrateMode = true;
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==22){ //enter characterize mode
+          implantMode = true;
         }
-        else if (pulsePairIndex==7 && convertBIN(marks,7)==117){ //about to receive calibration vector
-          receivingCalVector = true;
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==105){ //enter characterize mode
+          diodeMode = true;
+        }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==117){ //about to receive fade vector
+          receivingFadeVector = true;
           vectorIndex = 0;
         }
         else if (pulsePairIndex==7 && convertBIN(marks,7)==97){ //about to receive hardware vector
@@ -519,22 +530,22 @@ void updateWaveform(uint16_t (&marks)[NUMPULSES]){
   printParameters();
 }
 
-void updateCalVector(uint16_t (&marks)[NUMPULSES],byte offset){
-  unsigned int calValue  = 0;
+void updateFadeVector(uint16_t (&marks)[NUMPULSES],byte offset){
+  unsigned int fadeValue  = 0;
   for (byte m = 0; m<NUMPARAM; m++){    //write values to eeprom
-    calValue = convertBIN(marks,16,7+16*m);
-    eepromWriteByte(FADE_START+offset+2*m,calValue>>8);
-    eepromWriteByte(FADE_START+offset+2*m+1,calValue & 255);
+    fadeValue = convertBIN(marks,16,7+16*m);
+    eepromWriteByte(FADE_START+offset+2*m,fadeValue>>8);
+    eepromWriteByte(FADE_START+offset+2*m+1,fadeValue & 255);
   }
   powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1)); //read powerLevel from eeprom
 }
 
 void updateHardware(uint16_t (&marks)[NUMPULSES]){
-  unsigned int calValue  = 0;
+  unsigned int hardwareValue  = 0;
   for (byte m = 0; m<2; m++){   //only care about 2 values, Cerebro # and Laser Diode #
-    calValue = convertBIN(marks,16,7+16*m);
-    eepromWriteByte(2*m+12,calValue>>8);
-    eepromWriteByte(2*m+13,calValue & 255);
+    hardwareValue = convertBIN(marks,16,7+16*m);
+    eepromWriteByte(2*m+12,hardwareValue>>8);
+    eepromWriteByte(2*m+13,hardwareValue & 255);
   }
 }
 
@@ -689,7 +700,7 @@ bool laserOFF(){
   return false;
 }
 
-void printCalVector(){
+void printFadeVector(){
   for (int k = FADE_START; k < FADE_START+200 ; k+=NUMPARAM*2) {
     unsigned int param1;
     for (int i = 0; i<NUMPARAM; i++){

@@ -27,8 +27,6 @@ SOFTWARE.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-
-
     setWindowTitle("Xavier");
     qApp->setStyleSheet("QListWidget::item:selected { background-color: gold; color: black}");
     //Menu bar
@@ -62,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.25.3\nUpdated:\t10/25/2016";
+        QString aboutString = "\t1.26.0\nUpdated:\t11/30/2016";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -112,8 +110,8 @@ MainWindow::MainWindow(QWidget *parent)
                 clearBase_btn->setText("Clear Monitor");
             serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
                 baseMonitor = new QPlainTextEdit();
-                baseMonitor->setMinimumWidth(275);
-                baseMonitor->setMinimumHeight(350);
+                baseMonitor->setMinimumWidth(300);
+                baseMonitor->setMinimumHeight(500);
             serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
                 eeprom_btn = new QPushButton();
                 eeprom_btn->setText("(While the rat is still in the rig)\nClick to End Session");
@@ -121,75 +119,82 @@ MainWindow::MainWindow(QWidget *parent)
         baseBox->setLayout(serialMonitorLayout);
 
         //Pulse parameter adjustment box
-        adjustBox = new QGroupBox("Cerebro's Waveform Parameters");
+        adjustBox = new QGroupBox("Cerebro's Parameters");
             adjustmentLayout = new QGridLayout();
+                power_lbl = new QLabel("Power Level");
+                power_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            adjustmentLayout->addWidget(power_lbl,0,0);
+                power_spn = new QSpinBox();
+                power_spn->setRange(0,65535);
+                power_spn->setSingleStep(50);
+                power_spn->setAlignment(Qt::AlignCenter);
+            adjustmentLayout->addWidget(power_spn,0,1);
+                newPower_btn = new QPushButton("Send New Power Level");
+            adjustmentLayout->addWidget(newPower_btn,1,0,1,2);
                 startDelay_spn = new QSpinBox();
                 startDelay_spn->setRange(0,65535);
                 startDelay_spn->setSingleStep(50);
+                startDelay_spn->setSuffix(" ms");
                 startDelay_spn->setAlignment(Qt::AlignCenter);
-            adjustmentLayout->addWidget(startDelay_spn,0,1);
+            adjustmentLayout->addWidget(startDelay_spn,2,1);
                 startDelay_lbl = new QLabel("Start Delay");
                 startDelay_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            adjustmentLayout->addWidget(startDelay_lbl,0,0);
+            adjustmentLayout->addWidget(startDelay_lbl,2,0);
                 singleShot = new QRadioButton("Single Shot");
                 singleShot->setChecked(true);
-            adjustmentLayout->addWidget(singleShot,1,0,Qt::AlignRight);
+            adjustmentLayout->addWidget(singleShot,3,0,Qt::AlignRight);
                 pulseTrain = new QRadioButton("Pulse Train");
-            adjustmentLayout->addWidget(pulseTrain,1,1);
+            adjustmentLayout->addWidget(pulseTrain,3,1);
                 onTime_lbl = new QLabel("On Time");
                 onTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            adjustmentLayout->addWidget(onTime_lbl,2,0);
+            adjustmentLayout->addWidget(onTime_lbl,4,0);
                 onTime_spn = new QSpinBox();
                 onTime_spn->setRange(0,65535);
                 onTime_spn->setSingleStep(50);
                 onTime_spn->setSuffix(" ms");
                 onTime_spn->setAlignment(Qt::AlignCenter);
-            adjustmentLayout->addWidget(onTime_spn,2,1);
+            adjustmentLayout->addWidget(onTime_spn,4,1);
                 offTime_lbl = new QLabel("Off Time");
                 offTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
                 offTime_lbl->setVisible(false);
-            adjustmentLayout->addWidget(offTime_lbl,3,0);
+            adjustmentLayout->addWidget(offTime_lbl,5,0);
                 offTime_spn = new QSpinBox();
                 offTime_spn->setRange(0,65535);
                 offTime_spn->setSingleStep(50);
                 offTime_spn->setSuffix(" ms");
                 offTime_spn->setAlignment(Qt::AlignCenter);
                 offTime_spn->setVisible(false);
-            adjustmentLayout->addWidget(offTime_spn,3,1);
+            adjustmentLayout->addWidget(offTime_spn,5,1);
                 trainDescription_lbl  = new QLabel("");
                 trainDescription_lbl->setVisible(false);
                 trainDescription_lbl->setAlignment(Qt::AlignRight);
-            adjustmentLayout->addWidget(trainDescription_lbl,4,0,1,2);
+            adjustmentLayout->addWidget(trainDescription_lbl,6,0,1,2);
                 trainDuration_lbl = new QLabel("Train Duration");
                 trainDuration_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
                 trainDuration_lbl->setVisible(false);
-            adjustmentLayout->addWidget(trainDuration_lbl,5,0);
+            adjustmentLayout->addWidget(trainDuration_lbl,7,0);
                 trainDuration_spn = new QSpinBox();
                 trainDuration_spn->setRange(0,65535);
                 trainDuration_spn->setSingleStep(250);
                 trainDuration_spn->setSuffix(" ms");
                 trainDuration_spn->setAlignment(Qt::AlignCenter);
                 trainDuration_spn->setVisible(false);
-            adjustmentLayout->addWidget(trainDuration_spn,5,1);
+            adjustmentLayout->addWidget(trainDuration_spn,7,1);
                 fade_checkbox = new QCheckBox("Ramp Down");
-            adjustmentLayout->addWidget(fade_checkbox,6,0,Qt::AlignRight);
+            adjustmentLayout->addWidget(fade_checkbox,8,0,Qt::AlignRight);
                 fade_spn = new QSpinBox();
                 fade_spn->setRange(100,65535);
                 fade_spn->setSingleStep(100);
                 fade_spn->setSuffix(" ms");
                 fade_spn->setAlignment(Qt::AlignCenter);
                 fade_spn->setVisible(false);
-            adjustmentLayout->addWidget(fade_spn,6,1);
-                sendSettings_btn = new QPushButton("Send New Parameters");
+            adjustmentLayout->addWidget(fade_spn,8,1);
+                sendSettings_btn = new QPushButton("Send New Waveform Parameters");
                 sendSettings_btn->setAutoDefault(true);
-//                sendSettings_btn->setMinimumHeight(30);
-            adjustmentLayout->addWidget(sendSettings_btn,7,0,1,2);
+            adjustmentLayout->addWidget(sendSettings_btn,9,0,1,2);
                 last_settings = new QLabel();
                 last_settings->setText("No settings sent yet");
-            adjustmentLayout->addWidget(last_settings,8,0,1,2,Qt::AlignTop);
-                newPower_btn = new QPushButton("Change Power Level");
-//                newPower_btn->setMinimumHeight(30);
-            adjustmentLayout->addWidget(newPower_btn,9,0,1,2);
+            adjustmentLayout->addWidget(last_settings,10,0,1,2,Qt::AlignTop);
         adjustBox->setLayout(adjustmentLayout);
         adjustBox->setMinimumWidth(235);
 
@@ -211,6 +216,15 @@ MainWindow::MainWindow(QWidget *parent)
 //            baseSettingLayout->addWidget(lamp_btn,2,0,1,2);
         baseSettingsBox->setLayout(baseSettingLayout);
 
+        charBox = new QGroupBox("Implant Construction Tools");
+            charLayout = new QGridLayout();
+                startDiode_btn = new QPushButton("Start Diode Characterization");
+            charLayout->addWidget(startDiode_btn,0,0);
+                startImplant_btn = new QPushButton("Start Implant Characterization");
+            charLayout->addWidget(startImplant_btn,1,0);
+                initialize_btn = new QPushButton("Initialize Cerebro");
+            charLayout->addWidget(initialize_btn,2,0);
+        charBox->setLayout(charLayout);
 
         //Triggering & debugging
         bugBox = new QGroupBox("Debug");
@@ -244,56 +258,61 @@ MainWindow::MainWindow(QWidget *parent)
             triggerLayout->addWidget(macro_btn,4,1);
         bugBox->setLayout(triggerLayout);
 
-calDialog = new QDialog();
-    calLayout = new QGridLayout();
-//        chooseBox = new QGroupBox("Calibrate");
-            chooseLayout = new QGridLayout();
-                startCal_btn = new QPushButton("Start Calibration Routine");
-            chooseLayout->addWidget(startCal_btn,0,0,1,6);
-                wantedLevel = new QSlider(Qt::Horizontal);
-                wantedLevel->setRange(0,10);
-                wantedLevel->setValue(4);
-                wantedLevel->setTickPosition(QSlider::TicksBelow);
-                wantedLevel->setMaximumWidth(150);
-            chooseLayout->addWidget(wantedLevel,2,0,2,2);
-                slideLabel = new QLabel("Target Power: "+QString::number(wantedLevel->value())+ " mW");
-            chooseLayout->addWidget(slideLabel,1,0,1,2,Qt::AlignCenter);
-                showGraph = new QCheckBox("Show Graphs");
-                showGraph->setChecked(true);
-            chooseLayout->addWidget(showGraph,1,2,1,4,Qt::AlignCenter);
-                selectFile_btn = new DropButton;//("Select Power Meter\ndata file");
-                selectFile_btn->setCheckable(true);
-                selectFile_btn->setAcceptDrops(true);
-                selectFile_btn->setCheckable(false);
-            chooseLayout->addWidget(selectFile_btn,2,2,2,4);
-                codeTextBox = new QPlainTextEdit();
-                codeTextBox->setMinimumHeight(350);
-//                QFont codefont;
-//                codefont.setPointSize(5);
-//                codeTextBox->setFont(codefont);
-            chooseLayout->addWidget(codeTextBox,4,0,1,6);
-                cerebroNum_lbl = new QLabel("Cerebro #");
-                cerebroNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            chooseLayout->addWidget(cerebroNum_lbl,5,0);
-                cerebroNum_edit = new QLineEdit;
-                cerebroNum_edit->setFixedWidth(40);
-            chooseLayout->addWidget(cerebroNum_edit,5,1);
-                ldNum_lbl = new QLabel("Laser diode #");
-                ldNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            chooseLayout->addWidget(ldNum_lbl,6,0);
-                ldNum_edit = new QLineEdit;
-                ldNum_edit->setFixedWidth(40);
-            chooseLayout->addWidget(ldNum_edit,6,1);
-                sendCal_btn = new QPushButton("Send Calibration Vector");
-                sendCal_btn->setMinimumHeight(40);
-            chooseLayout->addWidget(sendCal_btn,5,2,2,4);
-//        chooseBox->setLayout(chooseLayout);
-//    calLayout->addWidget(chooseBox);
-calDialog->setWindowTitle("Change Power Level");
-calDialog->setWindowFlags(calDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
-calDialog->setMaximumWidth(0);
-calDialog->setMaximumHeight(0);
-calDialog->setLayout(chooseLayout);
+
+
+createFadeDialog = new QDialog();
+    createVecLayout = new QGridLayout();
+        wantedLevel = new QSlider(Qt::Horizontal);
+        wantedLevel->setRange(0,10);
+        wantedLevel->setValue(4);
+        wantedLevel->setTickPosition(QSlider::TicksBelow);
+        wantedLevel->setMaximumWidth(150);
+    createVecLayout->addWidget(wantedLevel,1,0,2,2);
+        slideLabel = new QLabel("Target Power: "+QString::number(wantedLevel->value())+ " mW");
+    createVecLayout->addWidget(slideLabel,0,0,1,2,Qt::AlignCenter);
+        showGraph = new QCheckBox("Show Graphs");
+        showGraph->setChecked(true);
+    createVecLayout->addWidget(showGraph,0,2,1,4,Qt::AlignCenter);
+        selectFile_btn = new DropButton(QString("Select Power Meter File"));//("Select Power Meter\ndata file");
+        selectFile_btn->setCheckable(true);
+        selectFile_btn->setAcceptDrops(true);
+        selectFile_btn->setCheckable(false);
+    createVecLayout->addWidget(selectFile_btn,1,2,2,4);
+createFadeDialog->setWindowTitle("Create fade vector from file");
+createFadeDialog->setWindowFlags(createFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
+createFadeDialog->setLayout(createVecLayout);
+
+sendFadeDialog = new QDialog();
+    sendFadeLayout = new QGridLayout();
+        createVecBtn = new QPushButton("Create fade vector from power meter file");
+    sendFadeLayout->addWidget(createVecBtn,0,0,1,6);
+        codeTextBox = new QPlainTextEdit();
+        codeTextBox->setMinimumHeight(350);
+        codeTextBox->setPlaceholderText("Paste Fade Vector here");
+//        QFont codefont;
+//        codefont.setPointSize(5);
+//        codeTextBox->setFont(codefont);
+    sendFadeLayout->addWidget(codeTextBox,4,0,1,6);
+        cerebroNum_lbl = new QLabel("Cerebro #");
+        cerebroNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    sendFadeLayout->addWidget(cerebroNum_lbl,5,0);
+        cerebroNum_edit = new QLineEdit;
+        cerebroNum_edit->setFixedWidth(40);
+    sendFadeLayout->addWidget(cerebroNum_edit,5,1);
+        ldNum_lbl = new QLabel("Laser diode #");
+        ldNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    sendFadeLayout->addWidget(ldNum_lbl,6,0);
+        ldNum_edit = new QLineEdit;
+        ldNum_edit->setFixedWidth(40);
+    sendFadeLayout->addWidget(ldNum_edit,6,1);
+        sendCal_btn = new QPushButton("Send Initialization");
+        sendCal_btn->setMinimumHeight(40);
+    sendFadeLayout->addWidget(sendCal_btn,5,2,2,4);
+sendFadeDialog->setWindowTitle("Initialize Cerebro");
+sendFadeDialog->setWindowFlags(sendFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
+sendFadeDialog->setMaximumWidth(0);
+sendFadeDialog->setMaximumHeight(0);
+sendFadeDialog->setLayout(sendFadeLayout);
 
 
         QPixmap pictcha(":myFiles/headerpicc.png");
@@ -337,14 +356,16 @@ calDialog->setLayout(chooseLayout);
     mainLayout->addWidget(equipmentBox,0,0,1,3);
 //    mainLayout->addWidget(baseSettingsBox,1,0);
     mainLayout->addWidget(adjustBox,1,0);
-//    mainLayout->addWidget(chooseBox,3,0,1,1);
-    mainLayout->addWidget(bugBox,2,0);
-    mainLayout->addWidget(baseBox,1,1,3,2);
+    mainLayout->addWidget(charBox,2,0);
+    mainLayout->addWidget(bugBox,3,0);
+    mainLayout->addWidget(baseBox,1,1,4,2);
     mainLayout->setColumnStretch(2,1);
-    mainLayout->addWidget(downloaderBox,0,3,4,1);
+    mainLayout->addWidget(downloaderBox,0,3,5,1);
     mainLayout->setRowStretch(5,1);
     adjustBox->setEnabled(false);
     adjustBox->setPalette(Qt::gray);
+    charBox->setEnabled(false);
+    charBox->setPalette(Qt::gray);
     bugBox->setEnabled(false);
     bugBox->setPalette(Qt::gray);
 //    chooseBox->setEnabled(false);
@@ -498,8 +519,8 @@ calDialog->setLayout(chooseLayout);
     refreshDrops();
     fillPortsInfo();
     fillPortsInfo2();
-    isConnected = false;
-    isConnected2 = false;
+    baseConnected = false;
+    downloadConnected = false;
     inTestloop = false;
     testCount = 0;
     timer = new QTimer(this);
@@ -518,7 +539,7 @@ calDialog->setLayout(chooseLayout);
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo()));
     connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo2()));
-    connect(connect_btn,SIGNAL(clicked()),this,SLOT(connectPort()));
+    connect(connect_btn,SIGNAL(clicked()),this,SLOT(connectBasePort()));
     connect(connect2_btn,SIGNAL(clicked()),this,SLOT(connectDownloadPort()));
     connect(serial,SIGNAL(readyRead()),this,SLOT(readSerial()));
     connect(serial2,SIGNAL(readyRead()),this,SLOT(readLog()));
@@ -566,14 +587,19 @@ calDialog->setLayout(chooseLayout);
     connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
     connect(debugCheckbox,SIGNAL(clicked(bool)),this,SLOT(setDebug()));
-    connect(newPower_btn,SIGNAL(clicked(bool)),calDialog,SLOT(exec()));
+    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(exec()));
+    connect(createVecBtn,SIGNAL(clicked(bool)),createFadeDialog,SLOT(exec()));
+    connect(newPower_btn,SIGNAL(clicked(bool)),this,SLOT(sendNewPower()));
+
 
 
     //Calibration signal&slots
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
-    connect(startCal_btn,SIGNAL(clicked()),this,SLOT(sendCalStart()));
+    connect(startImplant_btn,SIGNAL(clicked()),this,SLOT(sendImplantStart()));
+    connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
+
 
 
 
@@ -585,7 +611,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (isConnected){
+    if (baseConnected){
         QMessageBox alert;
             alert.setWindowTitle("Exit");
             alert.setIcon(QMessageBox::Warning);
@@ -654,9 +680,9 @@ void MainWindow::fillPortsInfo2()
     refresh2_btn->setDown(0);
 }
 
-void MainWindow::connectPort()
+void MainWindow::connectBasePort()
 {
-    if((rigSelect->selectedItems().size()==0) & !isConnected){
+    if((rigSelect->selectedItems().size()==0) & !baseConnected){
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -664,7 +690,7 @@ void MainWindow::connectPort()
         alert.exec();
         connect_btn->setChecked(false);
         }
-    else if((ratSelect->selectedItems().size()==0) & !isConnected){
+    else if((ratSelect->selectedItems().size()==0) & !baseConnected){
         QMessageBox alert;
         alert.setText("Please select a Rat ID to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -672,7 +698,7 @@ void MainWindow::connectPort()
         alert.exec();
         connect_btn->setChecked(false);
     }
-    else if((cerebroSelect->selectedItems().size()==0) & !isConnected){
+    else if((cerebroSelect->selectedItems().size()==0) & !baseConnected){
         QMessageBox alert;
         alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -681,25 +707,26 @@ void MainWindow::connectPort()
         connect_btn->setChecked(false);
     }
     else{
-        gotoSettings->setEnabled(isConnected);
-        toggleDebug->setEnabled(isConnected);
-        rig_lbl->setEnabled(isConnected);
-        rat_lbl->setEnabled(isConnected);
-        cerebro_lbl->setEnabled(isConnected);
-        rigSelect->setEnabled(isConnected);
-        ratSelect->setEnabled(isConnected);
-        cerebroSelect->setEnabled(isConnected);
-        connectBS_label->setEnabled(isConnected);
-        serialPortList->setEnabled(isConnected);
-        refresh_btn->setEnabled(isConnected);
-        debugCheckbox->setEnabled(isConnected);
-        adjustBox->setEnabled(!isConnected);
-        baseSettingsBox->setEnabled(!isConnected);
-        bugBox->setEnabled(!isConnected && debugOn);
-//        chooseBox->setEnabled(!isConnected && debugOn);
-        baseBox->setEnabled(!isConnected);
-        connect_btn->setChecked(!isConnected);
-        if(!isConnected){
+        gotoSettings->setEnabled(baseConnected);
+        toggleDebug->setEnabled(baseConnected);
+        rig_lbl->setEnabled(baseConnected);
+        rat_lbl->setEnabled(baseConnected);
+        cerebro_lbl->setEnabled(baseConnected);
+        rigSelect->setEnabled(baseConnected);
+        ratSelect->setEnabled(baseConnected);
+        cerebroSelect->setEnabled(baseConnected);
+        connectBS_label->setEnabled(baseConnected);
+        serialPortList->setEnabled(baseConnected);
+        refresh_btn->setEnabled(baseConnected);
+        debugCheckbox->setEnabled(baseConnected);
+        adjustBox->setEnabled(!baseConnected);
+        charBox->setEnabled(!baseConnected && debugOn);
+        bugBox->setEnabled(!baseConnected && debugOn);
+        baseSettingsBox->setEnabled(!baseConnected);
+//        chooseBox->setEnabled(!baseConnected && debugOn);
+        baseBox->setEnabled(!baseConnected);
+        connect_btn->setChecked(!baseConnected);
+        if(!baseConnected){
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
@@ -719,14 +746,14 @@ void MainWindow::connectPort()
             serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
             QTimer::singleShot(1000, this, SLOT(sendTime()));
-            isConnected = 1;
+            baseConnected = 1;
             errorThrown = false;
         }
         else{
             if (inTestloop){
                 triggerPushed();
             }
-            QString time = "\r" + serialPortList->currentText() + " Disconnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
+            QString time = "\r" + serialPortList->currentText() + " DbaseConnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
             baseMonitor->textCursor().insertText(time);
             serial->close();
             if (debugOn){
@@ -737,7 +764,7 @@ void MainWindow::connectPort()
             }
 //            connect_btn->setStyleSheet("background-color: green; color:white");
             setWindowTitle("Xavier");
-            isConnected = 0;
+            baseConnected = 0;
         }
     }
 }
@@ -745,7 +772,7 @@ void MainWindow::connectPort()
 void MainWindow::connectDownloadPort()
 {
     QString tempPortName = serialPortList2->currentText();
-    if (tempPortName.isEmpty() & !isConnected2){
+    if (tempPortName.isEmpty() & !downloadConnected){
         QMessageBox noSerial;
         noSerial.setText("Make sure a Downloader Cord is connected \nand click ''Rescan''' to see available Serial Ports.");
         noSerial.setIcon(QMessageBox::Warning);
@@ -754,14 +781,14 @@ void MainWindow::connectDownloadPort()
         connect2_btn->setChecked(false);
     }
     else{
-        connectLU_label->setEnabled(isConnected2);
-        serialPortList2->setEnabled(isConnected2);
-        refresh2_btn->setEnabled(isConnected2);
-        downloadMonitor->setEnabled(!isConnected2);
-        download_title->setEnabled(!isConnected2);
-        clearDownload_btn->setEnabled(!isConnected2);
-        saveMonitor_btn->setEnabled(!isConnected2);
-        if(!isConnected2){//if it's not connected, we'll connect it
+        connectLU_label->setEnabled(downloadConnected);
+        serialPortList2->setEnabled(downloadConnected);
+        refresh2_btn->setEnabled(downloadConnected);
+        downloadMonitor->setEnabled(!downloadConnected);
+        download_title->setEnabled(!downloadConnected);
+        clearDownload_btn->setEnabled(!downloadConnected);
+        saveMonitor_btn->setEnabled(!downloadConnected);
+        if(!downloadConnected){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
@@ -774,12 +801,12 @@ void MainWindow::connectDownloadPort()
             serial2->setFlowControl(QSerialPort::NoFlowControl);
             serial2->open(QIODevice::ReadWrite);
             connect2_btn->setText("Disconnect");
-            isConnected2 = true;
+            downloadConnected = true;
         }
         else{// if it is connected, we'll disconnect
             serial2->close();
             connect2_btn->setText("Connect To Downloader");
-            isConnected2 = false;
+            downloadConnected = false;
             fillPortsInfo2();
         }
     }
@@ -813,6 +840,7 @@ void MainWindow::readLog()
                 downloadMonitor->insertPlainText(buffer.mid(0,andIndex-1));
             }
             QStringList onboardParams = buffer.mid(andIndex+1,starIndex).split('~');
+            power_spn->setValue(onboardParams[3].toInt());
             startDelay_spn->setValue(onboardParams[4].toInt());
             onTime_spn->setValue(onboardParams[5].toInt());
             offTime_spn->setValue(onboardParams[6].toInt());
@@ -851,7 +879,7 @@ void MainWindow::readLog()
 void MainWindow::clearMonitor()
 {
     baseMonitor->clear();
-    if(isConnected){
+    if(baseConnected){
         QString rst = "R";
         serial->write(rst.toLocal8Bit());
         clearBase_btn->setEnabled(false);
@@ -900,7 +928,7 @@ void MainWindow::set()
                     offTimeString + offTime +
                     " ms\nTrain Duration:\t" + trainDur +
                     " ms\nFade Time:\t" + fadeTime + " ms"
-                    "\n\nThe command filter will be automatically been updated to " + QString::number(baseFilter_spn->value()) + " ms");
+                    "\n\nThe command filter will be automatically updated to " + QString::number(baseFilter_spn->value()) + " ms");
     if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
         last_settings->setText("Last Settings Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
@@ -1039,8 +1067,8 @@ void MainWindow::saveFile()
                 out << log;
                 file.close();
                 //Disconnect the com port if connected.
-                if(isConnected){
-                    connectPort();
+                if(baseConnected){
+                    connectBasePort();
                     fillPortsInfo();
                 }
                 rigSelect->clearSelection();
@@ -1101,7 +1129,7 @@ void MainWindow::errorMsg()
     if (((serial->error()==11)|(serial->error()==7)|(serial->error()==8)|(serial->error()==9)&& errorThrown==false)){                //http://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
         errorThrown = true;
         baseMonitor->textCursor().insertText("ERROR\r");
-        connectPort();
+        connectBasePort();
         fillPortsInfo();
         QMessageBox alert;
         alert.setText("Serial Communication Error");
@@ -1332,7 +1360,7 @@ void MainWindow::refreshDrops()
         settings.endGroup();
         toolMenu->setEnabled(pythonCheckbox->isChecked());
         debugOn = false;
-        if (isConnected2){
+        if (downloadConnected){
             connectDownloadPort(); //disconnect download port after settings change
         }
     }
@@ -1480,7 +1508,7 @@ void MainWindow::getGraphs()
 
 void MainWindow::setDebug()
 {
-    if (!isConnected){
+    if (!baseConnected){
         debugOn = !debugOn;
         debugCheckbox->setChecked(debugOn);
         showDebug();
@@ -1567,6 +1595,25 @@ void MainWindow::sendHardwareVals(){
     }
 }
 
+void MainWindow::sendNewPower(){
+    isFirstTime = true;
+    QTimer::singleShot(1000,this,SLOT(powerSending()));
+}
+
+void MainWindow::powerSending(){
+    if (isFirstTime){
+        QString msg = "P";
+        serial->write(msg.toLocal8Bit());
+        QTimer::singleShot(500, this, SLOT(powerSending()));
+        isFirstTime = false;
+    }
+    else{
+        QString msg = power_spn->text() + ",0,0,0,0";
+        qDebug()<<msg<<"sent";
+        serial->write(msg.toLocal8Bit());
+    }
+}
+
 /*``````````````````````Calibration functions`````````````````````*/
 void MainWindow::slideValueUpdate(int newVal){
     wantedLevel->setValue(newVal);
@@ -1614,11 +1661,19 @@ void MainWindow::getCalVals(QString calibrateDataPath ){
         alert.setText(errorString);
         alert.exec();
     }
+    createFadeDialog->close();
 }
 
-void MainWindow::sendCalStart()
+void MainWindow::sendImplantStart()
 {
     QString msg = "Z";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::sendDiodeStart()
+{
+    QString msg = "K";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }

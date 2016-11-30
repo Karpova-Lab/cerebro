@@ -49,8 +49,8 @@ private:
     QString                 saveName2;
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
-    bool                    isConnected;
-    bool                    isConnected2;
+    bool                    baseConnected;
+    bool                    downloadConnected;
     bool                    repeatOn;
     bool                    inTestloop;
     bool                    errorThrown;
@@ -69,7 +69,7 @@ private:
     QPushButton*            refresh2_btn,*connect2_btn,*sendCal_btn;
     QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*filter_btn,*macro_btn;;
     QPushButton*            eeprom_btn;
-    QPushButton*            sendSettings_btn,*newPower_btn;
+    QPushButton*            sendSettings_btn,*newPower_btn,*initialize_btn;
     QPushButton*            clearBase_btn;
     QPushButton*            clearDownload_btn;
     QPushButton*            changeSettings_btn;
@@ -84,10 +84,10 @@ private:
     QPlainTextEdit*         baseMonitor;
     QPlainTextEdit*         downloadMonitor;
     QLineEdit*              macroText;
-    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*startDelay_spn,*fade_spn,*trials_spn,*baseFilter_spn;
+    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*startDelay_spn,*fade_spn,*trials_spn,*baseFilter_spn,*power_spn;
     QRadioButton*           singleShot,*pulseTrain;
     QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*filterLabel;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*filterLabel,*power_lbl;
     QLabel*                 serial_title;
     QLabel*                 download_title;
     QLabel*                 last_settings;
@@ -104,6 +104,7 @@ private:
     QGridLayout*            startscreenLayout;
     QGridLayout*            connectionLayout2;
     QGridLayout*            adjustmentLayout;
+    QGridLayout*            charLayout;
     QGridLayout*            triggerLayout;
     QGridLayout*            serialMonitorLayout;
     QGridLayout*            logLayout;
@@ -114,6 +115,7 @@ private:
     QGroupBox*              equipmentBox;
     QGroupBox*              connectBox2;
     QGroupBox*              adjustBox;
+    QGroupBox*              charBox;
     QGroupBox*              bugBox;
     QGroupBox*              baseBox;
     QGroupBox*              downloaderBox;
@@ -159,10 +161,10 @@ private:
     QCheckBox*              pythonCheckbox;
 
     //Calibration Stuff
-    QDialog*                calDialog;
+    QDialog*                sendFadeDialog,*createFadeDialog;
     QGroupBox*              chooseBox;
-    QPushButton*            startCal_btn,*pickFile_btn;
-    QGridLayout*            chooseLayout,*calLayout;
+    QPushButton*            startImplant_btn,*startDiode_btn,*pickFile_btn,*createVecBtn;
+    QGridLayout*            sendFadeLayout,*createVecLayout;
     QPlainTextEdit*         codeTextBox;
     QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl;
     QLineEdit*              cerebroNum_edit,*ldNum_edit;
@@ -178,7 +180,7 @@ private:
 private slots:
     void fillPortsInfo();
     void fillPortsInfo2();
-    void connectPort();
+    void connectBasePort();
     void connectDownloadPort();
     void sendTime();
     void readSerial();
@@ -215,13 +217,17 @@ private slots:
     void setDebug();
     void shrink();
     void editLabel();
+    void sendNewPower();
+    void powerSending();
+
 
     //Calibration stuff
     void chooseFile();
     void getCalVals(QString calibrateDataPath);
     void slideValueUpdate(int newVal);
     void useDropped(const QMimeData *mimeData);
-    void sendCalStart();
+    void sendImplantStart();
+    void sendDiodeStart();
     void sendCalVector();
     void sendCalGroups();
     void sendHardwareVals();

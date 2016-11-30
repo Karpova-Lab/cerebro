@@ -14,7 +14,8 @@ public:
   void saveEEPROM();
   void toggle(bool turnON);
   void send(unsigned int newVals[]);
-  void calibrate();
+  void implantCharacterize();
+  void diodeCharacterize();
   void dumpMemory();
   void sendBinary(unsigned int value, unsigned char valSize);
   void powerTest(unsigned int testLevel);

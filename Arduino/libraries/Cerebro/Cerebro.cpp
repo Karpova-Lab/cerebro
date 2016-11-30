@@ -122,9 +122,13 @@ void Cerebro::send(unsigned int newVals[]) //ir remote send
   }
 }
 
-void Cerebro::calibrate()
+void Cerebro::implantCharacterize()
 {
   sendBinary(22,7);
+}
+
+void Cerebro::diodeCharacterize(){
+  sendBinary(105,7);
 }
 
 void Cerebro::powerTest(unsigned int testLevel)

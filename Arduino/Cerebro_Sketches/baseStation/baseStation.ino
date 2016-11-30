@@ -44,7 +44,7 @@ SoftwareSerial mySerial(3,4);
 String startupMsg;
 unsigned long timeOffset;
 byte values[numParameters][6];
-byte version = 22;
+byte version = 23;
 unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
 long triggerClock = 0;
 unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
@@ -211,10 +211,20 @@ void parseMsg(byte numValues){
     mySerial.print(millis() - timeOffset);
     mySerial.print(F(",Memory Dump Sent\r"));
   }
-  else if (values[0][0] == 'Z') {
-    cerebro.calibrate();
+  else if (values[0][0] == 'P') {
+    cerebro.sendBinary(36,7); //sends message that sets the powerTest flag
     mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Calibration Routine Start Sent\r"));
+    mySerial.print(F(",New Power Sent\r"));
+  }
+  else if (values[0][0] == 'Z') {
+    cerebro.implantCharacterize();
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Implant Characterization Routine Start Sent\r"));
+  }
+  else if (values[0][0] == 'K') {
+    cerebro.diodeCharacterize();
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Diode Characterization Routine Start Sent\r"));
   }
   //received values to pass along to cerebro. Send 8 bytes of data to cerebro.
   else if (numValues==numParameters-1){

@@ -42,11 +42,11 @@
 
 #include <QDragEnterEvent>
 #include <QMimeData>
-QString startText = "Select Calibration File";
 
-DropButton::DropButton(QWidget *parent)
+DropButton::DropButton(QString buttonText,QWidget *parent)
     : QPushButton(parent)
 {
+    setText(buttonText);
     setAcceptDrops(true);
     setAutoFillBackground(true);
     clear();
@@ -54,7 +54,6 @@ DropButton::DropButton(QWidget *parent)
 
 void DropButton::dragEnterEvent(QDragEnterEvent *event)
 {
-    setText(startText);
     setBackgroundRole(QPalette::Dark);
 
     event->acceptProposedAction();
@@ -82,7 +81,6 @@ void DropButton::dragLeaveEvent(QDragLeaveEvent *event)
 //! [clear() function]
 void DropButton::clear()
 {
-    setText(startText);
     setBackgroundRole(QPalette::Dark);
 
     emit changed();
