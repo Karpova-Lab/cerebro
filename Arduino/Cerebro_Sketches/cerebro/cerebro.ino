@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 55;
+byte version = 56;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE
 // #define OLDBOARD
@@ -209,7 +209,11 @@ void loop() {
   marksReceived = listenForIR();      //wait for IR signal and return the number of marks received
   if (trigMatch) {                    //trigger light upon receiving exactly 4 marks of with durations that match a key
     trigMatch = false;
-    triggerEvent(powerLevel);
+    #ifdef MCUBE
+    triggerEvent(powerLevel,false);
+    #else
+    triggerEvent(powerLevel,true);
+    #endif
   }
   else if(implantMode || diodeMode){
     digitalWrite(indicatorLED,HIGH);
