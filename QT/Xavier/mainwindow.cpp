@@ -862,13 +862,13 @@ void MainWindow::readLog()
             showParams.setWindowTitle("Cerebro #" + onboardParams[1]  + " - LD #" + onboardParams[2]);
             showParams.setStandardButtons(QMessageBox::Ok);
             showParams.setText(
-                    "\nStart Delay:\t"+ onboardParams[4]+
+                    "Firmware:\t" + onboardParams[0] +
+                    "\n\nPower Level:\t" + onboardParams[3] +
+                    "\n\nStart Delay:\t"+ onboardParams[4]+
                     onTimeString + onboardParams[5] +
                     offTimeString + onboardParams[6] +
                     " ms\nTrain Duration:\t" + onboardParams[7] +
-                    " ms\nFade Time:\t" + onboardParams[8] + " ms" +
-                    "\n\nPower Level:\t" + onboardParams[3] +
-                    "\n\nFirmware:\t" + onboardParams[0]);
+                    " ms\nFade Time:\t" + onboardParams[8] + " ms" );
             showParams.exec();
         }
     }
