@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 56;
+byte version = 57;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE
 // #define OLDBOARD
@@ -231,8 +231,8 @@ void loop() {
     printParameters();
     #else
     triggerEvent(tempPower);
-    powerTestMode = false;
     #endif
+    powerTestMode = false;
   }
   else if (marksReceived==memoryDumpFlag){
     mySerial.println(F("Memory Contents:"));
