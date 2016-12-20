@@ -55,6 +55,7 @@ private:
     bool                    inTestloop;
     bool                    errorThrown;
     bool                    pythonEnabled;
+    bool                    mcubeEnabled;
     int                     testCount;
     bool                    first;
     bool                    debugOn;
@@ -158,7 +159,7 @@ private:
 
     QGroupBox*              featuresBox;
     QGridLayout*            featuresLayout;
-    QCheckBox*              pythonCheckbox;
+    QCheckBox*              pythonCheckbox,*mcubeCheckbox;
 
     //Calibration Stuff
     QDialog*                sendFadeDialog,*createFadeDialog;
@@ -166,7 +167,7 @@ private:
     QPushButton*            startImplant_btn,*startDiode_btn,*pickFile_btn,*createVecBtn;
     QGridLayout*            sendFadeLayout,*createVecLayout;
     QPlainTextEdit*         codeTextBox;
-    QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl;
+    QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl,*orLabel;
     QLineEdit*              cerebroNum_edit,*ldNum_edit;
     QCheckBox*              showGraph;
     QSlider*                wantedLevel;
@@ -215,7 +216,6 @@ private slots:
     void showDownloader();
     void getGraphs();
     void setDebug();
-    void shrink();
     void editLabel();
     void sendNewPower();
     void powerSending();

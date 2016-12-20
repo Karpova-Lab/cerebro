@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.26.0\nUpdated:\t11/30/2016";
+        QString aboutString = "\t1.26.1\nUpdated:\t12/19/2016";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -222,7 +222,7 @@ MainWindow::MainWindow(QWidget *parent)
             charLayout->addWidget(startDiode_btn,0,0);
                 startImplant_btn = new QPushButton("Start Implant Characterization");
             charLayout->addWidget(startImplant_btn,1,0);
-                initialize_btn = new QPushButton("Initialize Cerebro");
+                initialize_btn = new QPushButton("Send Power Values to Cerebro");
             charLayout->addWidget(initialize_btn,2,0);
         charBox->setLayout(charLayout);
 
@@ -281,34 +281,35 @@ createFadeDialog = new QDialog();
 createFadeDialog->setWindowTitle("Create fade vector from file");
 createFadeDialog->setWindowFlags(createFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
 createFadeDialog->setLayout(createVecLayout);
-
 sendFadeDialog = new QDialog();
     sendFadeLayout = new QGridLayout();
         createVecBtn = new QPushButton("Create fade vector from power meter file");
     sendFadeLayout->addWidget(createVecBtn,0,0,1,6);
+        orLabel = new QLabel("or");
+    sendFadeLayout->addWidget(orLabel,1,0,1,6,Qt::AlignCenter);
         codeTextBox = new QPlainTextEdit();
         codeTextBox->setMinimumHeight(350);
         codeTextBox->setPlaceholderText("Paste Fade Vector here");
 //        QFont codefont;
 //        codefont.setPointSize(5);
 //        codeTextBox->setFont(codefont);
-    sendFadeLayout->addWidget(codeTextBox,4,0,1,6);
+    sendFadeLayout->addWidget(codeTextBox,2,0,1,6);
         cerebroNum_lbl = new QLabel("Cerebro #");
         cerebroNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    sendFadeLayout->addWidget(cerebroNum_lbl,5,0);
+    sendFadeLayout->addWidget(cerebroNum_lbl,3,0);
         cerebroNum_edit = new QLineEdit;
         cerebroNum_edit->setFixedWidth(40);
-    sendFadeLayout->addWidget(cerebroNum_edit,5,1);
-        ldNum_lbl = new QLabel("Laser diode #");
+    sendFadeLayout->addWidget(cerebroNum_edit,3,1);
+        ldNum_lbl = new QLabel("Implant #");
         ldNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    sendFadeLayout->addWidget(ldNum_lbl,6,0);
+    sendFadeLayout->addWidget(ldNum_lbl,4,0);
         ldNum_edit = new QLineEdit;
         ldNum_edit->setFixedWidth(40);
-    sendFadeLayout->addWidget(ldNum_edit,6,1);
-        sendCal_btn = new QPushButton("Send Initialization");
+    sendFadeLayout->addWidget(ldNum_edit,4,1);
+        sendCal_btn = new QPushButton("Send Values");
         sendCal_btn->setMinimumHeight(40);
-    sendFadeLayout->addWidget(sendCal_btn,5,2,2,4);
-sendFadeDialog->setWindowTitle("Initialize Cerebro");
+    sendFadeLayout->addWidget(sendCal_btn,3,2,2,4);
+sendFadeDialog->setWindowTitle("Power Value Sender");
 sendFadeDialog->setWindowFlags(sendFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
 sendFadeDialog->setMaximumWidth(0);
 sendFadeDialog->setMaximumHeight(0);
@@ -489,6 +490,9 @@ sendFadeDialog->setLayout(sendFadeLayout);
                 pythonCheckbox = new QCheckBox("Enable Python Scripts");
                 pythonCheckbox->setChecked(pythonEnabled);
             featuresLayout->addWidget(pythonCheckbox);
+                mcubeCheckbox = new QCheckBox("Check this box if using Xavier with MCUBE (without photoresistor feedback)");
+                mcubeCheckbox->setChecked(mcubeEnabled);
+            featuresLayout->addWidget(mcubeCheckbox);
         featuresBox->setLayout(featuresLayout);
 
         settingsLayout = new QGridLayout();
@@ -510,7 +514,7 @@ sendFadeDialog->setLayout(sendFadeLayout);
 #elif __APPLE__ //---------Mac USB parse settings---------------
     usbTag  = "cu.usbserial";
     usbDescription = "FT230X Basic UART";
-#endif    
+#endif
 
     //program setup
     serial = new QSerialPort(this);
@@ -964,6 +968,7 @@ void MainWindow::triggerPushed()
             if(inTestloop){
                 timer->start(2000);
                 testProgress->setVisible(true);
+                testProgress->setValue(0);
                 testProgress->setMaximum(trials_spn->value());
                 trigger_btn->setText("Stop Testing");
             }
@@ -1092,7 +1097,6 @@ void MainWindow::saveFile()
             out2 << log2;
             file2.close();
             downloadMonitor->clear();
-            QTimer::singleShot(0,this,SLOT(shrink()));
             if(pythonEnabled){
                 // Run python script to summarize data from base station and cerebro logs
                 QProcess *process = new QProcess(this);
@@ -1305,9 +1309,14 @@ void MainWindow::refreshDrops()
         settings.endGroup();
         settings.beginGroup("Features");
         pythonEnabled = settings.value("pythonEnabled").toBool();
+        mcubeEnabled = settings.value("mcubeEnabled").toBool();
         settings.endGroup();
         toolMenu->setEnabled(pythonEnabled);
         pythonCheckbox->setChecked(pythonEnabled);
+        mcubeCheckbox->setChecked(mcubeEnabled);
+        power_lbl->setVisible(mcubeCheckbox->isChecked());
+        power_spn->setVisible(mcubeCheckbox->isChecked());
+        newPower_btn->setVisible(mcubeCheckbox->isChecked());
         first = false;
         // populate the listwidgets in the settings dialog with the items in the lists we got from memory
         for (int i = 0;i< rigList.count(); i++){
@@ -1357,8 +1366,12 @@ void MainWindow::refreshDrops()
         settings.endGroup();
         settings.beginGroup("Features");
         settings.setValue("pythonEnabled",pythonCheckbox->isChecked());
+        settings.setValue("mcubeEnabled",mcubeCheckbox->isChecked());
         settings.endGroup();
         toolMenu->setEnabled(pythonCheckbox->isChecked());
+        power_lbl->setVisible(mcubeCheckbox->isChecked());
+        power_spn->setVisible(mcubeCheckbox->isChecked());
+        newPower_btn->setVisible(mcubeCheckbox->isChecked());
         debugOn = false;
         if (downloadConnected){
             connectDownloadPort(); //disconnect download port after settings change
@@ -1515,9 +1528,6 @@ void MainWindow::setDebug()
     }
 }
 
-void MainWindow::shrink(){
-    adjustSize();
-}
 
 void MainWindow::editLabel(){
     //isolate the COMXX part of the port name
