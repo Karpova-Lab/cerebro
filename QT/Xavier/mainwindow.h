@@ -170,7 +170,7 @@ private:
     QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl,*orLabel;
     QLineEdit*              cerebroNum_edit,*ldNum_edit;
     QCheckBox*              showGraph;
-    QSlider*                wantedLevel;
+    QLineEdit*              wantedLevel;
     DropButton*             selectFile_btn;
     bool                    isFirstTime;
 
@@ -224,7 +224,6 @@ private slots:
     //Calibration stuff
     void chooseFile();
     void getCalVals(QString calibrateDataPath);
-    void slideValueUpdate(int newVal);
     void useDropped(const QMimeData *mimeData);
     void sendImplantStart();
     void sendDiodeStart();

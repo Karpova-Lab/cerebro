@@ -1,19 +1,17 @@
 from calFunctions import*
 from sys import argv
-script, calibDataPath,wantedLevel,showGraph = argv
+script, calDataPath,wantedLevel,showGraph = argv
 
-calibDataPath = calibDataPath[1:-1]
-
-sourceName = calibDataPath
-wantedLevel = int(wantedLevel)
+sourceName = calDataPath[1:-1]
+wantedLevel = float(wantedLevel)
 showGraph = int(showGraph)
-# wantedLevel = 8
 
 LD,measuredPowers,saveName = parseMeterFile(sourceName)
 peakIndices,peakVals,threshold = getPeaks(measuredPowers)
 plt.figure(figsize=(17,11))
-rawGraph(measuredPowers,peakIndices,peakVals,LD) #subplot 1
-trimmedInputs,lightout = calibrationCurve(peakVals,wantedLevel,LD) #subplot 2
+plotRawGraph(measuredPowers,peakIndices,peakVals,LD) #subplot 1
+trimmedInputs,lightout = getCalCoords(peakVals)
+plotCalibrationCurve(trimmedInputs,lightout,wantedLevel,LD) #subplot 2
 
 if showGraph>0:
 	fig = plt.gcf()

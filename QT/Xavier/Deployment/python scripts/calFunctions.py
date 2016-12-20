@@ -8,7 +8,6 @@ import seaborn as sns
 import os
 import shutil
 
-
 def parseMeterFile(sourceName):
     saveName = sourceName[:-4] #remove .txt
     index = saveName.find("LD")
@@ -26,6 +25,30 @@ def parseMeterFile(sourceName):
         val = 1000*float(i[start:start+6])*10**float(i[start+8+a:-3])
         vec.append(val)
     return LD,vec,saveName
+
+def parseSummaryFile(summaryFile):
+    #get LD #
+    index = summaryFile.find("LD")
+    index2 = summaryFile.find("_")
+    LD = summaryFile[index+2:index2]
+    summaryText = open(summaryFile,'r')
+    lineNum = 0
+    #Find the "***" delimeter so we know how many data points there are
+    for line in summaryText:
+        if line.find("***")>-1:
+            rowsInSummaryFile = lineNum
+            break
+        lineNum += 1
+
+    summaryData = pd.read_csv(summaryFile,header=None,nrows=rowsInSummaryFile)
+    powerLvls = []
+    lightOutputs = []
+    for i in summaryData[0]:
+        powerLvls.append(i)
+    for i in summaryData[1]:
+        lightOutputs.append(i)
+
+    return LD,powerLvls,lightOutputs
 
 def getPeaks(vec):
     #################################
@@ -51,7 +74,7 @@ def getCalibration(desired,xVec,yVec):
             return int(round((desired-b)/slope))
         loop+=1
 
-def rawGraph(vec,_peakIndices,_peakVals,LD):
+def plotRawGraph(vec,_peakIndices,_peakVals,LD):
     plt.subplot(2,1,1)
     plt.plot(vec)
     plt.scatter(_peakIndices,_peakVals,color='red')
@@ -66,7 +89,19 @@ def rawGraph(vec,_peakIndices,_peakVals,LD):
     plt.ylim(0,45)
     plt.xlim(0,150000)
 
-def calibrationCurve(_peakVals,wantedLevel,LD):
+def getCalCoords(_peakVals):
+    lightOut = _peakVals[::-1] #reverse the order of the peak values since we were getting them from righ to left
+    softVals = []
+    for i in range(500,751,50):
+        softVals.append(i)
+    for i in range(760,901,10):
+        softVals.append(i)
+    for i in range(905,1026,5):
+        softVals.append(i)
+    trimmedSoftVals = softVals[:len(lightOut)]
+    return trimmedSoftVals,lightOut
+
+def plotCalibrationCurve(calX,calY,wantedLevel,LD):
     fig = plt.gcf()
     ax1 = fig.add_subplot(212)
     fig.subplots_adjust(bottom=0.2)
@@ -85,21 +120,9 @@ def calibrationCurve(_peakVals,wantedLevel,LD):
     # Offset the twin axis below the host
     ax2.spines["bottom"].set_position(("axes", -0.15))
 
-
-    lightOut = _peakVals[::-1]
-    softVals = []
-    for i in range(500,751,50):
-        softVals.append(i)
-    for i in range(760,901,10):
-        softVals.append(i)
-    for i in range(905,1026,5):
-        softVals.append(i)
-
-    trimmedSoftVals = softVals[:len(lightOut)]
-
-    ax1.scatter(trimmedSoftVals,lightOut,s=50) #plot points
-    ax1.plot(trimmedSoftVals,lightOut,'--')    #connect points with dashed line
-    calibration =  getCalibration(wantedLevel,trimmedSoftVals,lightOut) #get calibrated value
+    ax1.scatter(calX,calY,s=50) #plot points
+    ax1.plot(calX,calY,'--')    #connect points with dashed line
+    calibration =  getCalibration(wantedLevel,calX,calY) #get calibrated value
     ax1.scatter(calibration,wantedLevel,color="red",s=50) #plot calibrated value
     ax1.set_title("LD{} Characterization Curve".format(LD),fontsize=20)
     ylabel = "Power (mW)"
@@ -110,7 +133,6 @@ def calibrationCurve(_peakVals,wantedLevel,LD):
                 fontsize=30,
                 ha='center',
                 va='bottom')
-    return trimmedSoftVals,lightOut
 
 def saveGraphs(_sourceName,_saveName,bokehGraph):
     # save graphs to local directory
@@ -120,13 +142,13 @@ def saveGraphs(_sourceName,_saveName,bokehGraph):
     plt.savefig("Calibrations/Graphs/{0}_graph.png".format(_saveName),bbox_inches='tight')
     shutil.copy(_sourceName,'Calibrations/{}'.format(_saveName)) #put a copy of the .txt log file in the local folder
 
-def saveSummary(_saveName,_wantedLevel,_trimmedSoftVals,lightOut,LD):
+def saveSummary(_saveName,_wantedLevel,_trimmedSoftVals,_lightOut,LD):
     ######### Write summary to file###################
-    target = open("{0}_summary.txt".format(_saveName), 'w')
+    target = open("{0}_{1}mWsummary.txt".format(_saveName,str(_wantedLevel)), 'w')
     for i in range(len(_trimmedSoftVals)):
-        target.write("{},{}\n".format(_trimmedSoftVals[i],lightOut[i]))
+        target.write("{},{}\n".format(_trimmedSoftVals[i],_lightOut[i]))
     waveform = np.linspace(_wantedLevel,0,num=100)
-    vals = [getCalibration(i,_trimmedSoftVals,lightOut) for i in waveform ]
+    vals = [getCalibration(i,_trimmedSoftVals,_lightOut) for i in waveform ]
     target.write("***\n")
     target.write("LD{} {}mW\n".format(LD,_wantedLevel))
     for i in range(len(vals)):
@@ -136,18 +158,18 @@ def saveSummary(_saveName,_wantedLevel,_trimmedSoftVals,lightOut,LD):
             target.write("\n")
         else:
             target.write(",")
-    powerTable = range(_wantedLevel*10,-1,-1)
-    vals = [getCalibration(i/10.0,_trimmedSoftVals,lightOut) for i in powerTable ]
+    powerTable = range(int(_wantedLevel*10),-1,-1)
+    vals = [getCalibration(i/10.0,_trimmedSoftVals,_lightOut) for i in powerTable ]
     target.write("\n")
     for i in range(len(vals)):
     #     print powerTable[i]/10.0,vals[i]
         target.write("{},{}\n".format(powerTable[i]/10.0,vals[i]))
     target.close()
 
-def fitLine2Graph(trimmedSoftVals,lightOut):
-    coefficients = np.polyfit(trimmedSoftVals,lightOut,5)
+def fitLine2Graph(_trimmedSoftVals,_lightOut):
+    coefficients = np.polyfit(_trimmedSoftVals,_lightOut,5)
     f = np.poly1d(coefficients)
-    plt.plot(trimmedSoftVals,f(trimmedSoftVals),'r')
+    plt.plot(_trimmedSoftVals,f(_trimmedSoftVals),'r')
     print (coefficients)
 
 def showCalVal(showVal):
@@ -159,7 +181,6 @@ def getCalVector(wantedLevel,LD,trimmedInputs,lightout):
 
 	for i in range(len(vals)):
 		print (vals[i],end="")
-		#if i != 0:
 		if not((i+1)%5):
 			print ("")
 		else:

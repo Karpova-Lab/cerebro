@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.26.1\nUpdated:\t12/19/2016";
+        QString aboutString = "\t1.26.2\nUpdated:\t12/20/2016";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -262,22 +262,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 createFadeDialog = new QDialog();
     createVecLayout = new QGridLayout();
-        wantedLevel = new QSlider(Qt::Horizontal);
-        wantedLevel->setRange(0,10);
-        wantedLevel->setValue(4);
-        wantedLevel->setTickPosition(QSlider::TicksBelow);
-        wantedLevel->setMaximumWidth(150);
-    createVecLayout->addWidget(wantedLevel,1,0,2,2);
-        slideLabel = new QLabel("Target Power: "+QString::number(wantedLevel->value())+ " mW");
-    createVecLayout->addWidget(slideLabel,0,0,1,2,Qt::AlignCenter);
+        slideLabel = new QLabel("Target Power (mW):");
+    createVecLayout->addWidget(slideLabel,0,0,Qt::AlignRight);
+        wantedLevel = new QLineEdit();
+        wantedLevel->setMaximumWidth(50);
+    createVecLayout->addWidget(wantedLevel,0,1);
         showGraph = new QCheckBox("Show Graphs");
         showGraph->setChecked(true);
-    createVecLayout->addWidget(showGraph,0,2,1,4,Qt::AlignCenter);
+    createVecLayout->addWidget(showGraph,1,0,1,3,Qt::AlignCenter);
         selectFile_btn = new DropButton(QString("Select Power Meter File"));//("Select Power Meter\ndata file");
         selectFile_btn->setCheckable(true);
         selectFile_btn->setAcceptDrops(true);
         selectFile_btn->setCheckable(false);
-    createVecLayout->addWidget(selectFile_btn,1,2,2,4);
+    createVecLayout->addWidget(selectFile_btn,2,0,1,3,Qt::AlignCenter);
 createFadeDialog->setWindowTitle("Create fade vector from file");
 createFadeDialog->setWindowFlags(createFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
 createFadeDialog->setLayout(createVecLayout);
@@ -600,7 +597,6 @@ sendFadeDialog->setLayout(sendFadeLayout);
     //Calibration signal&slots
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
-    connect(wantedLevel,SIGNAL(sliderMoved(int)),this,SLOT(slideValueUpdate(int)));
     connect(startImplant_btn,SIGNAL(clicked()),this,SLOT(sendImplantStart()));
     connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
 
@@ -1625,10 +1621,6 @@ void MainWindow::powerSending(){
 }
 
 /*``````````````````````Calibration functions`````````````````````*/
-void MainWindow::slideValueUpdate(int newVal){
-    wantedLevel->setValue(newVal);
-    slideLabel->setText("Target Power: "+QString::number(wantedLevel->value())+ " mW");
-}
 
 
 void MainWindow::chooseFile(){
@@ -1657,7 +1649,7 @@ void MainWindow::useDropped(const QMimeData *mimeData)
 void MainWindow::getCalVals(QString calibrateDataPath ){
     QProcess *process = new QProcess(this);
     QStringList pythonArgs;
-    pythonArgs<<qApp->applicationDirPath()+"/python scripts/getCalibrationVec.py"<<"\""+calibrateDataPath+"\""<<QString::number(wantedLevel->value())<<QString::number(showGraph->isChecked()); //pass the calibration data into python script
+    pythonArgs<<qApp->applicationDirPath()+"/python scripts/getCalibrationVec.py"<<"\""+calibrateDataPath+"\""<<wantedLevel->text()<<QString::number(showGraph->isChecked()); //pass the calibration data into python script
     process->start("python",pythonArgs);
     process->waitForFinished(-1);
     QString errorString = process->readAllStandardError();
