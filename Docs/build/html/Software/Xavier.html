@@ -95,13 +95,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#download-instructions">Download Instructions</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#starting-a-new-session">Starting a New Session</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#waveform-parameters">Waveform Parameters</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#checking-current-parameters">Checking Current Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#changing-parameters">Changing Parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#ending-a-session-and-saving-data">Ending a Session and Saving Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#settings">Settings</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#edit-default-save-directory">Edit Default Save Directory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#edit-dropdown-lists">Edit Dropdown Lists</a><ul>
@@ -115,6 +108,22 @@
 <li class="toctree-l4"><a class="reference internal" href="#removing-labels">Removing Labels</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#waveform-parameters">Waveform Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#checking-current-parameters">Checking Current Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-parameters">Changing Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implant-construction-tools">Implant Construction Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#diode-characterization">Diode Characterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implant-characterization">Implant Characterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#send-power-values-to-cerebro">Send Power Values to Cerebro</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-an-experiment">Running an Experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-a-new-session">Starting a New Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ending-a-session-and-saving-data">Ending a Session and Saving Data</a></li>
 </ul>
 </li>
 </ul>
@@ -165,7 +174,7 @@
             
   <div class="section" id="xavier">
 <h1>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="../_images/Xavier.png"><img alt="../_images/Xavier.png" class="align-center" src="../_images/Xavier.png" style="width: 731.2px; height: 551.2px;" /></a>
+<a class="reference internal image-reference" href="../_images/Xavier.png"><img alt="../_images/Xavier.png" class="align-center" src="../_images/Xavier.png" style="width: 784.8000000000001px; height: 672.0px;" /></a>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="system-requirements">
@@ -173,120 +182,33 @@
 <blockquote>
 <div><ul class="simple">
 <li>Windows XP or newer</li>
-<li><a class="reference external" href="http://continuum.io/downloads">Anaconda Python 3.5 Distribution</a></li>
+<li>Python 3.5 with numpy, pandas, and matplotlib libraries</li>
 </ul>
 </div></blockquote>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Download <a class="reference external" href="http://continuum.io/downloads">Anaconda Python 3.5 Distribution</a> , which has all of the required libraries included</p>
+</div>
 </div>
 <div class="section" id="download-instructions">
 <span id="setup-default"></span><h3>Download Instructions<a class="headerlink" href="#download-instructions" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Download and install <a class="reference external" href="http://continuum.io/downloads">Anaconda Python 3.5 Distribution</a></li>
 <li>Download and unzip <a class="reference download internal" href="../_downloads/Deployment.zip" download=""><code class="xref download docutils literal"><span class="pre">Xavier</span> <span class="pre">Deployment</span> <span class="pre">Folder</span></code></a></li>
 <li>Open up Xavier.exe</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/Xavier_open.png"><img alt="../_images/Xavier_open.png" src="../_images/Xavier_open.png" style="width: 487.5px; height: 371.25px;" /></a>
 </div>
-<ol class="arabic simple" start="4">
+<ol class="arabic simple" start="3">
 <li>Setup a <a class="reference internal" href="#edit-default-directory"><span class="std std-ref">default directory</span></a> that data will be saved to</li>
 </ol>
 </div>
-</div>
-<div class="section" id="starting-a-new-session">
-<span id="start-session"></span><h2>Starting a New Session<a class="headerlink" href="#starting-a-new-session" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
-<li>Fill out experimental setup information.</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/rat_info.png"><img alt="../_images/rat_info.png" class="align-center" src="../_images/rat_info.png" style="width: 564.0px; height: 136.0px;" /></a>
-<ol class="arabic simple" start="2">
-<li>Select a Base Station Serial Port.</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/com_port.png"><img alt="../_images/com_port.png" class="align-center" src="../_images/com_port.png" style="width: 565.0px; height: 136.0px;" /></a>
-<ol class="arabic simple" start="3">
-<li>Click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Session</span></code></li>
-</ol>
-<a class="reference internal image-reference" href="../_images/start_session.png"><img alt="../_images/start_session.png" class="align-center" src="../_images/start_session.png" style="width: 564.0px; height: 135.0px;" /></a>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">The dropdown menus can be <a class="reference internal" href="#add-items"><span class="std std-ref">edited</span></a> and COM Ports that appear in the dropdown list can be <a class="reference internal" href="#label-ports"><span class="std std-ref">labeled</span></a></p>
-</div>
-</div>
-<div class="section" id="waveform-parameters">
-<span id="id2"></span><h2>Waveform Parameters<a class="headerlink" href="#waveform-parameters" title="Permalink to this headline">¶</a></h2>
-<p>Five waveform parameters (Start Delay, On Time, Off Time, Train Duration, Ramp Down) can be wirelessly changed throughout the session.
-The user can make changes using either a <strong>Single Shot</strong> mode with an optional ramp down or <strong>Pulse Train</strong> mode. Non-applicable parameters are automatically set to zero depending on
-options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained between sessions.</p>
-<a class="reference internal image-reference" href="../_images/parameter_diagram.png"><img alt="../_images/parameter_diagram.png" class="align-center" src="../_images/parameter_diagram.png" style="width: 5055.0px; height: 4856.0px;" /></a>
-<div class="section" id="checking-current-parameters">
-<span id="pulse-change-header"></span><h3>Checking Current Parameters<a class="headerlink" href="#checking-current-parameters" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic simple">
-<li>Select the appropriate Downloader Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
-</ol>
-<a class="reference internal image-reference" href="../_images/connect_downloader.png"><img alt="../_images/connect_downloader.png" class="align-center" src="../_images/connect_downloader.png" style="width: 308.0px; height: 208.0px;" /></a>
-<ol class="arabic simple" start="2">
-<li>With Cerebro turned off, plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
-<li>Turn on Cerebro.</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/connect_plug.jpg"><img alt="../_images/connect_plug.jpg" class="align-center" src="../_images/connect_plug.jpg" style="width: 469.20000000000005px; height: 250.0px;" /></a>
-<ol class="arabic simple" start="4">
-<li>A dialog box with all of Cerebro&#8217;s parameters will appear. Xavier&#8217;s &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section will automatically be updated to match the parameters currently on Cerebro.</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/parameters_popup.png"><img alt="../_images/parameters_popup.png" class="align-center" src="../_images/parameters_popup.png" style="width: 322.3px; height: 357.50000000000006px;" /></a>
-</div>
-<div class="section" id="changing-parameters">
-<h3>Changing Parameters<a class="headerlink" href="#changing-parameters" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic simple">
-<li>In the &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section, select desired pulse options and modify the parameters</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/parameter_change.png"><img alt="../_images/parameter_change.png" class="align-center" src="../_images/parameter_change.png" style="width: 614.8000000000001px; height: 301.6px;" /></a>
-<ol class="arabic simple" start="2">
-<li>Click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">New</span> <span class="pre">Parameters</span></code>. The last sent parameters will be displayed at the bottom</li>
-</ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/last_sent.png"><img alt="../_images/last_sent.png" src="../_images/last_sent.png" style="width: 319.95000000000005px; height: 317.25px;" /></a>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">The IR Remote can be used as an alternative to <a class="reference internal" href="../Hardware/remote.html#remote-send"><span class="std std-ref">send new parameters</span></a>. Additionally, it is capable of <a class="reference internal" href="../Hardware/remote.html#remote-check"><span class="std std-ref">checking the current parameters</span></a>  saved to Cerebro&#8217;s memory.</p>
-</div>
-</div>
-</div>
-<div class="section" id="ending-a-session-and-saving-data">
-<span id="upload-header"></span><h2>Ending a Session and Saving Data<a class="headerlink" href="#ending-a-session-and-saving-data" title="Permalink to this headline">¶</a></h2>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<ol class="last arabic simple">
-<li>Before opening the rig and removing the rat, click the <code class="docutils literal"><span class="pre">End</span> <span class="pre">Session</span></code> button.</li>
-</ol>
-</div>
-<a class="reference internal image-reference" href="../_images/end_session.png"><img alt="../_images/end_session.png" class="align-center" src="../_images/end_session.png" style="width: 277.0px; height: 389.0px;" /></a>
-<ol class="arabic simple" start="2">
-<li>Turn off Cerebro and disconnect it from the rat&#8217;s head implant</li>
-<li>Make sure the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> is plugged into the computer</li>
-<li>Select the appropriate Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
-</ol>
-<a class="reference internal image-reference" href="../_images/connect_downloader1.png"><img alt="../_images/connect_downloader1.png" class="align-center" src="../_images/connect_downloader1.png" style="width: 308.0px; height: 208.0px;" /></a>
-<ol class="arabic simple" start="5">
-<li>Plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
-<li>Press and hold the download button</li>
-<li>While still holding down the download button, switch Cerebro on. The event log will be printed to the Download Monitor.
-You may release the download button once events have begun being printed to the Cerebro Monitor.</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/upload1.png"><img alt="../_images/upload1.png" class="align-center" src="../_images/upload1.png" style="width: 443.20000000000005px; height: 309.40000000000003px;" /></a>
-<ol class="arabic simple" start="8">
-<li>Click <code class="docutils literal"><span class="pre">Save</span> <span class="pre">Session</span></code> button.</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/save_session.png"><img alt="../_images/save_session.png" class="align-center" src="../_images/save_session.png" style="width: 294.0px; height: 562.0px;" /></a>
-<ol class="arabic simple" start="9">
-<li>After saving, a dialog will appear with a summary of the session</li>
-</ol>
-<a class="reference internal image-reference" href="../_images/summary.png"><img alt="../_images/summary.png" class="align-center" src="../_images/summary.png" style="width: 497.0px; height: 224.0px;" /></a>
 </div>
 <div class="section" id="settings">
 <h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
 <p>Access Xavier Settings by navigating to <strong>File-&gt;Settings..</strong> or by pressing <code class="kbd docutils literal"><span class="pre">Ctrl</span></code> + <code class="kbd docutils literal"><span class="pre">,</span></code></p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/settings_dialog.png"><img alt="../_images/settings_dialog.png" src="../_images/settings_dialog.png" style="width: 577.0px; height: 109.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/settings_dialog.png"><img alt="../_images/settings_dialog.png" src="../_images/settings_dialog.png" style="width: 307.0px; height: 133.0px;" /></a>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -298,7 +220,7 @@ You may release the download button once events have begun being printed to the 
 <li>Click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Directory</span></code> to setup a new save location.</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/change_directory.png"><img alt="../_images/change_directory.png" src="../_images/change_directory.png" style="width: 463.0px; height: 526.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/change_directory.png"><img alt="../_images/change_directory.png" src="../_images/change_directory.png" style="width: 463.0px; height: 133.0px;" /></a>
 </div>
 <ol class="arabic simple" start="2">
 <li>Navigate to an existing folder or create a new folder for future data.</li>
@@ -307,10 +229,13 @@ You may release the download button once events have begun being printed to the 
 <a class="reference internal image-reference" href="../_images/new_folder.png"><img alt="../_images/new_folder.png" src="../_images/new_folder.png" style="width: 576.0px; height: 360.0px;" /></a>
 </div>
 <ol class="arabic simple" start="3">
-<li>Finally, click <strong>Select Folder</strong></li>
+<li>Finally, click <strong>Select Folder</strong>. The &#8220;Current Directory&#8221; will reflect updated save path</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/rename_and_select.png"><img alt="../_images/rename_and_select.png" src="../_images/rename_and_select.png" style="width: 576.0px; height: 360.0px;" /></a>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/directory_changed.png"><img alt="../_images/directory_changed.png" src="../_images/directory_changed.png" style="width: 567.0px; height: 163.0px;" /></a>
 </div>
 </div>
 <div class="section" id="edit-dropdown-lists">
@@ -354,6 +279,134 @@ to serial ports, Xavier allows you to label COM Ports.</p>
 </div>
 </div>
 </div>
+<div class="section" id="waveform-parameters">
+<span id="id1"></span><h2>Waveform Parameters<a class="headerlink" href="#waveform-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Five waveform parameters (Start Delay, On Time, Off Time, Train Duration, Ramp Down) can be wirelessly changed throughout the session.
+The user can make changes using either a <strong>Single Shot</strong> mode with an optional ramp down or <strong>Pulse Train</strong> mode. Non-applicable parameters are automatically set to zero depending on
+options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained between sessions.</p>
+<a class="reference internal image-reference" href="../_images/parameter_diagram.png"><img alt="../_images/parameter_diagram.png" class="align-center" src="../_images/parameter_diagram.png" style="width: 5055.0px; height: 4856.0px;" /></a>
+<div class="section" id="checking-current-parameters">
+<span id="pulse-change-header"></span><h3>Checking Current Parameters<a class="headerlink" href="#checking-current-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Select the appropriate Downloader Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_downloader.png"><img alt="../_images/connect_downloader.png" class="align-center" src="../_images/connect_downloader.png" style="width: 308.0px; height: 208.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>With Cerebro turned off, plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
+<li>Turn on Cerebro.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_plug.jpg"><img alt="../_images/connect_plug.jpg" class="align-center" src="../_images/connect_plug.jpg" style="width: 469.20000000000005px; height: 250.0px;" /></a>
+<ol class="arabic simple" start="4">
+<li>A dialog box with all of Cerebro&#8217;s parameters will appear. Additionally, the &#8220;Cerebro&#8217;s Parameters&#8221; section will automatically be updated to match the parameters currently on Cerebro.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/parameters_popup.png"><img alt="../_images/parameters_popup.png" class="align-center" src="../_images/parameters_popup.png" style="width: 322.3px; height: 357.50000000000006px;" /></a>
+</div>
+<div class="section" id="changing-parameters">
+<h3>Changing Parameters<a class="headerlink" href="#changing-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>In the &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section, select desired pulse options and modify the parameters</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/parameter_change.png"><img alt="../_images/parameter_change.png" class="align-center" src="../_images/parameter_change.png" style="width: 658.8000000000001px; height: 260.8px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">New</span> <span class="pre">Waveform</span> <span class="pre">Parameters</span></code>.</li>
+<li>A confirmation dialog will appear.</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/send_confirm.png"><img alt="../_images/send_confirm.png" src="../_images/send_confirm.png" style="width: 506.0px; height: 264.0px;" /></a>
+</div>
+<ol class="arabic simple" start="4">
+<li>Once confirmed, the settings will be sent and the last sent parameters will be displayed at the bottom</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/last_sent.png"><img alt="../_images/last_sent.png" src="../_images/last_sent.png" style="width: 400.95000000000005px; height: 355.05px;" /></a>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The IR Remote can be used as an alternative to <a class="reference internal" href="../Hardware/remote.html#remote-send"><span class="std std-ref">send new parameters</span></a>. Additionally, it is capable of <a class="reference internal" href="../Hardware/remote.html#remote-check"><span class="std std-ref">checking the current parameters</span></a>  saved to Cerebro&#8217;s memory.</p>
+</div>
+</div>
+</div>
+<div class="section" id="implant-construction-tools">
+<h2>Implant Construction Tools<a class="headerlink" href="#implant-construction-tools" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="diode-characterization">
+<h3>Diode Characterization<a class="headerlink" href="#diode-characterization" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../Hardware/implant.html#diode-char"><span class="std std-ref">Intructions here</span></a></p>
+</div>
+<div class="section" id="implant-characterization">
+<h3>Implant Characterization<a class="headerlink" href="#implant-characterization" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../Hardware/implant.html#implant-char"><span class="std std-ref">Intructions here</span></a></p>
+</div>
+<div class="section" id="send-power-values-to-cerebro">
+<span id="send-power"></span><h3>Send Power Values to Cerebro<a class="headerlink" href="#send-power-values-to-cerebro" title="Permalink to this headline">¶</a></h3>
+<p>Each implant has different response curves to power levels provided by Cerebro.
+To output a desired light level, Cerebro must know how much current to provide.
+To implement a fade, Cerebro must know multiple current levels to step through such that  the implant&#8217;s light output linearly decreases from a desired light output down to 0 mW.
+We therefore send Cerebro a vector of values that correspond to our desired light output with a linear fade to 0 mW.</p>
+<ol class="arabic simple">
+<li>Select &#8220;Debug Mode&#8221; and start a new session.</li>
+<li>In the &#8220;Implant Construction Tools&#8221; section click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">Power</span> <span class="pre">Values</span> <span class="pre">to</span> <span class="pre">Cerebro</span></code></li>
+<li>Assuming you&#8217;ve previously <a class="reference internal" href="../Hardware/implant.html#implant-char"><span class="std std-ref">characterized an implant</span></a>, click <code class="docutils literal"><span class="pre">Create</span> <span class="pre">fade</span> <span class="pre">vector</span> <span class="pre">from</span> <span class="pre">power</span> <span class="pre">meter</span> <span class="pre">file</span></code></li>
+<li>Input a target power into the text box and then click <code class="docutils literal"><span class="pre">Select</span> <span class="pre">Power</span> <span class="pre">Meter</span> <span class="pre">File</span></code></li>
+<li>After choosing a file, a implant characterization graph will appear, a summary file will be saved to the same directory as the selected power meter file.</li>
+<li>The fade vector is automatically copied from the summary file into the fade vector input.</li>
+<li>Fill in the the information for Cerebro # and implant # then click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">Values</span></code></li>
+<li>Confirm you want to send new power levels to Cerbro and the values will be sent.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="running-an-experiment">
+<h2>Running an Experiment<a class="headerlink" href="#running-an-experiment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="starting-a-new-session">
+<span id="start-session"></span><h3>Starting a New Session<a class="headerlink" href="#starting-a-new-session" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Fill out experimental setup information.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/rat_info.png"><img alt="../_images/rat_info.png" class="align-center" src="../_images/rat_info.png" style="width: 564.0px; height: 136.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Select a Base Station Serial Port.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/com_port.png"><img alt="../_images/com_port.png" class="align-center" src="../_images/com_port.png" style="width: 565.0px; height: 136.0px;" /></a>
+<ol class="arabic simple" start="3">
+<li>Click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Session</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/start_session.png"><img alt="../_images/start_session.png" class="align-center" src="../_images/start_session.png" style="width: 564.0px; height: 135.0px;" /></a>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The dropdown menus can be <a class="reference internal" href="#add-items"><span class="std std-ref">edited</span></a> and COM Ports that appear in the dropdown list can be <a class="reference internal" href="#label-ports"><span class="std std-ref">labeled</span></a></p>
+</div>
+</div>
+<div class="section" id="ending-a-session-and-saving-data">
+<span id="upload-header"></span><h3>Ending a Session and Saving Data<a class="headerlink" href="#ending-a-session-and-saving-data" title="Permalink to this headline">¶</a></h3>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<ol class="last arabic simple">
+<li>Before opening the rig and removing the rat, click the <code class="docutils literal"><span class="pre">End</span> <span class="pre">Session</span></code> button. &#8220;Save Sent&#8221; will be printed to the Base Station Monitor.</li>
+</ol>
+</div>
+<a class="reference internal image-reference" href="../_images/end_session.png"><img alt="../_images/end_session.png" class="align-center" src="../_images/end_session.png" style="width: 277.0px; height: 389.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Turn off Cerebro and disconnect it from the rat&#8217;s head implant</li>
+<li>Make sure the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> is plugged into the computer</li>
+<li>Select the appropriate Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_downloader1.png"><img alt="../_images/connect_downloader1.png" class="align-center" src="../_images/connect_downloader1.png" style="width: 308.0px; height: 208.0px;" /></a>
+<ol class="arabic simple" start="5">
+<li>Plug the <a class="reference internal" href="../Overview/Overview.html#cord"><span class="std std-ref">Downloader Cord</span></a> into Cerebro&#8217;s micro usb port</li>
+<li>Press and hold the download button</li>
+<li>While still holding down the download button, switch Cerebro on. The event log will be printed to the Download Monitor.
+You may release the download button once events have begun being printed to the Cerebro Monitor.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/upload1.png"><img alt="../_images/upload1.png" class="align-center" src="../_images/upload1.png" style="width: 443.20000000000005px; height: 309.40000000000003px;" /></a>
+<ol class="arabic simple" start="8">
+<li>Click <code class="docutils literal"><span class="pre">Save</span> <span class="pre">Session</span></code> button.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/save_session.png"><img alt="../_images/save_session.png" class="align-center" src="../_images/save_session.png" style="width: 294.0px; height: 562.0px;" /></a>
+<ol class="arabic simple" start="9">
+<li>After saving, a dialog will appear with a summary of the session</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/summary.png"><img alt="../_images/summary.png" class="align-center" src="../_images/summary.png" style="width: 497.0px; height: 224.0px;" /></a>
+</div>
+</div>
 </div>
 
 
@@ -374,7 +427,7 @@ to serial ports, Xavier allows you to label COM Ports.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2016, Andy Lustig.
-      Last updated on Oct 21, 2016.
+      Last updated on Dec 20, 2016.
 
     </p>
   </div>

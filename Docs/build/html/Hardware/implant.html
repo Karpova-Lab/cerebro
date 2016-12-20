@@ -87,12 +87,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Head Implant</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#required-tools">Required Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#assembly-instructions">Assembly Instructions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#characterization">Characterization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#gathering-data">Gathering Data</a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="#design-files">Design Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assembly-instructions">Assembly Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diode-characterization-and-pairing-for-bilateral-implants-only">Diode Characterization and Pairing (for bilateral implants only)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implant-characterization">Implant Characterization</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station</a></li>
@@ -147,6 +145,40 @@
             
   <div class="section" id="head-implant">
 <h1>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h1>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/implant_cad.png"><img alt="../_images/implant_cad.png" src="../_images/implant_cad.png" style="width: 8667.0px; height: 6119.0px;" /></a>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="3%" />
+<col width="97%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Micro USB Socket</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Printed Circuit Board (PCB)</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Laser Diode</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>Acrylic ferrule holder</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>Ferrule</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td>Optical Fiber</td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="required-tools">
 <span id="implanttools"></span><h2>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h2>
 <blockquote>
@@ -186,11 +218,11 @@
 </tr>
 <tr class="row-odd"><td>2</td>
 <td>Laser Diodes</td>
-<td><a class="reference download internal" href="../_downloads/PLT5 520.pdf" download=""><code class="xref download docutils literal"><span class="pre">PLT5</span> <span class="pre">520</span></code></a></td>
+<td><a class="reference download internal" href="../_downloads/PL520_B1.pdf" download=""><code class="xref download docutils literal"><span class="pre">PL</span> <span class="pre">520_B1</span></code></a></td>
 <td><a class="reference external" href="http://worldstartech.com/products/description/25/index">World Star Tech</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
-<td>Fiber</td>
+<td>Optical Fiber</td>
 <td><a class="reference download internal" href="../_downloads/FP200URT.pdf" download=""><code class="xref download docutils literal"><span class="pre">FP200URT</span></code></a></td>
 <td><a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=FP200URT">ThorLabs</a></td>
 </tr>
@@ -215,7 +247,7 @@
 <td><a class="reference external" href="http://www.amazon.com/Star-brite-Liquid-Electrical-Tape/dp/B000QUW4EE/ref=sr_1_1?ie=UTF8&amp;qid=1463746324&amp;sr=8-1&amp;keywords=electrical+tape+liquid+tube">Amazon</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>Photocell</td>
+<td>Photoresistor</td>
 <td><a class="reference download internal" href="../_downloads/PDV-P9005-1.pdf" download=""><code class="xref download docutils literal"><span class="pre">PDV-P9005-1</span></code></a></td>
 <td rowspan="3"><a class="reference external" href="https://octopart.com/bom-lookup/HBO7aiJs">Octopart</a></td>
 </tr>
@@ -230,6 +262,24 @@
 </tbody>
 </table>
 </div>
+<div class="section" id="design-files">
+<h2>Design Files<a class="headerlink" href="#design-files" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>PCB</dt>
+<dd><ul class="first last simple">
+<li><a class="reference download internal" href="../_downloads/Implant 4.4.brd" download=""><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.brd</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Implant 4.4.sch" download=""><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.sch</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Implant 4.4 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
+</ul>
+</dd>
+<dt>Lasercut</dt>
+<dd><ul class="first last simple">
+<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.dxf" download=""><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.dxf</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.ai" download=""><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.ai</span></code></a></li>
+</ul>
+</dd>
+</dl>
+</div>
 <div class="section" id="assembly-instructions">
 <h2>Assembly Instructions<a class="headerlink" href="#assembly-instructions" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
@@ -237,37 +287,43 @@
 <li>Align fiber to laser diode</li>
 <li>Apply Norland Optical Adhesive 68 and cure it with UV adhesive curing gun</li>
 <li>Laser cut fiber guide</li>
-<li>Sand down ferrule to width of acrylic</li>
 <li>Insert ferrules into acrylic to create fiber guide</li>
 <li>Thread coupled fibers through fiber guide</li>
 <li>Surround assembly with epoxy</li>
-<li>Place photocell in epoxy</li>
-<li>Cover photocell/epoxy with liquid electrical tape</li>
+<li>Place photoresistor in epoxy</li>
+<li>Cover photoresistor/epoxy with liquid electrical tape</li>
 <li>Solder laser diodes onto implant PCB</li>
 </ol>
 </div>
-<div class="section" id="characterization">
-<h2>Characterization<a class="headerlink" href="#characterization" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="diode-characterization-and-pairing-for-bilateral-implants-only">
+<span id="diode-char"></span><h2>Diode Characterization and Pairing (for bilateral implants only)<a class="headerlink" href="#diode-characterization-and-pairing-for-bilateral-implants-only" title="Permalink to this headline">¶</a></h2>
+<p>Laser diodes are are not perfectly manufactured to have identical electrical characteristics.
+At a given current and voltage, there is some variation in light output from laser diode to laser diode.
+This can cause problems when making a bilateral implant because the current is split evenly between the two laser diodes.
+If the two laser diodes have drastically different electrical characteristics, this will result in one diode being brighter than the other.
+To try and prevent this unbalanced light ouput, we attempt to characterize each individual laser diode, and pair similar diodes together in each bilateral implant.</p>
+<p>Instructions here.</p>
+</div>
+<div class="section" id="implant-characterization">
+<span id="implant-char"></span><h2>Implant Characterization<a class="headerlink" href="#implant-characterization" title="Permalink to this headline">¶</a></h2>
 <p>We want to know and be able to control the amount of light that we deliver to the brain during experiments.
 The light power produced by the laser diodes is a function of current and case temperature:</p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/laserDiodeResponse.png"><img alt="../_images/laserDiodeResponse.png" src="../_images/laserDiodeResponse.png" style="width: 258.59999999999997px; height: 324.9px;" /></a>
 </div>
-<p>Cerebro has precise control of the current being delivered to the laser diode, and can monitor the voltage across the photocell.
-We can use a feeback loop to maintain a constant photocell voltage, and therefore a constant fiber tip light power output
-(assuming the light power at the fiber tip is proportional to the light hitting the photocell).</p>
-<p>If the photocell had a linear response to light power, we could just make 1 measurement of the light output at a known photocell voltage
-and find a proportionality constant. However, the photocell doesn&#8217;t have a linear response:</p>
+<p>Cerebro has precise control of the current being delivered to the laser diode, and can monitor the voltage across the photoresistor.
+We can use a feeback loop to maintain a constant photoresistor voltage, and therefore a constant fiber tip light power output
+(assuming the light power at the fiber tip is proportional to the light hitting the photoresistor).</p>
+<p>If the photoresistor had a linear response to light power, we could just make 1 measurement of the light output at a known photoresistor voltage
+and find a proportionality constant. However, the photoresistor doesn&#8217;t have a linear response:</p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/photcellResponse.png"><img alt="../_images/photcellResponse.png" src="../_images/photcellResponse.png" style="width: 377.5px; height: 267.0px;" /></a>
 </div>
-<p>We therefore need to measure the light output at the fiber tip across a range of known photocell voltages. Overall, we are trying to
-characterize the relationship between photocell voltage and fiber tip light power, resulting in a graph like the following:</p>
+<p>We therefore need to measure the light output at the fiber tip across a range of known photoresistor voltages. Overall, we are trying to
+characterize the relationship between photoresistor voltage and fiber tip light power, resulting in a graph like the following:</p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/characterization.png"><img alt="../_images/characterization.png" src="../_images/characterization.png" style="width: 1108.0px; height: 371.0px;" /></a>
 </div>
-<div class="section" id="gathering-data">
-<h3>Gathering Data<a class="headerlink" href="#gathering-data" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li>Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a <a class="reference internal" href="#implanttools"><span class="std std-ref">Light Power Meter</span></a></li>
 </ol>
@@ -293,40 +349,18 @@ characterize the relationship between photocell voltage and fiber tip light powe
 <a class="reference internal image-reference" href="../_images/settings_combined.png"><img alt="../_images/settings_combined.png" src="../_images/settings_combined.png" style="width: 2256.0px; height: 1159.0px;" /></a>
 </div>
 <ol class="arabic simple" start="3">
+<li>Make sure Cerbero is turned on.</li>
 <li>Open up Xavier and start a new session.  <a class="reference internal" href="../Software/Xavier.html#start-session"><span class="std std-ref">How to start a session</span></a></li>
-<li>In the &#8220;Cerebro&#8217;s Waveform Parameters&#8221; section, click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Power</span> <span class="pre">Level</span></code>. A &#8220;Change Power Level&#8221; window will appear.</li>
+<li>In the &#8220;Cerebro&#8217;s Construction Tools&#8221; section click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Implant</span> <span class="pre">Characterization</span></code>. Cerebro&#8217;s amber light will turn on to indicate that the characterization routine has begun.</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/openCalDialog.png"><img alt="../_images/openCalDialog.png" src="../_images/openCalDialog.png" style="width: 298.0px; height: 236.5px;" /></a>
-</div>
-<p>5. Make sure Cerbero is turned on and then click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Calibration</span> <span class="pre">Routine</span></code> in the new window.
-Cerebro&#8217;s amber light will turn on to indicate that the calibration routine has begun.
-Within 10 seconds, click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Log</span></code> in the Light Power Meter software to begin recording light power data.</p>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/sendCalTrigger.png"><img alt="../_images/sendCalTrigger.png" src="../_images/sendCalTrigger.png" style="width: 320.0px; height: 178.5px;" /></a>
+<a class="reference internal image-reference" href="../_images/sendCalTrigger.png"><img alt="../_images/sendCalTrigger.png" src="../_images/sendCalTrigger.png" style="width: 299.0px; height: 138.0px;" /></a>
 </div>
 <ol class="arabic simple" start="6">
+<li>Within 10 seconds, click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Log</span></code> in the Light Power Meter software to begin recording light power data.</li>
 <li>After about 15 minutes, the data will have been collected.</li>
+<li>When you are ready to setup a Cerebro for use with this implant, follow the instructions for <a class="reference internal" href="../Software/Xavier.html#send-power"><span class="std std-ref">sending power values to Cerebro</span></a></li>
 </ol>
-</div>
-</div>
-<div class="section" id="design-files">
-<h2>Design Files<a class="headerlink" href="#design-files" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>PCB</dt>
-<dd><ul class="first last simple">
-<li><a class="reference download internal" href="../_downloads/Implant 4.4.brd" download=""><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.brd</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Implant 4.4.sch" download=""><code class="xref download docutils literal"><span class="pre">Implant</span> <span class="pre">4.4.sch</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Implant 4.4 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
-</ul>
-</dd>
-<dt>Lasercut</dt>
-<dd><ul class="first last simple">
-<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.dxf" download=""><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.dxf</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Fiber guide_1,5mm gap.ai" download=""><code class="xref download docutils literal"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.ai</span></code></a></li>
-</ul>
-</dd>
-</dl>
 </div>
 </div>
 
@@ -350,7 +384,7 @@ Within 10 seconds, click <code class="docutils literal"><span class="pre">Start<
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2016, Andy Lustig.
-      Last updated on Oct 21, 2016.
+      Last updated on Dec 20, 2016.
 
     </p>
   </div>

@@ -13,9 +13,12 @@ public:
   void test();
   void saveEEPROM();
   void toggle(bool turnON);
-  void send(int newVals[]);
-  void calibrate();
+  void send(unsigned int newVals[]);
+  void implantCharacterize();
+  void diodeCharacterize();
+  void dumpMemory();
   void sendBinary(unsigned int value, unsigned char valSize);
+  void powerTest(unsigned int testLevel);
   byte getEmitterType();
   bool isNormallyOn;
 private:

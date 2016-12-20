@@ -21,59 +21,95 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-byte digits[10]  = {252,96,218,242,102,182,190,224,254,230}; //{0,1,2,3,4,5,6,7,8,9}  add 1 to value to add decimal point ("1" is 252, "1." is 253)
-//byte pins[10] = {2,3,4,5,6,7,8,9,10,11}; //{A,B,C,D,E,F,G,DP,first,second} //attiny2313
-byte pins[10] = {0,1,2,3,4,5,7,8,9,10}; //{A,B,C,D,E,F,G,DP,first,second} //attiny84
-#define batt 6
-int pov = 20;
-int juice;
-int tempjuice;
-int count = 0;
-int show = 0;
+//Software SPI
+#define OLED_DATA  7
+#define OLED_CLK   6
+#define OLED_DC    5
+#define OLED_RESET 4
+#define OLED_CS    3
+
+#define NWvolt A0
+#define NEvolt A1
+#define SEvolt A2
+#define SWvolt A3
+
+Adafruit_SSD1306 display(OLED_DATA, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+
+const byte voltPins[4] = {NWvolt,NEvolt,SEvolt,SWvolt};
+
+const byte numSamples = 10;
+
+char* unit = " volts";
+
+char* labels[9] = { " Version",
+                    "Cerebro #",
+                    "  LD #",
+                    "  Power Level = ",
+                    " Strt Dlay",
+                    " On       ",
+                    " Off      ",
+                    " Train Dur",
+                    " Ramp Down",
+                  };
 
 void setup() {
-  pinMode(batt,INPUT);
-  for(int i=0; i<11; i++){
-    pinMode(pins[i],OUTPUT);
-    if(i>8){
-      digitalWrite(pins[i],HIGH);
-    }
-    else{
-      digitalWrite(pins[i],LOW);
-    }
+  for (byte i=0; i<4; i++){
+    pinMode(voltPins[i],INPUT);
   }
+  displaySetup();
+}
+
+void displaySetup(){
+   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
+  display.begin(SSD1306_SWITCHCAPVCC);
+  // Clear the buffer.
+  display.clearDisplay();
+  draw();
+  display.display();
+}
+
+void draw(){
+  display.setTextColor(1,0);
+  display.setTextSize(1);
+  display.setCursor(0,0);
+  display.print("A");
+  display.setCursor(30,0);
+  display.print("B");
+  display.println(1);
+  display.println(1);
 }
 
 void loop(){
-  juice = map(analogRead(batt),0,724,0,99);
-  if (juice>45){
-    delay(500);
-    for(int i = 0; i<1000; i++){
-      segmentize(juice/10,0); //display 1st digit
-      segmentize(juice%10,1); ///display 2nd digit
-    }
-  }
+  display.setCursor(0,0);
+  display.print(analogRead(NWvolt));
+  display.display();
+
+  // digitalWrite(2,HIGH);
+  // delay(2000);
+  // digitalWrite(2,LOW);
+  // delay(2000);
+
+  // for (int i = 0; i <4; i++){
+  //   float juice = 0;
+  //   for (int j = 0 ; j<numSamples; j++){
+  //     juice += analogRead(voltPins[i]);
+  //   }
+  //   juice = juice/numSamples;
+  // }
+  // if (juice>10){ //cerebro is docked
+  //
+  // }
+  // else{ //nothing is there
+  //
+  // }
+  // juice += map(analogRead(voltPins[i]),675,860,0,100);
+
+
   // testDigits();
 
-}
-
-void segmentize(int number,boolean place){
-  //
-  for (int i=7; i>-1; i--){
-    digitalWrite(pins[i],bitRead(digits[number],7-i));
-  }
-  digitalWrite(pins[8],place); //pulling Digit 1's common cathode low, illuminates the digit 1
-  digitalWrite(pins[9],!place); //pulling Digit 2's common cathode low, illuminates digit 2
-  delay(1);
-  digitalWrite(pins[8+place],HIGH); //pull Digits High to turn them off.
-}
-
-void testDigits(){
-  for (int i = 0; i<10; i++){
-    for (int j=0; j<200; j++){
-      segmentize(i,0);
-      segmentize(i,1);
-    }
-  }
 }

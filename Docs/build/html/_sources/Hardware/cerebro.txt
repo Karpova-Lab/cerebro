@@ -60,7 +60,7 @@ Bill of Materials
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
 | 1   | Momentary Button                   | :download:`B3U-1000P<Datasheets/B3U-1000P.pdf>`              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | Male micro USB vertical plug       | :download:`ZX20-B-5S<Datasheets/ZX20-B-5S.pdf>`              |                                                             |
+| 1   | Male micro USB vertical plug       | :download:`ZX20-B-5S-UNIT(30)<Datasheets/ZX20-B-5S.pdf>`     |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
 | 1   | Male micro USB shielding           | :download:`ZX20-B-SLDC<Datasheets/ZX20-B-5S.pdf>`            |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
@@ -70,23 +70,25 @@ Bill of Materials
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
 | 1   | 10uH Inductor                      | :download:`LQH43CN100K03L<Datasheets/LQH43CN100K03L.pdf>`    |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | 0805 Red LED                       | :download:`LTST-C171KRKT<Datasheets/LTST-C171KRKT.pdf>`      |                                                             |
+| 1   | 0603 Red LED                       | :download:`LTST-C191KRKT<Datasheets/LTST-C191KRKT.pdf>`      |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | 0805 10 |mgr|\F Capacitor          |                                                              |                                                             |
+| 1   | 0603 Amber LED                     | :download:`LNJ437W84RA<Datasheets/LNJ437W84RA_E.pdf>`        |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | 0805 2.2 |mgr|\F Capacitor         |                                                              |                                                             |
+| 1   | 0603 10 |mgr|\F Capacitor          |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | 0805 8.2 |OHgr| Resistor           |                                                              |                                                             |
+| 1   | 0603 2.2 |mgr|\F Capacitor         |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | 0805 27 |OHgr| Resistor            |                                                              |                                                             |
+| 1   | 0603 6.8 |OHgr| Resistor           |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 1   | 0805 2 k\ |OHgr| Resistor          |                                                              |                                                             |
+| 1   | 0603 27 |OHgr| Resistor            |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 3   | 0805 6.2 k\ |OHgr| Resisor         |                                                              |                                                             |
+| 1   | 0603 2 k\ |OHgr| Resistor          |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 2   | 0805 12 k\ |OHgr| Resistor         |                                                              |                                                             |
+| 3   | 0603 6.2 k\ |OHgr| Resisor         |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+                                                             +
-| 2   | 0805 20 k\ |OHgr| Resistor         |                                                              |                                                             |
+| 2   | 0603 12 k\ |OHgr| Resistor         |                                                              |                                                             |
++-----+------------------------------------+--------------------------------------------------------------+                                                             +
+| 3   | 0603 20 k\ |OHgr| Resistor         |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+-------------------------------------------------------------+
 
 .. Caution::
@@ -129,6 +131,10 @@ PCB Assembly
 
 Uploading Firmware
 ------------------
+.. Unless there are updates to the code, you should only need to upload Cerebro firmware once.
+.. Hardware parameters such as the Cerebro ID #, paired implant# can be setup wirelessly (link).
+.. Waveform parameters such as power level, on time, and off time can be changed wirelessly as well (link)
+
 1. Setup Arduino environment and Cerebro Utility Shield if you haven't already done so. :ref:`utility shield setup`
 2. Turn on Cerebro and plug it into the Utility Shield as shown below.
 
@@ -163,6 +169,3 @@ Uploading Firmware
 .. figure:: photos/Setup_photos/upload.png
     :align: center
     :scale: 100%
-
-Power Level Setup
------------------

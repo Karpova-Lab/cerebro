@@ -16,8 +16,16 @@ Low Latency
 Wirelessly Adjustable Waveforms
   Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
-High Power Laser Diodes
-  Up to 15 mW per laser diode or 450 mW/mm\ :sup:`2` (tested with 520 nm laser diodes coupled to 200 |mgr|\m fibers)
+Laser Diodes
+  Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
+  Bilateral implants have been capable of up to 15 mW per fiber-coupled laser diode or 450 mW/mm\ :sup:`2` (tested with two 520 nm laser diodes coupled to 200 |mgr|\m diameter fibers and powered by two 105 mAh lipo batteries).
+.. Keep in mind the limiting factor of the tested implant wasn't the laser diodes, but rather the peak current supply of the batteries.
+
+.. This means you can substitute a LED coupled to a large fiber, with a laser diode coupled to smaller (less brain damaging) fiber.
+.. By coupling high power laser diodes with small fibers, one can get the same amount of light power
+.. as LEDs coupled with large fibers, but instead use a high power laser diode with a small fiber. Using smaller fibers results in less brain tissue damage.
+..
+.. One can get equal light power by coupling high power laser diodes with small fibers, as one
 
 Low Material Cost
   Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
@@ -38,7 +46,6 @@ Low Material Cost
 
 Commercial Alternatives
 -----------------------
-
 Here are some commercial products that also provide wireless optogenetics:
 
 | `Eicom Teleopto <https://eicomusa.com/teleopto/>`_
@@ -77,7 +84,7 @@ Head Implant
   :align: center
   :scale: 10 %
 
-The head implant assembly consists of two laser diodes coupled to optical fibers. Also included is a light dependent resistor (LDR) that is used as feedback
+The head implant assembly consists of two laser diodes coupled to optical fibers. Also included is a photoresistor that is used as feedback
 to maintain a constant light output.
 
 :doc:`More info... <../Hardware/implant>`

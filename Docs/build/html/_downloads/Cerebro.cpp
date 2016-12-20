@@ -61,9 +61,7 @@ void Cerebro::test()
 
 void Cerebro::saveEEPROM()
 {
-    for(int y = 0;y<26;y++){
-      sendMark(false);
-    }
+  sendBinary(76,7);
 }
 
 void Cerebro::sendMark(bool data)
@@ -114,7 +112,7 @@ void Cerebro::sendBinary(unsigned int value, unsigned char bitWidth){
   }
 }
 
-void Cerebro::send(int newVals[]) //ir remote send
+void Cerebro::send(unsigned int newVals[]) //ir remote send
 {
   //send key that says that data is to follow
   sendBinary(101,7);
@@ -124,8 +122,24 @@ void Cerebro::send(int newVals[]) //ir remote send
   }
 }
 
-void Cerebro::calibrate()
+void Cerebro::implantCharacterize()
 {
-  //send key that says that data is to follow
   sendBinary(22,7);
+}
+
+void Cerebro::diodeCharacterize(){
+  sendBinary(105,7);
+}
+
+void Cerebro::powerTest(unsigned int testLevel)
+{
+  sendBinary(36,7); //sends message that sets the powerTest flag
+  delay(100);
+  unsigned int tempVals[5] = {testLevel,0,0,0,0};
+  send(tempVals);
+}
+
+void Cerebro::dumpMemory()
+{
+  sendBinary(45,7);
 }
