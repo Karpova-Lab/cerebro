@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2017 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.26.2\nUpdated:\t12/20/2016";
+        QString aboutString = "\t1.27.0\nUpdated:\t1/04/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
         //Experimental setup
-        equipmentBox = new QGroupBox();
+        equipmentBox = new QGroupBox("Session Setup");
             equipmentLayout = new QGridLayout();
                 rig_lbl = new QLabel("Rig #");
             equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
@@ -193,7 +193,7 @@ MainWindow::MainWindow(QWidget *parent)
                 sendSettings_btn->setAutoDefault(true);
             adjustmentLayout->addWidget(sendSettings_btn,9,0,1,2);
                 last_settings = new QLabel();
-                last_settings->setText("No settings sent yet");
+                last_settings->setText("No parameters sent yet");
             adjustmentLayout->addWidget(last_settings,10,0,1,2,Qt::AlignTop);
         adjustBox->setLayout(adjustmentLayout);
         adjustBox->setMinimumWidth(235);
@@ -263,20 +263,22 @@ MainWindow::MainWindow(QWidget *parent)
 createFadeDialog = new QDialog();
     createVecLayout = new QGridLayout();
         slideLabel = new QLabel("Target Power (mW):");
-    createVecLayout->addWidget(slideLabel,0,0,Qt::AlignRight);
+    createVecLayout->addWidget(slideLabel,0,1,Qt::AlignRight);
         wantedLevel = new QLineEdit();
         wantedLevel->setMaximumWidth(50);
-    createVecLayout->addWidget(wantedLevel,0,1);
+    createVecLayout->addWidget(wantedLevel,0,2);
         showGraph = new QCheckBox("Show Graphs");
         showGraph->setChecked(true);
-    createVecLayout->addWidget(showGraph,1,0,1,3,Qt::AlignCenter);
+    createVecLayout->addWidget(showGraph,1,0,1,4,Qt::AlignCenter);
         selectFile_btn = new DropButton(QString("Select Power Meter File"));//("Select Power Meter\ndata file");
         selectFile_btn->setCheckable(true);
         selectFile_btn->setAcceptDrops(true);
         selectFile_btn->setCheckable(false);
-    createVecLayout->addWidget(selectFile_btn,2,0,1,3,Qt::AlignCenter);
+    createVecLayout->addWidget(selectFile_btn,2,0,1,4,Qt::AlignCenter);
 createFadeDialog->setWindowTitle("Create fade vector from file");
 createFadeDialog->setWindowFlags(createFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
+createFadeDialog->setMinimumWidth(300);
+createFadeDialog->setMaximumWidth(300);
 createFadeDialog->setLayout(createVecLayout);
 sendFadeDialog = new QDialog();
     sendFadeLayout = new QGridLayout();
@@ -396,51 +398,51 @@ sendFadeDialog->setLayout(sendFadeLayout);
             directoryLayout->addWidget(changeDir_btn,1,0,Qt::AlignLeft);
         directoryBox->setLayout(directoryLayout);
 
-        //Dropdown editor
-        dropDownsBox = new QGroupBox("Edit Dropdown Lists");
+        //Session Setup Selectable lists
+        sessionListsBox = new QGroupBox("Edit Session Setup Lists");
             //1st listbox//
-            dropDownsLayout = new QGridLayout();
+            sessionListsLayout = new QGridLayout();
                 rigLabel = new QLabel("Rig #");
-            dropDownsLayout->addWidget(rigLabel,0,0,1,2,Qt::AlignCenter);
+            sessionListsLayout->addWidget(rigLabel,0,0,1,2,Qt::AlignCenter);
                 rigVals = new QListWidget();
-            dropDownsLayout->addWidget(rigVals,2,0,1,2);
+            sessionListsLayout->addWidget(rigVals,2,0,1,2);
                 add1_btn= new QPushButton("Add Rig #");
                 add1_btn->setFocusPolicy(Qt::NoFocus);
-            dropDownsLayout->addWidget(add1_btn,1,1);
+            sessionListsLayout->addWidget(add1_btn,1,1);
                 newItem1 = new QLineEdit();
-            dropDownsLayout->addWidget(newItem1,1,0);
+            sessionListsLayout->addWidget(newItem1,1,0);
                 rmv1_btn= new QPushButton("Remove Selected Rig #");
                 rmv1_btn->setFocusPolicy(Qt::NoFocus);
-            dropDownsLayout->addWidget(rmv1_btn,3,0,1,2);
+            sessionListsLayout->addWidget(rmv1_btn,3,0,1,2);
             //2nd listbox//
                 ratLabel = new QLabel("Rat ID");
-            dropDownsLayout->addWidget(ratLabel,0,2,1,2,Qt::AlignCenter);
+            sessionListsLayout->addWidget(ratLabel,0,2,1,2,Qt::AlignCenter);
                 ratVals = new QListWidget();
                 ratVals->addItems(rigList);
-            dropDownsLayout->addWidget(ratVals,2,2,1,2);
+            sessionListsLayout->addWidget(ratVals,2,2,1,2);
                 add2_btn= new QPushButton("Add Rat ID");
                 add2_btn->setFocusPolicy(Qt::NoFocus);
-            dropDownsLayout->addWidget(add2_btn,1,3);
+            sessionListsLayout->addWidget(add2_btn,1,3);
                 newItem2 = new QLineEdit();
-            dropDownsLayout->addWidget(newItem2,1,2);
+            sessionListsLayout->addWidget(newItem2,1,2);
                 rmv2_btn= new QPushButton("Remove Selected Rat ID");
                 rmv2_btn->setFocusPolicy(Qt::NoFocus);
-            dropDownsLayout->addWidget(rmv2_btn,3,2,1,2);
+            sessionListsLayout->addWidget(rmv2_btn,3,2,1,2);
             //3rd listbox//
                 cerebroLabel = new QLabel("Cerebro #");
-            dropDownsLayout->addWidget(cerebroLabel,0,4,1,2,Qt::AlignCenter);
+            sessionListsLayout->addWidget(cerebroLabel,0,4,1,2,Qt::AlignCenter);
                 cerebroVals = new QListWidget();
                 cerebroVals->addItems(rigList);
-            dropDownsLayout->addWidget(cerebroVals,2,4,1,2);
+            sessionListsLayout->addWidget(cerebroVals,2,4,1,2);
                 add3_btn= new QPushButton("Add Cerebro #");
                 add3_btn->setFocusPolicy(Qt::NoFocus);
-            dropDownsLayout->addWidget(add3_btn,1,5);
+            sessionListsLayout->addWidget(add3_btn,1,5);
                 newItem3 = new QLineEdit();
-            dropDownsLayout->addWidget(newItem3,1,4);
+            sessionListsLayout->addWidget(newItem3,1,4);
                 rmv3_btn= new QPushButton("Remove Selected Cerebro #");
                 rmv3_btn->setFocusPolicy(Qt::NoFocus);
-            dropDownsLayout->addWidget(rmv3_btn,3,4,1,2);
-        dropDownsBox->setLayout(dropDownsLayout);
+            sessionListsLayout->addWidget(rmv3_btn,3,4,1,2);
+        sessionListsBox->setLayout(sessionListsLayout);
 
         //alias assignment box
         portEditBox = new QGroupBox("Edit COM Port Labels");
@@ -494,7 +496,7 @@ sendFadeDialog->setLayout(sendFadeLayout);
 
         settingsLayout = new QGridLayout();
         settingsLayout->addWidget(directoryBox);
-        settingsLayout->addWidget(dropDownsBox);
+        settingsLayout->addWidget(sessionListsBox);
         settingsLayout->addWidget(portEditBox);
         settingsLayout->addWidget(featuresBox);
 
@@ -750,20 +752,13 @@ void MainWindow::connectBasePort()
             errorThrown = false;
         }
         else{
-            if (inTestloop){
-                triggerPushed();
-            }
-            QString time = "\r" + serialPortList->currentText() + " DbaseConnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
+            QString time = "\r" + serialPortList->currentText() + " Disconnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
             baseMonitor->textCursor().insertText(time);
             serial->close();
-            if (debugOn){
-                connect_btn->setText("Start Session (Debug Mode)");
-            }
-            else{
-                connect_btn->setText("Start Session");
-            }
-//            connect_btn->setStyleSheet("background-color: green; color:white");
+            connect_btn->setStyleSheet("background-color: green; color:white");
             setWindowTitle("Xavier");
+            debugOn = false;
+            showDebug();
             baseConnected = 0;
         }
     }
@@ -854,10 +849,13 @@ void MainWindow::readLog()
             }
             trainDuration_spn->setValue(onboardParams[7].toInt());
             if (onboardParams[8].toInt()){
-                fade_spn->setValue(onboardParams[8].toInt());
                 fade_checkbox->setChecked(true);
-                fadeChecked();
+                fade_spn->setValue(onboardParams[8].toInt());
             }
+            else{
+                fade_checkbox->setChecked(false);
+            }
+            fadeChecked();
             QMessageBox showParams;
             showParams.setWindowTitle("Cerebro #" + onboardParams[1]  + " - LD #" + onboardParams[2]);
             showParams.setStandardButtons(QMessageBox::Ok);
@@ -870,6 +868,7 @@ void MainWindow::readLog()
                     " ms\nTrain Duration:\t" + onboardParams[7] +
                     " ms\nFade Time:\t" + onboardParams[8] + " ms" );
             showParams.exec();
+            updateFilter();
         }
     }
 
@@ -905,16 +904,20 @@ void MainWindow::set()
         trainDur = QString::number(trainDuration_spn->value());
     }
     if(fade_checkbox->isChecked()){
-        fadeTime = QString::number(fade_spn->value());
+        if(fade_spn->value()%100){// throw an error if the fadetime isn't a multiple of 100
+            QMessageBox fadeError;
+                fadeError.setWindowTitle("Parameter Error");
+                fadeError.setIcon(QMessageBox::Critical);
+                fadeError.setStandardButtons(QMessageBox::Ok);
+                fadeError.setText("Ramp Down time must be a multiple of 100");
+            fadeError.exec();
+            return;
+        }
+        else{
+            fadeTime = QString::number(fade_spn->value());
+        }
     }
     QString msg = startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
-    if (singleShot->isChecked()){
-        baseFilter_spn->setValue(startDelay_spn->value() + onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked());
-    }
-    else{
-        baseFilter_spn->setValue(startDelay_spn->value()+ trainDuration_spn->value());
-    }
-    qDebug()<<onTimeString<<offTimeString;
     QMessageBox confirmUpdate;
         confirmUpdate.setWindowTitle("Confirm Parameter Change");
         confirmUpdate.setIcon(QMessageBox::Question);
@@ -927,17 +930,12 @@ void MainWindow::set()
                     onTimeString + onTime +
                     offTimeString + offTime +
                     " ms\nTrain Duration:\t" + trainDur +
-                    " ms\nFade Time:\t" + fadeTime + " ms"
-                    "\n\nThe command filter will be automatically updated to " + QString::number(baseFilter_spn->value()) + " ms");
+                    " ms\nFade Time:\t" + fadeTime + " ms");
+//                    "\n\nThe command filter will be automatically updated to " + QString::number(baseFilter_spn->value()) + " ms");
     if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
-        last_settings->setText("Last Settings Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
+        last_settings->setText("Last Parameters Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
         QTimer::singleShot(500, this, SLOT(updateFilter()));
-//        QMessageBox baseUpdated;
-//            baseUpdated.setWindowTitle("Base Station Updated");
-//            baseUpdated.setIcon(QMessageBox::Information);
-//            baseUpdated.setText("The command filter has automatically been updated to  <b>" + QString::number(baseFilter_spn->value()) + " ms</b> to match the settings sent to Cerebro");
-//        baseUpdated.exec();
     }
 }
 
@@ -1077,7 +1075,6 @@ void MainWindow::saveFile()
                 cerebroSelect->clearSelection();
                 baseMonitor->clear();
                 debugOn = false;
-                debugCheckbox->setChecked(false);
                 showDebug();
             }
         }
@@ -1125,7 +1122,7 @@ void MainWindow::saveFile()
 
 void MainWindow::errorMsg()
 {
-    qDebug()<<"serial error:"<<serial->error();
+//    qDebug()<<"serial error:"<<serial->error();
     if (((serial->error()==11)|(serial->error()==7)|(serial->error()==8)|(serial->error()==9)&& errorThrown==false)){                //http://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
         errorThrown = true;
         baseMonitor->textCursor().insertText("ERROR\r");
@@ -1151,9 +1148,20 @@ void MainWindow::setPath(){
 }
 
 void MainWindow::updateFilter(){
+    if (singleShot->isChecked()){
+        baseFilter_spn->setValue(startDelay_spn->value() + onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked());
+    }
+    else{
+        baseFilter_spn->setValue(startDelay_spn->value()+ trainDuration_spn->value());
+    }
     QString msg = "F,"+ QString::number(baseFilter_spn->value());
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
+    QMessageBox baseUpdated;
+        baseUpdated.setWindowTitle("Command Filter Updated");
+        baseUpdated.setIcon(QMessageBox::Information);
+        baseUpdated.setText("Base Station's command filter has automatically been updated to <b>" + QString::number(baseFilter_spn->value()) + " ms</b>");
+    baseUpdated.exec();
     QTimer::singleShot(500, this, SLOT(clearMonitor()));
  }
 
@@ -1210,6 +1218,7 @@ void MainWindow::trainDur(){
 }
 
 void MainWindow::showDebug(){
+    debugCheckbox->setChecked(debugOn);
     if (debugOn){
         rigSelect->setCurrentRow(0);
         ratSelect->setCurrentRow(0);
@@ -1297,7 +1306,7 @@ void MainWindow::refreshDrops()
     if (first){ //starting up...
         //get the Qstringlists from memory
         QSettings settings("Bobcat Engineering","CCS");
-        settings.beginGroup("Dropdowns");
+        settings.beginGroup("sessionLists");
         rigList = settings.value("rigList").toStringList();
         ratList = settings.value("ratList").toStringList();
         cerebroList = settings.value("cerebroList").toStringList();
@@ -1354,7 +1363,7 @@ void MainWindow::refreshDrops()
 
         //Update the Qsettings with the new values
         QSettings settings("Bobcat Engineering","CCS");
-        settings.beginGroup("Dropdowns");
+        settings.beginGroup("sessionLists");
         settings.setValue("rigList",rigList);
         settings.setValue("ratList",ratList);
         settings.setValue("cerebroList",cerebroList);
@@ -1369,6 +1378,7 @@ void MainWindow::refreshDrops()
         power_spn->setVisible(mcubeCheckbox->isChecked());
         newPower_btn->setVisible(mcubeCheckbox->isChecked());
         debugOn = false;
+        showDebug();
         if (downloadConnected){
             connectDownloadPort(); //disconnect download port after settings change
         }
@@ -1386,7 +1396,7 @@ void MainWindow::openSettings()
 {
     if(gotoSettings->isEnabled()){
         QSettings settings("Bobcat Engineering","CCS");
-        settings.beginGroup("Dropdowns");
+        settings.beginGroup("sessionLists");
         aliasStringList = settings.value("portList").toStringList();
         settings.endGroup();
         portDropdown->clear();
@@ -1404,6 +1414,9 @@ void MainWindow::openSettings()
                 portDropdown->addItem(list.first(), list);
             }
         }
+        rigVals->clearSelection();
+        ratVals->clearSelection();
+        cerebroVals->clearSelection();
         settingsDialog->exec();
     }
 }
@@ -1519,7 +1532,6 @@ void MainWindow::setDebug()
 {
     if (!baseConnected){
         debugOn = !debugOn;
-        debugCheckbox->setChecked(debugOn);
         showDebug();
     }
 }

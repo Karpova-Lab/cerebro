@@ -133,8 +133,8 @@ private:
     QLabel*                 directoryLabel;
     QPushButton*            changeDir_btn;
 
-    QGroupBox*              dropDownsBox;
-    QGridLayout*            dropDownsLayout;
+    QGroupBox*              sessionListsBox;
+    QGridLayout*            sessionListsLayout;
     QLabel*                 rigLabel, *ratLabel, *cerebroLabel;
     QListWidget*            rigVals,*ratVals, *cerebroVals;
     QPushButton*            add1_btn,*add2_btn,*add3_btn;
