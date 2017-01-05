@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/myFiles">
-        <file>headerpic.png</file>
-        <file>pulse train.png</file>
-        <file>single shot.png</file>
-    </qresource>
-</RCC>
