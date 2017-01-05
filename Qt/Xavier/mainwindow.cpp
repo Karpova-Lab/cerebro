@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.27.0\nUpdated:\t1/04/2017";
+        QString aboutString = "\t1.27.1\nUpdated:\t1/05/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -755,7 +755,7 @@ void MainWindow::connectBasePort()
             QString time = "\r" + serialPortList->currentText() + " Disconnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
             baseMonitor->textCursor().insertText(time);
             serial->close();
-            connect_btn->setStyleSheet("background-color: green; color:white");
+            // connect_btn->setStyleSheet("background-color: green; color:white");
             setWindowTitle("Xavier");
             debugOn = false;
             showDebug();
