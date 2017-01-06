@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.27.1\nUpdated:\t1/05/2017";
+        QString aboutString = "\t1.27.2\nUpdated:\t1/06/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -868,7 +868,16 @@ void MainWindow::readLog()
                     " ms\nTrain Duration:\t" + onboardParams[7] +
                     " ms\nFade Time:\t" + onboardParams[8] + " ms" );
             showParams.exec();
-            updateFilter();
+//            if(baseConnected){
+//                QMessageBox filterMsg;
+//                filterMsg.setWindowTitle("Update Base Station Command Filter");
+//                filterMsg.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+//                filterMsg.setDefaultButton(QMessageBox::No);
+//                filterMsg.setText("Would you like to update the Base Station Command Filter to match the parameters on this Cerebro?");
+//                if(filterMsg.exec()==QMessageBox::Yes){
+//                    updateFilter();
+//                }
+//            }
         }
     }
 
@@ -1011,7 +1020,6 @@ void MainWindow::trainChecked()
 
 void MainWindow::saveFile()
 {
-    //warn if there is no rat # to indicate which folder to save to
     QString ratNumber;
     if(debugOn){
         ratNumber = "9999";
@@ -1020,13 +1028,6 @@ void MainWindow::saveFile()
         ratNumber = ratSelect->currentItem()->text();
     }
     bool continueSaving = true;
-    if(ratNumber==""){
-        QMessageBox alert;
-        alert.setText("Rat# is unknown, therefore this file can't be automatically saved to an existing rat folder.\nPlease select a folder you would like to save to.");
-        alert.setIcon(QMessageBox::Warning);
-        alert.setWindowTitle("Unknown Rat #");
-        alert.exec();
-    }
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("Saving");

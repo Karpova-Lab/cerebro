@@ -92,6 +92,7 @@ def compare(bLog,cLog,paramNames):
 
     missedStopVec = []
     missedTrigVec = []
+    missedContinueVec = []
     ignoreVec = []
     baseInterval = 0
     diffArray = []
@@ -122,6 +123,10 @@ def compare(bLog,cLog,paramNames):
                     missedTrigVec.append(j)
                     for column in paramNames:
                         combined.loc[j,column] = "Trig Miss"
+            elif combined['Sent'][j] == "Continue Sent":
+                missedContinueVec.append(j)
+                for column in paramNames:
+                        combined.loc[j,column] = "Continue Miss"
             elif combined['Sent'][j] == "Stop Sent":
                 missedStopVec.append(j)
                 for column in paramNames:
@@ -133,12 +138,16 @@ def compare(bLog,cLog,paramNames):
             diffArray.append(correctDiff)
 #             baseVec.append(combined['bTime'][j])
 
-    compareData = {'missedStopVec':missedStopVec,'missedTrigVec':missedTrigVec,'ignoreVec':ignoreVec}
+    # create dictionary with summary data
+    compareData = {'missedStopVec':missedStopVec,'missedTrigVec':missedTrigVec,'missedContinueVec':missedContinueVec,'ignoreVec':ignoreVec}
     compareData['trigIgnored'] = len(ignoreVec)
     compareData['trigMissed'] = len(missedTrigVec)
+    compareData['continueMissed'] = len(missedContinueVec)
     compareData['stopMissed'] = len(missedStopVec)
     compareData['trigSent'] = np.sum(combined['Sent']=='Trigger Sent')
     compareData['trigReceived'] = np.sum(combined['Received']=='trigger')
+    compareData['continueSent'] = np.sum(combined['Sent']=='Continue Sent')
+    compareData['continueReceived'] = np.sum(combined['Received']=='continue')
     compareData['stopSent'] = np.sum(combined['Sent']=='Stop Sent')
     compareData['stopReceived'] = np.sum(combined['Received']=='abort')
 
@@ -154,7 +163,6 @@ def compare(bLog,cLog,paramNames):
 #     print "max intra diff:\t", round(max(diff),3)
 #     print "min error\t",round(min(missDiff),3)
 #     print
-
     return combined,compareData
 
 def printSummary(combined,sessionLength,paramRanges,comp):
@@ -162,22 +170,27 @@ def printSummary(combined,sessionLength,paramRanges,comp):
     tMissed,missedTrigVec = comp['trigMissed'],comp['missedTrigVec']
     tIgnored,ignoredVec = comp['trigIgnored'],comp['ignoreVec']
 
+    cSent,cReceived = comp['continueSent'],comp['continueReceived']
+    cMissed,missedContinueVec = comp['continueMissed'],comp['missedContinueVec']
+
     sSent,sReceived = comp['stopSent'],comp['stopReceived']
     sMissed,missedStopVec =  comp['stopMissed'], comp['missedStopVec']
 
     summary = {}
     summary['lengthSummary'] = 'Session Length:\t{}'.format(sessionLength)
-    summary['successSummary'] = '\nTrigger Success Rate:\t{}/{} ({:.2f}%)'.format(tReceived,tSent-tIgnored,tReceived/float(tSent-tIgnored)*100)
-    summary['tIgnored'] = '\t{} Ignored: {}'.format(tIgnored,ignoredVec)
+    summary['triggerSummary'] = '\nTrigger Success Rate:\t{}/{} ({:.2f}%)'.format(tReceived,tSent-tIgnored,tReceived/float(tSent-tIgnored)*100)
+    # summary['tIgnored'] = '\t{} Ignored: {}'.format(tIgnored,ignoredVec)
     summary['tMissed'] = '\t{} Missed: {}'.format(tMissed,missedTrigVec)
+    summary['continueSummary'] = 'Continue Success Rate:\t{}/{} ({:.2f}%)'.format(cReceived,cSent,cReceived/float(cSent)*100)
     summary['abortSummary'] = 'Stop Success Rate:\t{}/{} ({:.2f}%)'.format(sReceived,sSent,sReceived/float(sSent)*100)
     summary['sMissed'] = '\t{} Missed: {}'.format(sMissed,missedStopVec)
     summary['paramRanges'] = '\nParameters Throughout Session:\ndelay\t\ton\t\toff\t\ttrain\t\tramp\t\t[range]\n{}'.format(paramRanges)
 
     print (summary['lengthSummary'])
-    print (summary['successSummary'])
-    print (summary['tIgnored'])
+    print (summary['triggerSummary'])
+    # print (summary['tIgnored'])
     print (summary['tMissed'])
+    print (summary['continueSummary'])
     print (summary['abortSummary'])
     print (summary['sMissed'])
     print (summary['paramRanges'])
@@ -197,9 +210,10 @@ def writeSummary(cerebroLogPath,bData,cData,summary,combined):
     target.write('\nBase Station Firmware Version:{}'.format(int(setup['baseFirmware'])))
     target.write('\nCerebro Firmware Version:{}'.format(cData['firmware']))
     target.write('\n\n{}'.format(summary['lengthSummary']))
-    target.write('\n{}'.format(summary['successSummary']))
+    target.write('\n{}'.format(summary['triggerSummary']))
     target.write('\n{}'.format(summary['tIgnored']))
     target.write('\n{}'.format(summary['tMissed']))
+    target.write('\n{}'.format(summary['continueSummary']))
     target.write('\n{}'.format(summary['abortSummary']))
     target.write('\n{}'.format(summary['sMissed']))
     target.write('\n{}'.format(summary['paramRanges']))
@@ -220,7 +234,9 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     missedStop['type'] = "Missed Stop"
     missedTrig = pd.DataFrame({'missIndex':compData['missedTrigVec']})
     missedTrig['type'] = "Missed Trig"
-    new = missedStop.append(missedTrig)
+    missedContinue = pd.DataFrame({'missIndex':compData['missedContinueVec']})
+    missedContinue['type'] = "Missed Continue"
+    new = missedStop.append(missedTrig).append(missedContinue)
     new.sort_values(by='missIndex',inplace=True)
     reIndex(new)
 
@@ -240,10 +256,10 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     plt.annotate(missString,xy=(0.005,.99),xycoords='axes fraction',size=12,verticalalignment = 'top')
 
     #Display session summary at the top
-    totalSummary = '{}{}\n{}'.format(sumry['lengthSummary'],sumry['successSummary'],sumry['abortSummary'])
+    totalSummary = '{}{}\n{}\n{}'.format(sumry['lengthSummary'],sumry['triggerSummary'],sumry['continueSummary'],sumry['abortSummary'])
     totalSummary = totalSummary.replace("\t\t", "\t")
     totalSummary = totalSummary.replace("\t", "      ")
-    plt.figtext(.125,.91,totalSummary,fontsize = 12,verticalalignment = 'bottom')
+    plt.figtext(.125,.92,totalSummary,fontsize = 12,verticalalignment = 'bottom')
 
     plt.title(plotTitle,fontsize = 30)
     plt.ylabel(yAxis,fontsize = 25)
