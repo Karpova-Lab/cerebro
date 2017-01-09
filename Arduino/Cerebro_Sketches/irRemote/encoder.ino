@@ -13,7 +13,7 @@ void updateEncoder(){
 void encoderSetup(){
   pinMode(encoderPin1, INPUT_PULLUP);
   pinMode(encoderPin2, INPUT_PULLUP);
-  pinMode(encoderSwitchPin, INPUT_PULLUP);
+  pinMode(encoderPshBtn, INPUT_PULLUP);
   attachInterrupt(0, updateEncoder, CHANGE);
   attachInterrupt(1, updateEncoder, CHANGE);
 }

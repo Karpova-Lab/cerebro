@@ -15,23 +15,31 @@ void draw(bool _mode) {
   display.println();
   display.println();
   display.println();
-  if (!_mode){
+  if (!_mode){ //highlight parameters
     for (int i = 4; i<9; i++){
-      display.setTextColor(highlight!=(1<<(i-4)),highlight==(1<<(i-4)));
+      if(!isViewingParameters){
+        display.setTextColor(highlight!=(1<<(i-4)),highlight==(1<<(i-4)));
+      }
       display.print(labels[i]);
       display.setTextColor(1,0);
       display.print(": ");
       display.print(params[i]);
+      display.setTextColor(1,0);
+      display.print(" ms ");
       fillExcess(params[i],5);
     }
   }
-  else{
+  else{ //highlight values
     for (int i = 4; i<9; i++){
       display.setTextColor(1,0);
       display.print(labels[i]);
       display.print(": ");
-      display.setTextColor(highlight!=(1<<(i-4)),highlight==(1<<(i-4)));
+      if(!isViewingParameters){
+        display.setTextColor(highlight!=(1<<(i-4)),highlight==(1<<(i-4)));
+      }
       display.print(params[i]);
+      display.setTextColor(1,0);
+      display.print(" ms ");
       fillExcess(params[i],5);
     }
   }
@@ -40,7 +48,6 @@ void draw(bool _mode) {
 
 void fillExcess(unsigned int tempParam,byte wanted){
   byte numDigits = 1;
-  display.setTextColor(1,0);
   while(tempParam/10>0){
     numDigits++;
     tempParam = tempParam/10;

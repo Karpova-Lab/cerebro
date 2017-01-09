@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2017 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,59 +21,94 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-byte digits[10]  = {252,96,218,242,102,182,190,224,254,230}; //{0,1,2,3,4,5,6,7,8,9}  add 1 to value to add decimal point ("1" is 252, "1." is 253)
-//byte pins[10] = {2,3,4,5,6,7,8,9,10,11}; //{A,B,C,D,E,F,G,DP,first,second} //attiny2313
-byte pins[10] = {0,1,2,3,4,5,7,8,9,10}; //{A,B,C,D,E,F,G,DP,first,second} //attiny84
-#define batt 6
-int pov = 20;
-int juice;
-int tempjuice;
-int count = 0;
-int show = 0;
+//Software SPI
+#define OLED_DATA  7
+#define OLED_CLK   6
+#define OLED_DC    5
+#define OLED_RESET 4
+#define OLED_CS    3
+
+#define NWvolt A0
+#define NEvolt A1
+#define SEvolt A2
+#define SWvolt A3
+
+Adafruit_SSD1306 display(OLED_DATA, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+
+const byte voltPins[4] = {NWvolt,NEvolt,SEvolt,SWvolt};
+const byte xpos[4] = {0,79,79,0};
+const byte ypos[4] = {0,0,50,50};
+const byte muxEnable = 10; //PB2
+const byte button = 9; //PB1
+
+const byte numSamples = 100;
+
+unsigned long refreshClock = 0;
+unsigned long refreshTime = 10000; //refresh every 15 seconds.
+
 
 void setup() {
-  pinMode(batt,INPUT);
-  for(int i=0; i<11; i++){
-    pinMode(pins[i],OUTPUT);
-    if(i>8){
-      digitalWrite(pins[i],HIGH);
-    }
-    else{
-      digitalWrite(pins[i],LOW);
-    }
+  for (byte i=0; i<4; i++){
+    pinMode(voltPins[i],INPUT);
   }
+  pinMode(muxEnable,OUTPUT);
+  pinMode(button,INPUT_PULLUP);
+  digitalWrite(muxEnable,LOW);
+  displaySetup();
+}
+
+void displaySetup(){
+   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
+  display.begin(SSD1306_SWITCHCAPVCC);
+  // Clear the buffer.
+  display.clearDisplay();
+  draw();
+  display.display();
+}
+
+void draw(){
+  display.setTextColor(1,0);
+  display.setTextSize(2);
+  display.setCursor(0,0);
+}
+
+void getVoltage(byte pin){
+  digitalWrite(muxEnable,HIGH);
+  unsigned long sample = 0;
+  for (int i = 0; i<numSamples; i++){
+    sample += analogRead(voltPins[pin]);
+  }
+  display.setCursor(xpos[pin],ypos[pin]);
+  float voltage = (sample*0.86/numSamples)/1023.0*5.1;
+  if (voltage>3){
+    display.print(voltage);
+  }
+}
+
+void refreshDisplay(){
+  refreshClock = 0;
+  display.clearDisplay();
+  for (byte i = 0; i<4; i++){
+    getVoltage(i);
+  }
+  display.display();
 }
 
 void loop(){
-  juice = map(analogRead(batt),0,724,0,99);
-  if (juice>45){
-    delay(500);
-    for(int i = 0; i<1000; i++){
-      segmentize(juice/10,0); //display 1st digit
-      segmentize(juice%10,1); ///display 2nd digit
-    }
-  }
-  // testDigits();
-
-}
-
-void segmentize(int number,boolean place){
-  //
-  for (int i=7; i>-1; i--){
-    digitalWrite(pins[i],bitRead(digits[number],7-i));
-  }
-  digitalWrite(pins[8],place); //pulling Digit 1's common cathode low, illuminates the digit 1
-  digitalWrite(pins[9],!place); //pulling Digit 2's common cathode low, illuminates digit 2
   delay(1);
-  digitalWrite(pins[8+place],HIGH); //pull Digits High to turn them off.
-}
-
-void testDigits(){
-  for (int i = 0; i<10; i++){
-    for (int j=0; j<200; j++){
-      segmentize(i,0);
-      segmentize(i,1);
-    }
+  if(!digitalRead(button)){
+    refreshDisplay();
+  }
+  if(refreshClock>refreshTime){ //
+    refreshDisplay();
+  }
+  else{
+    digitalWrite(muxEnable,LOW);
+    refreshClock++;
   }
 }

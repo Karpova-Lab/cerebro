@@ -1,5 +1,5 @@
 void clicked(){
-  Serial.println(F("clicked"));
+  // Serial.println(F("clicked"));
   delay(100);
   isEditMode = !isEditMode;
   letter = 0;
@@ -7,7 +7,7 @@ void clicked(){
 }
 
 void left(){
-  Serial.println(F("left"));
+  // Serial.println(F("left"));
   if (!isEditMode){
   highlight=highlight>>1;
     if (highlight<1){
@@ -38,7 +38,7 @@ void left(){
 }
 
 void right(){
-  Serial.println(F("right"));
+  // Serial.println(F("right"));
   if (!isEditMode){
     highlight=highlight<<1;
     if (highlight>16){
