@@ -72,11 +72,11 @@ Edit Default Save Directory
 
 .. _add items:
 
-Edit Dropdown Lists
--------------------
+Edit Session Setup Lists
+------------------------
 Adding Items
 ````````````
-Type new items into dropdown list textboxes and click ``Add Item`` (or press :kbd:`Enter`)
+Type new items into the textboxes and click ``Add Item`` (or press :kbd:`Enter`)
 
 .. image:: photos/Settings/additem.gif
   :align: center

@@ -16,9 +16,9 @@ Head Implant
   1, "Micro USB Socket"
   2, "Printed Circuit Board (PCB)"
   3, "Laser Diode"
-  4, "Acrylic ferrule holder"
-  4, "Ferrule"
-  5, "Optical Fiber"
+  4, "Acrylic fiber guide"
+  5, "Ferrule"
+  6, "Optical Fiber"
 
 
 .. _implantTools:

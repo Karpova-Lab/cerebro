@@ -11,13 +11,13 @@ Bill of Materials
 +-----+----------------------------------+-----------------------------------------------------------------+-------------------------------------------------------------+
 | Qty | Description                      | Datasheet                                                       | Vendor                                                      |
 +=====+==================================+=================================================================+=============================================================+
-| 1   | Utility Shield PCB               |                                                                 | `OSH Park <https://oshpark.com/shared_projects/wJsXe7TS>`_  |
+| 1   | Utility Shield PCB               |                                                                 | `OSH Park <https://oshpark.com/shared_projects/NacBaAQJ>`_  |
 +-----+----------------------------------+-----------------------------------------------------------------+-------------------------------------------------------------+
 | 1   | Arduino Uno                      | :download:`ATmega328<Datasheets/ATmega328.pdf>`                 | `Octopart <https://octopart.com/bom-lookup/n5svTbJz>`_      |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 1   | 22 pin ZIF socket                | :download:`222-3343-00-0602J<Datasheets/222-3343-00-0602J.pdf>` |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
-| 1   | Male micro USB vertical plug     | :download:`ZX20-B-5S<Datasheets/ZX20-B-5S.pdf>`                 |                                                             |
+| 1   | Male micro USB vertical plug     | :download:`ZX20-B-5S-UNIT(30)<Datasheets/ZX20-B-5S.pdf>`        |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 1   | Male micro USB shielding         | :download:`ZX20-B-SLDC<Datasheets/ZX20-B-5S.pdf>`               |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
@@ -26,6 +26,10 @@ Bill of Materials
 | 1   | Lipo charger IC                  | :download:`MCP73831T<Datasheets/MCP73831T.pdf>`                 |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 1   | 1206 red/green LED               | :download:`5977703607F<Datasheets/5977703607F.pdf>`             |                                                             |
++-----+----------------------------------+-----------------------------------------------------------------+                                                             +
+| 1   | Breakaway 0.1" male pins         | :download:`68001-420HLF<Datasheets/68001-420HLF.pdf>`           |                                                             |
++-----+----------------------------------+-----------------------------------------------------------------+                                                             +
+| 1   | Tactile Switch                   | :download:`B3FS-1010P<Datasheets/B3FS-1010P.pdf>`               |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 2   | 0805 100 |OHgr| Resistor         |                                                                 |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
@@ -40,9 +44,9 @@ Design Files
 ````````````
 
 PCB
-	- :download:`Utility Shield 1.2.brd<../../../PCB Files/Utility Shield 1.2/Utility Shield 1.2.brd>`
-	- :download:`Utility Shield 1.2.sch<../../../PCB Files/Utility Shield 1.2/Utility Shield 1.2.sch>`
-	- :download:`Schematic.pdf<../../../PCB Files/Utility Shield 1.2/Utility Shield 1.2 schematic.pdf>`
+	- :download:`Utility Shield 1.4.brd<../../../PCB Files/Utility Shield 1.4/Utility Shield 1.4.brd>`
+	- :download:`Utility Shield 1.4.sch<../../../PCB Files/Utility Shield 1.4/Utility Shield 1.4.sch>`
+	- :download:`Schematic.pdf<../../../PCB Files/Utility Shield 1.4/Utility Shield 1.4 schematic.pdf>`
 
 
 .. _utility shield setup:
@@ -62,7 +66,7 @@ Setting up Arduino IDE
      :align: center
      :scale: 75%
 
-3. Download and unzip :download:`Arduino_cererbo.zip<Arduino_cerebro.zip>`
+3. Download and unzip :download:`Arduino_cerebro.zip<Arduino_cerebro.zip>`
 
 4. Transfer the "Cerebro_sketches" and "Hardware" folders into your Arduino Sketchbook folder
 

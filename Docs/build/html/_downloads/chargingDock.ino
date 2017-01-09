@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2017 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,26 +41,24 @@ SOFTWARE.
 Adafruit_SSD1306 display(OLED_DATA, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
 const byte voltPins[4] = {NWvolt,NEvolt,SEvolt,SWvolt};
+const byte xpos[4] = {0,79,79,0};
+const byte ypos[4] = {0,0,50,50};
+const byte muxEnable = 10; //PB2
+const byte button = 9; //PB1
 
-const byte numSamples = 10;
+const byte numSamples = 100;
 
-char* unit = " volts";
+unsigned long refreshClock = 0;
+unsigned long refreshTime = 10000; //refresh every 15 seconds.
 
-char* labels[9] = { " Version",
-                    "Cerebro #",
-                    "  LD #",
-                    "  Power Level = ",
-                    " Strt Dlay",
-                    " On       ",
-                    " Off      ",
-                    " Train Dur",
-                    " Ramp Down",
-                  };
 
 void setup() {
   for (byte i=0; i<4; i++){
     pinMode(voltPins[i],INPUT);
   }
+  pinMode(muxEnable,OUTPUT);
+  pinMode(button,INPUT_PULLUP);
+  digitalWrite(muxEnable,LOW);
   displaySetup();
 }
 
@@ -75,41 +73,42 @@ void displaySetup(){
 
 void draw(){
   display.setTextColor(1,0);
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setCursor(0,0);
-  display.print("A");
-  display.setCursor(30,0);
-  display.print("B");
-  display.println(1);
-  display.println(1);
+}
+
+void getVoltage(byte pin){
+  digitalWrite(muxEnable,HIGH);
+  unsigned long sample = 0;
+  for (int i = 0; i<numSamples; i++){
+    sample += analogRead(voltPins[pin]);
+  }
+  display.setCursor(xpos[pin],ypos[pin]);
+  float voltage = (sample*0.86/numSamples)/1023.0*5.1;
+  if (voltage>3){
+    display.print(voltage);
+  }
+}
+
+void refreshDisplay(){
+  refreshClock = 0;
+  display.clearDisplay();
+  for (byte i = 0; i<4; i++){
+    getVoltage(i);
+  }
+  display.display();
 }
 
 void loop(){
-  display.setCursor(0,0);
-  display.print(analogRead(NWvolt));
-  display.display();
-
-  // digitalWrite(2,HIGH);
-  // delay(2000);
-  // digitalWrite(2,LOW);
-  // delay(2000);
-
-  // for (int i = 0; i <4; i++){
-  //   float juice = 0;
-  //   for (int j = 0 ; j<numSamples; j++){
-  //     juice += analogRead(voltPins[i]);
-  //   }
-  //   juice = juice/numSamples;
-  // }
-  // if (juice>10){ //cerebro is docked
-  //
-  // }
-  // else{ //nothing is there
-  //
-  // }
-  // juice += map(analogRead(voltPins[i]),675,860,0,100);
-
-
-  // testDigits();
-
+  delay(1);
+  if(!digitalRead(button)){
+    refreshDisplay();
+  }
+  if(refreshClock>refreshTime){ //
+    refreshDisplay();
+  }
+  else{
+    digitalWrite(muxEnable,LOW);
+    refreshClock++;
+  }
 }

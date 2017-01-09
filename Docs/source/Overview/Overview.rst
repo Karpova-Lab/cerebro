@@ -19,6 +19,7 @@ Wirelessly Adjustable Waveforms
 Laser Diodes
   Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
   Bilateral implants have been capable of up to 15 mW per fiber-coupled laser diode or 450 mW/mm\ :sup:`2` (tested with two 520 nm laser diodes coupled to 200 |mgr|\m diameter fibers and powered by two 105 mAh lipo batteries).
+
 .. Keep in mind the limiting factor of the tested implant wasn't the laser diodes, but rather the peak current supply of the batteries.
 
 .. This means you can substitute a LED coupled to a large fiber, with a laser diode coupled to smaller (less brain damaging) fiber.
@@ -126,9 +127,9 @@ Charging Dock
   :align: center
   :scale: 20 %
 
-The Charging Dock provides ports for charging up to 4 Cerebro receivers at one time. A 2-digit display shows
-the voltage of a Cerebro when the corresponding button is pressed. When Cerebro becomes fully charged (~4.2v) an
-indicator led changes from red to green.
+The Charging Dock provides ports for charging up to 4 Cerebro receivers at one time.
+An OLED display shows the voltages of the batteries being charged.
+A red indicator LED is lit while Cerebro is charging, and turns off once Cerebro is fully charged.
 
 :doc:`More info... <../Hardware/charging dock>`
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Charging Dock &mdash; Cerebro 0.0.4 documentation</title>
+  <title>Charging Dock &mdash; Cerebro 0.0.5 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="Cerebro 0.0.4 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.5 documentation" href="../index.html"/>
         <link rel="next" title="IR Remote" href="remote.html"/>
         <link rel="prev" title="Utility Shield" href="utility shield.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.4
+                0.0.5
               </div>
             
           
@@ -171,12 +171,37 @@
 <tr class="row-even"><td>1</td>
 <td>Charging Dock PCB</td>
 <td>&nbsp;</td>
-<td><a class="reference external" href="https://oshpark.com/shared_projects/WBLi9Dib">OSH Park</a></td>
+<td><a class="reference external" href="https://oshpark.com/shared_projects/796c3lzQ">OSH Park</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>OLED display</td>
+<td>&nbsp;</td>
+<td><a class="reference external" href="https://www.adafruit.com/products/938">Adafruit</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Microcontroller</td>
+<td><a class="reference download internal" href="../_downloads/ATMEGA328P-AU.pdf" download=""><code class="xref download docutils literal"><span class="pre">ATMEGA328P-AU</span></code></a></td>
+<td rowspan="12"><a class="reference external" href="https://octopart.com/bom-lookup/sGmVuHz7">Octopart</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>16 MHz Resonator</td>
+<td><a class="reference download internal" href="../_downloads/CSTLS16M0X53-A0.pdf" download=""><code class="xref download docutils literal"><span class="pre">CSTLS16M0X53-A0</span></code></a></td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>Multiplexer</td>
+<td><a class="reference download internal" href="../_downloads/MAX4674.pdf" download=""><code class="xref download docutils literal"><span class="pre">MAX4674</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>0805 Red LED</td>
+<td><a class="reference download internal" href="../_downloads/LTST-C171KRKT.pdf" download=""><code class="xref download docutils literal"><span class="pre">LTST-C171KRKT</span></code></a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Momentary Button</td>
+<td><a class="reference download internal" href="../_downloads/B3U-1000P.pdf" download=""><code class="xref download docutils literal"><span class="pre">B3U-1100P</span></code></a></td>
 </tr>
 <tr class="row-odd"><td>4</td>
 <td>Female micro USB vertical socket</td>
 <td><a class="reference download internal" href="../_downloads/1051330011.pdf" download=""><code class="xref download docutils literal"><span class="pre">1051330011</span></code></a></td>
-<td rowspan="12"><a class="reference external" href="https://octopart.com/bom-lookup/sGmVuHz7">Octopart</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Female micro USB horizontal socket</td>
@@ -186,40 +211,20 @@
 <td>Lipo charger IC</td>
 <td><a class="reference download internal" href="../_downloads/MCP73831T.pdf" download=""><code class="xref download docutils literal"><span class="pre">MCP73831T</span></code></a></td>
 </tr>
-<tr class="row-even"><td>4</td>
-<td>Push button</td>
-<td><a class="reference download internal" href="../_downloads/KS12R22CQD.pdf" download=""><code class="xref download docutils literal"><span class="pre">KS12R22CQD</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>4</td>
-<td>2-Digit 7-segment Display</td>
-<td><a class="reference download internal" href="../_downloads/LTD-4708JR.pdf" download=""><code class="xref download docutils literal"><span class="pre">LTD-4708JR</span></code></a></td>
-</tr>
 <tr class="row-even"><td>1</td>
-<td>14 pin DIP socket</td>
-<td><a class="reference download internal" href="../_downloads/A14-LC-TT.pdf" download=""><code class="xref download docutils literal"><span class="pre">A14-LC-TT</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>4</td>
-<td>Diodes</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-even"><td>4</td>
-<td>red/green led</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-odd"><td>1</td>
 <td>0805 10 kΩ Resistor</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-even"><td>4</td>
+<tr class="row-odd"><td>4</td>
 <td>0805 27 kΩ Resistor</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td>8</td>
+<tr class="row-even"><td>8</td>
 <td>0805 100 Ω Resistor</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-even"><td>9</td>
-<td>0805 4.7 μF Capacitor</td>
+<tr class="row-odd"><td>9</td>
+<td>0805 10 μF Capacitor</td>
 <td>&nbsp;</td>
 </tr>
 </tbody>
@@ -230,9 +235,9 @@
 <dl class="docutils">
 <dt>PCB</dt>
 <dd><ul class="first last simple">
-<li><a class="reference download internal" href="../_downloads/Charging Dock 1.4.brd" download=""><code class="xref download docutils literal"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">1.4.brd</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Charging Dock 1.4.sch" download=""><code class="xref download docutils literal"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">1.4.sch</span></code></a></li>
-<li><a class="reference download internal" href="../_downloads/Charging Dock 1.4 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Charging Dock 1.8.brd" download=""><code class="xref download docutils literal"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">1.8.brd</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Charging Dock 1.8.sch" download=""><code class="xref download docutils literal"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">1.8.sch</span></code></a></li>
+<li><a class="reference download internal" href="../_downloads/Charging Dock 1.8 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
 </ul>
 </dd>
 </dl>
@@ -266,8 +271,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2016, Andy Lustig.
-      Last updated on Dec 20, 2016.
+        &copy; Copyright 2015-2017, Andy Lustig.
+      Last updated on Jan 09, 2017.
 
     </p>
   </div>
@@ -289,7 +294,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.4',
+            VERSION:'0.0.5',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
