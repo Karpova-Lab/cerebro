@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.27.2\nUpdated:\t1/06/2017";
+        QString aboutString = "\t1.27.3\nUpdated:\t1/10/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -1095,7 +1095,7 @@ void MainWindow::saveFile()
                 // Run python script to summarize data from base station and cerebro logs
                 QProcess *process = new QProcess(this);
                 QStringList pythonArgs;
-                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<"\""+saveName1+"\""<<"\""+saveName2+"\""; //pass the two log file locations into the python script
+                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<"\""+saveName1+"\""<<"\""+saveName2+"\""<<"0"; //pass the two log file locations into the python script
                 process->start("python",pythonArgs);
                 process->waitForFinished(-1);
                 QString errorString = process->readAllStandardError();
@@ -1504,7 +1504,7 @@ void MainWindow::getGraphs()
             //Run python script for creating graph
             QProcess *process = new QProcess(this);
             QStringList pythonArgs;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/graph.py"<<"\""+baseData+"\""<<"\""+cerData+"\""; //pass the two log file locations into the python script
+            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<"\""+baseData+"\""<<"\""+cerData+"\""<<"1"; //pass the two log file locations into the python script
             process->start("python",pythonArgs);
             process->waitForFinished(-1);
             QString errorString = process->readAllStandardError();

@@ -211,7 +211,7 @@ def writeSummary(cerebroLogPath,bData,cData,summary,combined):
     target.write('\nCerebro Firmware Version:{}'.format(cData['firmware']))
     target.write('\n\n{}'.format(summary['lengthSummary']))
     target.write('\n{}'.format(summary['triggerSummary']))
-    target.write('\n{}'.format(summary['tIgnored']))
+    # target.write('\n{}'.format(summary['tIgnored']))
     target.write('\n{}'.format(summary['tMissed']))
     target.write('\n{}'.format(summary['continueSummary']))
     target.write('\n{}'.format(summary['abortSummary']))
