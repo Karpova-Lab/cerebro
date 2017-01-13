@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.27.3\nUpdated:\t1/10/2017";
+        QString aboutString = "\t1.27.4\nUpdated:\t1/13/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -684,31 +684,28 @@ void MainWindow::fillPortsInfo2()
 
 void MainWindow::connectBasePort()
 {
-    if((rigSelect->selectedItems().size()==0) & !baseConnected){
+    if((rigSelect->selectedItems().size()==0) & !baseConnected){ //didn't select Rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rig #");
         alert.exec();
-        connect_btn->setChecked(false);
         }
-    else if((ratSelect->selectedItems().size()==0) & !baseConnected){
+    else if((ratSelect->selectedItems().size()==0) & !baseConnected){ //didn't select rat
         QMessageBox alert;
         alert.setText("Please select a Rat ID to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rat ID");
         alert.exec();
-        connect_btn->setChecked(false);
     }
-    else if((cerebroSelect->selectedItems().size()==0) & !baseConnected){
+    else if((cerebroSelect->selectedItems().size()==0) & !baseConnected){ //didn't select cerebro
         QMessageBox alert;
         alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Cerebro #");
         alert.exec();
-        connect_btn->setChecked(false);
     }
-    else{
+    else{ //  disable and enable components depending on whether we are connecting or disconnecting to the base station
         gotoSettings->setEnabled(baseConnected);
         toggleDebug->setEnabled(baseConnected);
         rig_lbl->setEnabled(baseConnected);
@@ -727,8 +724,7 @@ void MainWindow::connectBasePort()
         baseSettingsBox->setEnabled(!baseConnected);
 //        chooseBox->setEnabled(!baseConnected && debugOn);
         baseBox->setEnabled(!baseConnected);
-        connect_btn->setChecked(!baseConnected);
-        if(!baseConnected){
+        if(!baseConnected){ //connect to serial port
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
@@ -751,7 +747,7 @@ void MainWindow::connectBasePort()
             baseConnected = 1;
             errorThrown = false;
         }
-        else{
+        else{ //disconnect from serial port
             QString time = "\r" + serialPortList->currentText() + " Disconnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
             baseMonitor->textCursor().insertText(time);
             serial->close();
@@ -762,6 +758,7 @@ void MainWindow::connectBasePort()
             baseConnected = 0;
         }
     }
+    connect_btn->setChecked(baseConnected);
 }
 
 void MainWindow::connectDownloadPort()
@@ -773,7 +770,6 @@ void MainWindow::connectDownloadPort()
         noSerial.setIcon(QMessageBox::Warning);
         noSerial.setWindowTitle("No Available Serial Ports");
         noSerial.exec();
-        connect2_btn->setChecked(false);
     }
     else{
         connectLU_label->setEnabled(downloadConnected);
@@ -805,6 +801,7 @@ void MainWindow::connectDownloadPort()
             fillPortsInfo2();
         }
     }
+    connect2_btn->setChecked(downloadConnected);
 }
 
 void MainWindow::sendTime()
