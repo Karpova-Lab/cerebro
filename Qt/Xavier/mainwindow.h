@@ -179,8 +179,8 @@ private:
 
 
 private slots:
-    void fillPortsInfo();
-    void fillPortsInfo2();
+    void fillBasestationPorts();
+    void fillDownloaderPorts();
     void connectBasePort();
     void connectDownloadPort();
     void sendTime();
@@ -219,6 +219,7 @@ private slots:
     void editLabel();
     void sendNewPower();
     void powerSending();
+    void getJSON();
 
 
     //Calibration stuff

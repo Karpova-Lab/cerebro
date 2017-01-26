@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.27.4\nUpdated:\t1/13/2017";
+        QString aboutString = "\t1.27.5\nUpdated:\t1/25/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -131,20 +131,20 @@ MainWindow::MainWindow(QWidget *parent)
             adjustmentLayout->addWidget(power_spn,0,1);
                 newPower_btn = new QPushButton("Send New Power Level");
             adjustmentLayout->addWidget(newPower_btn,1,0,1,2);
+                singleShot = new QRadioButton("Single Shot");
+                singleShot->setChecked(true);
+            adjustmentLayout->addWidget(singleShot,2,0,Qt::AlignRight);
+                pulseTrain = new QRadioButton("Pulse Train");
+            adjustmentLayout->addWidget(pulseTrain,2,1);
+            startDelay_lbl = new QLabel("Start Delay");
+                startDelay_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            adjustmentLayout->addWidget(startDelay_lbl,3,0);
                 startDelay_spn = new QSpinBox();
                 startDelay_spn->setRange(0,65535);
                 startDelay_spn->setSingleStep(50);
                 startDelay_spn->setSuffix(" ms");
                 startDelay_spn->setAlignment(Qt::AlignCenter);
-            adjustmentLayout->addWidget(startDelay_spn,2,1);
-                startDelay_lbl = new QLabel("Start Delay");
-                startDelay_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            adjustmentLayout->addWidget(startDelay_lbl,2,0);
-                singleShot = new QRadioButton("Single Shot");
-                singleShot->setChecked(true);
-            adjustmentLayout->addWidget(singleShot,3,0,Qt::AlignRight);
-                pulseTrain = new QRadioButton("Pulse Train");
-            adjustmentLayout->addWidget(pulseTrain,3,1);
+            adjustmentLayout->addWidget(startDelay_spn,3,1);
                 onTime_lbl = new QLabel("On Time");
                 onTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             adjustmentLayout->addWidget(onTime_lbl,4,0);
@@ -520,8 +520,6 @@ sendFadeDialog->setLayout(sendFadeLayout);
     serial2 = new QSerialPort(this);
     first = true;
     refreshDrops();
-    fillPortsInfo();
-    fillPortsInfo2();
     baseConnected = false;
     downloadConnected = false;
     inTestloop = false;
@@ -540,8 +538,8 @@ sendFadeDialog->setLayout(sendFadeLayout);
 
 
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
-    connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo()));
-    connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillPortsInfo2()));
+    connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillBasestationPorts()));
+    connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillDownloaderPorts()));
     connect(connect_btn,SIGNAL(clicked()),this,SLOT(connectBasePort()));
     connect(connect2_btn,SIGNAL(clicked()),this,SLOT(connectDownloadPort()));
     connect(serial,SIGNAL(readyRead()),this,SLOT(readSerial()));
@@ -634,7 +632,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 
-void MainWindow::fillPortsInfo()
+void MainWindow::fillBasestationPorts()
 {
     refresh_btn->setDown(1);
     serialPortList->clear();
@@ -658,7 +656,7 @@ void MainWindow::fillPortsInfo()
     refresh_btn->setDown(0);
 }
 
-void MainWindow::fillPortsInfo2()
+void MainWindow::fillDownloaderPorts()
 {
     refresh2_btn->setDown(1);
     serialPortList2->clear();
@@ -798,7 +796,7 @@ void MainWindow::connectDownloadPort()
             serial2->close();
             connect2_btn->setText("Connect To Downloader");
             downloadConnected = false;
-            fillPortsInfo2();
+            fillDownloaderPorts();
         }
     }
     connect2_btn->setChecked(downloadConnected);
@@ -1028,23 +1026,23 @@ void MainWindow::saveFile()
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("Saving");
-    QString tempPath = settings.value("DefaultDir").toString();
+    QString saveDirectoryPath = settings.value("DefaultDir").toString();
     settings.endGroup();
     //if the default save directory hasn't been set yet, use the desktop as the save directory
-    if(tempPath.isEmpty()){
-        tempPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    if(saveDirectoryPath.isEmpty()){
+        saveDirectoryPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
     QDateTime saveTime = saveTime.currentDateTime();
     //check if the rat# folder exists in the save directory, if not go ahead and make a new rat# folder
-    if(!QDir(tempPath+ "/" + ratNumber).exists()){
+    if(!QDir(saveDirectoryPath+ "/" + ratNumber).exists()){
         QMessageBox newFolder;
         QPushButton *connectButton = newFolder.addButton(tr("Yes, Create new folder"), QMessageBox::YesRole);
         newFolder.addButton(QMessageBox::Cancel);
-        newFolder.setText("'" + ratNumber + "' folder does not currently exist in the '" + tempPath + "' directory. Would you like to create one?");
+        newFolder.setText("'" + ratNumber + "' folder does not currently exist in the '" + saveDirectoryPath + "' directory. Would you like to create one?");
         newFolder.exec();
         if (newFolder.clickedButton() == connectButton) {
             // connect
-            QDir().mkdir(tempPath+ "/" + ratNumber);
+            QDir().mkdir(saveDirectoryPath+ "/" + ratNumber);
         }
         else{
             continueSaving = false;
@@ -1054,7 +1052,7 @@ void MainWindow::saveFile()
         if (!ratNumber.isEmpty()){
             //save the base station log
             saveName1 = QFileDialog::getSaveFileName(this,
-                tr("Save Base Station Log"), tempPath + "/" + ratNumber + "/" + saveTime.toString("yyyyMMMdd_hhmm")+"_base station",tr("(*.csv)") );
+                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_base station",tr("(*.csv)") );
             qDebug()<<saveName1;
             if (!saveName1.isEmpty()){
                 QFile file(saveName1);
@@ -1066,7 +1064,7 @@ void MainWindow::saveFile()
                 //Disconnect the com port if connected.
                 if(baseConnected){
                     connectBasePort();
-                    fillPortsInfo();
+                    fillBasestationPorts();
                 }
                 rigSelect->clearSelection();
                 ratSelect->clearSelection();
@@ -1078,7 +1076,7 @@ void MainWindow::saveFile()
         }
         //save the cerebro log
         saveName2 = QFileDialog::getSaveFileName(this,
-            tr("Save Cerebro Log"), tempPath + "/" + ratNumber + "/" + saveTime.toString("yyyyMMMdd_hhmm")+"_cerebroLog", tr("(*.csv)") );
+            tr("Save Cerebro Log"), saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_cerebroLog", tr("(*.csv)") );
         if (!saveName2.isEmpty()){
             QFile file2(saveName2);
             file2.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -1107,7 +1105,7 @@ void MainWindow::saveFile()
         //            alert.setWindowTitle("Error");
         //            alert.setText(errorString);
         //            alert.exec();
-                    QFile file3(tempPath + "/" + ratNumber + "/" + saveTime.toString("yyyyMMMdd_hhmm")+"_errorText.txt");
+                    QFile file3(saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_errorText.txt");
                     file3.open(QIODevice::WriteOnly | QIODevice::Text);
                     QTextStream out3(&file3);
                     out3 << errorString;
@@ -1125,7 +1123,7 @@ void MainWindow::errorMsg()
         errorThrown = true;
         baseMonitor->textCursor().insertText("ERROR\r");
         connectBasePort();
-        fillPortsInfo();
+        fillBasestationPorts();
         QMessageBox alert;
         alert.setText("Serial Communication Error");
         alert.setIcon(QMessageBox::Warning);
@@ -1189,17 +1187,17 @@ void MainWindow::gotoDir(){
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("Saving");
-    QString tempPath = settings.value("DefaultDir").toString();
+    QString saveDirectoryPath = settings.value("DefaultDir").toString();
     settings.endGroup();
-    if(tempPath.isEmpty()){
-        tempPath = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    if(saveDirectoryPath.isEmpty()){
+        saveDirectoryPath = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     }
-    QDesktopServices::openUrl(QUrl::fromLocalFile(tempPath));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(saveDirectoryPath));
 }
 
 void MainWindow::gotoAppLocation(){
-    QString tempPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
-    QDesktopServices::openUrl(QUrl::fromLocalFile(tempPath));
+    QString saveDirectoryPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
+    QDesktopServices::openUrl(QUrl::fromLocalFile(saveDirectoryPath));
 }
 
 
@@ -1381,8 +1379,8 @@ void MainWindow::refreshDrops()
             connectDownloadPort(); //disconnect download port after settings change
         }
     }
-    fillPortsInfo();
-    fillPortsInfo2();
+    fillBasestationPorts();
+    fillDownloaderPorts();
     int itemHeight = 25;
     int itemWidth = 75;
     rigSelect->setMaximumSize(itemWidth,itemHeight*rigSelect->count());
@@ -1481,7 +1479,7 @@ void MainWindow::removeAlias()
 void MainWindow::showDownloader()
 {
     if (!(connect2_btn->isChecked())){ //prevents download port dropdown text from being cleared if already connected
-        fillPortsInfo2();
+        fillDownloaderPorts();
     }
 }
 
@@ -1490,12 +1488,12 @@ void MainWindow::getGraphs()
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("Saving");
-    QString tempPath = settings.value("DefaultDir").toString();
+    QString saveDirectoryPath = settings.value("DefaultDir").toString();
     settings.endGroup();
-    QString baseData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),tempPath,tr("(*station.csv)"));
+    QString baseData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),saveDirectoryPath,tr("(*station.csv)"));
     if (baseData!=""){
         //the cerebro data should be in the same folder, so we have the getOpenFileName dialog start in the the same folder
-        QString betterPath = baseData.mid(tempPath.length(),baseData.indexOf("/",tempPath.length()+1)-tempPath.length())+"/";
+        QString betterPath = baseData.mid(saveDirectoryPath.length(),baseData.indexOf("/",saveDirectoryPath.length()+1)-saveDirectoryPath.length())+"/";
         QString cerData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),betterPath,tr("(*cerebroLog.csv)"));
         if (cerData!=""){
             //Run python script for creating graph
@@ -1688,4 +1686,17 @@ void MainWindow::sendDiodeStart()
     QString msg = "K";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::getJSON(){
+    QString val;
+    QFile file;
+    file.setFileName(qApp->applicationDirPath()+"/test.json");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    val = file.readAll();
+    file.close();
+    QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject topLevel = doc.object();
+    QJsonValue rigVallArray = topLevel.value(QString("rigVals"));
+    qDebug() <<rigVallArray.toArray()[0].toString()<< rigVallArray.toArray()[1].toString();
 }
