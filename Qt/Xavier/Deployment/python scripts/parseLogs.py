@@ -2,8 +2,6 @@ from logFunctions import*
 from sys import argv
 script, basestationLogPath, cerebroLogPath,showGraph = argv
 
-basestationLogPath = basestationLogPath[1:-1]
-cerebroLogPath = cerebroLogPath[1:-1]
 showGraph = int(showGraph)
 
 baseDF,baseData = parseBaseStation(basestationLogPath)

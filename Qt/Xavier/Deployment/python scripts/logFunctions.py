@@ -181,8 +181,8 @@ def printSummary(combined,sessionLength,paramRanges,comp):
     summary['triggerSummary'] = '\nTrigger Success Rate:\t{}/{} ({:.2f}%)'.format(tReceived,tSent-tIgnored,tReceived/float(tSent-tIgnored)*100)
     # summary['tIgnored'] = '\t{} Ignored: {}'.format(tIgnored,ignoredVec)
     summary['tMissed'] = '\t{} Missed: {}'.format(tMissed,missedTrigVec)
-    summary['continueSummary'] = 'Continue Success Rate:\t{}/{} ({:.2f}%)'.format(cReceived,cSent,cReceived/float(cSent)*100)
-    summary['abortSummary'] = 'Stop Success Rate:\t{}/{} ({:.2f}%)'.format(sReceived,sSent,sReceived/float(sSent)*100)
+    summary['continueSummary'] = 'Continue Success Rate:\t{}/{} ({:.2f}%)'.format(cReceived,cSent,cReceived/float(cSent)*100 if cSent>0 else 0)
+    summary['abortSummary'] = 'Stop Success Rate:\t{}/{} ({:.2f}%)'.format(sReceived,sSent,sReceived/float(sSent)*100 if sSent>0 else 0)
     summary['sMissed'] = '\t{} Missed: {}'.format(sMissed,missedStopVec)
     summary['paramRanges'] = '\nParameters Throughout Session:\ndelay\t\ton\t\toff\t\ttrain\t\tramp\t\t[range]\n{}'.format(paramRanges)
 

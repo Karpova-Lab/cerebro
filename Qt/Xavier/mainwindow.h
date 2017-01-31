@@ -44,6 +44,7 @@ public:
     ~MainWindow();
 
 private:
+    QString                 startTime;
     QString                 location;
     QString                 saveName1;
     QString                 saveName2;

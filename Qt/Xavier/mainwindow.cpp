@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.27.5\nUpdated:\t1/25/2017";
+        QString aboutString = "\t1.27.6\nUpdated:\t1/30/2017";
         if(QSysInfo::WindowsVersion==48){
             aboutDialog->setText("Version:"+aboutString);
         }
@@ -79,11 +79,11 @@ MainWindow::MainWindow(QWidget *parent)
                 cerebro_lbl = new QLabel("Cerebro #");
             equipmentLayout->addWidget(cerebro_lbl,0,3,Qt::AlignCenter);
                 rigSelect = new QListWidget();
-            equipmentLayout->addWidget(rigSelect,1,1,2,1,Qt::AlignTop);
+            equipmentLayout->addWidget(rigSelect,1,1,3,1,Qt::AlignTop);
                 ratSelect = new QListWidget();
-            equipmentLayout->addWidget(ratSelect,1,2,2,1,Qt::AlignTop);
+            equipmentLayout->addWidget(ratSelect,1,2,3,1,Qt::AlignTop);
                 cerebroSelect = new QListWidget();
-            equipmentLayout->addWidget(cerebroSelect,1,3,2,1,Qt::AlignTop);
+            equipmentLayout->addWidget(cerebroSelect,1,3,3,1,Qt::AlignTop);
                 connectBS_label = new QLabel("Base Station Serial Port");
             equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
                 refresh_btn = new QPushButton("Rescan");
@@ -92,11 +92,11 @@ MainWindow::MainWindow(QWidget *parent)
                 serialPortList->setMinimumWidth(150);
             equipmentLayout->addWidget(serialPortList,1,6,1,2);
                 debugCheckbox = new QCheckBox("Debug Mode");
-            equipmentLayout->addWidget(debugCheckbox,3,1,1,2);
+            equipmentLayout->addWidget(debugCheckbox,2,5,1,3,Qt::AlignCenter);
                 connect_btn = new QPushButton("Start Session");
                 connect_btn->setCheckable(true);
 //                connect_btn->setStyleSheet("background-color: green; color:white");
-            equipmentLayout->addWidget(connect_btn,3,3,1,5);
+            equipmentLayout->addWidget(connect_btn,3,5,1,3);
             equipmentLayout->setColumnStretch(0,1);
             equipmentLayout->setColumnStretch(8,1);
         equipmentBox->setLayout(equipmentLayout);
@@ -722,6 +722,7 @@ void MainWindow::connectBasePort()
         baseSettingsBox->setEnabled(!baseConnected);
 //        chooseBox->setEnabled(!baseConnected && debugOn);
         baseBox->setEnabled(!baseConnected);
+        saveMonitor_btn->setEnabled(downloadConnected && !baseConnected);
         if(!baseConnected){ //connect to serial port
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
@@ -754,6 +755,7 @@ void MainWindow::connectBasePort()
             debugOn = false;
             showDebug();
             baseConnected = 0;
+
         }
     }
     connect_btn->setChecked(baseConnected);
@@ -776,7 +778,7 @@ void MainWindow::connectDownloadPort()
         downloadMonitor->setEnabled(!downloadConnected);
         download_title->setEnabled(!downloadConnected);
         clearDownload_btn->setEnabled(!downloadConnected);
-        saveMonitor_btn->setEnabled(!downloadConnected);
+        saveMonitor_btn->setEnabled(!downloadConnected && baseConnected);
         if(!downloadConnected){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
@@ -804,8 +806,8 @@ void MainWindow::connectDownloadPort()
 
 void MainWindow::sendTime()
 {
-    QString time = QDate::currentDate().toString() + " " + QTime::currentTime().toString();
-    QString startup = QString("%1,%2,%3,%4,").arg(time,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+    startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
+    QString startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
     serial->write(startup.toLocal8Bit());
     clearBase_btn->setEnabled(true);
 }
@@ -1052,7 +1054,7 @@ void MainWindow::saveFile()
         if (!ratNumber.isEmpty()){
             //save the base station log
             saveName1 = QFileDialog::getSaveFileName(this,
-                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_base station",tr("(*.csv)") );
+                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime +"_base station",tr("(*.csv)") );
             qDebug()<<saveName1;
             if (!saveName1.isEmpty()){
                 QFile file(saveName1);
@@ -1076,7 +1078,7 @@ void MainWindow::saveFile()
         }
         //save the cerebro log
         saveName2 = QFileDialog::getSaveFileName(this,
-            tr("Save Cerebro Log"), saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_cerebroLog", tr("(*.csv)") );
+            tr("Save Cerebro Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime+"_cerebroLog", tr("(*.csv)") );
         if (!saveName2.isEmpty()){
             QFile file2(saveName2);
             file2.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -1090,7 +1092,7 @@ void MainWindow::saveFile()
                 // Run python script to summarize data from base station and cerebro logs
                 QProcess *process = new QProcess(this);
                 QStringList pythonArgs;
-                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<"\""+saveName1+"\""<<"\""+saveName2+"\""<<"0"; //pass the two log file locations into the python script
+                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<"0"; //pass the two log file locations into the python script
                 process->start("python",pythonArgs);
                 process->waitForFinished(-1);
                 QString errorString = process->readAllStandardError();
@@ -1499,7 +1501,7 @@ void MainWindow::getGraphs()
             //Run python script for creating graph
             QProcess *process = new QProcess(this);
             QStringList pythonArgs;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<"\""+baseData+"\""<<"\""+cerData+"\""<<"1"; //pass the two log file locations into the python script
+            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<"1"; //pass the two log file locations into the python script
             process->start("python",pythonArgs);
             process->waitForFinished(-1);
             QString errorString = process->readAllStandardError();
