@@ -3,6 +3,7 @@ from pandas import DataFrame, read_csv,concat,to_timedelta,to_datetime,to_numeri
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.legend_handler import HandlerLine2D
+import json
 
 def reIndex(dataframe):
     dataframe.reset_index(inplace=True)
@@ -21,10 +22,10 @@ def readableTime(stamp):
 def parseBaseStation(logFile):
     # get experimental setup data from the base station log's first row
     bLogHeader = pd.read_csv(logFile,header=None,nrows=1)
-    setupKeys = ['expDate','rigNum','ratNum','cerebroNum','baseFirmware']
-    setup = {}
-    for i,setupKey in enumerate(setupKeys): #assign the header data to variables that we can recall later to print
-        setup[setupKey] = bLogHeader.loc[0,i]
+    firstLineKeys = ['startTime','rigNum','ratNum','cerebroNum','baseFirmware','filterDuration']
+    bData = {}
+    for i,setupKey in enumerate(firstLineKeys): #assign the header data to variables that we can recall later to print
+        bData[setupKey] = bLogHeader.loc[0,i]
     #Read in base station log. Skip the experimental setup
     bLog = pd.read_csv(logFile,sep=',',skiprows=1,names=['bTime','Sent','P1','P2','P3','P4','P5'])
     bLog['bTime'] = to_numeric(bLog['bTime'],errors='coerce')   #converts time columns from strings to numbers
@@ -32,56 +33,60 @@ def parseBaseStation(logFile):
     trigsandchanges = len(bLog)
     bLog = bLog[bLog['Sent']!='New Parameters Sent']                    #remove parameter change events
     changesonly = len(bLog)
-    numChangesSent = trigsandchanges - changesonly
+    bData['numChangesSent'] = trigsandchanges - changesonly
     bLog = reIndex(bLog)
     bLog.drop(bLog.columns[[2,3,4,5,6]], axis=1, inplace=True)          #remove  parameter columns
     first = (bLog.loc[0,'bTime'])                                   #store time offset
     bLog['bTime'] = bLog['bTime']-first                         #subtract offset from all timestamps
     bLog['bDiff'] = bLog['bTime']-bLog['bTime'].shift(1)        #add column of time between events
     bLog['Clock'] = bLog['bTime'].apply(readableTime)               #add column with readable time
-    sessionLength = bLog.loc[len(bLog)-1,'Clock']
-    bData = {'numChangesSent':numChangesSent,'setup':setup,'sessionLength':sessionLength}
+    bData['sessionLength'] = bLog.loc[len(bLog)-1,'Clock']
     return bLog,bData
 
 def parseCerebroLog(logFile):
     # get cerebro attributes from cerebro log
-    cLog = pd.read_csv(logFile,names=['cTime','Received'])
-    firmware = cLog.loc[0,'Received']                                   #get firmware version
-    cLog = cLog[1:-20]                                                  #remove firwmare row and calibration vector at the end
-    cLog = reIndex(cLog)
+    cLog = pd.read_csv(logFile,names=['cTime','Received','extra1','extra2'])
+    cData = {'firmware':cLog.loc[0,'Received']} #get firmware version
+    cData['paramNames'],cData['waveform'] = getWaveformParamters(cLog[-26:-20]) #get list of soon to be column headings and a dictionary with the waveforms parameters
+    cData['waveform']['rampVector'] = getRampVector(cLog[-20:])
+
+    cLog = cLog[1:-20]    #remove firwmare row, waveform parameters, ramp down vector
     #label events
-    paramChangeIndices = cLog[cLog['cTime'].str.contains("Start Delay")].index.tolist() #get indices of parameter changes
-    paramNames = ['delay','onTime','offTime','trainDur','rampdown']
+    paramChangeIndices = cLog[cLog['cTime'].str.contains("Start_Delay")].index.tolist() #get indices of parameter changes
     #get parameters from the parameter rows and then use them to label the events above them that they describe
     for i,paramChangeIndex in enumerate(paramChangeIndices):
-        for j,paramName in enumerate(paramNames):
-            b = paramChangeIndices[i-1]+len(paramNames) if i>0 else 0 #b is the index of where above the parameters to start labeling events.
+        for j,paramName in enumerate(cData['paramNames']):
+            b = paramChangeIndices[i-1]+len(cData['paramNames']) if i>0 else 0 #b is the index of where above the parameters to start labeling events.
             cLog.loc[b:paramChangeIndex-1,paramName] = cLog.loc[paramChangeIndex+j,'Received']
     cLog['cTime'] =to_numeric(cLog['cTime'],errors='coerce')    #convert time column from strings to numbers
-    cLog = cLog[cLog['cTime'].notnull()]                            #remove parameter rows from data frame, leaving of list of events w/parameter labels
+    cLog = cLog[cLog['cTime'].notnull()]                        #remove parameter rows from data frame, leaving of list of events w/parameter labels
     cLog = reIndex(cLog)
 
-    first = cLog.loc[0,'cTime']                                     #get time offset
+    # Add cDiff column
+    first = cLog.loc[0,'cTime']                                 #get time offset
     cLog['cTime'] = cLog['cTime']-first                         #subtract offset from all timestamps
     cLog['cDiff'] = cLog['cTime']-cLog['cTime'].shift(1)        #add column of time between events
 
-    orig = np.array(paramChangeIndices)
-    transform = np.array(range(0,5*len(paramChangeIndices),5))
-    ends = orig-transform
-    starts = np.insert(ends,0,0)[:-1]+1
-    paramRanges = ""
-    for start,end in zip(starts,ends):
-        if start<end:
-            for col in range(2,7):
-                paramRanges = paramRanges + ("{}\t\t").format(cLog.iloc[start,col])
-            paramRanges = paramRanges + ('[{}-{}]\n'.format(start,end))
-    cData = {'firmware':firmware,'paramNames':paramNames,'paramChangeIndices':paramChangeIndices,'paramRanges':paramRanges}
+    cLog = cLog.drop(['extra1','extra2'], 1) #remove extra columns
     return cLog,cData
 
-def compare(bLog,cLog,paramNames):
+def getWaveformParamters(_wavformDF):
+    paramNames = list(_wavformDF.cTime.values)
+    paramValues = list(map(int,_wavformDF.Received.values))
+    return paramNames[1:],dict(zip(paramNames,paramValues))
+
+def getRampVector(_rampDF):
+    rampVec = []
+    for row in _rampDF.itertuples():
+        for column in [1,2,3,4]:
+            rampVec.append(int(row[column]))
+    return rampVec
+
+
+def compare(bLog,cLog,cerColHeaders):
     #combine the logs
     baseCols = ['Clock','Sent','bTime','bDiff']
-    cerebroCols = ['cDiff','cTime','Received',]+ paramNames
+    cerebroCols = ['cDiff','cTime','Received'] + cerColHeaders
     combined = concat([bLog[baseCols],cLog[cerebroCols]],axis=1,) # concatenate the two dataframes
 
 # **Compare the data logs to reveal any events may have been sent by Base Station, but not executed by Cerebro**
@@ -89,7 +94,7 @@ def compare(bLog,cLog,paramNames):
 # We are comparing timestamps of events. We expect there to be a fairly constant ratio between
 # Base Station timestamps and Cerebro timestamps (it is not 1:1 because both MCUs are using internal clocks
 # that are not neccesarily calibrated, and also have some drift).
-
+    Debug = False
     missedStopVec = []
     missedTrigVec = []
     missedContinueVec = []
@@ -100,72 +105,70 @@ def compare(bLog,cLog,paramNames):
     correctDiff = abs(1-combined['bTime'][1]/combined['cTime'][1])*100
     dataLength = np.isfinite(combined['bTime']).sum()
     numMiss =  dataLength-np.isfinite(cLog['cTime']).sum() #discrepency between the number of base station entries and cerebro entries
+    print("percentDiff\t","changingDiff\t","alt_percentDiff\t","alt_changingDiff\t") if Debug==1 else ""
     for j in np.arange(dataLength)[1:-1]: # if there are 8 entries, we want indices [1,2,3,4,5,6,7]
         if numMiss == 0: #We've found all of the missing signals, so the remaining entries match and we can exit
             break
         baseInterval = baseInterval + combined['bDiff'][j] #keep track of how long it's been since we successfully sent a command from base station
-        percentDiff = abs(1-combined['bTime'][j]/combined['cTime'][j])*100 #%difference between base station time and cerebro time
-        changingDiff = abs(percentDiff-correctDiff)
+        percentDiff = abs(1-combined['bTime'][j]/combined['cTime'][j])*100 #%difference between base station time and cerebro time for the current row
         alt_percentDiff = abs(1-combined['bTime'][j+1]/combined['cTime'][j])*100
+
+        changingDiff = abs(percentDiff-correctDiff)
         alt_changingDiff = abs(alt_percentDiff-correctDiff)
-        if changingDiff-alt_changingDiff>0.01 and j>3:
+
+        print('{} {:.2f}\t\t\t{:.2f}\t\t{:.2f}\t\t\t{:.2f}\t\t{:2f}\t{:2f}'.format(j,percentDiff,changingDiff,alt_percentDiff,alt_changingDiff,changingDiff-alt_changingDiff,percentDiff-alt_percentDiff)) if Debug==1 else ""
+        # if the % diff of the alternative is smaller than the current %diff and closer to the previous % diff, then
+        # the current cerebro time matches the next base station time better than it matches with the current base staion time,
+        # implying that we're missing the cerebro entry that should be matched with the current base station entry
+        
+        if alt_percentDiff<percentDiff  and alt_changingDiff<changingDiff and j>2:
+            print("missing event") if Debug==1 else ""
             missDiff.append(abs(percentDiff-correctDiff))
             combined[cerebroCols] = combined[cerebroCols][:j].append(combined[cerebroCols][j:].shift(1))
             if combined['Sent'][j] == "Trigger Sent":
-                singleDuration = int(combined['onTime'][j+1])+int(combined['rampdown'][j+1])
-                trainDuration = int(combined['trainDur'][j+1])
+                singleDuration = int(combined[cerColHeaders[1]][j+1])+int(combined[cerColHeaders[4]][j+1])
+                trainDuration = int(combined[cerColHeaders[3]][j+1])
                 trueDuration = max(singleDuration,trainDuration) #duration that cerebro will be busy executing a waveform
                 if int(baseInterval)<trueDuration:
                     ignoreVec.append(j)
-                    for column in paramNames:
+                    for column in cerColHeaders:
                         combined.loc[j,column] = "Ignored"
                 else:
                     missedTrigVec.append(j)
-                    for column in paramNames:
+                    for column in cerColHeaders:
                         combined.loc[j,column] = "Trig Miss"
             elif combined['Sent'][j] == "Continue Sent":
                 missedContinueVec.append(j)
-                for column in paramNames:
+                for column in cerColHeaders:
                         combined.loc[j,column] = "Continue Miss"
             elif combined['Sent'][j] == "Stop Sent":
                 missedStopVec.append(j)
-                for column in paramNames:
+                for column in cerColHeaders:
                         combined.loc[j,column] = "Stop Miss"
             numMiss = numMiss-1
         else:
             baseInterval = 0 #reset the time since we've successfully sent a command from base station
             correctDiff = percentDiff #update our standard %diff which we are comparing to
             diffArray.append(correctDiff)
-#             baseVec.append(combined['bTime'][j])
 
     # create dictionary with summary data
-    compareData = {'missedStopVec':missedStopVec,'missedTrigVec':missedTrigVec,'missedContinueVec':missedContinueVec,'ignoreVec':ignoreVec}
-    compareData['trigIgnored'] = len(ignoreVec)
-    compareData['trigMissed'] = len(missedTrigVec)
-    compareData['continueMissed'] = len(missedContinueVec)
-    compareData['stopMissed'] = len(missedStopVec)
-    compareData['trigSent'] = np.sum(combined['Sent']=='Trigger Sent')
-    compareData['trigReceived'] = np.sum(combined['Received']=='trigger')
-    compareData['continueSent'] = np.sum(combined['Sent']=='Continue Sent')
-    compareData['continueReceived'] = np.sum(combined['Received']=='continue')
-    compareData['stopSent'] = np.sum(combined['Sent']=='Stop Sent')
-    compareData['stopReceived'] = np.sum(combined['Received']=='abort')
+    compareData = {'missedStopVec':list(map(int,missedStopVec)),'missedTrigVec':list(map(int,missedTrigVec)),'missedContinueVec':list(map(int,missedContinueVec)),'ignoreVec':list(map(int,ignoreVec))}
+    missedStopVec =  list(map(int,missedStopVec))
+    compareData['trigIgnored'] = int(len(ignoreVec))
+    compareData['trigMissed'] = int(len(missedTrigVec))
+    compareData['continueMissed'] = int(len(missedContinueVec))
+    compareData['stopMissed'] = int(len(missedStopVec))
 
-#     plt.figure(figsize=(17,11))
-#     plt.plot(baseVec,diffArray,'gx',label="Base Station")
-#     plt.ylabel("%Diff between timestamps",fontsize = 25)
-#     plt.xlabel("Time (ms)",fontsize = 25)
+    compareData['trigSent'] = int(np.sum(combined['Sent']=='Trigger Sent'))
+    compareData['trigReceived'] = int(np.sum(combined['Received']=='trigger'))
+    compareData['continueSent'] = int(np.sum(combined['Sent']=='Continue Sent'))
+    compareData['continueReceived'] = int(np.sum(combined['Received']=='continue'))
+    compareData['stopSent'] = int(np.sum(combined['Sent']=='Stop Sent'))
+    compareData['stopReceived'] = int(np.sum(combined['Received']=='abort'))
 
-#     print "Percent Diff range: {} to {} ({})".format(round(min(diffArray),2),round(max(diffArray),2),round(max(diffArray)-min(diffArray),3))
-#     bob = np.array(diffArray)
-#     jay = np.array(diffArray)
-#     diff = abs(bob[1:]-jay[:-1])
-#     print "max intra diff:\t", round(max(diff),3)
-#     print "min error\t",round(min(missDiff),3)
-#     print
     return combined,compareData
 
-def printSummary(combined,sessionLength,paramRanges,comp):
+def printSummary(combined,sessionLength,cerebro,comp):
     tSent,tReceived = comp['trigSent'],comp['trigReceived']
     tMissed,missedTrigVec = comp['trigMissed'],comp['missedTrigVec']
     tIgnored,ignoredVec = comp['trigIgnored'],comp['ignoreVec']
@@ -179,51 +182,57 @@ def printSummary(combined,sessionLength,paramRanges,comp):
     summary = {}
     summary['lengthSummary'] = 'Session Length:\t{}'.format(sessionLength)
     summary['triggerSummary'] = '\nTrigger Success Rate:\t{}/{} ({:.2f}%)'.format(tReceived,tSent-tIgnored,tReceived/float(tSent-tIgnored)*100)
-    # summary['tIgnored'] = '\t{} Ignored: {}'.format(tIgnored,ignoredVec)
     summary['tMissed'] = '\t{} Missed: {}'.format(tMissed,missedTrigVec)
     summary['continueSummary'] = 'Continue Success Rate:\t{}/{} ({:.2f}%)'.format(cReceived,cSent,cReceived/float(cSent)*100 if cSent>0 else 0)
     summary['abortSummary'] = 'Stop Success Rate:\t{}/{} ({:.2f}%)'.format(sReceived,sSent,sReceived/float(sSent)*100 if sSent>0 else 0)
     summary['sMissed'] = '\t{} Missed: {}'.format(sMissed,missedStopVec)
-    summary['paramRanges'] = '\nParameters Throughout Session:\ndelay\t\ton\t\toff\t\ttrain\t\tramp\t\t[range]\n{}'.format(paramRanges)
 
-    print (summary['lengthSummary'])
+    print (summary['lengthSummary']+"\n")
+    for parameter in cerebro['paramNames']:
+        print('{}:\t{} ms'.format(parameter,cerebro['waveform'][parameter]))
     print (summary['triggerSummary'])
-    # print (summary['tIgnored'])
-    print (summary['tMissed'])
     print (summary['continueSummary'])
     print (summary['abortSummary'])
-    print (summary['sMissed'])
-    print (summary['paramRanges'])
 
     summary['tMissed'] = summary['tMissed'].replace("\t",'\t\t')
     summary['sMissed'] = summary['sMissed'].replace("\t",'\t\t')
 
     return summary
 
-def writeSummary(cerebroLogPath,bData,cData,summary,combined):
-    setup = bData['setup']
-    target = open('{}summary.txt'.format(cerebroLogPath[:-14]), 'w')
-    target.write('Session Start:{}'.format(to_datetime(setup['expDate']).strftime("%Y-%m-%d %H:%M:%S")))
-    target.write('\nRat:{} '.format(setup['ratNum']))
-    target.write('\nRig:{}'.format(setup['rigNum']))
-    target.write('\nCerebro:{:1}'.format(int(setup['cerebroNum'])))
-    target.write('\nBase Station Firmware Version:{}'.format(int(setup['baseFirmware'])))
-    target.write('\nCerebro Firmware Version:{}'.format(cData['firmware']))
-    target.write('\n\n{}'.format(summary['lengthSummary']))
-    target.write('\n{}'.format(summary['triggerSummary']))
-    # target.write('\n{}'.format(summary['tIgnored']))
-    target.write('\n{}'.format(summary['tMissed']))
-    target.write('\n{}'.format(summary['continueSummary']))
-    target.write('\n{}'.format(summary['abortSummary']))
-    target.write('\n{}'.format(summary['sMissed']))
-    target.write('\n{}'.format(summary['paramRanges']))
-    target.write('\n')
-    target.close()
-    combined.to_csv('{}combined_log.csv'.format(cerebroLogPath[:-14]),',')  #save csv file
-    target = open('{}summary.html'.format(cerebroLogPath[:-14]), 'w')
-    target.write('{}'.format(combined.to_html()))
-    target.close()
-#     bk.save(p2,'{}newgraph.html'.format(cerebroLogPath[:-14]))
+def writeSummary(cerebroLogPath,combined,baseData,cerebroData,compareData):
+    with open('{}summary.html'.format(cerebroLogPath[:-14]), 'w') as htmlSummary:
+        htmlSummary.write('{}'.format(combined.to_html()))
+
+    dataOutput = {
+        'Session_Start': baseData['startTime'],
+        'Cerebro': int(baseData['cerebroNum']),
+        'Rig': round(baseData['rigNum'],2),
+        'Base_Station_Firmware': int(baseData['baseFirmware']),
+        'Cerebro_Firmware': int(cerebroData['firmware']),
+        'Base_Station_Filter': int(baseData['filterDuration']),
+        'Waveform': cerebroData['waveform'],
+        'Analysis':{
+            'Session_Length':baseData['sessionLength'],
+            'Triggers':{
+                'Sent': compareData['trigSent'],
+                'Received':compareData['trigReceived'],
+                'Missed_Indices':compareData['missedTrigVec'],
+                'Ignored_Indices': compareData['ignoreVec']
+            },
+            'Continues':{
+                'Sent':compareData['continueSent'],
+                'Received':compareData['continueReceived'],
+                'Missed_Indices':compareData['missedContinueVec']
+            },
+            'Stops':{
+                'Sent':compareData['stopSent'],
+                'Received': compareData['stopReceived'],
+                'Missed_Indices':compareData['missedStopVec']
+            }
+        }
+    }
+    with open(cerebroLogPath[:-14]+'summary.json','w') as saveJSON:
+        json.dump(dataOutput,saveJSON,indent=2,sort_keys=True)
 
 def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     plotTitle = "Time Between\nLogged Events"

@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2017 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-byte version = 57;
+const byte version = 58;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// #define MCUBE
-// #define OLDBOARD
+// #define MCUBE //uncomment to disable feedback during a trigger
+// #define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
 
@@ -91,12 +91,12 @@ const unsigned int maxpulselength = 1000;//maximum pulse length (in microseconds
 const byte NUMPULSES = 88;               //maximum length of the message we can receive
 const byte irResolution = 4;             //# of microseconds that we will delay before checking the state of the IR sensor again
 #define NUMPARAM 5
-const char string_0[] PROGMEM = "Start Delay\t,";
-const char string_1[] PROGMEM = "On\t,";
-const char string_2[] PROGMEM = "Off\t,";
-const char string_3[] PROGMEM = "Train Dur\t,";
-const char string_4[] PROGMEM = "Ramp Down\t,";
-const char string_5[] PROGMEM = "Power Level\t,";
+const char string_0[] PROGMEM = "Start_Delay,";
+const char string_1[] PROGMEM = "On_Time,";
+const char string_2[] PROGMEM = "Off_Time,";
+const char string_3[] PROGMEM = "Train_Duration,";
+const char string_4[] PROGMEM = "Ramp_Duration,";
+const char string_5[] PROGMEM = "Power_Level,";
 
 #define ON_DELAY  0
 #define ON_TIME   1
@@ -175,7 +175,7 @@ void setup() {
   CLK_dirReg  |= (1<<CLK_pin);        //Output
   LATCH_dirReg |=  (1<<LATCH_pin);    //Output
   LATCH_outputReg |= (1<<LATCH_pin);  //Set Chip Select HIGH (LOW selects the chip)
-  pinMode(indicatorLED,OUTPUT);       //analog output
+  pinMode(indicatorLED,OUTPUT);       //Output
   digitalWrite(indicatorLED,LOW);
 
   mySerial.begin(115200);
@@ -380,7 +380,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     //else the end of the waveform has been reached. turn off the light.
     else{
       if (useFeedback){
-        if (rampDur>0 && !implantMode && !diodeMode){
+        if (rampDur>0 && !implantMode && !diodeMode && !powerTestMode){
           fade();
         }
       }
