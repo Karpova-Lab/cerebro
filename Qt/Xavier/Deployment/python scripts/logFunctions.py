@@ -120,8 +120,8 @@ def compare(bLog,cLog,cerColHeaders):
         # if the % diff of the alternative is smaller than the current %diff and closer to the previous % diff, then
         # the current cerebro time matches the next base station time better than it matches with the current base staion time,
         # implying that we're missing the cerebro entry that should be matched with the current base station entry
-        
-        if alt_percentDiff<percentDiff  and alt_changingDiff<changingDiff and j>2:
+        messagesMatch = ['Trigger Sent', 'Continue Sent', 'Stop Sent'].index(combined['Sent'][j]) == ['trigger','continue','abort'].index(combined['Received'][j]) #check if sent and recieved messages match
+        if (alt_percentDiff<percentDiff  and alt_changingDiff<changingDiff) or not(messagesMatch):
             print("missing event") if Debug==1 else ""
             missDiff.append(abs(percentDiff-correctDiff))
             combined[cerebroCols] = combined[cerebroCols][:j].append(combined[cerebroCols][j:].shift(1))
