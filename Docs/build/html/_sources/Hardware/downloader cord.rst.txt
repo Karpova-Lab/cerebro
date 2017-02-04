@@ -2,6 +2,10 @@ Downloader Cord
 ===============
 .. include:: isogrk1.txt
 
+.. image:: ../Overview/downloader.jpg
+  :align: center
+  :scale: 100 %
+
 Required Tools
 ``````````````
   * Soldering iron
@@ -49,3 +53,7 @@ PCB
 	- :download:`Downloader 1.3.brd<../../../PCB Files/Downloader 1.3/Downloader 1.3.brd>`
 	- :download:`Downloader 1.3.sch<../../../PCB Files/Downloader 1.3/Downloader 1.3.sch>`
 	- :download:`Schematic.pdf<../../../PCB Files/Downloader 1.3/Downloader 1.3 schematic.pdf>`
+
+.. raw:: html
+
+  <a href="https://oshpark.com/shared_projects/TwxlIkwq"><img src="https://oshpark.com/assets/badge-5b7ec47045b78aef6eb9d83b3bac6b1920de805e9a0c227658eac6e19a045b9c.png" alt="Order from OSH Park"></img></a>

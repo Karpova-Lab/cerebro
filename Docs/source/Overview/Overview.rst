@@ -61,7 +61,7 @@ Here are some commercial products that also provide wireless optogenetics:
 ..
 ..   `Eicom Teleopto <https://eicomusa.com/teleopto/>`_ , "4,500", "Very similar to Cerebro. Uses battery and IR triggering."
 ..   `Kendall Research Systems <http://www.kendallresearchsys.com/>`_ , "20,000", "Uses wireless power. Includes 3-axis accelerometer"
-..   `Neurolux <http://www.neurolux.org/products/>`_,
+..   `Neurolux <http://www.neurolux.org/>`_,
 ..   `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_,
 
 Cerebro
@@ -104,7 +104,7 @@ Base Station can also be controlled directly by `TTL <https://learn.sparkfun.com
 its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger signal to be emitted, and a high TTL signal on pin2 causes
 a stop signal to be emitted. Events will still be logged by Xavier even when triggered by a TTL.
 
-:doc:`More info... <../Hardware/implant>`
+:doc:`More info... <../Hardware/base station>`
 
 
 .. _utility shield:

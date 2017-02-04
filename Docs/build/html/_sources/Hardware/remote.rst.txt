@@ -3,11 +3,17 @@ IR Remote
 =========
 .. include:: isogrk1.txt
 
+.. image:: ../Overview/IR_remote.jpg
+	:align: center
+	:scale: 100 %
+	
 Required Tools
 ==============
 
 Bill of Materials
 =================
+.. Tip::
+	The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCBS. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.
 
 +-----+------------------------------------+-------------------------------------------------------------------+-------------------------------------------------------------+
 | Qty | Description                        | Datasheet                                                         | Vendor                                                      |

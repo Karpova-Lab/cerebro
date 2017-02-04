@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Cerebro 0.0.5 documentation" href="../index.html"/>
         <link rel="next" title="Head Implant" href="implant.html"/>
         <link rel="prev" title="System Overview" href="../Overview/Overview.html"/> 
@@ -103,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="remote.html">IR Remote</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downloader cord.html">Downloader Cord</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Notes/notes.html">Additional Resources</a></li>
 </ul>
 
             
@@ -137,7 +141,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/Hardware/cerebro.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/Hardware/cerebro.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -149,9 +153,10 @@
             
   <div class="section" id="cerebro">
 <h1>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="../_images/cerebro1.jpg"><img alt="../_images/cerebro1.jpg" class="align-center" src="../_images/cerebro1.jpg" style="width: 2432.0px; height: 1286.0px;" /></a>
 <div class="section" id="specifications">
 <h2>Specifications<a class="headerlink" href="#specifications" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="25%" />
 <col width="25%" />
@@ -246,6 +251,16 @@
 </div>
 <div class="section" id="bill-of-materials">
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCBS. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.</p>
+</div>
+<div class="admonition caution">
+<p class="first admonition-title">Caution</p>
+<p class="last">The Adafruit battery linked below has been confirmed to work with Cerebro. Other Li-poly batteries may be used to accommodate different
+weight or session length constraints, just make sure the battery capacity and <a class="reference external" href="https://learn.adafruit.com/all-about-batteries/power-capacity-and-power-capability">C rating</a>
+are capable of handling a peak current of 350 mA.</p>
+</div>
 <table border="1" class="docutils">
 <colgroup>
 <col width="3%" />
@@ -378,12 +393,6 @@
 </tr>
 </tbody>
 </table>
-<div class="admonition caution">
-<p class="first admonition-title">Caution</p>
-<p class="last">The Adafruit battery linked above has been confirmed to work with Cerebro. Other Li-poly batteries may be used to accommodate different
-weight or session length constraints, just make sure the battery capacity and <a class="reference external" href="https://learn.adafruit.com/all-about-batteries/power-capacity-and-power-capability">C rating</a>
-are capable of handling a peak current of 350 mA.</p>
-</div>
 </div>
 <div class="section" id="cad-files">
 <h2>CAD Files<a class="headerlink" href="#cad-files" title="Permalink to this headline">¶</a></h2>
@@ -483,7 +492,7 @@ are capable of handling a peak current of 350 mA.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Jan 10, 2017.
+      Last updated on Feb 04, 2017.
 
     </p>
   </div>

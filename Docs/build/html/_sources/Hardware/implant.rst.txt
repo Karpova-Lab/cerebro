@@ -32,7 +32,7 @@ Required Tools
   * `Fiber cleaver <http://www.fiberinstrumentsales.com/fis-lynx-precision-cleaver-with-fiber-basket.html>`_
   * `3-axis fiber launch system <http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M>`_
   * `Power meter <https://www.thorlabs.com/thorproduct.cfm?partnumber=PM121D>`_ and `photodiode sensor <https://www.thorlabs.com/thorproduct.cfm?partnumber=S121C>`_
-  * `Ultraviolet light adhesive curing gun <https://www.norlandprod.com/lightsourc.html#led200>`_
+  * `Ultraviolet light <https://www.amazon.com/TaoTronics-TT-FL001-Flashlight-Blacklight-Ultraviolet/dp/B00RV8PREI/ref=sr_1_1?ie=UTF8&qid=1484071557&sr=8-1&keywords=B00RV8PREI>`_
 
 
 Bill of Materials
@@ -76,7 +76,7 @@ Assembly Instructions
 =====================
 #. Strip fiber and cut to length
 #. Align fiber to laser diode
-#. Apply Norland Optical Adhesive 68 and cure it with UV adhesive curing gun
+#. Apply Norland Optical Adhesive 68 and cure it with UV light
 #. Laser cut fiber guide
 #. Insert ferrules into acrylic to create fiber guide
 #. Thread coupled fibers through fiber guide

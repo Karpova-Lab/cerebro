@@ -4,6 +4,10 @@ Charging Dock
 .. include:: isogrk1.txt
 .. include:: mmlalias.txt
 
+.. image:: ../Overview/charging_dock.jpg
+  :align: center
+  :scale: 20 %
+
 Required Tools
 ``````````````
   * Soldering iron
@@ -53,12 +57,3 @@ PCB
 Code
 `````
   - :download:`chargingDock.ino<../../../Arduino/Cerebro_Sketches/chargingDock/chargingDock.ino>`
-
-.. IR Remote
-.. =========
-.. Bill of Materials
-.. ``````````````````
-.. Design Files
-.. ````````````
-.. Code
-.. `````

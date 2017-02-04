@@ -91,12 +91,12 @@ const unsigned int maxpulselength = 1000;//maximum pulse length (in microseconds
 const byte NUMPULSES = 88;               //maximum length of the message we can receive
 const byte irResolution = 4;             //# of microseconds that we will delay before checking the state of the IR sensor again
 #define NUMPARAM 5
-const char string_0[] PROGMEM = "Start Delay\t,";
-const char string_1[] PROGMEM = "On\t,";
-const char string_2[] PROGMEM = "Off\t,";
-const char string_3[] PROGMEM = "Train Dur\t,";
-const char string_4[] PROGMEM = "Ramp Down\t,";
-const char string_5[] PROGMEM = "Power Level\t,";
+const char string_0[] PROGMEM = "Start_Delay,";
+const char string_1[] PROGMEM = "On_Time,";
+const char string_2[] PROGMEM = "Off_Time,";
+const char string_3[] PROGMEM = "Train_Duration,";
+const char string_4[] PROGMEM = "Ramp_Duration,";
+const char string_5[] PROGMEM = "Power_Level,";
 
 #define ON_DELAY  0
 #define ON_TIME   1

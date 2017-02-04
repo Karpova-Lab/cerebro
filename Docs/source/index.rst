@@ -33,11 +33,12 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
   Hardware/remote.rst
   Hardware/downloader cord.rst
   Software/Xavier.rst
+  Notes/notes.rst
 
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2016 Andy Lustig
+Copyright (c) 2015-2017 Andy Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

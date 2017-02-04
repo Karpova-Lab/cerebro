@@ -4,6 +4,10 @@ Cerebro
 .. include:: isogrk1.txt
 .. include:: mmlalias.txt
 
+.. image:: ../Overview/cerebro.jpg
+  :align: center
+  :scale: 100 %
+
 Specifications
 ==============
 
@@ -34,6 +38,13 @@ Specifications
 
 Bill of Materials
 =================
+.. Tip::
+  The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCBS. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.
+
+.. Caution::
+  The Adafruit battery linked below has been confirmed to work with Cerebro. Other Li-poly batteries may be used to accommodate different
+  weight or session length constraints, just make sure the battery capacity and `C rating <https://learn.adafruit.com/all-about-batteries/power-capacity-and-power-capability>`_
+  are capable of handling a peak current of 350 mA.
 
 +-----+------------------------------------+--------------------------------------------------------------+-------------------------------------------------------------+
 | Qty | Description                        | Datasheet                                                    | Vendor                                                      |
@@ -95,11 +106,6 @@ Bill of Materials
 | 3   | 0603 20 k\ |OHgr| Resistor         |                                                              |                                                             |
 +-----+------------------------------------+--------------------------------------------------------------+-------------------------------------------------------------+
 
-.. Caution::
-  The Adafruit battery linked above has been confirmed to work with Cerebro. Other Li-poly batteries may be used to accommodate different
-  weight or session length constraints, just make sure the battery capacity and `C rating <https://learn.adafruit.com/all-about-batteries/power-capacity-and-power-capability>`_
-  are capable of handling a peak current of 350 mA.
-
 
 CAD Files
 =========
@@ -107,7 +113,6 @@ PCB
 	- :download:`Cerebro 4.8.brd<../../../PCB Files/Cerebro 4.8/Cerebro 4.8.brd>`
 	- :download:`Cerebro 4.8.sch<../../../PCB Files/Cerebro 4.8/Cerebro 4.8.sch>`
 	- :download:`Schematic.pdf<../../../PCB Files/Cerebro 4.8/Cerebro 4.8 schematic.pdf>`
-
 
 Code
 ====
