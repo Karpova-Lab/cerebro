@@ -55,7 +55,6 @@ DropButton::DropButton(QString buttonText,QWidget *parent)
 void DropButton::dragEnterEvent(QDragEnterEvent *event)
 {
     setBackgroundRole(QPalette::Dark);
-
     event->acceptProposedAction();
     emit changed(event->mimeData());
 }

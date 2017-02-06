@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     int myWindowW = 896;
-    int myWindowH = 644;
+    int myWindowH = 650;
 //    int finalH;
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
 //    qDebug()<<screenGeometry.height()<<myWindowH;

@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dropbutton.cpp
+    dropbutton.cpp \
+    settingsDialog.cpp
 
 HEADERS  += mainwindow.h \
-    dropbutton.h
+    dropbutton.h \
+    settingsDialog.h
 
 RESOURCES +=
 

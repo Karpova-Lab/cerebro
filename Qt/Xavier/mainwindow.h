@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2017 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,9 @@ SOFTWARE.
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
 #include <qtimer.h>
+#include <settingsDialog.h>
+#include "dropbutton.h"
+
 
 class DropButton;
 
@@ -44,128 +47,66 @@ public:
     ~MainWindow();
 
 private:
-    QString                 startTime;
-    QString                 location;
-    QString                 saveName1;
-    QString                 saveName2;
+
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
-    bool                    baseConnected;
-    bool                    downloadConnected;
-    bool                    repeatOn;
+    bool                    baseConnected,downloadConnected;
     bool                    inTestloop;
-    bool                    errorThrown;
-    bool                    pythonEnabled;
-    bool                    mcubeEnabled;
     int                     testCount;
-    bool                    first;
+    bool                    startingUp;
     bool                    debugOn;
+    QSerialPort*            serial,*serial2;
+    QTimer*                 timer;
+    settingsDialog          *settingsDlog;
+    bool                    pythonEnabled,mcubeEnabled;
+    bool                    errorThrown;
+    int                     baseFilter;
+    QString                 startTime;
+    QString                 saveName1,saveName2;
+    bool                    repeatOn;
 
+    //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
     QMenu*                  fileMenu,*viewMenu,*toolMenu,*goMenu,*helpMenu;
     QMessageBox*            aboutDialog;
-    QTimer*                 timer;
 
-    QPushButton*            refresh_btn,*connect_btn,*startSession_btn;
-    QCheckBox*              debugCheckbox;
-    QPushButton*            refresh2_btn,*connect2_btn,*sendCal_btn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*lamp_btn,*filter_btn,*macro_btn;;
-    QPushButton*            eeprom_btn;
-    QPushButton*            sendSettings_btn,*newPower_btn,*initialize_btn;
-    QPushButton*            clearBase_btn;
-    QPushButton*            clearDownload_btn;
-    QPushButton*            changeSettings_btn;
-    QPushButton*            saveMonitor_btn;
-    QCheckBox*              trainOn_checkbox;
-    QCheckBox*              fade_checkbox;
-    QCheckBox*              trigger_checkbox;
-    QComboBox*              serialPortList;
-    QComboBox*              serialPortList2;
-    QListWidget*            rigSelect,*ratSelect,*cerebroSelect;
-    QStringList             rigList,ratList,cerebroList;
-    QPlainTextEdit*         baseMonitor;
-    QPlainTextEdit*         downloadMonitor;
-    QLineEdit*              macroText;
-    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*duration_spn,*startDelay_spn,*fade_spn,*trials_spn,*baseFilter_spn,*power_spn;
-    QRadioButton*           singleShot,*pulseTrain;
-    QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*filterLabel,*power_lbl;
-    QLabel*                 serial_title;
-    QLabel*                 download_title;
-    QLabel*                 last_settings;
-    QLabel*                 picLabel,*singlePicLabel,*trainPicLabel;
-    QLabel*                 connectBS_label;
-    QLabel*                 connectLU_label,*instructions;
-
-    QWidget*                window,*downloadWindow;
-    QPushButton*            insertValues;
-    QProgressBar*           testProgress;
-
-    QGridLayout*            mainLayout;
-    QGridLayout*            equipmentLayout;
-    QGridLayout*            startscreenLayout;
-    QGridLayout*            connectionLayout2;
-    QGridLayout*            adjustmentLayout;
-    QGridLayout*            charLayout;
-    QGridLayout*            triggerLayout;
-    QGridLayout*            serialMonitorLayout;
-    QGridLayout*            logLayout;
-    QGridLayout*            triggTestLayout;
-    QGridLayout*            baseSettingLayout;
-
-    QGroupBox*              startscreenBox;
+    //Experimental Setup
     QGroupBox*              equipmentBox;
-    QGroupBox*              connectBox2;
-    QGroupBox*              adjustBox;
-    QGroupBox*              charBox;
-    QGroupBox*              bugBox;
+    QGridLayout*            equipmentLayout;
+    QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
+    QListWidget*            rigSelect,*ratSelect,*cerebroSelect;
+    QComboBox*              serialPortList;
+    QLabel*                 connectBS_label;
+    QPushButton*            refresh_btn,*connect_btn;
+    QCheckBox*              debugCheckbox;
+    QStringList             aliasStringList,rigList,ratList,cerebroList;
+
+    //Base Station Monitor
+    QPushButton*            clearBase_btn;
+    QLabel*                 serial_title;
+    QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
-    QGroupBox*              downloaderBox;
-    QGroupBox*              baseSettingsBox;
+    QPlainTextEdit*         baseMonitor;
+    QPushButton*            eeprom_btn;
 
-    QSerialPort*            serial;
-    QSerialPort*            serial2;
+    //Waveform Adjustment
+    QGroupBox*              adjustBox;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*power_lbl,*last_settings;
+    QRadioButton*           singleShot,*pulseTrain;
+    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn,*power_spn;
+    QPushButton*            newPower_btn,*sendSettings_btn;
+    QGridLayout*            adjustmentLayout;
+    QCheckBox*              fade_checkbox;
 
-    QDialog*                settingsDialog;
-    QGridLayout*            settingsLayout;
+    //Characterization Commands
+    QGroupBox*              charBox;
+    QGridLayout*            charLayout;
+    QPushButton*            startImplant_btn,*startDiode_btn,*initialize_btn;
 
-    QGroupBox*              directoryBox;
-    QGridLayout*            directoryLayout;
-    QLabel*                 directoryLabel;
-    QPushButton*            changeDir_btn;
-
-    QGroupBox*              sessionListsBox;
-    QGridLayout*            sessionListsLayout;
-    QLabel*                 rigLabel, *ratLabel, *cerebroLabel;
-    QListWidget*            rigVals,*ratVals, *cerebroVals;
-    QPushButton*            add1_btn,*add2_btn,*add3_btn;
-    QLineEdit*              newItem1,*newItem2,*newItem3;
-    QPushButton*            rmv1_btn,*rmv2_btn,*rmv3_btn;
-
-    QGroupBox*              portEditBox;
-    QGridLayout*            portEditLayout;
-    QLabel*                 portnameLabel, *aliasLabel,*currentPorts, *newDescription;
-    QListWidget*            aliasWidget;
-    QStringList             aliasStringList;
-    QComboBox*              portDropdown;
-    QPushButton*            addAlias_btn,*rmvAlias_btn;
-    QLineEdit*              newAlias;
-
-    QDialog*                editLabelDialog;
-    QGroupBox*              buttonBox;
-    QGridLayout*            editLayout,*buttonLayout;
-    QLineEdit*              editText;
-    QLabel*                 newLabel;
-    QPushButton*            changeLabel_btn,*cancelChange_btn;
-
-    QGroupBox*              featuresBox;
-    QGridLayout*            featuresLayout;
-    QCheckBox*              pythonCheckbox,*mcubeCheckbox;
-
-    //Calibration Stuff
+    //Calibration Dialogs
     QDialog*                sendFadeDialog,*createFadeDialog;
     QGroupBox*              chooseBox;
-    QPushButton*            startImplant_btn,*startDiode_btn,*pickFile_btn,*createVecBtn;
+    QPushButton*            createVecBtn,*sendCal_btn;
     QGridLayout*            sendFadeLayout,*createVecLayout;
     QPlainTextEdit*         codeTextBox;
     QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl,*orLabel;
@@ -175,55 +116,69 @@ private:
     DropButton*             selectFile_btn;
     bool                    isFirstTime;
 
+    //Triggering & Debugging
+    QGroupBox*              bugBox;
+    QGridLayout*            triggerLayout;
+    QCheckBox*              trigger_checkbox;
+    QSpinBox*               trials_spn;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*macro_btn;;
+    QProgressBar*           testProgress;
+    QLineEdit*              macroText;
 
+    //Download Monitor
+    QGroupBox*              downloaderBox;
+    QPushButton*            refresh2_btn,*connect2_btn,*saveMonitor_btn,*clearDownload_btn;
+    QGridLayout*            connectionLayout2;
+    QComboBox*              serialPortList2;
+    QLabel*                 connectLU_label,*download_title;
+    QPlainTextEdit*         downloadMonitor;
 
-
+    QGridLayout*            mainLayout;
 
 private slots:
+
+    //Menu functions
+    void getGraphs();
+    void openDocs();
+    void gotoDir();
+    void gotoAppLocation();
+    void showDebug();
+    void setDebug();
+
+    //Connect to ports
+    void applySettings();
     void fillBasestationPorts();
     void fillDownloaderPorts();
     void connectBasePort();
     void connectDownloadPort();
     void sendTime();
+
+    //Monitors
+    void errorMsg();
+    void clearMonitor();
+    void clearMonitor2();
     void readSerial();
     void readLog();
-    void set();
+    void updateFilter();
+    void saveFile();
+
+    //Debug Commands
     void sendTrigger();
     void abort();
     void EEPROM();
-    void updateFilter();
-    void lamp();
     void macro();
-    void saveFile();
-    void errorMsg();
     void triggerPushed();
     void triggerChecked();
+
+    //Cerebro Parmeters
     void trainChecked();
-    void clearMonitor();
-    void clearMonitor2();
-    void setPath();
-    void gotoDir();
-    void gotoAppLocation();
     void trainDur();
-    void showDebug();
     void fadeChecked();
-    void openDocs();
-    void removeItem();
-    void addListItem();
-    void refreshDrops();
-    void openSettings();
-    void addAlias();
-    void removeAlias();
-    void showDownloader();
-    void getGraphs();
-    void setDebug();
-    void editLabel();
     void sendNewPower();
+    void set();
     void powerSending();
-    void getJSON();
 
-
-    //Calibration stuff
+    //Calibration
     void chooseFile();
     void getCalVals(QString calibrateDataPath);
     void useDropped(const QMimeData *mimeData);
@@ -232,6 +187,8 @@ private slots:
     void sendCalVector();
     void sendCalGroups();
     void sendHardwareVals();
+
+    //    void getJSON();
 };
 
 
