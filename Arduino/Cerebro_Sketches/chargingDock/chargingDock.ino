@@ -51,6 +51,7 @@ const byte numSamples = 100;
 unsigned long refreshClock = 0;
 unsigned long refreshTime = 10000; //refresh every 15 seconds.
 
+const float VoltageIn = 5.177; // Adjust this value according to match the incoming voltage from your power supply
 
 void setup() {
   for (byte i=0; i<4; i++){
@@ -84,7 +85,7 @@ void getVoltage(byte pin){
     sample += analogRead(voltPins[pin]);
   }
   display.setCursor(xpos[pin],ypos[pin]);
-  float voltage = (sample*0.86/numSamples)/1023.0*5.1;
+  float voltage = (sample*0.86/numSamples)/1023.0*VoltageIn;
   if (voltage>3){
     display.print(voltage);
   }
