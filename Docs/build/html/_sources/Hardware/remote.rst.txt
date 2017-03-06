@@ -6,7 +6,7 @@ IR Remote
 .. image:: ../Overview/IR_remote.jpg
 	:align: center
 	:scale: 100 %
-	
+
 Required Tools
 ==============
 
@@ -52,11 +52,50 @@ PCB
 Build Instructions
 ==================
 
-.. Uploading Firmware
-.. ------------------
+.. _remote upload:
 
-.. todo::
-	How to upload firmware
+Uploading Firmware
+------------------
+
+.. Attention::
+	If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to :ref:`arduino setup` and/or :ref:`utility shield setup` before moving on.
+
+1. With the battery connected, switch the remote on
+2. Plug the remote into the Utility Shield via the micro usb connection
+
+.. figure:: photos/remote_connect2shield.jpg
+    :align: center
+    :scale: 18%
+
+3. Open up the Arduino application and make the following selections under the **Tools** menu:
+
+| **Board:** "Arduino/Genuino Uno"
+| **Port:** "COMXX (Arduino/Genuino Uno)"
+| **Programmer**: "Arduino as ISP"
+|
+
+.. figure:: photos/tools_atmega328.png
+    :align: center
+    :scale: 100%
+
+4. Burn the bootloader by selecting **Tools -> Burn Bootloader**
+
+.. figure:: photos/remote_bootloader.png
+    :align: center
+    :scale: 100%
+
+5. Select the firmware that will be uploaded onto the IR Remote **File -> Sketchbook -> Cerebro Sketches -> irRemote**
+
+.. figure:: photos/remote_firmware.png
+    :align: center
+    :scale: 100%
+
+6. Upload the firmware by selecting **Sketch --> Upload Using Programmer**
+
+.. figure:: photos/upload_using_programmer.png
+    :align: center
+    :scale: 100%
+
 
 User Guide
 ==========

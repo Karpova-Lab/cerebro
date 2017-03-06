@@ -34,12 +34,12 @@ Specifications
 .. Battery Estimator
 .. -----------------
 .. .. raw:: html
-..    :file: home.html
+..    :file: battery estimator.html
 
 Bill of Materials
 =================
 .. Tip::
-  The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCBS. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.
+  The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCB. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.
 
 .. Caution::
   The Adafruit battery linked below has been confirmed to work with Cerebro. Other Li-poly batteries may be used to accommodate different
@@ -109,7 +109,9 @@ Bill of Materials
 
 CAD Files
 =========
+
 PCB
+---
 	- :download:`Cerebro 4.8.brd<../../../PCB Files/Cerebro 4.8/Cerebro 4.8.brd>`
 	- :download:`Cerebro 4.8.sch<../../../PCB Files/Cerebro 4.8/Cerebro 4.8.sch>`
 	- :download:`Schematic.pdf<../../../PCB Files/Cerebro 4.8/Cerebro 4.8 schematic.pdf>`
@@ -144,37 +146,40 @@ Uploading Firmware
 .. Hardware parameters such as the Cerebro ID #, paired implant# can be setup wirelessly (link).
 .. Waveform parameters such as power level, on time, and off time can be changed wirelessly as well (link)
 
-1. Setup Arduino environment and Cerebro Utility Shield if you haven't already done so. :ref:`utility shield setup`
-2. Turn on Cerebro and plug it into the Utility Shield as shown below.
+.. Attention::
+  If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to :ref:`arduino setup` and/or :ref:`utility shield setup` before moving on.
+
+1. Turn on Cerebro and plug it into the Utility Shield as shown below.
 
 .. figure:: photos/Setup_photos/cerebro_upload.png
     :align: center
     :scale: 15%
 
-3. Open the Arduino Software and select **Tools -> Board: -> Cerebro/Charging Dock/IR Remote (ATtiny84)**
+3. Open up the Arduino application and make the following selections under the **Tools** menu:
 
-.. figure:: photos/Setup_photos/board_select.png
+| **Board:** "Cerebro (ATtiny84)"
+| **Port:** "COMXX (Arduino/Genuino Uno)"
+| **Programmer**: "Arduino as ISP"
+|
+
+.. figure:: photos/tools_attiny84.png
     :align: center
-    :scale: 80%
+    :scale: 100%
 
-4. Choose the COM port that your Arduino Uno is connected to by selecting **Tools -> Port: ->**
+5. Burn the bootloader by selecting **Tools -> Burn Bootloader**
 
-5. Select **Tools -> Programmer -> Arduino as ISP**
-
-6. Burn the bootloader by selecting **Tools -> Burn Bootloader**
-
-.. figure:: photos/Setup_photos/burn_bootloader.png
+.. figure:: photos/cerebro_bootloader.png
     :align: center
-    :scale: 80%
+    :scale: 100%
 
-7. Choose the firmware that you'd like to upload under **File -> Sketchbook -> Cerebro Sketches ->**
+6. Select the firmware that will be uploaded onto Cerebro **File -> Sketchbook -> Cerebro Sketches -> cerebro**
 
-.. figure:: photos/Setup_photos/select_sketch.png
+.. figure:: photos/cerebro_firmware.png
     :align: center
-    :scale: 80%
+    :scale: 100%
 
-8. Upload the firmware by clicking the upload arrow
+7. Upload the firmware by clicking the upload arrow
 
-.. figure:: photos/Setup_photos/upload.png
+.. figure:: photos/upload.png
     :align: center
     :scale: 100%

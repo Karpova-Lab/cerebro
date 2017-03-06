@@ -78,8 +78,12 @@ Required Tools
   * Soldering iron
   * Tweezers
 
+.. _base upload:
+
 Uploading Firmware
 ------------------
+.. Attention::
+  If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to :ref:`arduino setup` and/or :ref:`utility shield setup` before moving on.
 
 1. With the notch facing down, place the chip in the lower portion of the :ref:`utility shield`'s ZIF socket.
 
@@ -87,28 +91,31 @@ Uploading Firmware
     :align: center
     :scale: 15%
 
-2. Open the Arduino Software and select **Tools -> Board: -> Base Station (ATtiny85)**
+2. Open up the Arduino application and make the following selections under the **Tools** menu:
 
-.. figure:: photos/Setup_photos/board_select.png
+| **Board:** "Base Station (ATtiny85)"
+| **Port:** "COMXX (Arduino/Genuino Uno)"
+| **Programmer**: "Arduino as ISP"
+|
+
+.. figure:: photos/tools_attiny84.png
     :align: center
     :scale: 100%
 
-3. Choose the COM port that your Arduino Uno is connected to by selecting **Tools -> Port: ->**
-4. Select **Tools -> Programmer -> Arduino as ISP**
-5. Burn the bootloader by selecting **Tools -> Burn Bootloader**
+3. Burn the bootloader by selecting **Tools -> Burn Bootloader**
 
-.. figure:: photos/Setup_photos/burn_bootloader.png
+.. figure:: photos/basestation_bootloader.png
     :align: center
     :scale: 100%
 
-6. Choose the Base Station firmware by going to **File -> Sketchbook -> Cerebro Sketches -> baseStation**
+4. Choose the Base Station firmware by going to **File -> Sketchbook -> Cerebro Sketches -> baseStation**
 
-.. figure:: photos/Setup_photos/select_sketch.png
+.. figure:: photos/basestation_firmware.png
     :align: center
     :scale: 100%
 
-7. Upload the firmware by clicking the upload arrow
+5. Upload the firmware by clicking the upload arrow
 
-.. figure:: photos/Setup_photos/upload.png
+.. figure:: photos/upload.png
     :align: center
     :scale: 100%

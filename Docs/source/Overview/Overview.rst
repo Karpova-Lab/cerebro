@@ -83,7 +83,7 @@ Head Implant
 
 .. image:: implant.jpg
   :align: center
-  :scale: 10 %
+  :scale: 20 %
 
 The head implant assembly consists of two laser diodes coupled to optical fibers. Also included is a photoresistor that is used as feedback
 to maintain a constant light output.

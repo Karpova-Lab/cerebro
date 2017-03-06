@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utility Shield &mdash; Cerebro 0.0.5 documentation</title>
+  <title>Utility Shield &mdash; Cerebro 0.0.6 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.5 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
         <link rel="next" title="Charging Dock" href="charging dock.html"/>
         <link rel="prev" title="Base Station" href="base station.html"/> 
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.5
+                0.0.6
               </div>
             
           
@@ -148,7 +148,7 @@
             
   <div class="section" id="utility-shield">
 <h1>Utility Shield<a class="headerlink" href="#utility-shield" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="../_images/utility_shield.jpg"><img alt="../_images/utility_shield.jpg" class="align-center" src="../_images/utility_shield.jpg" style="width: 3017.0px; height: 2273.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/utility_shield.jpg"><img alt="../_images/utility_shield.jpg" class="align-center" src="../_images/utility_shield.jpg" style="width: 499.40000000000003px; height: 418.40000000000003px;" /></a>
 <div class="section" id="required-tools">
 <h2>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -181,7 +181,7 @@
 <tr class="row-odd"><td>1</td>
 <td>Arduino Uno</td>
 <td><a class="reference download internal" href="../_downloads/ATmega328.pdf" download=""><code class="xref download docutils literal"><span class="pre">ATmega328</span></code></a></td>
-<td rowspan="13"><a class="reference external" href="https://octopart.com/bom-lookup/n5svTbJz">Octopart</a></td>
+<td rowspan="14"><a class="reference external" href="https://octopart.com/bom-lookup/n5svTbJz">Octopart</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>22 pin ZIF socket</td>
@@ -208,26 +208,30 @@
 <td><a class="reference download internal" href="../_downloads/5977703607F.pdf" download=""><code class="xref download docutils literal"><span class="pre">5977703607F</span></code></a></td>
 </tr>
 <tr class="row-even"><td>1</td>
+<td>0603 Red LED</td>
+<td><a class="reference download internal" href="../_downloads/LTST-C191KRKT.pdf" download=""><code class="xref download docutils literal"><span class="pre">LTST-C191KRKT</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
 <td>Breakaway 0.1&#8221; male pins</td>
 <td><a class="reference download internal" href="../_downloads/68001-420HLF.pdf" download=""><code class="xref download docutils literal"><span class="pre">68001-420HLF</span></code></a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>Tactile Switch</td>
 <td><a class="reference download internal" href="../_downloads/B3FS-1010P.pdf" download=""><code class="xref download docutils literal"><span class="pre">B3FS-1010P</span></code></a></td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-odd"><td>2</td>
 <td>0805 100 Ω Resistor</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>0805 27 kΩ Resistor</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-odd"><td>2</td>
 <td>0805 4.7 μF Capacitor</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>0805 10 μF Capacitor</td>
 <td>&nbsp;</td>
 </tr>
@@ -247,7 +251,7 @@
 </dl>
 </div>
 <div class="section" id="setting-up-arduino-ide">
-<span id="utility-shield-setup"></span><h2>Setting up Arduino IDE<a class="headerlink" href="#setting-up-arduino-ide" title="Permalink to this headline">¶</a></h2>
+<span id="arduino-setup"></span><h2>Setting up Arduino IDE<a class="headerlink" href="#setting-up-arduino-ide" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>Download and install <a class="reference external" href="https://www.arduino.cc/en/Main/Software">Arduino Software</a></li>
 <li>Open up your Arduino Sketchbook folder. It should be located in your main &#8220;Documents&#8221; folder with the name &#8220;Arduino&#8221;. If you cannot find it, open the Arduino Application and go to <strong>File -&gt; Preferences</strong>. The location of your Sketchbook folder is shown at the top of the preferences window. Your Sketchbook folder will have your current projects and a &#8220;libraries&#8221; folder.</li>
@@ -275,13 +279,13 @@
 </div>
 </div>
 <div class="section" id="setting-up-utility-shield">
-<h2>Setting up Utility Shield<a class="headerlink" href="#setting-up-utility-shield" title="Permalink to this headline">¶</a></h2>
+<span id="utility-shield-setup"></span><h2>Setting up Utility Shield<a class="headerlink" href="#setting-up-utility-shield" title="Permalink to this headline">¶</a></h2>
 <p>To upload firmware, we will be using an Arduino Uno as an In-System Programmer (ISP).
 The Utility Shield connects to the Arduino Uno to route the programming signals to the
 correct pins on various AVR microcontrollers.</p>
 <ol class="arabic simple">
-<li>Disconnect the <a class="reference internal" href="../Overview/Overview.html#utility-shield"><span class="std std-ref">Utility Shield</span></a> from your Arduino Uno</li>
-<li>Open Arduino, go to <strong>File -&gt; Examples -&gt; ArduinoISP</strong></li>
+<li>Connect an Arduino Uno to your computer via USB</li>
+<li>Open the Arduino application and go to <strong>File -&gt; Examples -&gt; ArduinoISP</strong></li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/arduinoISP.png"><img alt="../_images/arduinoISP.png" src="../_images/arduinoISP.png" style="width: 401.6px; height: 312.0px;" /></a>
@@ -290,21 +294,27 @@ correct pins on various AVR microcontrollers.</p>
 <li>Make the following selections under the <strong>Tools</strong> menu:</li>
 </ol>
 <div class="line-block">
-<div class="line"><strong>Board:</strong> Arduino UNO</div>
-<div class="line"><strong>Port:</strong> COMXX (Arduino Uno)</div>
+<div class="line"><strong>Board:</strong> &#8220;Arduino/Genuino Uno&#8221;</div>
+<div class="line"><strong>Port:</strong> &#8220;COMXX (Arduino/Genuino Uno)&#8221;</div>
 <div class="line"><br /></div>
 </div>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/ISP_config.png"><img alt="../_images/ISP_config.png" src="../_images/ISP_config.png" style="width: 400.8px; height: 159.20000000000002px;" /></a>
+<a class="reference internal image-reference" href="../_images/ISP_config.png"><img alt="../_images/ISP_config.png" src="../_images/ISP_config.png" style="width: 399.20000000000005px; height: 274.40000000000003px;" /></a>
 </div>
 <ol class="arabic simple" start="5">
-<li>Upload the firmware by clicking the upload arrow</li>
+<li>Upload the ArduinoISP firmware by clicking the upload arrow</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 90.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 100.0px;" /></a>
 </div>
 <ol class="arabic simple" start="6">
 <li>Connect the <a class="reference internal" href="../Overview/Overview.html#utility-shield"><span class="std std-ref">Utility Shield</span></a> to your Arduino Uno</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/shield_on.jpg"><img alt="../_images/shield_on.jpg" src="../_images/shield_on.jpg" style="width: 3010.0px; height: 1795.0px;" /></a>
+</div>
+<ol class="arabic simple" start="7">
+<li>You are ready to start programming <a class="reference internal" href="cerebro.html#cerebro-upload"><span class="std std-ref">Cerebro</span></a> , <a class="reference internal" href="base station.html#base-upload"><span class="std std-ref">Base Station</span></a> , <a class="reference internal" href="remote.html#remote-upload"><span class="std std-ref">IR Remote</span></a> and <a class="reference internal" href="charging dock.html#dock-upload"><span class="std std-ref">Charging Dock</span></a></li>
 </ol>
 </div>
 </div>
@@ -329,7 +339,7 @@ correct pins on various AVR microcontrollers.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Feb 07, 2017.
+      Last updated on Mar 06, 2017.
 
     </p>
   </div>
@@ -351,7 +361,7 @@ correct pins on various AVR microcontrollers.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.5',
+            VERSION:'0.0.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

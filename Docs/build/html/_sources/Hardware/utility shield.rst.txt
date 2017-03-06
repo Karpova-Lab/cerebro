@@ -4,7 +4,7 @@ Utility Shield
 
 .. image:: ../Overview/utility_shield.jpg
   :align: center
-  :scale: 100 %
+  :scale: 20 %
 
 Required Tools
 ``````````````
@@ -33,6 +33,8 @@ Bill of Materials
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 1   | 1206 red/green LED               | :download:`5977703607F<Datasheets/5977703607F.pdf>`             |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
+| 1   | 0603 Red LED                     | :download:`LTST-C191KRKT<Datasheets/LTST-C191KRKT.pdf>`         |                                                             |
++-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 1   | Breakaway 0.1" male pins         | :download:`68001-420HLF<Datasheets/68001-420HLF.pdf>`           |                                                             |
 +-----+----------------------------------+-----------------------------------------------------------------+                                                             +
 | 1   | Tactile Switch                   | :download:`B3FS-1010P<Datasheets/B3FS-1010P.pdf>`               |                                                             |
@@ -55,7 +57,7 @@ PCB
 	- :download:`Schematic.pdf<../../../PCB Files/Utility Shield 1.4/Utility Shield 1.4 schematic.pdf>`
 
 
-.. _utility shield setup:
+.. _arduino setup:
 
 Setting up Arduino IDE
 ``````````````````````
@@ -86,14 +88,16 @@ Setting up Arduino IDE
     :align: center
     :scale: 100%
 
+.. _utility shield setup:
+
 Setting up Utility Shield
 `````````````````````````
 To upload firmware, we will be using an Arduino Uno as an In-System Programmer (ISP).
 The Utility Shield connects to the Arduino Uno to route the programming signals to the
 correct pins on various AVR microcontrollers.
 
-1. Disconnect the :ref:`utility shield` from your Arduino Uno
-2. Open Arduino, go to **File -> Examples -> ArduinoISP**
+1. Connect an Arduino Uno to your computer via USB
+2. Open the Arduino application and go to **File -> Examples -> ArduinoISP**
 
 .. figure:: photos/Setup_photos/arduinoISP.png
     :align: center
@@ -101,18 +105,24 @@ correct pins on various AVR microcontrollers.
 
 3. Make the following selections under the **Tools** menu:
 
-| **Board:** Arduino UNO
-| **Port:** COMXX (Arduino Uno)
+| **Board:** "Arduino/Genuino Uno"
+| **Port:** "COMXX (Arduino/Genuino Uno)"
 |
 
 .. figure:: photos/Setup_photos/ISP_config.png
     :align: center
     :scale: 80%
 
-5. Upload the firmware by clicking the upload arrow
+5. Upload the ArduinoISP firmware by clicking the upload arrow
 
-.. figure:: photos/Setup_photos/upload.png
+.. figure:: photos/upload.png
     :align: center
     :scale: 100%
 
 6. Connect the :ref:`utility shield` to your Arduino Uno
+
+.. figure:: photos/Setup_photos/shield_on.jpg
+    :align: center
+    :scale: 100%
+
+7. You are ready to start programming :ref:`Cerebro <cerebro upload>` , :ref:`Base Station <base upload>` , :ref:`IR Remote <remote upload>` and :ref:`Charging Dock <dock upload>`

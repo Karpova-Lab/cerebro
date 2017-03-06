@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Base Station &mdash; Cerebro 0.0.5 documentation</title>
+  <title>Base Station &mdash; Cerebro 0.0.6 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.5 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
         <link rel="next" title="Utility Shield" href="utility shield.html"/>
         <link rel="prev" title="Head Implant" href="implant.html"/> 
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.5
+                0.0.6
               </div>
             
           
@@ -306,7 +306,11 @@
 </div></blockquote>
 </div>
 <div class="section" id="uploading-firmware">
-<h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<span id="base-upload"></span><h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to <a class="reference internal" href="utility shield.html#arduino-setup"><span class="std std-ref">Setting up Arduino IDE</span></a> and/or <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Utility Shield</span></a> before moving on.</p>
+</div>
 <ol class="arabic simple">
 <li>With the notch facing down, place the chip in the lower portion of the <a class="reference internal" href="../Overview/Overview.html#utility-shield"><span class="std std-ref">Utility Shield</span></a>&#8216;s ZIF socket.</li>
 </ol>
@@ -314,30 +318,34 @@
 <a class="reference internal image-reference" href="../_images/85_upload.png"><img alt="../_images/85_upload.png" src="../_images/85_upload.png" style="width: 429.0px; height: 336.9px;" /></a>
 </div>
 <ol class="arabic simple" start="2">
-<li>Open the Arduino Software and select <strong>Tools -&gt; Board: -&gt; Base Station (ATtiny85)</strong></li>
+<li>Open up the Arduino application and make the following selections under the <strong>Tools</strong> menu:</li>
 </ol>
+<div class="line-block">
+<div class="line"><strong>Board:</strong> &#8220;Base Station (ATtiny85)&#8221;</div>
+<div class="line"><strong>Port:</strong> &#8220;COMXX (Arduino/Genuino Uno)&#8221;</div>
+<div class="line"><strong>Programmer</strong>: &#8220;Arduino as ISP&#8221;</div>
+<div class="line"><br /></div>
+</div>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/board_select.png"><img alt="../_images/board_select.png" src="../_images/board_select.png" style="width: 812.0px; height: 730.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/tools_attiny84.png"><img alt="../_images/tools_attiny84.png" src="../_images/tools_attiny84.png" style="width: 499.0px; height: 345.0px;" /></a>
 </div>
 <ol class="arabic simple" start="3">
-<li>Choose the COM port that your Arduino Uno is connected to by selecting <strong>Tools -&gt; Port: -&gt;</strong></li>
-<li>Select <strong>Tools -&gt; Programmer -&gt; Arduino as ISP</strong></li>
 <li>Burn the bootloader by selecting <strong>Tools -&gt; Burn Bootloader</strong></li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/burn_bootloader.png"><img alt="../_images/burn_bootloader.png" src="../_images/burn_bootloader.png" style="width: 527.0px; height: 273.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/basestation_bootloader.png"><img alt="../_images/basestation_bootloader.png" src="../_images/basestation_bootloader.png" style="width: 501.0px; height: 344.0px;" /></a>
 </div>
-<ol class="arabic simple" start="6">
+<ol class="arabic simple" start="4">
 <li>Choose the Base Station firmware by going to <strong>File -&gt; Sketchbook -&gt; Cerebro Sketches -&gt; baseStation</strong></li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/select_sketch.png"><img alt="../_images/select_sketch.png" src="../_images/select_sketch.png" style="width: 499.0px; height: 600.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/basestation_firmware.png"><img alt="../_images/basestation_firmware.png" src="../_images/basestation_firmware.png" style="width: 499.0px; height: 222.0px;" /></a>
 </div>
-<ol class="arabic simple" start="7">
+<ol class="arabic simple" start="5">
 <li>Upload the firmware by clicking the upload arrow</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 90.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 100.0px;" /></a>
 </div>
 </div>
 </div>
@@ -363,7 +371,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Feb 07, 2017.
+      Last updated on Mar 06, 2017.
 
     </p>
   </div>
@@ -385,7 +393,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.5',
+            VERSION:'0.0.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

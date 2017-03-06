@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cerebro &mdash; Cerebro 0.0.5 documentation</title>
+  <title>Cerebro &mdash; Cerebro 0.0.6 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.5 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
         <link rel="next" title="Head Implant" href="implant.html"/>
         <link rel="prev" title="System Overview" href="../Overview/Overview.html"/> 
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.5
+                0.0.6
               </div>
             
           
@@ -89,7 +89,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#specifications">Specifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cad-files">CAD Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cad-files">CAD Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pcb">PCB</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#code">Code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#required-tools">Required Tools</a></li>
@@ -253,7 +256,7 @@
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p class="last">The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCBS. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.</p>
+<p class="last">The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCB. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.</p>
 </div>
 <div class="admonition caution">
 <p class="first admonition-title">Caution</p>
@@ -396,15 +399,16 @@ are capable of handling a peak current of 350 mA.</p>
 </div>
 <div class="section" id="cad-files">
 <h2>CAD Files<a class="headerlink" href="#cad-files" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>PCB</dt>
-<dd><ul class="first last simple">
+<div class="section" id="pcb">
+<h3>PCB<a class="headerlink" href="#pcb" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
 <li><a class="reference download internal" href="../_downloads/Cerebro 4.8.brd" download=""><code class="xref download docutils literal"><span class="pre">Cerebro</span> <span class="pre">4.8.brd</span></code></a></li>
 <li><a class="reference download internal" href="../_downloads/Cerebro 4.8.sch" download=""><code class="xref download docutils literal"><span class="pre">Cerebro</span> <span class="pre">4.8.sch</span></code></a></li>
 <li><a class="reference download internal" href="../_downloads/Cerebro 4.8 schematic.pdf" download=""><code class="xref download docutils literal"><span class="pre">Schematic.pdf</span></code></a></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
+</div>
 </div>
 <div class="section" id="code">
 <h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
@@ -435,38 +439,45 @@ are capable of handling a peak current of 350 mA.</p>
 </div>
 <div class="section" id="uploading-firmware">
 <span id="cerebro-upload"></span><h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to <a class="reference internal" href="utility shield.html#arduino-setup"><span class="std std-ref">Setting up Arduino IDE</span></a> and/or <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Utility Shield</span></a> before moving on.</p>
+</div>
 <ol class="arabic simple">
-<li>Setup Arduino environment and Cerebro Utility Shield if you haven&#8217;t already done so. <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Arduino IDE</span></a></li>
 <li>Turn on Cerebro and plug it into the Utility Shield as shown below.</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/cerebro_upload.png"><img alt="../_images/cerebro_upload.png" src="../_images/cerebro_upload.png" style="width: 307.05px; height: 442.2px;" /></a>
 </div>
 <ol class="arabic simple" start="3">
-<li>Open the Arduino Software and select <strong>Tools -&gt; Board: -&gt; Cerebro/Charging Dock/IR Remote (ATtiny84)</strong></li>
+<li>Open up the Arduino application and make the following selections under the <strong>Tools</strong> menu:</li>
 </ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/board_select.png"><img alt="../_images/board_select.png" src="../_images/board_select.png" style="width: 649.6px; height: 584.0px;" /></a>
+<div class="line-block">
+<div class="line"><strong>Board:</strong> &#8220;Cerebro (ATtiny84)&#8221;</div>
+<div class="line"><strong>Port:</strong> &#8220;COMXX (Arduino/Genuino Uno)&#8221;</div>
+<div class="line"><strong>Programmer</strong>: &#8220;Arduino as ISP&#8221;</div>
+<div class="line"><br /></div>
 </div>
-<ol class="arabic simple" start="4">
-<li>Choose the COM port that your Arduino Uno is connected to by selecting <strong>Tools -&gt; Port: -&gt;</strong></li>
-<li>Select <strong>Tools -&gt; Programmer -&gt; Arduino as ISP</strong></li>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/tools_attiny84.png"><img alt="../_images/tools_attiny84.png" src="../_images/tools_attiny84.png" style="width: 499.0px; height: 345.0px;" /></a>
+</div>
+<ol class="arabic simple" start="5">
 <li>Burn the bootloader by selecting <strong>Tools -&gt; Burn Bootloader</strong></li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/burn_bootloader.png"><img alt="../_images/burn_bootloader.png" src="../_images/burn_bootloader.png" style="width: 421.6px; height: 218.4px;" /></a>
+<a class="reference internal image-reference" href="../_images/cerebro_bootloader.png"><img alt="../_images/cerebro_bootloader.png" src="../_images/cerebro_bootloader.png" style="width: 499.0px; height: 345.0px;" /></a>
 </div>
-<ol class="arabic simple" start="7">
-<li>Choose the firmware that you&#8217;d like to upload under <strong>File -&gt; Sketchbook -&gt; Cerebro Sketches -&gt;</strong></li>
+<ol class="arabic simple" start="6">
+<li>Select the firmware that will be uploaded onto Cerebro <strong>File -&gt; Sketchbook -&gt; Cerebro Sketches -&gt; cerebro</strong></li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/select_sketch.png"><img alt="../_images/select_sketch.png" src="../_images/select_sketch.png" style="width: 399.20000000000005px; height: 480.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/cerebro_firmware.png"><img alt="../_images/cerebro_firmware.png" src="../_images/cerebro_firmware.png" style="width: 502.0px; height: 226.0px;" /></a>
 </div>
-<ol class="arabic simple" start="8">
+<ol class="arabic simple" start="7">
 <li>Upload the firmware by clicking the upload arrow</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 90.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 100.0px;" /></a>
 </div>
 </div>
 </div>
@@ -492,7 +503,7 @@ are capable of handling a peak current of 350 mA.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Feb 07, 2017.
+      Last updated on Mar 06, 2017.
 
     </p>
   </div>
@@ -514,7 +525,7 @@ are capable of handling a peak current of 350 mA.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.5',
+            VERSION:'0.0.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

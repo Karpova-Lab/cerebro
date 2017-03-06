@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>IR Remote &mdash; Cerebro 0.0.5 documentation</title>
+  <title>IR Remote &mdash; Cerebro 0.0.6 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.5 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
         <link rel="next" title="Downloader Cord" href="downloader cord.html"/>
         <link rel="prev" title="Charging Dock" href="charging dock.html"/> 
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.0.5
+                0.0.6
               </div>
             
           
@@ -95,7 +95,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#required-tools">Required Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#design-files">Design Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#demonstration-video">Demonstration Video</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#checking-cerebro-s-waveform-parameters">Checking Cerebro&#8217;s Waveform Parameters</a></li>
@@ -246,9 +249,49 @@
 </div>
 <div class="section" id="build-instructions">
 <h2>Build Instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">How to upload firmware</p>
+<div class="section" id="uploading-firmware">
+<span id="remote-upload"></span><h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to <a class="reference internal" href="utility shield.html#arduino-setup"><span class="std std-ref">Setting up Arduino IDE</span></a> and/or <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Utility Shield</span></a> before moving on.</p>
+</div>
+<ol class="arabic simple">
+<li>With the battery connected, switch the remote on</li>
+<li>Plug the remote into the Utility Shield via the micro usb connection</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/remote_connect2shield.jpg"><img alt="../_images/remote_connect2shield.jpg" src="../_images/remote_connect2shield.jpg" style="width: 435.41999999999996px; height: 415.26px;" /></a>
+</div>
+<ol class="arabic simple" start="3">
+<li>Open up the Arduino application and make the following selections under the <strong>Tools</strong> menu:</li>
+</ol>
+<div class="line-block">
+<div class="line"><strong>Board:</strong> &#8220;Arduino/Genuino Uno&#8221;</div>
+<div class="line"><strong>Port:</strong> &#8220;COMXX (Arduino/Genuino Uno)&#8221;</div>
+<div class="line"><strong>Programmer</strong>: &#8220;Arduino as ISP&#8221;</div>
+<div class="line"><br /></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/tools_atmega328.png"><img alt="../_images/tools_atmega328.png" src="../_images/tools_atmega328.png" style="width: 499.0px; height: 335.0px;" /></a>
+</div>
+<ol class="arabic simple" start="4">
+<li>Burn the bootloader by selecting <strong>Tools -&gt; Burn Bootloader</strong></li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/remote_bootloader.png"><img alt="../_images/remote_bootloader.png" src="../_images/remote_bootloader.png" style="width: 499.0px; height: 331.0px;" /></a>
+</div>
+<ol class="arabic simple" start="5">
+<li>Select the firmware that will be uploaded onto the IR Remote <strong>File -&gt; Sketchbook -&gt; Cerebro Sketches -&gt; irRemote</strong></li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/remote_firmware.png"><img alt="../_images/remote_firmware.png" src="../_images/remote_firmware.png" style="width: 499.0px; height: 224.0px;" /></a>
+</div>
+<ol class="arabic simple" start="6">
+<li>Upload the firmware by selecting <strong>Sketch &#8211;&gt; Upload Using Programmer</strong></li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/upload_using_programmer.png"><img alt="../_images/upload_using_programmer.png" src="../_images/upload_using_programmer.png" style="width: 500.0px; height: 237.0px;" /></a>
+</div>
 </div>
 </div>
 <div class="section" id="user-guide">
@@ -317,7 +360,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Feb 07, 2017.
+      Last updated on Mar 06, 2017.
 
     </p>
   </div>
@@ -339,7 +382,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.5',
+            VERSION:'0.0.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

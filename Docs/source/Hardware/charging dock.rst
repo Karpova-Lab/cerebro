@@ -9,11 +9,12 @@ Charging Dock
   :scale: 20 %
 
 Required Tools
-``````````````
+==============
   * Soldering iron
 
 Bill of Materials
-``````````````````
+=================
+
 +-----+------------------------------------+-------------------------------------------------------------+--------------------------------------------------------------+
 | Qty | Description                        | Datasheet                                                   | Vendor                                                       |
 +=====+====================================+=============================================================+==============================================================+
@@ -47,13 +48,25 @@ Bill of Materials
 +-----+------------------------------------+-------------------------------------------------------------+--------------------------------------------------------------+
 
 Design Files
-````````````
+============
 PCB
 	- :download:`Charging Dock 1.8.brd<../../../PCB Files/Charging Dock 1.8/Charging Dock 1.8.brd>`
 	- :download:`Charging Dock 1.8.sch<../../../PCB Files/Charging Dock 1.8/Charging Dock 1.8.sch>`
 	- :download:`Schematic.pdf<../../../PCB Files/Charging Dock 1.8/Charging Dock 1.8 schematic.pdf>`
 
-
 Code
-`````
+====
   - :download:`chargingDock.ino<../../../Arduino/Cerebro_Sketches/chargingDock/chargingDock.ino>`
+
+Build Instructions
+==================
+
+.. _dock upload:
+
+Uploading Firmware
+------------------
+.. Attention::
+  If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to :ref:`arduino setup` and/or :ref:`utility shield setup` before moving on.
+
+.. todo::
+	How to upload firmware
