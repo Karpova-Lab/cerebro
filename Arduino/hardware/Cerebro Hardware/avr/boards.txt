@@ -1,4 +1,4 @@
-receiver.name=Cerebro/Charging Dock (ATtiny84)
+receiver.name=Cerebro (ATtiny84)
 receiver.build.mcu=attiny84
 receiver.build.variant=tiny14
 
@@ -31,9 +31,3 @@ emitter.build.core=arduino:arduino
 emitter.build.board=attiny
 emitter.upload.tool=arduino:avrdude
 emitter.upload.maximum_size=8192
-
-
-
-
-
-
