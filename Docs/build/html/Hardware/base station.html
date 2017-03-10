@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#code">Code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#required-tools">Required Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ftdi-usb-to-serial-converter-setup">FTDI USB to Serial Converter Setup</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
 </ul>
 </li>
@@ -305,8 +306,42 @@
 </ul>
 </div></blockquote>
 </div>
+<div class="section" id="ftdi-usb-to-serial-converter-setup">
+<span id="base-upload"></span><h3>FTDI USB to Serial Converter Setup<a class="headerlink" href="#ftdi-usb-to-serial-converter-setup" title="Permalink to this headline">¶</a></h3>
+<p>The FTDI USB to serial converter should be setup such that it is powered from the Base Station PCB, not powered over USB.
+In order to implement this, the settings on the chip&#8217;s EEPROM need to be modified.
+FTDI provides a utility to do this, which you should download <a class="reference external" href="http://www.ftdichip.com/Support/Utilities.htm#FT_PROG">here</a></p>
+<ol class="arabic simple">
+<li>Open up Device Manager and reveal the Ports (COM &amp; LPT) list</li>
+<li>Connect the Base Station to the computer over USB. It should Appear under ports as &#8220;USB Serial Port (COMxx)&#8221;</li>
+</ol>
+<div class="admonition error">
+<p class="first admonition-title">Error</p>
+<p class="last">If the device doesn&#8217;t appear int he Ports list at all, you many need to connect power to the Base Station via the RJ45 jack or DC input jack</p>
+</div>
+<div class="admonition error">
+<p class="first admonition-title">Error</p>
+<p class="last">If the device appears in the Ports list as an &#8220;Unknown device&#8221;, then you can manually download and install the <a class="reference external" href="http://www.ftdichip.com/Drivers/VCP.htm">FTDI FT230X Driver</a></p>
+</div>
+<ol class="arabic simple" start="3">
+<li>Open up FT Prog and go to <strong>DEVICES&#8211;&gt;Scan and Parse</strong></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/scanandparse.png"><img alt="../_images/scanandparse.png" class="align-center" src="../_images/scanandparse.png" style="width: 637.0px; height: 152.0px;" /></a>
+<ol class="arabic simple" start="4">
+<li>Select &#8220;USB Config Descriptor&#8221; in the Device Tree. Select &#8220;Self Powered&#8221; and change the &#8220;Max Bus Power&#8221; to 0.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/USBconfig.png"><img alt="../_images/USBconfig.png" class="align-center" src="../_images/USBconfig.png" style="width: 637.0px; height: 282.0px;" /></a>
+<ol class="arabic simple" start="5">
+<li>Go to <strong>DEVICES&#8211;&gt;Program</strong></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/program.png"><img alt="../_images/program.png" class="align-center" src="../_images/program.png" style="width: 637.0px; height: 286.0px;" /></a>
+<ol class="arabic simple" start="6">
+<li>Click &#8220;Program&#8221;</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/flash.png"><img alt="../_images/flash.png" class="align-center" src="../_images/flash.png" style="width: 637.0px; height: 590.0px;" /></a>
+</div>
 <div class="section" id="uploading-firmware">
-<span id="base-upload"></span><h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
 <div class="admonition attention">
 <p class="first admonition-title">Attention</p>
 <p class="last">If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to <a class="reference internal" href="utility shield.html#arduino-setup"><span class="std std-ref">Setting up Arduino IDE</span></a> and/or <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Utility Shield</span></a> before moving on.</p>
@@ -371,7 +406,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Mar 06, 2017.
+      Last updated on Mar 10, 2017.
 
     </p>
   </div>

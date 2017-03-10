@@ -80,6 +80,45 @@ Required Tools
 
 .. _base upload:
 
+FTDI USB to Serial Converter Setup
+----------------------------------
+The FTDI USB to serial converter should be setup such that it is powered from the Base Station PCB, not powered over USB.
+In order to implement this, the settings on the chip's EEPROM need to be modified.
+FTDI provides a utility to do this, which you should download `here <http://www.ftdichip.com/Support/Utilities.htm#FT_PROG>`_
+
+1. Open up Device Manager and reveal the Ports (COM & LPT) list
+2. Connect the Base Station to the computer over USB. It should Appear under ports as "USB Serial Port (COMxx)"
+
+.. Error::
+  If the device doesn't appear int he Ports list at all, you many need to connect power to the Base Station via the RJ45 jack or DC input jack
+
+.. Error::
+  If the device appears in the Ports list as an "Unknown device", then you can manually download and install the `FTDI FT230X Driver <http://www.ftdichip.com/Drivers/VCP.htm>`_
+
+3. Open up FT Prog and go to **DEVICES-->Scan and Parse**
+
+.. image:: photos/FTprog/scanandparse.png
+  :align: center
+  :scale: 100 %
+
+4. Select "USB Config Descriptor" in the Device Tree. Select "Self Powered" and change the "Max Bus Power" to 0.
+
+.. image:: photos/FTprog/USBconfig.png
+  :align: center
+  :scale: 100 %
+
+5. Go to **DEVICES-->Program**
+
+.. image:: photos/FTprog/program.png
+  :align: center
+  :scale: 100 %
+
+6. Click "Program"
+
+.. image:: photos/FTprog/flash.png
+  :align: center
+  :scale: 100 %
+
 Uploading Firmware
 ------------------
 .. Attention::
