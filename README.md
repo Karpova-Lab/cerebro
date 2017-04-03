@@ -1,13 +1,13 @@
-#Cerebro Wireless Optogenetics System
+# Cerebro Wireless Optogenetics System
 
 This repository contains all files needed to replicate a wireless optogenetics system that was developed in the [Karpova Lab ](https://www.janelia.org/lab/karpova-lab) at HHMI's Janelia Research Campus.
 
 
 
-##Documentation
+## Documentation
 Go to [http://cerebro.readthedocs.io/](http://cerebro.readthedocs.io/) for detailed documentation.
 
-##Licenses
+## Licenses
 The MIT License (MIT)
 
 Copyright (c) 2015-2017 Andy Lustig
