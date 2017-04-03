@@ -11,7 +11,7 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
 .. raw:: html
 
   <div style="text-align:center; margin-bottom:24px">
-    <a href="https://github.com/alustig3/Cerebro" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">All files available on Github</a>
+    <a href="https://github.com/Karpova-Lab/cerebro" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">All files available on Github</a>
   </div>
 
 This project was developed by Andy Lustig in the `Karpova Lab at Janelia Research Campus <https://www.janelia.org/lab/karpova-lab>`_.
