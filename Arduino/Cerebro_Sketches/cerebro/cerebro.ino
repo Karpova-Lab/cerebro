@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 58;
+const byte version = 59;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE //uncomment to disable feedback during a trigger
-// #define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
+#define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
 
@@ -164,7 +164,7 @@ void printParameters();
 
 void setup() {
   ///////////Analog setup////////////////////////////
-  ADMUX = 2;       //Vcc is used as the analog reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13 of datasheet
+  ADMUX = B10000010;       //Internal 1.1V voltage reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13.1 of datasheet
   ADCSRA |= (1<<ADPS2) | (1<<ADPS1);  //set division factor of 64. ADC frequncy = 8Mhz/64=125khz (ADC needs to be in 50-200khz range)
   ADCSRA |= (1<<ADEN);                //enable the ADC
   ////////////Digital setup//////////////////////////
@@ -245,20 +245,12 @@ void loop() {
 
 void characterizeRoutine(){
   bool firstMax = true;
-  unsigned int dlay = 15000;
+  unsigned int dlay = 3000;
   if (!implantMode){
     dlay = 500;
   }
   delay(dlay);
-  for (int b = 500; b<751; b+=50){
-    triggerEvent(b);
-    delay(dlay);
-  }
-  for (int b = 760; b<901; b+=10){
-    triggerEvent(b);
-    delay(dlay);
-  }
-  for (int b = 905; b<1026; b+=5){
+  for (int b = 70; b<1023; b+=50){
     if(!isMaxed){
       triggerEvent(b);
       delay(dlay);
@@ -268,6 +260,7 @@ void characterizeRoutine(){
       firstMax = false;
     }
   }
+  isMaxed = false; //reset isMaxed
 }
 
 void triggerEvent(unsigned int desiredPower,bool useFeedback){
@@ -352,11 +345,8 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
         sendDAC(desiredPower);
       }
       else{
-        sendDAC(DAClevel);                //Laser on
-        if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
-          feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
-        }
-        alt++;
+        sendDAC(DAClevel);              //Laser on
+        feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
       }
       if (!triggerRecorded){           //event has not yet been recorded
         if (address < memorySize) {    //record trigger event
@@ -395,8 +385,8 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
 void feedback(int setPoint){
   ADCSRA |= (1<<ADSC);                    //start analog conversion
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  int photocellVoltage = ADC;
-  error = setPoint-photocellVoltage;
+  int photodiodeVoltage = ADC;
+  error = setPoint-photodiodeVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
     DAClevel = 4095;
@@ -690,6 +680,11 @@ void sendDAC(int value) {
 }
 
 bool laserOFF(){
+  ADCSRA |= (1<<ADSC);                    //start analog conversion
+  loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
+  mySerial.print(ADC);
+  mySerial.print(",");
+  mySerial.println(powerLevel);
   LATCH_outputReg &= ~(1<<LATCH_pin); //latch low
   myShift(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
   myShift(0);
