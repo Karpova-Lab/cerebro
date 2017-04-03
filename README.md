@@ -5,7 +5,7 @@ This repository contains all files needed to replicate a wireless optogenetics s
 
 
 ## Documentation
-Go to [http://cerebro.readthedocs.io/](http://cerebro.readthedocs.io/) for detailed documentation.
+Go to [https://karpova-lab.github.io/cerebro/](https://karpova-lab.github.io/cerebro/) for detailed documentation.
 
 ## Licenses
 The MIT License (MIT)
