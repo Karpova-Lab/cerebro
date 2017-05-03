@@ -18,3 +18,8 @@ CCS.pro.user.5163482
 CCS.pro.user.e18160a
 JSON testing
 .ipynb_checkpoints
+Qt/build-CCS-Desktop_Qt_5_6_2_MinGW_32bit-Release
+Qt/Xavier/release
+Makefile
+Makefile.Debug
+Makefile.Release

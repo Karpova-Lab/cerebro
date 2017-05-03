@@ -51,6 +51,7 @@ private:
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
     bool                    baseConnected,downloadConnected;
+    bool                    receivedBaseInfo;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -83,7 +84,7 @@ private:
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 serial_title;
+    QLabel*                 serial_title,*baseFilter_label;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;

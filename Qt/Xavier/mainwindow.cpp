@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.28.3\nUpdated:\t5/3/2017";
+        QString aboutString = "\t1.29.0\nUpdated:\t5/3/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -102,13 +102,15 @@ MainWindow::MainWindow(QWidget *parent)
         clearBase_btn = new QPushButton();
             clearBase_btn->setText("Clear Monitor");
         serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
+            baseFilter_label = new QLabel("Filter Duration:");
+        serialMonitorLayout->addWidget(baseFilter_label,1,0);
             baseMonitor = new QPlainTextEdit();
             baseMonitor->setMinimumWidth(300);
             baseMonitor->setMinimumHeight(500);
-        serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
+        serialMonitorLayout->addWidget(baseMonitor,2,0,1,6);
             eeprom_btn = new QPushButton();
             eeprom_btn->setText("(While the rat is still in the rig)\nClick to End Session");
-        serialMonitorLayout->addWidget(eeprom_btn,2,0,1,6);
+        serialMonitorLayout->addWidget(eeprom_btn,3,0,1,6);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
@@ -362,6 +364,7 @@ MainWindow::MainWindow(QWidget *parent)
     serial2 = new QSerialPort(this);
     startingUp = true;
     baseConnected = false;
+    receivedBaseInfo = false;
     downloadConnected = false;
     inTestloop = false;
     testCount = 0;
@@ -629,7 +632,7 @@ void MainWindow::connectBasePort()
             serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
             QTimer::singleShot(1000, this, SLOT(sendTime()));
-            baseConnected = 1;
+            baseConnected = true;
             errorThrown = false;
         }
         else{ //disconnect from serial port
@@ -640,8 +643,9 @@ void MainWindow::connectBasePort()
             setWindowTitle("Xavier");
             debugOn = false;
             showDebug();
-            baseConnected = 0;
-
+            baseConnected = false;
+            receivedBaseInfo = false;
+            baseFilter_label->setText("Filter Duration:");
         }
     }
     connect_btn->setChecked(baseConnected);
@@ -709,6 +713,18 @@ void MainWindow::readSerial()
     baseMonitor->moveCursor(QTextCursor::End);
     baseMonitor->insertPlainText(serial->readAll());
     baseMonitor->ensureCursorVisible();
+    if(!receivedBaseInfo){
+        QString buffer = baseMonitor->toPlainText();
+        qDebug()<<buffer.count('\n')<<buffer.count('_')<<buffer.count(',');
+        if (buffer.count('\n')==1 && buffer.count('_')==4 && buffer.count(',')==5){
+            receivedBaseInfo = true;
+            QStringList baseInfo = buffer.trimmed().split(',');
+            baseFilter_label->setText("Filter Duration: "+ baseInfo[5]+ " ms");
+        }
+        else if (buffer.count('\n')>1){
+            receivedBaseInfo = true; //stop searching if we haven't found it after the first line
+        }
+    }
 }
 void MainWindow::readLog()
 {
@@ -778,6 +794,8 @@ void MainWindow::readLog()
 void MainWindow::clearMonitor()
 {
     baseMonitor->clear();
+    receivedBaseInfo = false;
+    baseFilter_label->setText("Filter Duration:");
     if(baseConnected){
         QString rst = "R";
         serial->write(rst.toLocal8Bit());
@@ -1100,6 +1118,9 @@ void MainWindow::trainDur(){
 void MainWindow::showDebug(){
     debugCheckbox->setChecked(debugOn);
     if (debugOn){
+        rigSelect->setEnabled(false);
+        ratSelect->setEnabled(false);
+        cerebroSelect->setEnabled(false);
         rigSelect->clearSelection();
         ratSelect->clearSelection();
         cerebroSelect->clearSelection();
@@ -1107,6 +1128,9 @@ void MainWindow::showDebug(){
         toggleDebug->setText("Exit Debug Mode");
     }
     else{
+        rigSelect->setEnabled(true);
+        ratSelect->setEnabled(true);
+        cerebroSelect->setEnabled(true);
         connect_btn->setText("Start Session");
         toggleDebug->setText("Enter Debug Mode");
     }
