@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.28.2\nUpdated:\t2/6/2017";
+        QString aboutString = "\t1.28.3\nUpdated:\t5/3/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -565,21 +565,21 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
-    if((rigSelect->selectedItems().size()==0) & !baseConnected){ //didn't select Rig
+    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select Rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rig #");
         alert.exec();
         }
-    else if((ratSelect->selectedItems().size()==0) & !baseConnected){ //didn't select rat
+    else if((ratSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select rat
         QMessageBox alert;
         alert.setText("Please select a Rat ID to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rat ID");
         alert.exec();
     }
-    else if((cerebroSelect->selectedItems().size()==0) & !baseConnected){ //didn't select cerebro
+    else if((cerebroSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select cerebro
         QMessageBox alert;
         alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -620,7 +620,11 @@ void MainWindow::connectBasePort()
             serial->open(QIODevice::ReadWrite);
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
-            setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );
+            if(!debugOn){
+                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );}
+            else{
+                setWindowTitle("Debug Mode");
+            }
             QString rst = "R";
             serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
@@ -689,7 +693,13 @@ void MainWindow::connectDownloadPort()
 void MainWindow::sendTime()
 {
     startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-    QString startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+    QString startup;
+    if (!debugOn){
+        startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+    }
+    else{
+        startup = QString("%1,%2,%3,%4,").arg(startTime,"99","99","99");
+    }
     serial->write(startup.toLocal8Bit());
     clearBase_btn->setEnabled(true);
 }
@@ -1090,16 +1100,13 @@ void MainWindow::trainDur(){
 void MainWindow::showDebug(){
     debugCheckbox->setChecked(debugOn);
     if (debugOn){
-        rigSelect->setCurrentRow(0);
-        ratSelect->setCurrentRow(0);
-        cerebroSelect->setCurrentRow(0);
+        rigSelect->clearSelection();
+        ratSelect->clearSelection();
+        cerebroSelect->clearSelection();
         connect_btn->setText("Start Session (Debug Mode)");
         toggleDebug->setText("Exit Debug Mode");
     }
     else{
-        rigSelect->clearSelection();
-        ratSelect->clearSelection();
-        cerebroSelect->clearSelection();
         connect_btn->setText("Start Session");
         toggleDebug->setText("Enter Debug Mode");
     }
