@@ -38,26 +38,33 @@ def parseBaseStation(logFile):
     bLog.drop(bLog.columns[[2,3,4,5,6]], axis=1, inplace=True)          #remove  parameter columns
     first = (bLog.loc[0,'bTime'])                                   #store time offset
     bLog['bTime'] = bLog['bTime']-first                         #subtract offset from all timestamps
-    bLog['bDiff'] = bLog['bTime']-bLog['bTime'].shift(1)        #add column of time between events
+    bLog['bDiff'] = bLog['bTime'].diff()                            #add column of time between events
     bLog['Clock'] = bLog['bTime'].apply(readableTime)               #add column with readable time
     bData['sessionLength'] = bLog.loc[len(bLog)-1,'Clock']
     return bLog,bData
 
 def parseCerebroLog(logFile):
     # get cerebro attributes from cerebro log
-    cLog = pd.read_csv(logFile,names=['cTime','Received','extra1','extra2'])
-    cData = {'firmware':cLog.loc[0,'Received']} #get firmware version
-    cData['paramNames'],cData['waveform'] = getWaveformParamters(cLog[-26:-20]) #get list of soon to be column headings and a dictionary with the waveforms parameters
-    cData['waveform']['rampVector'] = getRampVector(cLog[-20:])
+    cLog = pd.read_csv(logFile,names=['cTime','Received','Light','extra2'])
 
-    cLog = cLog[1:-20]    #remove firwmare row, waveform parameters, ramp down vector
-    #label events
+    # get firmware and hardware info form first 3 lines
+    cData = {'firmware':cLog.loc[0,'Received']}
+    cData['cerebroNum'] = cLog.loc[1,'Received']
+    cData['laserdiodeNum'] = cLog.loc[2,'Received']
+
+    cData['paramNames'],cData['waveform'] = getWaveformParamters(cLog[-25:-20]) # get list of soon to be column headings and create a dictionary with the waveforms parameters
+    cData['waveform']['rampVector'] = getRampVector(cLog[-20:]) # add rampvector definition to waveform dictionary
+
+    cLog = cLog[3:-20]    #remove the hardware and firmware info as well as the ramp vector.
+
+    #label events with the correct pulse parameters.
     paramChangeIndices = cLog[cLog['cTime'].str.contains("Start_Delay")].index.tolist() #get indices of parameter changes
     #get parameters from the parameter rows and then use them to label the events above them that they describe
     for i,paramChangeIndex in enumerate(paramChangeIndices):
         for j,paramName in enumerate(cData['paramNames']):
             b = paramChangeIndices[i-1]+len(cData['paramNames']) if i>0 else 0 #b is the index of where above the parameters to start labeling events.
             cLog.loc[b:paramChangeIndex-1,paramName] = cLog.loc[paramChangeIndex+j,'Received']
+
     cLog['cTime'] =to_numeric(cLog['cTime'],errors='coerce')    #convert time column from strings to numbers
     cLog = cLog[cLog['cTime'].notnull()]                        #remove parameter rows from data frame, leaving of list of events w/parameter labels
     cLog = reIndex(cLog)
@@ -65,9 +72,9 @@ def parseCerebroLog(logFile):
     # Add cDiff column
     first = cLog.loc[0,'cTime']                                 #get time offset
     cLog['cTime'] = cLog['cTime']-first                         #subtract offset from all timestamps
-    cLog['cDiff'] = cLog['cTime']-cLog['cTime'].shift(1)        #add column of time between events
+    cLog['cDiff'] = cLog['cTime'].diff()                        #add column of time between events
 
-    cLog = cLog.drop(['extra1','extra2'], 1) #remove extra columns
+    cLog = cLog.drop(['extra2'], 1) #remove extra columns
     return cLog,cData
 
 def getWaveformParamters(_wavformDF):
@@ -86,7 +93,7 @@ def getRampVector(_rampDF):
 def compare(bLog,cLog,cerColHeaders):
     #combine the logs
     baseCols = ['Clock','Sent','bTime','bDiff']
-    cerebroCols = ['cDiff','cTime','Received'] + cerColHeaders
+    cerebroCols = ['cDiff','cTime','Received'] + cerColHeaders + ['Light']
     combined = concat([bLog[baseCols],cLog[cerebroCols]],axis=1,) # concatenate the two dataframes
 
 # **Compare the data logs to reveal any events may have been sent by Base Station, but not executed by Cerebro**
@@ -205,8 +212,9 @@ def writeSummary(cerebroLogPath,combined,baseData,cerebroData,compareData):
 
     dataOutput = {
         'Session_Start': baseData['startTime'],
-        'Cerebro': int(baseData['cerebroNum']),
-        'Rig': round(baseData['rigNum'],2),
+        'Cerebro': [int(baseData['cerebroNum']) , int(cerebroData['cerebroNum'])],
+        'Laser_diode': int(cerebroData['laserdiodeNum']),
+        'Rig': float(round(baseData['rigNum'],2)),
         'Base_Station_Firmware': int(baseData['baseFirmware']),
         'Cerebro_Firmware': int(cerebroData['firmware']),
         'Base_Station_Filter': int(baseData['filterDuration']),
@@ -235,6 +243,7 @@ def writeSummary(cerebroLogPath,combined,baseData,cerebroData,compareData):
         json.dump(dataOutput,saveJSON,indent=2,sort_keys=True)
 
 def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
+    ###---Alignment Graph---###
     plotTitle = "Time Between\nLogged Events"
     yAxis = "Time since last event (minutes)"
     xAxis = "Event #"
@@ -248,6 +257,7 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     new = missedStop.append(missedTrig).append(missedContinue)
     new.sort_values(by='missIndex',inplace=True)
     reIndex(new)
+
 
     #plot points
     plt.figure(figsize=(17,11))
@@ -273,5 +283,19 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     plt.title(plotTitle,fontsize = 30)
     plt.ylabel(yAxis,fontsize = 25)
     plt.xlabel(xAxis,fontsize = 25)
-    plt.savefig('{}graph.png'.format(cerebroLogPath[:-14]))
+    plt.savefig('{}alignment.png'.format(cerebroLogPath[:-14]))
+
+    ###---Light Level Graph---###
+    plotTitle = "Light Level Distribution"
+    yAxis = "Fequency"
+    xAxis = "Light Level"
+    #plot points
+    plt.figure(figsize=(17,11))
+    plt.hist(bothDF['Light'][bothDF['Light']>0],bins=list(range(0,1030,10)))
+    plt.title(plotTitle,fontsize = 30)
+    plt.ylabel(yAxis,fontsize = 25)
+    plt.xlabel(xAxis,fontsize = 25)
+    # lightPlot, = plt.plot(range(len(bothDF)),bothDF['Light'],c='r',label="Light Level")
+    # lightLegend = plt.legend(handles=[lightPlot], loc=1,fontsize=20)
+
     plt.show()
