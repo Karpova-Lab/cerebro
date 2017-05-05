@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 58;
+const byte version = 59;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE //uncomment to disable feedback during a trigger
 // #define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
@@ -96,18 +96,16 @@ const char string_1[] PROGMEM = "On_Time,";
 const char string_2[] PROGMEM = "Off_Time,";
 const char string_3[] PROGMEM = "Train_Duration,";
 const char string_4[] PROGMEM = "Ramp_Duration,";
-const char string_5[] PROGMEM = "Power_Level,";
 
 #define ON_DELAY  0
 #define ON_TIME   1
 #define OFF_TIME  2
 #define TRAIN_DUR 3
 #define RAMP_DUR  4
-#define PWR_LVL   5
 
 // Then set up a table to refer to your strings.
-const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4, string_5};
-char buffer[20];            // make sure this is large enough for the largest string it must hold
+const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
+char label[20];            // make sure this is large enough for the largest string it must hold
 unsigned int waveform[NUMPARAM] = {};
 unsigned int onDelay = 2000;
 char marksReceived;
@@ -161,6 +159,8 @@ void updateFadeVector(uint16_t (&marks)[NUMPULSES],byte offset);
 void updateHardware(uint16_t (&marks)[NUMPULSES]);
 void printFadeVector();
 void printParameters();
+int getLightLevel();
+void recordLightLevel(int lightLevel);
 
 void setup() {
   ///////////Analog setup////////////////////////////
@@ -379,6 +379,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
+      recordLightLevel(getLightLevel());
       if (useFeedback){
         if (rampDur>0 && !implantMode && !diodeMode && !powerTestMode){
           fade();
@@ -393,10 +394,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
 }
 
 void feedback(int setPoint){
-  ADCSRA |= (1<<ADSC);                    //start analog conversion
-  loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  int photocellVoltage = ADC;
-  error = setPoint-photocellVoltage;
+  error = setPoint-getLightLevel();
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
     DAClevel = 4095;
@@ -404,6 +402,12 @@ void feedback(int setPoint){
   else if (DAClevel<0){
     DAClevel = 0;
   }
+}
+
+int getLightLevel(){
+  ADCSRA |= (1<<ADSC);                    //start analog conversion
+  loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
+  return ADC;
 }
 
 void fade(){
@@ -571,6 +575,14 @@ void recordEvent(byte letter){
   address+=4;
 }
 
+void recordLightLevel(int lightLevel){
+  unsigned long temp = millis();
+  eepromWriteByte(address , 'L');
+  eepromWriteByte(address + 1, lightLevel >> 8 & 255 );
+  eepromWriteByte(address + 2, lightLevel & 255);
+  address+=3;
+}
+
 void eepromWriteByte( unsigned int writeAddress, byte data ) {
   TinyWireM.beginTransmission(0x50);
   TinyWireM.write(writeAddress >> 8);  // MSB
@@ -614,33 +626,42 @@ void readAddresses(int start, int finish){
     third = eepromReadByte(k+3);
     if(char(eepromReadByte(k))=='T'){
       stamp = first<<16|second<<8|third;                    //combine bytes to get timestamp
+      mySerial.print('\r');
       mySerial.print(stamp);
-      mySerial.print(",");
-      mySerial.print(F("trigger\r"));
+      mySerial.print(',');
+      mySerial.print(F("trigger"));
       k+=3;
     }
     else if (char(eepromReadByte(k))=='A'){
       stamp = first<<16|second<<8|third;
+      mySerial.print('\r');
       mySerial.print(stamp);
-      mySerial.print(",");
-      mySerial.print(F("abort\r"));
+      mySerial.print(',');
+      mySerial.print(F("abort"));
       k+=3;
     }
     else if (char(eepromReadByte(k))=='C'){
       stamp = first<<16|second<<8|third;
+      mySerial.print('\r');
       mySerial.print(stamp);
-      mySerial.print(",");
-      mySerial.print(F("continue\r"));
+      mySerial.print(',');
+      mySerial.print(F("continue"));
       k+=3;
+    }
+    else if (char(eepromReadByte(k))=='L'){
+      int lightLevel = first<<8|second;
+      mySerial.print(',');
+      mySerial.print(lightLevel);
+      k+=2;
     }
     else if (char(eepromReadByte(k))=='P'){
       unsigned int param1;
       for (int i = 0; i<NUMPARAM; i++){
-        param1 = eepromReadByte(k+1+2*i)<<8;
-        strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));    //Necessary casts and dereferencing
-        mySerial.print(buffer);
-        mySerial.print(word(param1|eepromReadByte(k+2*(i+1))));
         mySerial.print('\r');
+        param1 = eepromReadByte(k+1+2*i)<<8;
+        strcpy_P(label, (char*)pgm_read_word(&(parameterLabels[i])));    //Necessary casts and dereferencing
+        mySerial.print(label);
+        mySerial.print(word(param1|eepromReadByte(k+2*(i+1))));
       }
       k+=NUMPARAM*2;
     }
@@ -651,21 +672,30 @@ void readAddresses(int start, int finish){
 }
 
 void printEEPROM(){
+  //print firmware version
   mySerial.print(F("Ver,"));
   mySerial.print(version);
+
+  //print hardware parameters
   mySerial.print('\r');
+  mySerial.print(F("Cerebro,"));
+  mySerial.print(cerebroNum);
+  mySerial.print('\r');
+  mySerial.print(F("LD,"));
+  mySerial.print(LD);
+
+  //print the list of events
   unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
-  readAddresses(LOG_START,endingAddress);   //print the list of events
-  strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[PWR_LVL])));
-  mySerial.print(buffer);
-  mySerial.print(powerLevel);
-  mySerial.print('\r');
+  readAddresses(LOG_START,endingAddress);
+
+  //print pulse parameters
   for (int i = 0; i<NUMPARAM; i++){
-    strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
-    mySerial.print(buffer);
+    mySerial.print('\r');
+    strcpy_P(label, (char*)pgm_read_word(&(parameterLabels[i])));
+    mySerial.print(label);
     mySerial.print(waveform[i]);
-    mySerial.print("\r");
   }
+  mySerial.print('\r');
 }
 
 void myShift(int val){                  //shifts out data MSB first
@@ -720,7 +750,7 @@ void printFadeVector(){
 
 void printParameters(){
     char delimeter = '~';
-    mySerial.print("&");
+    mySerial.print('&');
     mySerial.print(version);
     mySerial.print(delimeter);
     mySerial.print(cerebroNum);
@@ -733,5 +763,5 @@ void printParameters(){
       mySerial.print(waveform[i]);
       mySerial.print(delimeter) ;
     }
-    mySerial.println("*");
+    mySerial.println('*');
 }

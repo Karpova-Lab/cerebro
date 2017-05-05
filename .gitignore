@@ -23,3 +23,9 @@ Qt/Xavier/release
 Makefile
 Makefile.Debug
 Makefile.Release
+diode pairing
+Qt/Xavier/Deployment/python scripts/__pycache__
+calibrate convert.ipynb
+filter truth table.xlsx
+LD24_Nov01_14h_00_cer31_firm49_calibrate_summary.txt
+LDMasha_bluediode_1_Nov17_5_02p_cer29_firm44_calibrate.txt
