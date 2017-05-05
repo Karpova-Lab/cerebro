@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.29.0\nUpdated:\t5/3/2017";
+        QString aboutString = "\t1.30.0\nUpdated:\t5/5/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 

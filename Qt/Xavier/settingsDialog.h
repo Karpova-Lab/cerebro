@@ -54,6 +54,8 @@ public:
     bool                    mcubeEnabled;
     QStringList             rigList,ratList,cerebroList;
 
+    QPushButton*            okButton;
+
 
 private:
     QString                 usbTag,usbDescription;

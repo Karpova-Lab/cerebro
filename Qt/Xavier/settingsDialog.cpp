@@ -122,11 +122,15 @@ settingsDialog::settingsDialog(QWidget *parent)
         featuresLayout->addWidget(mcubeCheckbox);
     featuresBox->setLayout(featuresLayout);
 
+    okButton = new QPushButton("Save Settings");
+    okButton->setFocusPolicy(Qt::NoFocus);
+
     settingsLayout = new QGridLayout();
     settingsLayout->addWidget(directoryBox);
     settingsLayout->addWidget(sessionListsBox);
     settingsLayout->addWidget(portEditBox);
     settingsLayout->addWidget(featuresBox);
+    settingsLayout->addWidget(okButton);
 
     this->setWindowTitle("Settings");
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
@@ -151,6 +155,7 @@ settingsDialog::settingsDialog(QWidget *parent)
     connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
     connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
     connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
+    connect(okButton,SIGNAL(clicked()),this,SLOT(close()));
 
 }
 
