@@ -59,7 +59,7 @@ private:
     QSerialPort*            serial,*serial2;
     QTimer*                 timer;
     settingsDialog          *settingsDlog;
-    bool                    pythonEnabled,mcubeEnabled;
+    bool                    pythonEnabled,mcubeEnabled,showHistogram;
     bool                    errorThrown;
     int                     baseFilter;
     QString                 startTime;

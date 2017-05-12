@@ -47,7 +47,7 @@ def parseCerebroLog(logFile):
     # get cerebro attributes from cerebro log
     cLog = pd.read_csv(logFile,names=['cTime','Received','Light','extra2'])
 
-    # get firmware and hardware info form first 3 lines
+    # get firmware and hardware info from first 3 lines
     cData = {'firmware':cLog.loc[0,'Received']}
     cData['cerebroNum'] = cLog.loc[1,'Received']
     cData['laserdiodeNum'] = cLog.loc[2,'Received']
@@ -95,6 +95,7 @@ def compare(bLog,cLog,cerColHeaders):
     baseCols = ['Clock','Sent','bTime','bDiff']
     cerebroCols = ['cDiff','cTime','Received'] + cerColHeaders + ['Light']
     combined = concat([bLog[baseCols],cLog[cerebroCols]],axis=1,) # concatenate the two dataframes
+    # combined.to_csv('out.csv', sep=',')
 
 # **Compare the data logs to reveal any events may have been sent by Base Station, but not executed by Cerebro**
 
@@ -133,8 +134,8 @@ def compare(bLog,cLog,cerColHeaders):
             missDiff.append(abs(percentDiff-correctDiff))
             combined[cerebroCols] = combined[cerebroCols][:j].append(combined[cerebroCols][j:].shift(1))
             if combined['Sent'][j] == "Trigger Sent":
-                singleDuration = int(combined[cerColHeaders[1]][j+1])+int(combined[cerColHeaders[4]][j+1])
-                trainDuration = int(combined[cerColHeaders[3]][j+1])
+                singleDuration = int(combined["On_Time"][j+1])+int(combined["Ramp_Duration"][j+1])
+                trainDuration = int(combined["Train_Duration"][j+1])
                 trueDuration = max(singleDuration,trainDuration) #duration that cerebro will be busy executing a waveform
                 if int(baseInterval)<trueDuration:
                     ignoreVec.append(j)
@@ -242,7 +243,7 @@ def writeSummary(cerebroLogPath,combined,baseData,cerebroData,compareData):
     with open(cerebroLogPath[:-14]+'summary.json','w') as saveJSON:
         json.dump(dataOutput,saveJSON,indent=2,sort_keys=True)
 
-def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
+def showAlignmentPlot(cerebroLogPath,bothDF,compData,sumry):
     ###---Alignment Graph---###
     plotTitle = "Time Between\nLogged Events"
     yAxis = "Time since last event (minutes)"
@@ -258,9 +259,8 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
     new.sort_values(by='missIndex',inplace=True)
     reIndex(new)
 
-
     #plot points
-    plt.figure(figsize=(17,11))
+    plt.figure(figsize=(11,8.5))
     bPlot, = plt.plot(range(len(bothDF)),bothDF['bDiff']/60000,'g',label="Base Station")
     cPlot, = plt.plot(range(len(bothDF)),bothDF['cDiff']/60000,'b',label="Cerebro",alpha = 0.5)
 
@@ -272,26 +272,28 @@ def matplotlibGraph(cerebroLogPath,bothDF,compData,sumry):
         plt.axvspan(miss-1, miss+1, color='red', alpha=0.5)
         missString+=("{} @ {}\n".format(missType, miss))
     first_legend = plt.legend(handles=[bPlot, cPlot], loc=1,fontsize=20)
-    plt.annotate(missString,xy=(0.005,.99),xycoords='axes fraction',size=12,verticalalignment = 'top')
+    plt.annotate(missString,xy=(0.005,.99),xycoords='axes fraction',size=10,verticalalignment = 'top')
 
     #Display session summary at the top
     totalSummary = '{}{}\n{}\n{}'.format(sumry['lengthSummary'],sumry['triggerSummary'],sumry['continueSummary'],sumry['abortSummary'])
     totalSummary = totalSummary.replace("\t\t", "\t")
     totalSummary = totalSummary.replace("\t", "      ")
-    plt.figtext(.125,.92,totalSummary,fontsize = 12,verticalalignment = 'bottom')
+    plt.figtext(.125,.92,totalSummary,fontsize = 8,verticalalignment = 'bottom')
 
     plt.title(plotTitle,fontsize = 30)
     plt.ylabel(yAxis,fontsize = 25)
     plt.xlabel(xAxis,fontsize = 25)
-    plt.savefig('{}alignment.png'.format(cerebroLogPath[:-14]))
+    # plt.savefig('{}alignment.png'.format(cerebroLogPath[:-14]))
+    plt.show()
 
+def showHistogramPlot(bothDF):
     ###---Light Level Graph---###
     plotTitle = "Light Level Distribution"
     yAxis = "Fequency"
     xAxis = "Light Level"
     #plot points
-    plt.figure(figsize=(17,11))
-    plt.hist(bothDF['Light'][bothDF['Light']>0],bins=list(range(0,1030,10)))
+    plt.figure(figsize=(11,8.5))
+    plt.hist(bothDF['Light'][bothDF['Light']>0])
     plt.title(plotTitle,fontsize = 30)
     plt.ylabel(yAxis,fontsize = 25)
     plt.xlabel(xAxis,fontsize = 25)

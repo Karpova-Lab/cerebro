@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.30.0\nUpdated:\t5/5/2017";
+        QString aboutString = "\t1.30.1\nUpdated:\t5/12/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -496,6 +496,7 @@ void MainWindow::applySettings()
     //
     settings.beginGroup("Features");
         pythonEnabled = settings.value("pythonEnabled").toBool();
+        showHistogram = settings.value("showHistogram").toBool();
         mcubeEnabled = settings.value("mcubeEnabled").toBool();
     settings.endGroup();
     toolMenu->setEnabled(pythonEnabled);
@@ -1004,7 +1005,14 @@ void MainWindow::saveFile()
                 // Run python script to summarize data from base station and cerebro logs
                 QProcess *process = new QProcess(this);
                 QStringList pythonArgs;
-                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<"0"; //pass the two log file locations into the python script
+                QString plotArg;
+                if (showHistogram){
+                    plotArg = "save and histogram";
+                }
+                else{
+                    plotArg = "save only";
+                }
+                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<plotArg; //pass the two log file locations into the python script
                 process->start("python",pythonArgs);
                 process->waitForFinished(-1);
                 QString errorString = process->readAllStandardError();
@@ -1050,7 +1058,7 @@ void MainWindow::errorMsg()
 
 void MainWindow::updateFilter(){
     if (singleShot->isChecked()){
-        baseFilter = startDelay_spn->value() + onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked();
+        baseFilter = startDelay_spn->value() + onTime_spn->value();
     }
     else{
         baseFilter = startDelay_spn->value()+ trainDuration_spn->value();
@@ -1142,7 +1150,7 @@ void MainWindow::fadeChecked(){
 
 void MainWindow::openDocs(){
 //    opens readthedocs.com documentation
-    QUrl site = QUrl::fromEncoded( "http://cerebro.readthedocs.io/en/latest/Software/Xavier.html#xavier-user-guide");
+    QUrl site = QUrl::fromEncoded( "https://karpova-lab.github.io/cerebro/Software/Xavier.html");
     QDesktopServices::openUrl(site);
 //    //opens local html file
 //    QProcess *process = new QProcess(this);
@@ -1167,7 +1175,7 @@ void MainWindow::getGraphs()
             //Run python script for creating graph
             QProcess *process = new QProcess(this);
             QStringList pythonArgs;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<"1"; //pass the two log file locations into the python script
+            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<"alignment and histogram"; //pass the two log file locations into the python script
             process->start("python",pythonArgs);
             process->waitForFinished(-1);
             QString errorString = process->readAllStandardError();
@@ -1190,7 +1198,6 @@ void MainWindow::getGraphs()
         }
     }
 }
-
 
 void MainWindow::setDebug()
 {

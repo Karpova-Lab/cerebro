@@ -49,9 +49,8 @@ public:
 
     QGroupBox*              featuresBox;
     QGridLayout*            featuresLayout;
-    QCheckBox*              pythonCheckbox,*mcubeCheckbox;
-    bool                    pythonEnabled;
-    bool                    mcubeEnabled;
+    QCheckBox*              pythonCheckbox,*mcubeCheckbox,*histogramCheckbox;
+    bool                    pythonEnabled,mcubeEnabled,showHistogram;
     QStringList             rigList,ratList,cerebroList;
 
     QPushButton*            okButton;
