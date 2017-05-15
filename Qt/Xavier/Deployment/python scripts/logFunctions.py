@@ -287,17 +287,29 @@ def showAlignmentPlot(cerebroLogPath,bothDF,compData,sumry):
     plt.show()
 
 def showHistogramPlot(bothDF):
+    lightVals = bothDF['Light'][bothDF['Light']>0]
+    unq = np.unique(lightVals)
+    newUnq = []
+    for el in unq:
+        newUnq.append(el-0.5)
+        newUnq.append(el+0.5)
+
     ###---Light Level Graph---###
     plotTitle = "Light Level Distribution"
     yAxis = "Fequency"
     xAxis = "Light Level"
     #plot points
     plt.figure(figsize=(11,8.5))
-    plt.hist(bothDF['Light'][bothDF['Light']>0])
+    plt.hist(lightVals,bins=newUnq,rwidth=0.9)
     plt.title(plotTitle,fontsize = 30)
     plt.ylabel(yAxis,fontsize = 25)
     plt.xlabel(xAxis,fontsize = 25)
-    # lightPlot, = plt.plot(range(len(bothDF)),bothDF['Light'],c='r',label="Light Level")
+    # lightPlot = plt.scatter(range(len(bothDF)),bothDF['Light'],c='r',label="Light Level")
     # lightLegend = plt.legend(handles=[lightPlot], loc=1,fontsize=20)
-
     plt.show()
+
+    # Print summary of histogram
+    print("\nDistribution of Light Levels")
+    freqs,lvls = np.histogram(lightVals,bins=newUnq)
+    for level,count in zip(lvls[::2]+0.5,freqs[::2]):
+        print(int(level),":",count)
