@@ -11,6 +11,9 @@ settingsDialog::settingsDialog(QWidget *parent)
     #elif __APPLE__ //---------Mac USB parse settings---------------
         usbTag  = "cu.usbserial";
         usbDescription = "FT230X Basic UART";
+    #elif __linux__ //---------Linux USB parse settings-------------
+        usbTag  = "ttyUSB";
+        usbDescription = "FT230X Basic UART";
     #endif
     //Save directory editor
     directoryBox = new QGroupBox("Edit Default Save Directory");
