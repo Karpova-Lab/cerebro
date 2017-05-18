@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 59;
+const byte version = 60;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE //uncomment to disable feedback during a trigger
 // #define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
@@ -131,6 +131,7 @@ unsigned int LD;
 
 const char saveMemoryFlag = -1;
 const char memoryDumpFlag = -2;
+const char resetAddressFlag = -3;
 
 #ifdef MCUBE
 int DAClevel = 725;
@@ -241,6 +242,15 @@ void loop() {
   else if (marksReceived == saveMemoryFlag) {         //save data to EEPROM upon receiving exactly 26 marks
     save2EEPROM();
   }
+  else if (marksReceived == resetAddressFlag){
+    address = LOG_START; // reset address
+    for (byte i=0; i <3; i ++){
+      digitalWrite(indicatorLED,HIGH);
+      delay(100);
+      digitalWrite(indicatorLED,LOW);
+      delay(100);
+    }
+  }
 }
 
 void characterizeRoutine(){
@@ -335,6 +345,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
         trigMatch = false;
       }
       else if (stopMatch){
+        recordLightLevel(getLightLevel());
         if (rampDur>0){
           fade();
         }
@@ -501,6 +512,9 @@ byte listenForIR(int timeout=0) {
         }
         else if (pulsePairIndex==7 && convertBIN(marks,7)==76){ //set saveMemory flag
           return saveMemoryFlag;
+        }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==77){ //set resetAddress flag
+          return resetAddressFlag;
         }
         // else{ //We received a message that we don't understand
         //   mySerial.println(pulsePairIndex);
