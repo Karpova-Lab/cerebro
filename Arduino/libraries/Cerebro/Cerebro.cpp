@@ -143,3 +143,8 @@ void Cerebro::dumpMemory()
 {
   sendBinary(45,7);
 }
+
+void Cerebro::resetAddress()
+{
+  sendBinary(77,7);
+}

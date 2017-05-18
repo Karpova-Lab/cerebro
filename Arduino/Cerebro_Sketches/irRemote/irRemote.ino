@@ -121,8 +121,8 @@ void loop() {
   else if (tempNow-tempOld<-2 && !isViewingParameters){ //CW knob turn
     right();
   }
-  checkButtonPress(triggerButton,triggerSent,greenPin,sendImplant,bluePin,sendPower); //A button: press, long press, double press
-  checkButtonPress(stopButton,stopSent,redPin,sendVals,bluePin,sendMemoryDump);   //B Button: press, long press, double press
+  checkButtonPress(triggerButton,triggerSent,greenPin,doNothing,bluePin,doNothing); //A button: press-fxn,press-color, longpress-fxn,longpress-color, doublepress-fxn
+  checkButtonPress(stopButton,stopSent,redPin,resetAddress,bluePin,doNothing);   //B button: press-fxn,press-color, longpress-fxn,longpress-color, doublepress-fxn
   newButtonState = digitalRead(encoderPshBtn);
   if (newButtonState){  //rotary button pressed
     pressedCount++;
@@ -369,6 +369,25 @@ void sendMemoryDump(){
   display.clearDisplay();
   draw(isEditMode);
   analogWrite(bluePin,255);
+}
+
+void resetAddress(){
+  cerebro.resetAddress();
+  display.clearDisplay();
+  display.setTextColor(1,0);
+  display.setTextSize(2);
+  display.setCursor(26,18);
+  display.print(F("Address"));
+  display.setCursor(35,39);
+  display.print(F("Reset"));
+  display.display();
+  delay(msgDelay);
+  display.clearDisplay();
+  draw(isEditMode);
+}
+
+void doNothing(){
+
 }
 
 void showBatteryStatus(bool show){
