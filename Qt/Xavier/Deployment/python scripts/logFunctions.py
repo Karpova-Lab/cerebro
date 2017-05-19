@@ -90,12 +90,13 @@ def getRampVector(_rampDF):
     return rampVec
 
 
-def compare(bLog,cLog,cerColHeaders):
+def compare(bLog,cLog,cerColHeaders,outputCSV=False):
     #combine the logs
     baseCols = ['Clock','Sent','bTime','bDiff']
     cerebroCols = ['cDiff','cTime','Received'] + cerColHeaders + ['Light']
     combined = concat([bLog[baseCols],cLog[cerebroCols]],axis=1,) # concatenate the two dataframes
-    # combined.to_csv('out.csv', sep=',')
+    if type(outputCSV)==str:
+        combined.to_csv('{}table.csv'.format(outputCSV[:-14]), sep=',')
 
 # **Compare the data logs to reveal any events may have been sent by Base Station, but not executed by Cerebro**
 

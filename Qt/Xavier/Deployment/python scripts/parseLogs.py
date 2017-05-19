@@ -10,6 +10,10 @@ summaryStrings = printSummary(combinedDF,baseData['sessionLength'],cerebroData,c
 if showData == "alignment and histogram":
     showAlignmentPlot(cerebroLogPath,combinedDF,compareData,summaryStrings)
     showHistogramPlot(combinedDF)
+elif showData == "alignment and histogram and outcsv":
+    compare(baseDF,cerebroDF,cerebroData['paramNames'],cerebroLogPath)
+    showAlignmentPlot(cerebroLogPath,combinedDF,compareData,summaryStrings)
+    showHistogramPlot(combinedDF)
 elif showData == "save only":
     writeSummary(cerebroLogPath,combinedDF,baseData,cerebroData,compareData)
 elif showData == "save and histogram":

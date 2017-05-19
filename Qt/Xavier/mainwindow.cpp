@@ -57,9 +57,14 @@ MainWindow::MainWindow(QWidget *parent)
         about->setText("About...");
     helpMenu->addAction(about);
 
+    /*Semantic Versioning
+        MAJOR version when you make incompatible API changes,
+        MINOR version when you add functionality in a backwards-compatible manner, and
+        PATCH version when you make backwards-compatible bug fixes.
+    */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.30.1\nUpdated:\t5/12/2017";
+        QString aboutString = "\t1.31.0\nUpdated:\t5/19/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -291,6 +296,10 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(testProgress,2,0,1,2);
             abort_btn = new QPushButton("Stop");
         triggerLayout->addWidget(abort_btn,1,1);
+            memoryDump_btn = new QPushButton("Memory Dump");
+        triggerLayout->addWidget(memoryDump_btn,3,0);
+            resetAddress_btn = new QPushButton("Reset Address");
+        triggerLayout->addWidget(resetAddress_btn,3,1);
             macroText = new QLineEdit();
 //                macroText->setFixedWidth(40);
         triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
@@ -426,14 +435,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
+    connect(memoryDump_btn,SIGNAL(clicked(bool)),this,SLOT(dumpMemory()));
+    connect(resetAddress_btn,SIGNAL(clicked(bool)),this,SLOT(resetAddress()));
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
-
-
-
-    connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
-    connect(offTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
-    connect(fade_checkbox,SIGNAL(clicked()),this,SLOT(fadeChecked()));
-
 
     //Calibration
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
@@ -635,6 +639,7 @@ void MainWindow::connectBasePort()
             QString rst = "R";
             serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
+            connect_btn->setEnabled(false);
             QTimer::singleShot(1000, this, SLOT(sendTime()));
             baseConnected = true;
             errorThrown = false;
@@ -658,7 +663,7 @@ void MainWindow::connectBasePort()
 void MainWindow::connectDownloadPort()
 {
     QString tempPortName = serialPortList2->currentText();
-    if (tempPortName.isEmpty() & !downloadConnected){
+    if (tempPortName.isEmpty() & !downloadConnected &!debugOn){
         QMessageBox noSerial;
         noSerial.setText("Make sure a Downloader Cord is connected \nand click ''Rescan''' to see available Serial Ports.");
         noSerial.setIcon(QMessageBox::Warning);
@@ -709,6 +714,7 @@ void MainWindow::sendTime()
         startup = QString("%1,%2,%3,%4,").arg(startTime,"99","99","99");
     }
     serial->write(startup.toLocal8Bit());
+    connect_btn->setEnabled(true);
     clearBase_btn->setEnabled(true);
 }
 
@@ -1007,7 +1013,6 @@ void MainWindow::saveFile()
             if(pythonEnabled){
                 // Run python script to summarize data from base station and cerebro logs
                 QProcess *process = new QProcess(this);
-                QStringList pythonArgs;
                 QString plotArg;
                 if (showHistogram){
                     plotArg = "save and histogram";
@@ -1015,6 +1020,7 @@ void MainWindow::saveFile()
                 else{
                     plotArg = "save only";
                 }
+                QStringList pythonArgs;
                 pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<plotArg; //pass the two log file locations into the python script
                 process->start("python",pythonArgs);
                 process->waitForFinished(-1);
@@ -1098,6 +1104,18 @@ void MainWindow::macro(){
     qDebug()<<msg<<"sent";
 }
 
+void MainWindow::dumpMemory(){
+    QString msg = "M";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<"sent";
+}
+
+void MainWindow::resetAddress(){
+    QString msg = "A";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<"sent";
+}
+
 void MainWindow::gotoDir(){
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
@@ -1177,8 +1195,17 @@ void MainWindow::getGraphs()
         if (cerData!=""){
             //Run python script for creating graph
             QProcess *process = new QProcess(this);
+            QString plotArg;
+            if (debugOn){
+                plotArg = "alignment and histogram and outcsv";
+                debugOn = false;
+                showDebug();
+            }
+            else{
+                plotArg = "alignment and histogram";
+            }
             QStringList pythonArgs;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<"alignment and histogram"; //pass the two log file locations into the python script
+            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<plotArg; //pass the two log file locations into the python script
             process->start("python",pythonArgs);
             process->waitForFinished(-1);
             QString errorString = process->readAllStandardError();
