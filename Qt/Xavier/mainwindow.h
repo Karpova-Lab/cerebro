@@ -51,6 +51,7 @@ private:
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
     bool                    baseConnected,downloadConnected;
+    bool                    receivedBaseInfo;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -58,7 +59,7 @@ private:
     QSerialPort*            serial,*serial2;
     QTimer*                 timer;
     settingsDialog          *settingsDlog;
-    bool                    pythonEnabled,mcubeEnabled;
+    bool                    pythonEnabled,mcubeEnabled,showHistogram;
     bool                    errorThrown;
     int                     baseFilter;
     QString                 startTime;
@@ -83,7 +84,7 @@ private:
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 serial_title;
+    QLabel*                 serial_title,*baseFilter_label;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
@@ -121,7 +122,7 @@ private:
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*memoryDump_btn,*resetAddress_btn,*macro_btn;;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 
@@ -169,6 +170,8 @@ private slots:
     void macro();
     void triggerPushed();
     void triggerChecked();
+    void resetAddress();
+    void dumpMemory();
 
     //Cerebro Parmeters
     void trainChecked();

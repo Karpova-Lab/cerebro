@@ -18,3 +18,29 @@ CCS.pro.user.5163482
 CCS.pro.user.e18160a
 JSON testing
 .ipynb_checkpoints
+Qt/build-CCS-Desktop_Qt_5_6_2_MinGW_32bit-Release
+Qt/Xavier/release
+Makefile
+Makefile.Debug
+Makefile.Release
+diode pairing
+Qt/Xavier/Deployment/python scripts/__pycache__
+calibrate convert.ipynb
+filter truth table.xlsx
+LD24_Nov01_14h_00_cer31_firm49_calibrate_summary.txt
+LDMasha_bluediode_1_Nov17_5_02p_cer29_firm44_calibrate.txt
+Qt/Xavier/Deployment/python scripts
+Qt/Xavier/Xavier.app
+Qt/Xavier/.qmake.stash
+Qt/Xavier/dropbutton.o
+Qt/Xavier/moc_dropbutton.cpp
+Qt/Xavier/moc_dropbutton.o
+Qt/Xavier/moc_mainwindow.cpp
+Qt/Xavier/moc_mainwindow.o
+Qt/Xavier/moc_settingsDialog.cpp
+Qt/Xavier/moc_settingsDialog.o
+Qt/Xavier/settingsDialog.o
+Qt/Xavier/Xavier.pro.user
+Qt/Xavier/Xavier.pro.user.5163482
+Qt/Xavier/Xavier.pro.user.e18160a
+Thumbs.db

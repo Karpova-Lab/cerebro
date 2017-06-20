@@ -44,7 +44,7 @@ SoftwareSerial mySerial(3,4);
 String startupMsg;
 unsigned long timeOffset;
 byte values[numParameters][6];
-byte version = 23;
+byte version = 24;
 unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
 long triggerClock = 0;
 unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
@@ -210,6 +210,11 @@ void parseMsg(byte numValues){
     cerebro.dumpMemory();
     mySerial.print(millis() - timeOffset);
     mySerial.print(F(",Memory Dump Sent\r"));
+  }
+  else if (values[0][0] == 'A') {
+    cerebro.resetAddress();
+    mySerial.print(millis() - timeOffset);
+    mySerial.print(F(",Address Reset Sent\r"));
   }
   else if (values[0][0] == 'P') {
     cerebro.sendBinary(36,7); //sends message that sets the powerTest flag

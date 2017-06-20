@@ -17,6 +17,7 @@ public:
   void implantCharacterize();
   void diodeCharacterize();
   void dumpMemory();
+  void resetAddress();
   void sendBinary(unsigned int value, unsigned char valSize);
   void powerTest(unsigned int testLevel);
   byte getEmitterType();

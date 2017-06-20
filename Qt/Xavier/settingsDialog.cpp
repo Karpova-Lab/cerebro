@@ -11,6 +11,9 @@ settingsDialog::settingsDialog(QWidget *parent)
     #elif __APPLE__ //---------Mac USB parse settings---------------
         usbTag  = "cu.usbserial";
         usbDescription = "FT230X Basic UART";
+    #elif __linux__ //---------Linux USB parse settings-------------
+        usbTag  = "ttyUSB";
+        usbDescription = "FT230X Basic UART";
     #endif
     //Save directory editor
     directoryBox = new QGroupBox("Edit Default Save Directory");
@@ -117,16 +120,23 @@ settingsDialog::settingsDialog(QWidget *parent)
             pythonCheckbox = new QCheckBox("Enable Python Scripts");
             pythonCheckbox->setChecked(pythonEnabled);
         featuresLayout->addWidget(pythonCheckbox);
+            histogramCheckbox  = new QCheckBox("Show histogram of light levels at the end of the session");
+            histogramCheckbox->setChecked(showHistogram);
+        featuresLayout->addWidget(histogramCheckbox);
             mcubeCheckbox = new QCheckBox("Check this box if using Xavier with MCUBE (without photoresistor feedback)");
             mcubeCheckbox->setChecked(mcubeEnabled);
         featuresLayout->addWidget(mcubeCheckbox);
     featuresBox->setLayout(featuresLayout);
+
+    okButton = new QPushButton("Save Settings");
+    okButton->setFocusPolicy(Qt::NoFocus);
 
     settingsLayout = new QGridLayout();
     settingsLayout->addWidget(directoryBox);
     settingsLayout->addWidget(sessionListsBox);
     settingsLayout->addWidget(portEditBox);
     settingsLayout->addWidget(featuresBox);
+    settingsLayout->addWidget(okButton);
 
     this->setWindowTitle("Settings");
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
@@ -151,6 +161,8 @@ settingsDialog::settingsDialog(QWidget *parent)
     connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
     connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
     connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
+    connect(okButton,SIGNAL(clicked()),this,SLOT(close()));
+    connect(pythonCheckbox,SIGNAL(clicked(bool)),histogramCheckbox,SLOT(setEnabled(bool)));
 
 }
 
@@ -170,6 +182,7 @@ void settingsDialog::saveChanges(){
 
     settings.beginGroup("Features");
         settings.setValue("pythonEnabled",pythonCheckbox->isChecked());
+        settings.setValue("showHistogram",histogramCheckbox->isChecked());
         settings.setValue("mcubeEnabled",mcubeCheckbox->isChecked());
     settings.endGroup();
 
@@ -278,10 +291,12 @@ void settingsDialog::openSettings()
     //--Other Settings--//
     settings.beginGroup("Features");
         pythonEnabled = settings.value("pythonEnabled").toBool();
+        showHistogram = settings.value("showHistogram").toBool();
         mcubeEnabled = settings.value("mcubeEnabled").toBool();
     settings.endGroup();
     //set the checkboxes to match what we got from memory
     pythonCheckbox->setChecked(pythonEnabled);
+    histogramCheckbox->setChecked(showHistogram);
     mcubeCheckbox->setChecked(mcubeEnabled);
 
     this->exec();

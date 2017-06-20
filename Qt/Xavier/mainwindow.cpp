@@ -57,9 +57,14 @@ MainWindow::MainWindow(QWidget *parent)
         about->setText("About...");
     helpMenu->addAction(about);
 
+    /*Semantic Versioning
+        MAJOR version when you make incompatible API changes,
+        MINOR version when you add functionality in a backwards-compatible manner, and
+        PATCH version when you make backwards-compatible bug fixes.
+    */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.28.2\nUpdated:\t2/6/2017";
+        QString aboutString = "\t1.31.0\nUpdated:\t5/19/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -102,13 +107,15 @@ MainWindow::MainWindow(QWidget *parent)
         clearBase_btn = new QPushButton();
             clearBase_btn->setText("Clear Monitor");
         serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
+            baseFilter_label = new QLabel("Filter Duration:");
+        serialMonitorLayout->addWidget(baseFilter_label,1,0);
             baseMonitor = new QPlainTextEdit();
             baseMonitor->setMinimumWidth(300);
             baseMonitor->setMinimumHeight(500);
-        serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
+        serialMonitorLayout->addWidget(baseMonitor,2,0,1,6);
             eeprom_btn = new QPushButton();
             eeprom_btn->setText("(While the rat is still in the rig)\nClick to End Session");
-        serialMonitorLayout->addWidget(eeprom_btn,2,0,1,6);
+        serialMonitorLayout->addWidget(eeprom_btn,3,0,1,6);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
@@ -289,6 +296,10 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(testProgress,2,0,1,2);
             abort_btn = new QPushButton("Stop");
         triggerLayout->addWidget(abort_btn,1,1);
+            memoryDump_btn = new QPushButton("Memory Dump");
+        triggerLayout->addWidget(memoryDump_btn,3,0);
+            resetAddress_btn = new QPushButton("Reset Address");
+        triggerLayout->addWidget(resetAddress_btn,3,1);
             macroText = new QLineEdit();
 //                macroText->setFixedWidth(40);
         triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
@@ -355,6 +366,9 @@ MainWindow::MainWindow(QWidget *parent)
 #elif __APPLE__ //---------Mac USB parse settings---------------
     usbTag  = "cu.usbserial";
     usbDescription = "FT230X Basic UART";
+#elif __linux__ //---------Linux USB parse settings-------------
+    usbTag  = "ttyUSB";
+    usbDescription = "FT230X Basic UART";
 #endif
 
     //program setup
@@ -362,6 +376,7 @@ MainWindow::MainWindow(QWidget *parent)
     serial2 = new QSerialPort(this);
     startingUp = true;
     baseConnected = false;
+    receivedBaseInfo = false;
     downloadConnected = false;
     inTestloop = false;
     testCount = 0;
@@ -420,14 +435,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
+    connect(memoryDump_btn,SIGNAL(clicked(bool)),this,SLOT(dumpMemory()));
+    connect(resetAddress_btn,SIGNAL(clicked(bool)),this,SLOT(resetAddress()));
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
-
-
-
-    connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
-    connect(offTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
-    connect(fade_checkbox,SIGNAL(clicked()),this,SLOT(fadeChecked()));
-
 
     //Calibration
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
@@ -493,6 +503,7 @@ void MainWindow::applySettings()
     //
     settings.beginGroup("Features");
         pythonEnabled = settings.value("pythonEnabled").toBool();
+        showHistogram = settings.value("showHistogram").toBool();
         mcubeEnabled = settings.value("mcubeEnabled").toBool();
     settings.endGroup();
     toolMenu->setEnabled(pythonEnabled);
@@ -565,21 +576,21 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
-    if((rigSelect->selectedItems().size()==0) & !baseConnected){ //didn't select Rig
+    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select Rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rig #");
         alert.exec();
         }
-    else if((ratSelect->selectedItems().size()==0) & !baseConnected){ //didn't select rat
+    else if((ratSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select rat
         QMessageBox alert;
         alert.setText("Please select a Rat ID to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rat ID");
         alert.exec();
     }
-    else if((cerebroSelect->selectedItems().size()==0) & !baseConnected){ //didn't select cerebro
+    else if((cerebroSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select cerebro
         QMessageBox alert;
         alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -620,12 +631,17 @@ void MainWindow::connectBasePort()
             serial->open(QIODevice::ReadWrite);
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
-            setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );
+            if(!debugOn){
+                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );}
+            else{
+                setWindowTitle("Debug Mode");
+            }
             QString rst = "R";
             serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
+            connect_btn->setEnabled(false);
             QTimer::singleShot(1000, this, SLOT(sendTime()));
-            baseConnected = 1;
+            baseConnected = true;
             errorThrown = false;
         }
         else{ //disconnect from serial port
@@ -636,8 +652,9 @@ void MainWindow::connectBasePort()
             setWindowTitle("Xavier");
             debugOn = false;
             showDebug();
-            baseConnected = 0;
-
+            baseConnected = false;
+            receivedBaseInfo = false;
+            baseFilter_label->setText("Filter Duration:");
         }
     }
     connect_btn->setChecked(baseConnected);
@@ -646,7 +663,7 @@ void MainWindow::connectBasePort()
 void MainWindow::connectDownloadPort()
 {
     QString tempPortName = serialPortList2->currentText();
-    if (tempPortName.isEmpty() & !downloadConnected){
+    if (tempPortName.isEmpty() & !downloadConnected &!debugOn){
         QMessageBox noSerial;
         noSerial.setText("Make sure a Downloader Cord is connected \nand click ''Rescan''' to see available Serial Ports.");
         noSerial.setIcon(QMessageBox::Warning);
@@ -689,8 +706,15 @@ void MainWindow::connectDownloadPort()
 void MainWindow::sendTime()
 {
     startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-    QString startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+    QString startup;
+    if (!debugOn){
+        startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+    }
+    else{
+        startup = QString("%1,%2,%3,%4,").arg(startTime,"99","99","99");
+    }
     serial->write(startup.toLocal8Bit());
+    connect_btn->setEnabled(true);
     clearBase_btn->setEnabled(true);
 }
 
@@ -699,6 +723,18 @@ void MainWindow::readSerial()
     baseMonitor->moveCursor(QTextCursor::End);
     baseMonitor->insertPlainText(serial->readAll());
     baseMonitor->ensureCursorVisible();
+    if(!receivedBaseInfo){
+        QString buffer = baseMonitor->toPlainText();
+        qDebug()<<buffer.count('\n')<<buffer.count('_')<<buffer.count(',');
+        if (buffer.count('\n')==1 && buffer.count('_')==4 && buffer.count(',')==5){
+            receivedBaseInfo = true;
+            QStringList baseInfo = buffer.trimmed().split(',');
+            baseFilter_label->setText("Filter Duration: "+ baseInfo[5]+ " ms");
+        }
+        else if (buffer.count('\n')>1){
+            receivedBaseInfo = true; //stop searching if we haven't found it after the first line
+        }
+    }
 }
 void MainWindow::readLog()
 {
@@ -768,6 +804,8 @@ void MainWindow::readLog()
 void MainWindow::clearMonitor()
 {
     baseMonitor->clear();
+    receivedBaseInfo = false;
+    baseFilter_label->setText("Filter Duration:");
     if(baseConnected){
         QString rst = "R";
         serial->write(rst.toLocal8Bit());
@@ -975,8 +1013,15 @@ void MainWindow::saveFile()
             if(pythonEnabled){
                 // Run python script to summarize data from base station and cerebro logs
                 QProcess *process = new QProcess(this);
+                QString plotArg;
+                if (showHistogram){
+                    plotArg = "save and histogram";
+                }
+                else{
+                    plotArg = "save only";
+                }
                 QStringList pythonArgs;
-                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<"0"; //pass the two log file locations into the python script
+                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<plotArg; //pass the two log file locations into the python script
                 process->start("python",pythonArgs);
                 process->waitForFinished(-1);
                 QString errorString = process->readAllStandardError();
@@ -1022,7 +1067,7 @@ void MainWindow::errorMsg()
 
 void MainWindow::updateFilter(){
     if (singleShot->isChecked()){
-        baseFilter = startDelay_spn->value() + onTime_spn->value()+fade_spn->value() * fade_checkbox->isChecked();
+        baseFilter = startDelay_spn->value() + onTime_spn->value();
     }
     else{
         baseFilter = startDelay_spn->value()+ trainDuration_spn->value();
@@ -1059,6 +1104,18 @@ void MainWindow::macro(){
     qDebug()<<msg<<"sent";
 }
 
+void MainWindow::dumpMemory(){
+    QString msg = "M";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<"sent";
+}
+
+void MainWindow::resetAddress(){
+    QString msg = "A";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<"sent";
+}
+
 void MainWindow::gotoDir(){
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
@@ -1090,16 +1147,19 @@ void MainWindow::trainDur(){
 void MainWindow::showDebug(){
     debugCheckbox->setChecked(debugOn);
     if (debugOn){
-        rigSelect->setCurrentRow(0);
-        ratSelect->setCurrentRow(0);
-        cerebroSelect->setCurrentRow(0);
+        rigSelect->setEnabled(false);
+        ratSelect->setEnabled(false);
+        cerebroSelect->setEnabled(false);
+        rigSelect->clearSelection();
+        ratSelect->clearSelection();
+        cerebroSelect->clearSelection();
         connect_btn->setText("Start Session (Debug Mode)");
         toggleDebug->setText("Exit Debug Mode");
     }
     else{
-        rigSelect->clearSelection();
-        ratSelect->clearSelection();
-        cerebroSelect->clearSelection();
+        rigSelect->setEnabled(true);
+        ratSelect->setEnabled(true);
+        cerebroSelect->setEnabled(true);
         connect_btn->setText("Start Session");
         toggleDebug->setText("Enter Debug Mode");
     }
@@ -1111,7 +1171,7 @@ void MainWindow::fadeChecked(){
 
 void MainWindow::openDocs(){
 //    opens readthedocs.com documentation
-    QUrl site = QUrl::fromEncoded( "http://cerebro.readthedocs.io/en/latest/Software/Xavier.html#xavier-user-guide");
+    QUrl site = QUrl::fromEncoded( "https://karpova-lab.github.io/cerebro/Software/Xavier.html");
     QDesktopServices::openUrl(site);
 //    //opens local html file
 //    QProcess *process = new QProcess(this);
@@ -1135,8 +1195,17 @@ void MainWindow::getGraphs()
         if (cerData!=""){
             //Run python script for creating graph
             QProcess *process = new QProcess(this);
+            QString plotArg;
+            if (debugOn){
+                plotArg = "alignment and histogram and outcsv";
+                debugOn = false;
+                showDebug();
+            }
+            else{
+                plotArg = "alignment and histogram";
+            }
             QStringList pythonArgs;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<"1"; //pass the two log file locations into the python script
+            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<plotArg; //pass the two log file locations into the python script
             process->start("python",pythonArgs);
             process->waitForFinished(-1);
             QString errorString = process->readAllStandardError();
@@ -1159,7 +1228,6 @@ void MainWindow::getGraphs()
         }
     }
 }
-
 
 void MainWindow::setDebug()
 {
