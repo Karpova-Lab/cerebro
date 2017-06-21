@@ -3,10 +3,17 @@ void characterizeRoutine(){
   bool firstMax = true;
   unsigned int dlay = 3000;
   if (!implantMode){
-    dlay = 500;
+    dlay = 4000;
   }
   delay(dlay);
-  for (int b = 70; b<1023; b+=50){
+  byte initial = 70;
+  byte increment = 30;
+  byte maxNumDataPts = 12;
+  for (byte sample = 0; sample<maxNumDataPts; sample++){
+    int b = sample*increment+initial;
+  // for (int b = 40; b<1023; b+=30){
+		mySerial.print(b);
+		mySerial.print(",");
     if(!isMaxed){
       triggerEvent(b);
       delay(dlay);
@@ -37,7 +44,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
   }
   else if(diodeMode){
     onDelay = 0;
-    onTime = 300;
+    onTime = 1000;
     offTime = 0;
     trainDur = 0;
     rampDur = 0;
@@ -186,9 +193,7 @@ void sendDAC(int value) {
 bool laserOFF(){
   ADCSRA |= (1<<ADSC);                    //start analog conversion
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  mySerial.print(ADC);
-  mySerial.print(",");
-  mySerial.println(powerLevel);
+  mySerial.println(ADC);
   LATCH_outputReg &= ~(1<<LATCH_pin); //latch low
   myShift(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
   myShift(0);
