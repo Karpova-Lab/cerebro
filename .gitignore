@@ -1,38 +1,16 @@
-IR remote demonstration 2.mp4
-PCB Files/Cerebro 4.8/.Cerebro 4.8.brd.lck
-PCB Files/Cerebro 4.8/.Cerebro 4.8.sch.lck
-QT/Calibration Utility/release
-CCS.pro.user
-QT/build-CCS-Desktop_Qt_5_4_2_MinGW_32bit-Debug
-main.o
-mainwindow.o
-Xavier.exe
-logFunctions.pyc
-calFunctions.pyc
-mainwindow.cpp.autosave
-Xavier.exe - Shortcut.lnk
-QT/build-CCS-Desktop_Qt_5_4_2_MinGW_32bit-Release
-QT/release
-QT/build-CCS-Desktop_Qt_5_6_0_clang_64bit-Release
-CCS.pro.user.5163482
-CCS.pro.user.e18160a
 JSON testing
-.ipynb_checkpoints
-Qt/build-CCS-Desktop_Qt_5_6_2_MinGW_32bit-Release
+*__pycache__
+*.ipynb_checkpoints
+Thumbs.db
 Qt/Xavier/release
-Makefile
-Makefile.Debug
-Makefile.Release
-diode pairing
-Qt/Xavier/Deployment/python scripts/__pycache__
-calibrate convert.ipynb
-filter truth table.xlsx
-LD24_Nov01_14h_00_cer31_firm49_calibrate_summary.txt
-LDMasha_bluediode_1_Nov17_5_02p_cer29_firm44_calibrate.txt
-Qt/Xavier/Deployment/python scripts
-Qt/Xavier/Xavier.app
+parse log debug.ipynb
 Qt/Xavier/.qmake.stash
 Qt/Xavier/dropbutton.o
+Qt/Xavier/main.o
+Qt/Xavier/mainwindow.o
+Qt/Xavier/Makefile
+Qt/Xavier/Makefile.Debug
+Qt/Xavier/Makefile.Release
 Qt/Xavier/moc_dropbutton.cpp
 Qt/Xavier/moc_dropbutton.o
 Qt/Xavier/moc_mainwindow.cpp
@@ -43,4 +21,3 @@ Qt/Xavier/settingsDialog.o
 Qt/Xavier/Xavier.pro.user
 Qt/Xavier/Xavier.pro.user.5163482
 Qt/Xavier/Xavier.pro.user.e18160a
-Thumbs.db
