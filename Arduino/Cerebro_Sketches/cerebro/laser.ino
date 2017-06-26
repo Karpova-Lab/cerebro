@@ -7,8 +7,8 @@ void characterizeRoutine(){
   }
   delay(dlay);
   byte initial = 70;
-  byte increment = 30;
-  byte maxNumDataPts = 12;
+  byte increment = 95;
+  byte maxNumDataPts = 10;
   for (byte sample = 0; sample<maxNumDataPts; sample++){
     int b = sample*increment+initial;
   // for (int b = 40; b<1023; b+=30){
