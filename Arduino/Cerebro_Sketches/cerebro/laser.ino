@@ -1,18 +1,18 @@
 
 void characterizeRoutine(){
   bool firstMax = true;
-  unsigned int dlay = 3000;
-  if (!implantMode){
-    dlay = 4000;
-  }
-  delay(dlay);
+  unsigned int dlay = 4000;
   byte initial = 70;
   byte increment = 95;
-  byte maxNumDataPts = 10;
+  byte maxNumDataPts = 11;
+  if (diodeMode){
+    increment = 30;
+    maxNumDataPts = 12;
+  }
+  delay(dlay);
   for (byte sample = 0; sample<maxNumDataPts; sample++){
     int b = sample*increment+initial;
-  // for (int b = 40; b<1023; b+=30){
-		mySerial.print(b);
+    mySerial.print(b);
 		mySerial.print(",");
     if(!isMaxed){
       triggerEvent(b);
@@ -35,14 +35,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
   delayClock=millis();              //reset clocks
   byte rcvd = 0;
   unsigned int onDelay,onTime,offTime,trainDur,rampDur;
-  if (implantMode){
-    onDelay = 0;
-    onTime = 2000;
-    offTime = 0;
-    trainDur = 0;
-    rampDur = 0;
-  }
-  else if(diodeMode){
+  if (implantMode|diodeMode){
     onDelay = 0;
     onTime = 1000;
     offTime = 0;
