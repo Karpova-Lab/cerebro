@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 61;
+const byte version = 62;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE //uncomment to disable feedback during a trigger
 // #define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
@@ -154,7 +154,7 @@ void save2EEPROM();
 void readAddresses(int start, int finish);
 void printEEPROM();
 void myShift(int val);
-void sendDAC(int value);
+void sendDAC(unsigned int value);
 bool laserOFF();
 void updateFadeVector(uint16_t (&marks)[NUMPULSES],byte offset);
 void updateHardware(uint16_t (&marks)[NUMPULSES]);
@@ -165,7 +165,7 @@ void recordLightLevel(int lightLevel);
 
 void setup() {
   ///////////Analog setup////////////////////////////
-  ADMUX = B10000010;       //Internal 1.1V voltage reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13.1 of datasheet
+  ADMUX = B00000010;       //Vcc used as analog reference reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13.1 of datasheet
   ADCSRA |= (1<<ADPS2) | (1<<ADPS1);  //set division factor of 64. ADC frequncy = 8Mhz/64=125khz (ADC needs to be in 50-200khz range)
   ADCSRA |= (1<<ADEN);                //enable the ADC
   ////////////Digital setup//////////////////////////

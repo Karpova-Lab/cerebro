@@ -5,22 +5,37 @@ void characterizeRoutine(){
   byte initial = 70;
   byte increment = 95;
   byte maxNumDataPts = 11;
+  bool feedback = true;
+  byte multiplier = 1;
   if (diodeMode){
     increment = 30;
     maxNumDataPts = 12;
+    feedback = false;
+    multiplier = 4;
   }
   delay(dlay);
-  for (byte sample = 0; sample<maxNumDataPts; sample++){
-    int b = sample*increment+initial;
+  for (int b = 500; b<751; b+=50){
+    triggerEvent(b*multiplier,feedback);
+    delay(dlay);
+  }
+  for (int b = 760; b<901; b+=10){
+    triggerEvent(b*multiplier,feedback);
+    delay(dlay);
+  }
+  for (int b = 905; b<1026; b+=5){
+    // int b = sample*increment+initial;
     mySerial.print(b);
 		mySerial.print(",");
     if(!isMaxed){
-      triggerEvent(b);
+      triggerEvent(b*multiplier,feedback);
       delay(dlay);
     }
-    else if(firstMax){
-      triggerEvent(b);
+    else if(firstMax){  //trigger once more after being maxed
+      triggerEvent(b*multiplier,feedback);
       firstMax = false;
+    }
+    else{
+      //do nothing
     }
   }
   isMaxed = false; //reset isMaxed
@@ -103,7 +118,10 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
       }
       else{
         sendDAC(DAClevel);              //Laser on
-        feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
+        if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
+          feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
+        }
+        alt++;
       }
       if (!triggerRecorded){           //event has not yet been recorded
         if (address < memorySize) {    //record trigger event
@@ -144,8 +162,8 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
 void feedback(int setPoint){
   ADCSRA |= (1<<ADSC);                    //start analog conversion
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  int photodiodeVoltage = ADC;
-  error = setPoint-photodiodeVoltage;
+  int photocellVoltage = ADC;
+  error = setPoint-photocellVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
     DAClevel = 4095;
@@ -175,7 +193,7 @@ void fade(){
   }
 }
 
-void sendDAC(int value) {
+void sendDAC(unsigned int value) {
   LATCH_outputReg &= ~(1<<LATCH_pin); //latch low selects the chip
   myShift(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
   myShift(value>>4);                  //shift high byte
