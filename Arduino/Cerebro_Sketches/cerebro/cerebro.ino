@@ -140,7 +140,8 @@ int DAClevel = 0;
 #endif
 
 //---------function prototypes---------//
-void characterizeRoutine();
+void characterizeDiode();
+void characterizeImplant();
 void triggerEvent(unsigned int desiredPower, bool useFeedback=true);
 void feedback(int setPoint);
 void fade();
@@ -218,9 +219,14 @@ void loop() {
   }
   else if(implantMode || diodeMode){
     digitalWrite(indicatorLED,HIGH);
-    characterizeRoutine();
-    implantMode = false;
-    diodeMode = false;
+    if(diodeMode){
+      characterizeDiode();
+      diodeMode = false;
+    }
+    else if(implantMode){
+      characterizeImplant();
+      implantMode = false;
+    }
     digitalWrite(indicatorLED,LOW);
   }
   else if (powerTestMode){

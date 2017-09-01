@@ -1,37 +1,35 @@
+void characterizeDiode(){
+  triggerEvent(50); //warmup
+  delay(60000);
+  triggerEvent(50); //~ 1mW
+  delay(60000);
+  triggerEvent(70); //~1.5 mW
+  delay(60000);
+  triggerEvent(90); //~2 mW
 
-void characterizeRoutine(){
+}
+//
+void characterizeImplant(){
   bool firstMax = true;
   unsigned int dlay = 4000;
-  byte initial = 70;
-  byte increment = 95;
-  byte maxNumDataPts = 11;
-  bool feedback = true;
-  byte multiplier = 1;
-  if (diodeMode){
-    increment = 30;
-    maxNumDataPts = 12;
-    feedback = false;
-    multiplier = 4;
-  }
   delay(dlay);
-  for (int b = 500; b<751; b+=50){
-    triggerEvent(b*multiplier,feedback);
+  for (int testLevel = 500; testLevel<751; testLevel+=50){
+    triggerEvent(testLevel);
     delay(dlay);
   }
-  for (int b = 760; b<901; b+=10){
-    triggerEvent(b*multiplier,feedback);
+  for (int testLevel = 760; testLevel<901; testLevel+=10){
+    triggerEvent(testLevel);
     delay(dlay);
   }
-  for (int b = 905; b<1026; b+=5){
-    // int b = sample*increment+initial;
-    mySerial.print(b);
+  for (int testLevel = 905; testLevel<1026; testLevel+=5){
+    mySerial.print(testLevel);
 		mySerial.print(",");
     if(!isMaxed){
-      triggerEvent(b*multiplier,feedback);
+      triggerEvent(testLevel);
       delay(dlay);
     }
     else if(firstMax){  //trigger once more after being maxed
-      triggerEvent(b*multiplier,feedback);
+      triggerEvent(testLevel);
       firstMax = false;
     }
     else{
@@ -50,7 +48,14 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
   delayClock=millis();              //reset clocks
   byte rcvd = 0;
   unsigned int onDelay,onTime,offTime,trainDur,rampDur;
-  if (implantMode|diodeMode){
+  if (diodeMode){
+    onDelay = 0;
+    onTime = 2000;
+    offTime = 6000;
+    trainDur = 57000;
+    rampDur = 0;
+  }
+  else if (implantMode){
     onDelay = 0;
     onTime = 1000;
     offTime = 0;
@@ -150,10 +155,6 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
           fade();
         }
       }
-      if(implantMode || diodeMode){
-        mySerial.print(desiredPower);
-        mySerial.print(",");
-      }
       laserEnabled = laserOFF();
     }
   }
@@ -204,7 +205,9 @@ void sendDAC(unsigned int value) {
 bool laserOFF(){
   ADCSRA |= (1<<ADSC);                    //start analog conversion
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  mySerial.println(ADC);
+  mySerial.print(ADC);
+  mySerial.print(',');
+  mySerial.println(DAClevel);
   LATCH_outputReg &= ~(1<<LATCH_pin); //latch low
   myShift(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
   myShift(0);
