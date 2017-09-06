@@ -22,8 +22,8 @@ void characterizeImplant(){
     delay(dlay);
   }
   for (int testLevel = 905; testLevel<1026; testLevel+=5){
-    mySerial.print(testLevel);
-		mySerial.print(",");
+    Serial.print(testLevel);
+		Serial.print(",");
     if(!isMaxed){
       triggerEvent(testLevel);
       delay(dlay);
@@ -64,7 +64,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
   }
   else{
     onDelay = 0;
-    onTime = 100;
+    onTime = 1000;
     offTime = 0;
     trainDur = 0;
     rampDur = 0;
@@ -76,23 +76,23 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
   }
   if (onDelay>0){
     while ((millis()-delayClock)<waveform[ON_DELAY]){
-      if (!(IR_inputReg & (1<<IR_pin))){
-        while(! (IR_inputReg & (1<<IR_pin))){
-          //wait until stop pulse is finished
-        }
-        rcvd = listenForIR(5000);
-        if (stopMatch){
-          laserEnabled = laserOFF();
-          if (address < memorySize) {       //record abort event
-            recordEvent('A');
-          }
-          stopMatch = false;
-        }
-        rcvd = 0;
-      }
+      // if (!(IR_inputReg & (1<<IR_pin))){
+      //   while(! (IR_inputReg & (1<<IR_pin))){
+      //     //wait until stop pulse is finished
+      //   }
+      //   rcvd = listenForIR(5000);
+      //   if (stopMatch){
+      //     laserEnabled = laserOFF();
+      //     if (address < memorySize) {       //record abort event
+      //       recordEvent('A');
+      //     }
+      //     stopMatch = false;
+      //   }
+      //   rcvd = 0;
+      // }
     }
   }
-  mySerial.println('B');                  
+  Serial.println('B');                  
   onClock=trainClock=millis();
   while(laserEnabled){   
     // //check if another command (abort or continuation) has been sent since the trigger was activated
@@ -127,7 +127,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     if ((millis()-onClock)<onTime){
         
       if(!useFeedback){
-        mySerial.println('D');                
+        Serial.println('D');                
         sendDAC(desiredPower);
       }
       else{
@@ -138,7 +138,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
         alt++;
       }
       if (!triggerRecorded){           //event has not yet been recorded
-        mySerial.println('E');
+        Serial.println('E');
         if (address < memorySize) {    //record trigger event
           recordEvent('T');
         }
@@ -171,9 +171,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
 }
 
 void feedback(int setPoint){
-  ADCSRA |= (1<<ADSC);                    //start analog conversion
-  loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  int photocellVoltage = ADC;
+  int photocellVoltage = analogRead(A0);
   error = setPoint-photocellVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
@@ -205,43 +203,32 @@ void fade(){
 }
 
 void sendDAC(unsigned int value) {
-  LATCH_outputReg &= ~(1<<LATCH_pin); //latch low selects the chip
-  myShift(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
-  myShift(value>>4);                  //shift high byte
-  myShift(value<<4 & 255);            //shift low byte
-  LATCH_outputReg |= (1<<LATCH_pin);  //latch high de-selects the chip
+  SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
+  digitalWrite(slaveSelect,LOW);  
+  SPI.transfer(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
+  SPI.transfer(value>>4);                  //shift high byte
+  SPI.transfer(value<<4 & 255);            //shift low byte
+  digitalWrite(slaveSelect,HIGH);
+  SPI.endTransaction();
 }
 
 bool laserOFF(){
-  mySerial.println("laser off");
-  ADCSRA |= (1<<ADSC);                    //start analog conversion
-  loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  mySerial.print(ADC);
-  mySerial.print(',');
-  mySerial.println(DAClevel);
-  LATCH_outputReg &= ~(1<<LATCH_pin); //latch low
-  myShift(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
-  myShift(0);
-  myShift(0);
-  LATCH_outputReg |= (1<<LATCH_pin);  //latch high
+  Serial.println("laser off");
+  Serial.print(analogRead(A0));
+  Serial.print(',');
+  Serial.println(DAClevel);
+  SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
+  digitalWrite(slaveSelect,LOW);
+  SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
+  SPI.transfer(0);
+  SPI.transfer(0);
+  digitalWrite(slaveSelect,HIGH);
   #ifndef MCUBE
   if (DAClevel==4095){
     isMaxed = true;
   }
   DAClevel = 0;
   #endif
+  SPI.endTransaction();   
   return false;
-}
-
-void myShift(int val){                  //shifts out data MSB first
-  for (int i = 7; i > -1; i--){
-    if(val & (1<<i)){                   //shift high bit
-      DATA_outputReg |= (1<<DATA_pin);
-    }
-    else{                               // shift low bit
-      DATA_outputReg &= ~(1<<DATA_pin);
-    }
-    CLK_outputReg |= (1<<CLK_pin);      //clock high
-    CLK_outputReg &= ~(1<<CLK_pin);     //clock low
-  }
 }

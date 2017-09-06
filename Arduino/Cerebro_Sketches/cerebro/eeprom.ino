@@ -109,63 +109,63 @@ void readAddresses(int start, int finish){
   //   third = eepromReadByte(k+3);
   //   if(char(eepromReadByte(k))=='T'){
   //     stamp = first<<16|second<<8|third;                    //combine bytes to get timestamp
-  //     mySerial.print('\r');
-  //     mySerial.print(stamp);
-  //     mySerial.print(',');
-  //     mySerial.print(F("trigger"));
+  //     Serial.print('\r');
+  //     Serial.print(stamp);
+  //     Serial.print(',');
+  //     Serial.print(F("trigger"));
   //     k+=3;
   //   }
   //   else if (char(eepromReadByte(k))=='A'){
   //     stamp = first<<16|second<<8|third;
-  //     mySerial.print('\r');
-  //     mySerial.print(stamp);
-  //     mySerial.print(',');
-  //     mySerial.print(F("abort"));
+  //     Serial.print('\r');
+  //     Serial.print(stamp);
+  //     Serial.print(',');
+  //     Serial.print(F("abort"));
   //     k+=3;
   //   }
   //   else if (char(eepromReadByte(k))=='C'){
   //     stamp = first<<16|second<<8|third;
-  //     mySerial.print('\r');
-  //     mySerial.print(stamp);
-  //     mySerial.print(',');
-  //     mySerial.print(F("continue"));
+  //     Serial.print('\r');
+  //     Serial.print(stamp);
+  //     Serial.print(',');
+  //     Serial.print(F("continue"));
   //     k+=3;
   //   }
   //   else if (char(eepromReadByte(k))=='L'){
   //     int lightLevel = first<<8|second;
-  //     mySerial.print(',');
-  //     mySerial.print(lightLevel);
+  //     Serial.print(',');
+  //     Serial.print(lightLevel);
   //     k+=2;
   //   }
   //   else if (char(eepromReadByte(k))=='P'){
   //     unsigned int param1;
   //     for (int i = 0; i<NUMPARAM; i++){
-  //       mySerial.print('\r');
+  //       Serial.print('\r');
   //       param1 = eepromReadByte(k+1+2*i)<<8;
   //       strcpy_P(label, (char*)pgm_read_word(&(parameterLabels[i])));    //Necessary casts and dereferencing
-  //       mySerial.print(label);
-  //       mySerial.print(word(param1|eepromReadByte(k+2*(i+1))));
+  //       Serial.print(label);
+  //       Serial.print(word(param1|eepromReadByte(k+2*(i+1))));
   //     }
   //     k+=NUMPARAM*2;
   //   }
   //   else{
-  //     mySerial.println(F("error"));
+  //     Serial.println(F("error"));
   //   }
   // }
 }
 
 void printEEPROM(){
   // //print firmware version
-  // mySerial.print(F("Ver,"));
-  // mySerial.print(version);
+  // Serial.print(F("Ver,"));
+  // Serial.print(version);
 
   // //print hardware parameters
-  // mySerial.print('\r');
-  // mySerial.print(F("Cerebro,"));
-  // mySerial.print(cerebroNum);
-  // mySerial.print('\r');
-  // mySerial.print(F("LD,"));
-  // mySerial.print(LD);
+  // Serial.print('\r');
+  // Serial.print(F("Cerebro,"));
+  // Serial.print(cerebroNum);
+  // Serial.print('\r');
+  // Serial.print(F("LD,"));
+  // Serial.print(LD);
 
   // //print the list of events
   // unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
@@ -173,31 +173,31 @@ void printEEPROM(){
 
   // //print pulse parameters
   // for (int i = 0; i<NUMPARAM; i++){
-  //   mySerial.print('\r');
+  //   Serial.print('\r');
   //   strcpy_P(label, (char*)pgm_read_word(&(parameterLabels[i])));
-  //   mySerial.print(label);
-  //   mySerial.print(waveform[i]);
+  //   Serial.print(label);
+  //   Serial.print(waveform[i]);
   // }
-  // mySerial.print('\r');
+  // Serial.print('\r');
 }
 
 
 void printParameters(){
     // char delimeter = '~';
-    // mySerial.print('&');
-    // mySerial.print(version);
-    // mySerial.print(delimeter);
-    // mySerial.print(cerebroNum);
-    // mySerial.print(delimeter);
-    // mySerial.print(LD);
-    // mySerial.print(delimeter);
-    // mySerial.print(powerLevel);
-    // mySerial.print(delimeter);
+    // Serial.print('&');
+    // Serial.print(version);
+    // Serial.print(delimeter);
+    // Serial.print(cerebroNum);
+    // Serial.print(delimeter);
+    // Serial.print(LD);
+    // Serial.print(delimeter);
+    // Serial.print(powerLevel);
+    // Serial.print(delimeter);
     // for (int i  = 0 ; i<NUMPARAM; i++){
-    //   mySerial.print(waveform[i]);
-    //   mySerial.print(delimeter) ;
+    //   Serial.print(waveform[i]);
+    //   Serial.print(delimeter) ;
     // }
-    // mySerial.println('*');
+    // Serial.println('*');
 }
 
 void printFadeVector(){
@@ -205,11 +205,11 @@ void printFadeVector(){
   //   unsigned int param1;
   //   for (int i = 0; i<NUMPARAM; i++){
   //     param1 = eepromReadByte(k+2*i)<<8;
-  //     mySerial.print(word(param1|eepromReadByte(k+1+2*i)));
+  //     Serial.print(word(param1|eepromReadByte(k+1+2*i)));
   //     if(i!=NUMPARAM-1){
-  //       mySerial.print(',');
+  //       Serial.print(',');
   //     }
   //   }
-  //   mySerial.print('\r');
+  //   Serial.print('\r');
   // }
 }
