@@ -63,11 +63,16 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     rampDur = 0;
   }
   else{
-    onDelay = waveform[ON_DELAY];
-    onTime = waveform[ON_TIME];
-    offTime = waveform[OFF_TIME];
-    trainDur = waveform[TRAIN_DUR];
-    rampDur  = waveform[RAMP_DUR];
+    onDelay = 0;
+    onTime = 100;
+    offTime = 0;
+    trainDur = 0;
+    rampDur = 0;
+    // onDelay = waveform[ON_DELAY];
+    // onTime = waveform[ON_TIME];
+    // offTime = waveform[OFF_TIME];
+    // trainDur = waveform[TRAIN_DUR];
+    // rampDur  = waveform[RAMP_DUR];
   }
   if (onDelay>0){
     while ((millis()-delayClock)<waveform[ON_DELAY]){
@@ -87,38 +92,42 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
       }
     }
   }
+  mySerial.println('B');                  
   onClock=trainClock=millis();
-  while(laserEnabled){
-    //check if another command (abort or continuation) has been sent since the trigger was activated
-    if (!(IR_inputReg & (1<<IR_pin))){
-      while(! (IR_inputReg & (1<<IR_pin))){
-        //wait until stop pulse is finished
-      }
-      rcvd = listenForIR(5000);
-      if (trigMatch){
-        onClock = millis();
-        trainClock = millis();
-        if (address < memorySize) {       //record continue event
-          recordEvent('C');
-        }
-        trigMatch = false;
-      }
-      else if (stopMatch){
-        recordLightLevel(getLightLevel());
-        if (rampDur>0){
-          fade();
-        }
-        laserEnabled = laserOFF();
-        if (address < memorySize) {       //record abort event
-          recordEvent('A');
-        }
-        stopMatch = false;
-      }
-      rcvd = 0;
-    }
+  while(laserEnabled){   
+    // //check if another command (abort or continuation) has been sent since the trigger was activated
+    // if (!(IR_inputReg & (1<<IR_pin))){
+    //   while(! (IR_inputReg & (1<<IR_pin))){
+    //     //wait until stop pulse is finished
+    //   }
+    //   rcvd = listenForIR(5000);
+    //   if (trigMatch){
+    //     onClock = millis();
+    //     trainClock = millis();
+    //     if (address < memorySize) {       //record continue event
+    //       recordEvent('C');
+    //     }
+    //     trigMatch = false;
+    //   }
+    //   else if (stopMatch){
+    //     recordLightLevel(getLightLevel());
+    //     if (rampDur>0){
+    //       fade();
+    //     }
+    //     laserEnabled = laserOFF();
+    //     if (address < memorySize) {       //record abort event
+    //       recordEvent('A');
+    //     }
+    //     stopMatch = false;
+    //   }
+    //   rcvd = 0;
+    // }
     //else if onClock hasn't expired, turn on/keep on the laser
-    else if ((millis()-onClock)<onTime){
+    // else if ((millis()-onClock)<onTime){
+    if ((millis()-onClock)<onTime){
+        
       if(!useFeedback){
+        mySerial.println('D');                
         sendDAC(desiredPower);
       }
       else{
@@ -129,6 +138,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
         alt++;
       }
       if (!triggerRecorded){           //event has not yet been recorded
+        mySerial.println('E');
         if (address < memorySize) {    //record trigger event
           recordEvent('T');
         }
@@ -181,17 +191,17 @@ int getLightLevel(){
 }
 
 void fade(){
-  unsigned long fadeClock;
-  unsigned int param1;
-  for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
-    fadeClock = millis();
-    param1 = eepromReadByte(k)<<8;
-    feedback(word(param1|eepromReadByte(k+1)));
-    sendDAC(DAClevel);
-    while((millis()-fadeClock)<(waveform[RAMP_DUR]/100)){
-      //wait
-    }
-  }
+  // unsigned long fadeClock;
+  // unsigned int param1;
+  // for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
+  //   fadeClock = millis();
+  //   param1 = eepromReadByte(k)<<8;
+  //   feedback(word(param1|eepromReadByte(k+1)));
+  //   sendDAC(DAClevel);
+  //   while((millis()-fadeClock)<(waveform[RAMP_DUR]/100)){
+  //     //wait
+  //   }
+  // }
 }
 
 void sendDAC(unsigned int value) {
@@ -203,6 +213,7 @@ void sendDAC(unsigned int value) {
 }
 
 bool laserOFF(){
+  mySerial.println("laser off");
   ADCSRA |= (1<<ADSC);                    //start analog conversion
   loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
   mySerial.print(ADC);
@@ -220,4 +231,17 @@ bool laserOFF(){
   DAClevel = 0;
   #endif
   return false;
+}
+
+void myShift(int val){                  //shifts out data MSB first
+  for (int i = 7; i > -1; i--){
+    if(val & (1<<i)){                   //shift high bit
+      DATA_outputReg |= (1<<DATA_pin);
+    }
+    else{                               // shift low bit
+      DATA_outputReg &= ~(1<<DATA_pin);
+    }
+    CLK_outputReg |= (1<<CLK_pin);      //clock high
+    CLK_outputReg &= ~(1<<CLK_pin);     //clock low
+  }
 }

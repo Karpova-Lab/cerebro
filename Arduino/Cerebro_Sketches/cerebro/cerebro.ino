@@ -48,7 +48,7 @@ are converted to 5 separate 16 bit unsigned integers (0-65535) and then assigned
 marks, it will write the most recently used memory address to the first 2 bytes of the memory. When the log is being printed, it will
 know which address to stop at by looking at the first 2 bytes of memory.
 
-listenForIR() function is based on code from Adafruit IR sensor tutorial: https://learn.adafruit.com/ir-sensor/reading-ir-commands
+listenForIR() function is based on code from Adafruit IR sensor tutorial: https:nn//learn.adafruit.com/ir-sensor/reading-ir-commands
 Adafruit code: https://github.com/adafruit/IR-Commander/blob/master/ircommander.pde
 Detailed explanation of how infrared (IR) remotes work: http://www.sbprojects.com/knowledge/ir/index.php#top
 Directions for uploading can be found at http://cerebro.readthedocs.io/
@@ -180,83 +180,86 @@ void setup() {
   pinMode(indicatorLED,OUTPUT);       //Output
   digitalWrite(indicatorLED,LOW);
 
-  mySerial.begin(115200);
+  mySerial.begin(115200);  
   TinyWireM.begin();
-
   //Get the saved parameters from EEPROM
-  for (int i = 0; i<NUMPARAM; i++){
-    waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
-  }
-  cerebroNum = word(eepromReadByte(HARDWARE_START)<<8|eepromReadByte(HARDWARE_START+1));
-  LD = word(eepromReadByte(HARDWARE_START+2)<<8|eepromReadByte(HARDWARE_START+3));
-  powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
+  // for (int i = 0; i<NUMPARAM; i++){
+  //   waveform[i] = word(eepromReadByte(2*i+2)<<8|eepromReadByte(2*i+3));
+  // }
+  // cerebroNum = word(eepromReadByte(HARDWARE_START)<<8|eepromReadByte(HARDWARE_START+1));
+  // LD = word(eepromReadByte(HARDWARE_START+2)<<8|eepromReadByte(HARDWARE_START+3));
+  // powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
 
-  //if the BTN is pressed (Low Signal) when cerebro starts up then print the log from the eeprom
-  #ifdef OLDBOARD
-  if((BTN_inputReg & (1<<BTN_pin))){
-  #else
-  if(!(BTN_inputReg & (1<<BTN_pin))){
-  #endif
-    printEEPROM();
-    printFadeVector();
-  }
-  //otherwise just print the waveform parameters
-  else{
-    printParameters();
-  }
+  // //if the BTN is pressed (Low Signal) when cerebro starts up then print the log from the eeprom
+  // #ifdef OLDBOARD
+  // if((BTN_inputReg & (1<<BTN_pin))){
+  // #else
+  // if(!(BTN_inputReg & (1<<BTN_pin))){
+  // #endif
+  //   printEEPROM();
+  //   printFadeVector();
+  // }
+  // //otherwise just print the waveform parameters
+  // else{
+  //   printParameters();
+  // }
+  mySerial.println("hello. is this thing on?");
   laserOFF();
 }
 
 void loop() {
-  marksReceived = listenForIR();      //wait for IR signal and return the number of marks received
-  if (trigMatch) {                    //trigger light upon receiving exactly 4 marks of with durations that match a key
-    trigMatch = false;
-    #ifdef MCUBE
-    triggerEvent(powerLevel,false);
-    #else
-    triggerEvent(powerLevel,true);
-    #endif
-  }
-  else if(implantMode || diodeMode){
-    digitalWrite(indicatorLED,HIGH);
-    if(diodeMode){
-      characterizeDiode();
-      diodeMode = false;
-    }
-    else if(implantMode){
-      characterizeImplant();
-      implantMode = false;
-    }
-    digitalWrite(indicatorLED,LOW);
-  }
-  else if (powerTestMode){
-    #ifdef MCUBE
-    eepromWriteByte(FADE_START,tempPower>>8);
-    eepromWriteByte(FADE_START+1,tempPower & 255);
-    delay(100);
-    powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
-    printParameters();
-    #else
-    triggerEvent(tempPower);
-    #endif
-    powerTestMode = false;
-  }
-  else if (marksReceived==memoryDumpFlag){
-    mySerial.println(F("Memory Contents:"));
-    readAddresses(LOG_START,8100); //print the remaining contents
-  }
-  else if (marksReceived == saveMemoryFlag) {         //save data to EEPROM upon receiving exactly 26 marks
-    save2EEPROM();
-  }
-  else if (marksReceived == resetAddressFlag){
-    address = LOG_START; // reset address
-    for (byte i=0; i <3; i ++){
-      digitalWrite(indicatorLED,HIGH);
-      delay(100);
-      digitalWrite(indicatorLED,LOW);
-      delay(100);
-    }
-  }
+  mySerial.println("new loop");
+  delay(1000);
+  triggerEvent(20,true);
+  // marksReceived = listenForIR();      //wait for IR signal and return the number of marks received
+  // if (trigMatch) {                    //trigger light upon receiving exactly 4 marks of with durations that match a key
+  //   trigMatch = false;
+  //   #ifdef MCUBE
+  //   triggerEvent(powerLevel,false);
+  //   #else
+  //   triggerEvent(powerLevel,true);
+  //   #endif
+  // }
+  // else if(implantMode || diodeMode){
+  //   digitalWrite(indicatorLED,HIGH);
+  //   if(diodeMode){
+  //     characterizeDiode();
+  //     diodeMode = false;
+  //   }
+  //   else if(implantMode){
+  //     characterizeImplant();
+  //     implantMode = false;
+  //   }
+  //   digitalWrite(indicatorLED,LOW);
+  // }
+  // else if (powerTestMode){
+  //   #ifdef MCUBE
+  //   eepromWriteByte(FADE_START,tempPower>>8);
+  //   eepromWriteByte(FADE_START+1,tempPower & 255);
+  //   delay(100);
+  //   powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1));
+  //   printParameters();
+  //   #else
+  //   triggerEvent(tempPower);
+  //   #endif
+  //   powerTestMode = false;
+  // }
+  // else if (marksReceived==memoryDumpFlag){
+  //   mySerial.println(F("Memory Contents:"));
+  //   readAddresses(LOG_START,8100); //print the remaining contents
+  // }
+  // else if (marksReceived == saveMemoryFlag) {         //save data to EEPROM upon receiving exactly 26 marks
+  //   save2EEPROM();
+  // }
+  // else if (marksReceived == resetAddressFlag){
+  //   address = LOG_START; // reset address
+  //   for (byte i=0; i <3; i ++){
+  //     digitalWrite(indicatorLED,HIGH);
+  //     delay(100);
+  //     digitalWrite(indicatorLED,LOW);
+  //     delay(100);
+  //   }
+  // }
 }
 
 byte listenForIR(int timeout=0) {
