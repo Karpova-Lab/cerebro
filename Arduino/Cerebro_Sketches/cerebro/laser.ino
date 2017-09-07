@@ -1,45 +1,55 @@
 void characterizeDiode(){
-  triggerEvent(50); //warmup
-  delay(60000);
-  triggerEvent(50); //~ 1mW
-  delay(60000);
-  triggerEvent(70); //~1.5 mW
-  delay(60000);
-  triggerEvent(90); //~2 mW
+  // triggerEvent(50); //warmup
+  // delay(60000);
+  // triggerEvent(50); //~ 1mW
+  // delay(60000);
+  // triggerEvent(70); //~1.5 mW
+  // delay(60000);
+  // triggerEvent(90); //~2 mW
 
 }
 //
 void characterizeImplant(){
-  bool firstMax = true;
-  unsigned int dlay = 4000;
-  delay(dlay);
-  for (int testLevel = 500; testLevel<751; testLevel+=50){
-    triggerEvent(testLevel);
-    delay(dlay);
-  }
-  for (int testLevel = 760; testLevel<901; testLevel+=10){
-    triggerEvent(testLevel);
-    delay(dlay);
-  }
-  for (int testLevel = 905; testLevel<1026; testLevel+=5){
-    Serial.print(testLevel);
-		Serial.print(",");
-    if(!isMaxed){
-      triggerEvent(testLevel);
-      delay(dlay);
-    }
-    else if(firstMax){  //trigger once more after being maxed
-      triggerEvent(testLevel);
-      firstMax = false;
-    }
-    else{
-      //do nothing
-    }
-  }
-  isMaxed = false; //reset isMaxed
+  // bool firstMax = true;
+  // unsigned int dlay = 4000;
+  // delay(dlay);
+  // for (int testLevel = 500; testLevel<751; testLevel+=50){
+  //   triggerEvent(testLevel);
+  //   delay(dlay);
+  // }
+  // for (int testLevel = 760; testLevel<901; testLevel+=10){
+  //   triggerEvent(testLevel);
+  //   delay(dlay);
+  // }
+  // for (int testLevel = 905; testLevel<1026; testLevel+=5){
+  //   Serial.print(testLevel);
+	// 	Serial.print(",");
+  //   if(!isMaxed){
+  //     triggerEvent(testLevel);
+  //     delay(dlay);
+  //   }
+  //   else if(firstMax){  //trigger once more after being maxed
+  //     triggerEvent(testLevel);
+  //     firstMax = false;
+  //   }
+  //   else{
+  //     //do nothing
+  //   }
+  // }
+  // isMaxed = false; //reset isMaxed
 }
 
-void triggerEvent(unsigned int desiredPower,bool useFeedback){
+void triggerEvent(unsigned int desiredPower,bool whichLaser,bool useFeedback){
+  int select;
+  int photoSignal;
+  if (whichLaser==LEFT){
+    select = oneSelect;
+    photoSignal = photoONE;
+  }
+  else{
+    select = twoSelect;
+    photoSignal = photoTWO;
+  }
   isSettled = false;
   unsigned long onClock,offClock,trainClock,delayClock,alt=0;
   bool laserEnabled = true; //set flag for entering waveform loop
@@ -92,7 +102,6 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
       // }
     }
   }
-  Serial.println('B');                  
   onClock=trainClock=millis();
   while(laserEnabled){   
     // //check if another command (abort or continuation) has been sent since the trigger was activated
@@ -127,18 +136,16 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     if ((millis()-onClock)<onTime){
         
       if(!useFeedback){
-        Serial.println('D');                
-        sendDAC(desiredPower);
+        sendDAC(desiredPower,select);
       }
       else{
-        sendDAC(DAClevel);              //Laser on
+        sendDAC(DAClevel,select);              //Laser on
         if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
-          feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
+          feedback(desiredPower,photoSignal);         //increase or decrease DAClevel to reach desired lightPower
         }
         alt++;
       }
       if (!triggerRecorded){           //event has not yet been recorded
-        Serial.println('E');
         if (address < memorySize) {    //record trigger event
           recordEvent('T');
         }
@@ -149,7 +156,7 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
     //else if offClock hasn't expired, turn off/keep off light
     else if((millis()-offClock)<offTime){
       if (newPulse){                   //if the laser is on then turn it off, otherwise do nothing (i.e. leave turned off)
-        newPulse = laserOFF();         //laserOn = false
+        newPulse = laserOFF(select,photoSignal);         //laserOn = false
       }
     }
     //else if trainClock hasn't expired, restart the light pulse
@@ -165,13 +172,13 @@ void triggerEvent(unsigned int desiredPower,bool useFeedback){
           fade();
         }
       }
-      laserEnabled = laserOFF();
+      laserEnabled = laserOFF(select,photoSignal);
     }
   }
 }
 
-void feedback(int setPoint){
-  int photocellVoltage = analogRead(A0);
+void feedback(int setPoint, int phototransistor ){
+  int photocellVoltage = analogRead(phototransistor);
   error = setPoint-photocellVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
@@ -202,7 +209,7 @@ void fade(){
   // }
 }
 
-void sendDAC(unsigned int value) {
+void sendDAC(unsigned int value, int slaveSelect) {
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   digitalWrite(slaveSelect,LOW);  
   SPI.transfer(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
@@ -212,9 +219,9 @@ void sendDAC(unsigned int value) {
   SPI.endTransaction();
 }
 
-bool laserOFF(){
+bool laserOFF(int slaveSelect , int phototransistor){
   Serial.println("laser off");
-  Serial.print(analogRead(A0));
+  Serial.print(analogRead(phototransistor));
   Serial.print(',');
   Serial.println(DAClevel);
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
