@@ -51,6 +51,8 @@ void triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedbac
           thediode->fade();
         }
       }
+      Serial.print("\tduring: ");  
+      feedbackReadings();
       laserEnabled = thediode->off();
     }
   }

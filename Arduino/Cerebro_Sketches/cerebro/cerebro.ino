@@ -98,9 +98,6 @@ LaserDiode::LaserDiode(uint8_t _slavePin, uint8_t _analogPin){
 
 bool LaserDiode::off(){
   Serial.println("laser off");
-  Serial.print(analogRead(analogPin));
-  Serial.print(',');
-  Serial.println(DAClevel);
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   digitalWrite(slaveSelectPin,LOW);
   SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
@@ -158,25 +155,32 @@ LaserDiode right(5,A1);
 void triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
 void setup() {
-
-
   SPI.begin();
   Serial.begin(115200);  
   Serial.println("hello. is this thing on?");
   left.off();
   right.off();
-  // laserOFF(leftSelect,leftPhotoFeedback);
-  // laserOFF(leftSelect,rightPhotoFeedback);  
+
+
 }
 
 void loop() {
-  Serial.println("new loop");
-  delay(1000);
-  triggerEvent(80,&left,true);
-  delay(1000);  
-  triggerEvent(80,&right,true);
-  
-//   delay(1000);
-//   triggerEvent(40,RIGHT,true);
+
+
 }
 
+void isolationTest(){
+  delay(5000);
+  Serial.print("Before left: ");    
+  feedbackReadings();
+  triggerEvent(600,&left,true);
+  delay(1000);  
+  Serial.print("Before right: ");  
+  feedbackReadings();  
+  triggerEvent(600,&right,true);
+}
+void feedbackReadings(){ 
+  Serial.print(analogRead(left.analogPin));
+  Serial.print(", ");
+  Serial.println(analogRead(right.analogPin));
+}
