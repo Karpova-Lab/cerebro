@@ -62,16 +62,11 @@ char label[20];            // make sure this is large enough for the largest str
 unsigned int waveform[NUMPARAM] = {};
 int error;
 const float KP = 0.2;
-const byte interval = 3;
 bool isSettled = false;
 // bool isMaxed = false;
 unsigned int tempPower = 0;
 byte vectorIndex = 0;
 unsigned int powerLevel;
-unsigned int cerebroNum;
-unsigned int LD;
-
-int DAClevel = 0;
 
 
 class LaserDiode{
@@ -97,7 +92,7 @@ LaserDiode::LaserDiode(uint8_t _slavePin, uint8_t _analogPin){
 }
 
 bool LaserDiode::off(){
-  Serial.println("laser off");
+  // Serial.println("laser off");
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   digitalWrite(slaveSelectPin,LOW);
   SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
@@ -148,36 +143,64 @@ void LaserDiode::fade(){
   // }
 }
 
-LaserDiode left(6,A0);
-LaserDiode right(5,A1);
+LaserDiode left(6,A0); //951 is set point
+LaserDiode right(5,A1); //74
 
 //---------function prototypes---------//
 void triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
+bool active = false;
 void setup() {
   SPI.begin();
   Serial.begin(115200);  
   Serial.println("hello. is this thing on?");
   left.off();
   right.off();
-
-
+  delay(5000);
 }
 
 void loop() {
+  // if (Serial.available()){
+  //   while(Serial.available()){
+  //     Serial.read();
+  //   }
+  //   active = !active;
+  //   if (active){
+  //     Serial.println("on");      
+  //   }
+  //   else{
+  //     Serial.println("off");              
+  //   }
+  // }
+  // if (active){
+  //   triggerEvent(100,&left,true);
+  // }
+  // triggerEvent(960,&left,true);
+  // delay(3000);
 
-
+  // for (int i=50; i<80; i+=3){
+  //   Serial.print(i);
+  //   Serial.print(" ");
+  //   delay(5000);
+  //   triggerEvent(i,&right,true);
+  // }
+  triggerEvent(951,&left,true);
+  delay(5000);
+  triggerBoth(951,74);
+  delay(5000);
+  triggerEvent(74,&right,true);
+  delay(8000);  
 }
 
 void isolationTest(){
   delay(5000);
   Serial.print("Before left: ");    
   feedbackReadings();
-  triggerEvent(600,&left,true);
+  triggerEvent(951,&left,true);
   delay(1000);  
   Serial.print("Before right: ");  
   feedbackReadings();  
-  triggerEvent(600,&right,true);
+  triggerEvent(74,&right,true);
 }
 void feedbackReadings(){ 
   Serial.print(analogRead(left.analogPin));
