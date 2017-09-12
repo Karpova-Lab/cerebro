@@ -1,4 +1,4 @@
-void triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedback){
+int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedback){
   unsigned long onClock,offClock,trainClock,delayClock,alt=0;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
@@ -9,6 +9,7 @@ void triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedbac
   offTime = 0;
   trainDur = 0;
   rampDur = 0;
+  int _meterValue;
   if (onDelay>0){
     while ((millis()-delayClock)<onDelay){
       //wait. be ready to stop if interrupted.
@@ -49,10 +50,14 @@ void triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedbac
       }
       // Serial.print("\tduring: ");  
       // feedbackReadings();
-      Serial.println(thediode->DAClevel);      
+      // Serial.print(thediode->DAClevel);
+      // Serial.print(",");
+      // Serial.println(analogRead(thediode->analogPin));
+      _meterValue = analogRead(powerMeter);         
       laserEnabled = thediode->off();
     }
   }
+  return _meterValue;
 }
 
 void triggerBoth(unsigned int leftPower, unsigned int rightPower){
@@ -77,10 +82,10 @@ void triggerBoth(unsigned int leftPower, unsigned int rightPower){
     // reset clock on continuation. or abort waveform.
     //else if onClock hasn't expired, turn on/keep on the laser
     if ((millis()-onClock)<onTime){
-      left.sendDAC(left.DAClevel);
-      left.feedback(leftPower);
       right.sendDAC(right.DAClevel);
       right.feedback(rightPower); //increase or decrease DAClevel to reach desired lightPower
+      left.sendDAC(left.DAClevel);
+      left.feedback(leftPower);
       offClock = millis();
     }
     //else if offClock hasn't expired, turn off/keep off light
@@ -88,7 +93,6 @@ void triggerBoth(unsigned int leftPower, unsigned int rightPower){
       if (newPulse){                   //if the laser is on then turn it off, otherwise do nothing (i.e. leave turned off)
         newPulse = left.off();         //laserOn = false
         newPulse = right.off();         //laserOn = false
-        
       }
     }
     //else if trainClock hasn't expired, restart the light pulse
@@ -103,9 +107,18 @@ void triggerBoth(unsigned int leftPower, unsigned int rightPower){
       // }
       // Serial.print("\tduring: ");  
       // feedbackReadings();
-      // Serial.println(thediode->DAClevel);      
+      // Serial.println(thediode->DAClevel);   
+      Serial.print("*****");
+      Serial.print(left.DAClevel);
+      Serial.print("*****");      
+      Serial.print(analogRead(left.analogPin)); 
+      Serial.print("*****");
+      Serial.print(right.DAClevel);
+      Serial.print("*****");      
+      Serial.println(analogRead(right.analogPin));
       laserEnabled = left.off();
       laserEnabled = right.off();
+
     }
   }
 }

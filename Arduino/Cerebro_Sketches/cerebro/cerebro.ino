@@ -34,6 +34,8 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 */
 #include <avr/pgmspace.h>
 #include <SPI.h>
+#include <EEPROM.h>
+
 
 
 #define LEFT 0
@@ -119,6 +121,7 @@ void LaserDiode::sendDAC(unsigned int value) {
 
 void LaserDiode::feedback(int setPoint){
   int photocellVoltage = analogRead(analogPin);
+  photocellVoltage = analogRead(analogPin);
   error = setPoint-photocellVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
@@ -143,11 +146,15 @@ void LaserDiode::fade(){
   // }
 }
 
-LaserDiode left(6,A0); //951 is set point
-LaserDiode right(5,A1); //74
+LaserDiode left(6,A0);
+int leftSetPoint = 1014;
+LaserDiode right(5,A1);
+int rightSetPoint = 60;
+int meterVal = 0;
+int powerMeter = A2;
 
 //---------function prototypes---------//
-void triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
+int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
 bool active = false;
 void setup() {
@@ -156,40 +163,24 @@ void setup() {
   Serial.println("hello. is this thing on?");
   left.off();
   right.off();
-  delay(5000);
+
+  while(!Serial.available()){
+    //wait
+  }
+  while(Serial.available()){
+    Serial.read();
+  }
+
 }
 
 void loop() {
-  // if (Serial.available()){
-  //   while(Serial.available()){
-  //     Serial.read();
-  //   }
-  //   active = !active;
-  //   if (active){
-  //     Serial.println("on");      
-  //   }
-  //   else{
-  //     Serial.println("off");              
-  //   }
-  // }
-  // if (active){
-  //   triggerEvent(100,&left,true);
-  // }
-  // triggerEvent(960,&left,true);
-  // delay(3000);
-
-  // for (int i=50; i<80; i+=3){
-  //   Serial.print(i);
-  //   Serial.print(" ");
-  //   delay(5000);
-  //   triggerEvent(i,&right,true);
-  // }
-  triggerEvent(951,&left,true);
-  delay(5000);
-  triggerBoth(951,74);
-  delay(5000);
-  triggerEvent(74,&right,true);
-  delay(8000);  
+  triggerEvent(leftSetPoint,&left,true);
+  delay(1000);
+  triggerBoth(leftSetPoint,rightSetPoint);
+  delay(1000);
+  triggerEvent(rightSetPoint,&right,true);
+  delay(5000);  
+  Serial.println();
 }
 
 void isolationTest(){
@@ -206,4 +197,26 @@ void feedbackReadings(){
   Serial.print(analogRead(left.analogPin));
   Serial.print(", ");
   Serial.println(analogRead(right.analogPin));
+}
+
+void calibrate(){
+  // int a = EEPROM.read(0)<<8;// high byte
+  // int b = EEPROM.read(1);
+  // Serial.print("last Value:");
+  // Serial.println(a|b,DEC);
+  // delay(5000);
+  int tryPower  = 1005;
+  while ( meterVal <96){
+    tryPower++;
+    meterVal =  triggerEvent(tryPower,&left,true);
+    Serial.print("Try: ");
+    Serial.print(tryPower);
+    Serial.print(", Result: ");
+    Serial.println(meterVal);
+    delay(2000);
+  }
+  EEPROM.write(0,tryPower>>8);// high byte
+  EEPROM.write(1,tryPower&255);//low byte
+  Serial.println("Done!");
+  Serial.print(tryPower);
 }
