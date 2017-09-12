@@ -36,9 +36,7 @@
 #define NETWORKID     100  //the same on all nodes that talk to each other (range up to 255)
 #define GATEWAYID     1
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
-#define FREQUENCY   RF69_433MHZ
-//#define FREQUENCY   RF69_868MHZ
-//#define FREQUENCY     RF69_915MHZ
+#define FREQUENCY     RF69_915MHZ
 #define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
 //*********************************************************************************************
@@ -51,22 +49,14 @@
 #define ATC_RSSI      -80
 //*********************************************************************************************
 
-#ifdef __AVR_ATmega1284P__
-  #define LED           15 // Moteino MEGAs have LEDs on D15
-  #define FLASH_SS      23 // and FLASH SS on D23
-#else
-  #define LED           9 // Moteinos have LEDs on D9
-  #define FLASH_SS      8 // and FLASH SS on D8
-#endif
-
+#define LED           9 // Moteinos have LEDs on D9
 #define SERIAL_BAUD   115200
 
-int TRANSMITPERIOD = 200; //transmit a packet to gateway so often (in ms)
+int TRANSMITPERIOD = 1000; //transmit a packet to gateway so often (in ms)
 char payload[] = "123 ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 char buff[20];
 byte sendSize=0;
 boolean requestACK = false;
-SPIFlash flash(FLASH_SS, 0xEF30); //EF30 for 4mbit  Windbond chip (W25X40CL)
 
 #ifdef ENABLE_ATC
   RFM69_ATC radio;
@@ -74,14 +64,14 @@ SPIFlash flash(FLASH_SS, 0xEF30); //EF30 for 4mbit  Windbond chip (W25X40CL)
   RFM69 radio;
 #endif
 
+#define BR_300KBPS             //run radio at max rate of 300kbps!
+//Antenna should be 82 mm for 2.99e8 / 915e6 = 32.67cm wavelength. 32.7/4 = 82mm
+
 void setup() {
   Serial.begin(SERIAL_BAUD);
   radio.initialize(FREQUENCY,NODEID,NETWORKID);
-#ifdef IS_RFM69HW_HCW
-  radio.setHighPower(); //must include this only for RFM69HW/HCW!
-#endif
-  radio.encrypt(ENCRYPTKEY);
-  //radio.setFrequency(919000000); //set frequency to some custom frequency
+  // radio.encrypt(ENCRYPTKEY);
+  radio.encrypt(null);
 
 //Auto Transmission Control - dials down transmit power to save battery (-100 is the noise floor, -90 is still pretty good)
 //For indoor nodes that are pretty static and at pretty stable temperatures (like a MotionMote) -90dBm is quite safe
@@ -92,27 +82,26 @@ void setup() {
 #endif
 
   char buff[50];
-  sprintf(buff, "\nTransmitting at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+  sprintf(buff, "\nTransmitting at %d Mhz...", 915);
   Serial.println(buff);
-
-  if (flash.initialize())
-  {
-    Serial.print("SPI Flash Init OK ... UniqueID (MAC): ");
-    flash.readUniqueId();
-    for (byte i=0;i<8;i++)
-    {
-      Serial.print(flash.UNIQUEID[i], HEX);
-      Serial.print(' ');
-    }
-    Serial.println();
-  }
-  else
-    Serial.println("SPI Flash MEM not found (is chip soldered?)...");
 
 #ifdef ENABLE_ATC
   Serial.println("RFM69_ATC Enabled (Auto Transmission Control)\n");
 #endif
+
+#ifdef BR_300KBPS
+radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
+radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
+radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
+radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
+radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
+radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
+radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
+#endif
 }
+
+unsigned long timeSent;
+
 
 void Blink(byte PIN, int DELAY_MS)
 {
@@ -123,10 +112,10 @@ void Blink(byte PIN, int DELAY_MS)
 }
 
 long lastPeriod = 0;
+
 void loop() {
   //process any serial input
-  if (Serial.available() > 0)
-  {
+  if (Serial.available() > 0){
     char input = Serial.read();
     if (input >= 48 && input <= 57) //[0,9]
     {
@@ -136,52 +125,19 @@ void loop() {
       Serial.print(TRANSMITPERIOD);
       Serial.println("ms\n");
     }
-
-    if (input == 'r') //d=dump register values
-      radio.readAllRegs();
-    //if (input == 'E') //E=enable encryption
-    //  radio.encrypt(KEY);
-    //if (input == 'e') //e=disable encryption
-    //  radio.encrypt(null);
-
-    if (input == 'd') //d=dump flash area
-    {
-      Serial.println("Flash content:");
-      uint16_t counter = 0;
-
-      Serial.print("0-256: ");
-      while(counter<=256){
-        Serial.print(flash.readByte(counter++), HEX);
-        Serial.print('.');
-      }
-      while(flash.busy());
-      Serial.println();
-    }
-    if (input == 'e')
-    {
-      Serial.print("Erasing Flash chip ... ");
-      flash.chipErase();
-      while(flash.busy());
-      Serial.println("DONE");
-    }
-    if (input == 'i')
-    {
-      Serial.print("DeviceID: ");
-      word jedecid = flash.readDeviceId();
-      Serial.println(jedecid, HEX);
-    }
   }
 
   //check for any received packets
-  if (radio.receiveDone())
-  {
-    Serial.print('[');Serial.print(radio.SENDERID, DEC);Serial.print("] ");
-    for (byte i = 0; i < radio.DATALEN; i++)
+  if (radio.receiveDone()){
+    Serial.print("[message from node ");
+    Serial.print(radio.SENDERID, DEC);
+    Serial.print("] ");
+    for (byte i = 0; i < radio.DATALEN; i++){
       Serial.print((char)radio.DATA[i]);
+    }
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
 
-    if (radio.ACKRequested())
-    {
+    if (radio.ACKRequested()){
       radio.sendACK();
       Serial.print(" - ACK sent");
     }
@@ -193,29 +149,19 @@ void loop() {
   if (currPeriod != lastPeriod)
   {
     lastPeriod=currPeriod;
-
-    //send FLASH id
-    if(sendSize==0)
-    {
-      sprintf(buff, "FLASH_MEM_ID:0x%X", flash.readDeviceId());
-      byte buffLen=strlen(buff);
-      if (radio.sendWithRetry(GATEWAYID, buff, buffLen))
-        Serial.print(" ok!");
-      else Serial.print(" nothing...");
-      //sendSize = (sendSize + 1) % 31;
+    Serial.print("Sending[");
+    Serial.print(sendSize);
+    Serial.print("]: ");
+    for(byte i = 0; i < sendSize; i++)
+      Serial.print((char)payload[i]);
+    timeSent = micros();
+    if (radio.sendWithRetry(GATEWAYID, payload, 1)){
+      timeSent = micros()-timeSent;
+      Serial.print(" trip: ");Serial.println(timeSent);
     }
-    else
-    {
-      Serial.print("Sending[");
-      Serial.print(sendSize);
-      Serial.print("]: ");
-      for(byte i = 0; i < sendSize; i++)
-        Serial.print((char)payload[i]);
-
-      if (radio.sendWithRetry(GATEWAYID, payload, sendSize))
-       Serial.print(" ok!");
-      else Serial.print(" nothing...");
-    }
+    else{
+      Serial.print(" no response :(");
+    } 
     sendSize = (sendSize + 1) % 31;
     Serial.println();
     Blink(LED,3);

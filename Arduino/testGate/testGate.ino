@@ -35,10 +35,8 @@
 #define NODEID        1    //unique for each node on same network
 #define NETWORKID     100  //the same on all nodes that talk to each other
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
-#define FREQUENCY     RF69_433MHZ
-//#define FREQUENCY     RF69_868MHZ
-//#define FREQUENCY     RF69_915MHZ
-#define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
+#define FREQUENCY     RF69_915MHZ
+// #define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
 //*********************************************************************************************
 //Auto Transmission Control - dials down transmit power to save battery
@@ -64,7 +62,9 @@
   RFM69 radio;
 #endif
 
-SPIFlash flash(FLASH_SS, 0xEF30); //EF30 for 4mbit  Windbond chip (W25X40CL)
+#define BR_300KBPS             //run radio at max rate of 300kbps!
+
+
 bool promiscuousMode = false; //set to 'true' to sniff all packets on the same network
 
 void setup() {
@@ -74,36 +74,24 @@ void setup() {
 #ifdef IS_RFM69HW_HCW
   radio.setHighPower(); //must include this only for RFM69HW/HCW!
 #endif
-  radio.encrypt(ENCRYPTKEY);
+  radio.encrypt(null);  
   radio.promiscuous(promiscuousMode);
-  //radio.setFrequency(919000000); //set frequency to some custom frequency
   char buff[50];
   sprintf(buff, "\nListening at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(buff);
-  if (flash.initialize())
-  {
-    Serial.print("SPI Flash Init OK. Unique MAC = [");
-    flash.readUniqueId();
-    for (byte i=0;i<8;i++)
-    {
-      Serial.print(flash.UNIQUEID[i], HEX);
-      if (i!=8) Serial.print(':');
-    }
-    Serial.println(']');
-    
-    //alternative way to read it:
-    //byte* MAC = flash.readUniqueId();
-    //for (byte i=0;i<8;i++)
-    //{
-    //  Serial.print(MAC[i], HEX);
-    //  Serial.print(' ');
-    //}
-  }
-  else
-    Serial.println("SPI Flash MEM not found (is chip soldered?)...");
-    
+  
 #ifdef ENABLE_ATC
   Serial.println("RFM69_ATC Enabled (Auto Transmission Control)");
+#endif
+
+#ifdef BR_300KBPS
+radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
+radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
+radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
+radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
+radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
+radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
+radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
 #endif
 }
 
@@ -114,12 +102,6 @@ void loop() {
   if (Serial.available() > 0)
   {
     char input = Serial.read();
-    if (input == 'r') //d=dump all register values
-      radio.readAllRegs();
-    if (input == 'E') //E=enable encryption
-      radio.encrypt(ENCRYPTKEY);
-    if (input == 'e') //e=disable encryption
-      radio.encrypt(null);
     if (input == 'p')
     {
       promiscuousMode = !promiscuousMode;
@@ -127,31 +109,6 @@ void loop() {
       Serial.print("Promiscuous mode ");Serial.println(promiscuousMode ? "on" : "off");
     }
     
-    if (input == 'd') //d=dump flash area
-    {
-      Serial.println("Flash content:");
-      int counter = 0;
-
-      while(counter<=256){
-        Serial.print(flash.readByte(counter++), HEX);
-        Serial.print('.');
-      }
-      while(flash.busy());
-      Serial.println();
-    }
-    if (input == 'D')
-    {
-      Serial.print("Deleting Flash chip ... ");
-      flash.chipErase();
-      while(flash.busy());
-      Serial.println("DONE");
-    }
-    if (input == 'i')
-    {
-      Serial.print("DeviceID: ");
-      word jedecid = flash.readDeviceId();
-      Serial.println(jedecid, HEX);
-    }
     if (input == 't')
     {
       byte temperature =  radio.readTemperature(-1); // -1 = user cal factor, adjust for correct ambient
