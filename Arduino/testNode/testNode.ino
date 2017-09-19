@@ -26,18 +26,16 @@
 // **********************************************************************************
 #include <RFM69.h>         //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
-#include <SPIFlash.h>      //get it here: https://www.github.com/lowpowerlab/spiflash
 #include <SPI.h>           //included with Arduino IDE install (www.arduino.cc)
 
 //*********************************************************************************************
 //************ IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE ************
 //*********************************************************************************************
-#define NODEID        2    //must be unique for each node on same network (range up to 254, 255 is used for broadcast)
+#define NODEID        12    //must be unique for each node on same network (range up to 254, 255 is used for broadcast)
 #define NETWORKID     100  //the same on all nodes that talk to each other (range up to 255)
 #define GATEWAYID     1
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
 #define FREQUENCY     RF69_915MHZ
-#define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
 #define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
 //*********************************************************************************************
 //Auto Transmission Control - dials down transmit power to save battery
@@ -59,9 +57,11 @@ byte sendSize=0;
 boolean requestACK = false;
 
 #ifdef ENABLE_ATC
-  RFM69_ATC radio;
+  // RFM69_ATC radio;
+  // RFM69_ATC(uint8_t slaveSelectPin=RF69_SPI_CS, uint8_t interruptPin=RF69_IRQ_PIN, bool isRFM69HW=false, uint8_t interruptNum=RF69_IRQ_NUM) :
+  RFM69_ATC radio(10, 2,false, digitalPinToInterrupt(2));  
 #else
-  RFM69 radio;
+  // RFM69 radio;
 #endif
 
 #define BR_300KBPS             //run radio at max rate of 300kbps!
@@ -70,7 +70,6 @@ boolean requestACK = false;
 void setup() {
   Serial.begin(SERIAL_BAUD);
   radio.initialize(FREQUENCY,NODEID,NETWORKID);
-  // radio.encrypt(ENCRYPTKEY);
   radio.encrypt(null);
 
 //Auto Transmission Control - dials down transmit power to save battery (-100 is the noise floor, -90 is still pretty good)
@@ -79,24 +78,21 @@ void setup() {
 //Always test your ATC mote in the edge cases in your own environment to ensure ATC will perform as you expect
 #ifdef ENABLE_ATC
   radio.enableAutoPower(ATC_RSSI);
+  Serial.println("RFM69_ATC Enabled (Auto Transmission Control)\n");  
 #endif
 
   char buff[50];
   sprintf(buff, "\nTransmitting at %d Mhz...", 915);
   Serial.println(buff);
 
-#ifdef ENABLE_ATC
-  Serial.println("RFM69_ATC Enabled (Auto Transmission Control)\n");
-#endif
-
 #ifdef BR_300KBPS
-radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
-radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
-radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
-radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
-radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
-radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
-radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
+  radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
+  radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
+  radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
+  radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
+  radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
 #endif
 }
 
@@ -136,7 +132,6 @@ void loop() {
       Serial.print((char)radio.DATA[i]);
     }
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
-
     if (radio.ACKRequested()){
       radio.sendACK();
       Serial.print(" - ACK sent");

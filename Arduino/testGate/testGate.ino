@@ -26,7 +26,6 @@
 // **********************************************************************************
 #include <RFM69.h>         //get it here: https://www.github.com/lowpowerlab/rfm69
 #include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
-#include <SPIFlash.h>      //get it here: https://www.github.com/lowpowerlab/spiflash
 #include <SPI.h>           //included with Arduino IDE install (www.arduino.cc)
 
 //*********************************************************************************************
@@ -36,25 +35,18 @@
 #define NETWORKID     100  //the same on all nodes that talk to each other
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
 #define FREQUENCY     RF69_915MHZ
-// #define ENCRYPTKEY    "sampleEncryptKey" //exactly the same 16 characters/bytes on all nodes!
-#define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
+// #define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
 //*********************************************************************************************
 //Auto Transmission Control - dials down transmit power to save battery
 //Usually you do not need to always transmit at max output power
 //By reducing TX power even a little you save a significant amount of battery power
 //This setting enables this gateway to work with remote nodes that have ATC enabled to
 //dial their power down to only the required level
-#define ENABLE_ATC    //comment out this line to disable AUTO TRANSMISSION CONTROL
+// #define ENABLE_ATC    //comment out this line to disable AUTO TRANSMISSION CONTROL
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
-
-#ifdef __AVR_ATmega1284P__
-  #define LED           15 // Moteino MEGAs have LEDs on D15
-  #define FLASH_SS      23 // and FLASH SS on D23
-#else
-  #define LED           9 // Moteinos have LEDs on D9
-  #define FLASH_SS      8 // and FLASH SS on D8
-#endif
+#define BR_300KBPS             //run radio at max rate of 300kbps!
+#define LED           9 // Moteinos have LEDs on D9
 
 #ifdef ENABLE_ATC
   RFM69_ATC radio;
@@ -62,10 +54,6 @@
   RFM69 radio;
 #endif
 
-#define BR_300KBPS             //run radio at max rate of 300kbps!
-
-
-bool promiscuousMode = false; //set to 'true' to sniff all packets on the same network
 
 void setup() {
   Serial.begin(SERIAL_BAUD);
@@ -75,7 +63,7 @@ void setup() {
   radio.setHighPower(); //must include this only for RFM69HW/HCW!
 #endif
   radio.encrypt(null);  
-  radio.promiscuous(promiscuousMode);
+  radio.promiscuous(false);
   char buff[50];
   sprintf(buff, "\nListening at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(buff);
@@ -85,14 +73,16 @@ void setup() {
 #endif
 
 #ifdef BR_300KBPS
-radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
-radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
-radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
-radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
-radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
-radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
-radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
+  radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
+  radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
+  radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
+  radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
+  radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
 #endif
+
+  pinMode(LED, OUTPUT);
 }
 
 byte ackCount=0;
@@ -101,14 +91,7 @@ void loop() {
   //process any serial input
   if (Serial.available() > 0)
   {
-    char input = Serial.read();
-    if (input == 'p')
-    {
-      promiscuousMode = !promiscuousMode;
-      radio.promiscuous(promiscuousMode);
-      Serial.print("Promiscuous mode ");Serial.println(promiscuousMode ? "on" : "off");
-    }
-    
+    char input = Serial.read();    
     if (input == 't')
     {
       byte temperature =  radio.readTemperature(-1); // -1 = user cal factor, adjust for correct ambient
@@ -120,17 +103,10 @@ void loop() {
       Serial.println('F');
     }
   }
-
   if (radio.receiveDone())
   {
-    Serial.print("#[");
-    Serial.print(++packetCount);
-    Serial.print(']');
+    Serial.print("#[");Serial.print(++packetCount);Serial.print(']');
     Serial.print('[');Serial.print(radio.SENDERID, DEC);Serial.print("] ");
-    if (promiscuousMode)
-    {
-      Serial.print("to [");Serial.print(radio.TARGETID, DEC);Serial.print("] ");
-    }
     for (byte i = 0; i < radio.DATALEN; i++)
       Serial.print((char)radio.DATA[i]);
     Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
@@ -146,9 +122,7 @@ void loop() {
       // This way both TX/RX NODE functions are tested on 1 end at the GATEWAY
       if (ackCount++%3==0)
       {
-        Serial.print(" Pinging node ");
-        Serial.print(theNodeID);
-        Serial.print(" - ACK...");
+        Serial.print(" Pinging node ");Serial.print(theNodeID);Serial.print(" - ACK...");
         delay(3); //need this when sending right after reception .. ?
         if (radio.sendWithRetry(theNodeID, "ACK TEST", 8, 0))  // 0 = only 1 attempt, no retries
           Serial.print("ok!");
@@ -160,10 +134,9 @@ void loop() {
   }
 }
 
-void Blink(byte PIN, int DELAY_MS)
+void Blink(byte PIN, int msDelay)
 {
-  pinMode(PIN, OUTPUT);
   digitalWrite(PIN,HIGH);
-  delay(DELAY_MS);
+  delay(msDelay);
   digitalWrite(PIN,LOW);
 }
