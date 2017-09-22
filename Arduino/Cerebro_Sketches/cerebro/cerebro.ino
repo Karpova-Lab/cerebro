@@ -154,35 +154,24 @@ int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedba
 bool active = false;
 
 LaserDiode left(&DDRD,&PORTD,2,A3);
-
+LaserDiode right(&DDRB,&PORTB,0,A4);
 
 void setup() {
   SPI.begin();
   Serial.begin(115200);  
   Serial.println("hello. is this thing on?");
-
-  // left.off();
-  // right.off();
-
-  // while(!Serial.available()){
-  //   //wait
-  // }
-  // while(Serial.available()){
-  //   Serial.read();
-  // }
   Serial.println("started!");
-
-  // int leftSetPoint = 20;
-  // left.sendDAC(1050);
-  // right.sendDAC(4000);
-
 }
 
 void loop() {
   left.sendDAC(500);
+  right.sendDAC(500);
   delay(1000);
   left.sendDAC(3000);
+  right.sendDAC(3000);  
   delay(1000);  
+
+  
   // if (Serial.available()){
   //   char msg = Serial.read();
   //   // if (msg=='1'){
@@ -252,4 +241,13 @@ void calibrate(){
   // EEPROM.write(1,tryPower&255);//low byte
   // Serial.println("Done!");
   // Serial.print(tryPower);
+}
+
+void pauseUntilCommand(){
+  while(!Serial.available()){
+    //wait
+  }
+  while(Serial.available()){
+    Serial.read();
+  }
 }
