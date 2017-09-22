@@ -41,7 +41,7 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #define LEFT 0
 #define RIGHT 1
 
-const byte indicatorLED = 8; //attiny pin 5, Arduino language pin8
+const byte indicatorLED = A5; //32u4 pin 41
 
 #define NUMPARAM 5
 const char string_0[] PROGMEM = "Start_Delay,";
@@ -57,7 +57,6 @@ unsigned int waveform[NUMPARAM] = {};
 int error;
 const float KP = 0.2;
 bool isSettled = false;
-// bool isMaxed = false;
 unsigned int tempPower = 0;
 byte vectorIndex = 0;
 unsigned int powerLevel;
@@ -84,16 +83,14 @@ LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOut
   analogPin = _analogPin;
   isMaxed = false;
   *slaveDirReg |= (1<<slaveSelectPin);       //set slave select pin as output
-  *slaveOutputReg |= (1<<slaveSelectPin);  //Set slave select HIGH (LOW selects the chip)  
-  
+  *slaveOutputReg |= (1<<slaveSelectPin);  //Set slave select HIGH (LOW selects the chip)    
 }
 
 bool LaserDiode::off(){
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
-  SPI.transfer(0);
-  SPI.transfer(0);
+  SPI.transfer16(0);
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   if (DAClevel==4095){
     isMaxed = true;
@@ -107,8 +104,7 @@ void LaserDiode::sendDAC(unsigned int value) {
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
-  SPI.transfer(value>>4);                  //shift high byte
-  SPI.transfer(value<<4 & 255);            //shift low byte
+  SPI.transfer16(value);
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   SPI.endTransaction();
 }
@@ -153,58 +149,95 @@ int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedba
 
 bool active = false;
 
-LaserDiode left(&DDRD,&PORTD,2,A3);
-LaserDiode right(&DDRB,&PORTB,0,A4);
+LaserDiode right(&DDRD,&PORTD,2,A3);
+int rightSetPoint = 114;
+LaserDiode left(&DDRB,&PORTB,0,A4);
+int leftSetPoint = 64;
+
 
 void setup() {
   SPI.begin();
   Serial.begin(115200);  
   Serial.println("hello. is this thing on?");
   Serial.println("started!");
+  right.off();
+  left.off();
+  pinMode(indicatorLED,OUTPUT);
+  // digitalWrite(indicatorLED,HIGH);
 }
 
 void loop() {
-  left.sendDAC(500);
-  right.sendDAC(500);
-  delay(1000);
-  left.sendDAC(3000);
-  right.sendDAC(3000);  
-  delay(1000);  
-
+  // combinedTest();
   
   // if (Serial.available()){
   //   char msg = Serial.read();
+
+
   //   // if (msg=='1'){
-  //   //   leftSetPoint+=100;
-  //   //   Serial.println(leftSetPoint);  
-  //   //   triggerEvent(leftSetPoint,&left,true);      
+  //   //   rightSetPoint+=20;
+  //   //   Serial.println(rightSetPoint);  
+  //   //   triggerEvent(rightSetPoint,&right,true);      
   //   // }
   //   // else if (msg=='2'){
-  //   //   leftSetPoint-=100;
-  //   //   Serial.println(leftSetPoint);    
-  //   //   triggerEvent(leftSetPoint,&left,true);  
+  //   //   rightSetPoint-=20;
+  //   //   Serial.println(rightSetPoint);    
+  //   //   triggerEvent(rightSetPoint,&right,true);  
   //   // }
-
-  //   if (msg=='1'){
-  //     rightSetPoint+=100;
-  //     Serial.println(rightSetPoint);  
-  //     triggerEvent(rightSetPoint,&right,true);      
-  //   }
-  //   else if (msg=='2'){
-  //     rightSetPoint-=100;
-  //     Serial.println(rightSetPoint);    
-  //     triggerEvent(rightSetPoint,&right,true);  
-  //   }
   // }
-  // triggerEvent(leftSetPoint,&left,true);
-  // delay(1000);
-  // triggerBoth(leftSetPoint,rightSetPoint);
-  // delay(1000);
-  // triggerEvent(rightSetPoint,&right,true);
-  // delay(5000);  
-  // Serial.println();
+
 }
 
+void leftTune(char msg){
+  if (msg=='1'){
+    leftSetPoint+=50;
+    Serial.println(leftSetPoint);  
+    triggerEvent(leftSetPoint,&left,true);      
+  }
+  else if (msg=='2'){
+    leftSetPoint+=10;
+    Serial.println(leftSetPoint);    
+    triggerEvent(leftSetPoint,&left,true);  
+  }
+  else if (msg=='3'){
+    leftSetPoint+=5;
+    Serial.println(leftSetPoint);    
+    triggerEvent(leftSetPoint,&left,true);  
+  }
+  else if (msg=='4'){
+    leftSetPoint++;
+    Serial.println(leftSetPoint);    
+    triggerEvent(leftSetPoint,&left,true);  
+  }
+  if (msg=='0'){
+    leftSetPoint-=50;
+    Serial.println(leftSetPoint);  
+    triggerEvent(leftSetPoint,&left,true);      
+  }
+  else if (msg=='9'){
+    leftSetPoint-=10;
+    Serial.println(leftSetPoint);    
+    triggerEvent(leftSetPoint,&left,true);  
+  }
+  else if (msg=='8'){
+    leftSetPoint-=5;
+    Serial.println(leftSetPoint);    
+    triggerEvent(leftSetPoint,&left,true);  
+  }
+  else if (msg=='8'){
+    leftSetPoint--;
+    Serial.println(leftSetPoint);    
+    triggerEvent(leftSetPoint,&left,true);  
+  }
+}
+void combinedTest(){
+  triggerEvent(leftSetPoint,&left,true);
+  delay(1000);
+  triggerBoth(leftSetPoint,rightSetPoint);
+  delay(1000);
+  triggerEvent(rightSetPoint,&right,true);
+  delay(5000);  
+  Serial.println();
+}
 void isolationTest(){
   // delay(5000);
   // Serial.print("Before left: ");    
