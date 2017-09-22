@@ -41,16 +41,8 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #define LEFT 0
 #define RIGHT 1
 
-//DAC pins setup//
-const int leftSelect = 6;
-const int rightSelect = 5;
-const int leftPhotoFeedback = A0;
-const int rightPhotoFeedback = A1;
-
 const byte indicatorLED = 8; //attiny pin 5, Arduino language pin8
 
-const byte NUMPULSES = 88;               //maximum length of the message we can receive
-const byte irResolution = 4;             //# of microseconds that we will delay before checking the state of the IR sensor again
 #define NUMPARAM 5
 const char string_0[] PROGMEM = "Start_Delay,";
 const char string_1[] PROGMEM = "On_Time,";
@@ -73,34 +65,36 @@ unsigned int powerLevel;
 
 class LaserDiode{
 public:
+  volatile uint8_t *slaveOutputReg;
   uint8_t slaveSelectPin;
   uint8_t analogPin;
   bool isMaxed;
   int16_t DAClevel;  
 
-  LaserDiode(uint8_t _slavePin, uint8_t _analogPin);
+  LaserDiode(volatile uint8_t *slaveDirReg, volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin);
   bool off();
   void sendDAC(unsigned int value);
   void feedback(int setPoint);
   void fade();
 };
 
-LaserDiode::LaserDiode(uint8_t _slavePin, uint8_t _analogPin){
+LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin){
+  slaveOutputReg = _slaveOutputReg;
   slaveSelectPin = _slavePin;
   analogPin = _analogPin;
   isMaxed = false;
-  pinMode(slaveSelectPin,OUTPUT);
-  digitalWrite(slaveSelectPin,HIGH);
+  *slaveDirReg |= (1<<slaveSelectPin);       //set slave select pin as output
+  *slaveOutputReg |= (1<<slaveSelectPin);  //Set slave select HIGH (LOW selects the chip)  
+  
 }
 
 bool LaserDiode::off(){
-  // Serial.println("laser off");
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
-  digitalWrite(slaveSelectPin,LOW);
+  *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
   SPI.transfer(0);
   SPI.transfer(0);
-  digitalWrite(slaveSelectPin,HIGH);
+  *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   if (DAClevel==4095){
     isMaxed = true;
   }
@@ -111,11 +105,11 @@ bool LaserDiode::off(){
 
 void LaserDiode::sendDAC(unsigned int value) {
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
-  digitalWrite(slaveSelectPin,LOW);  
+  *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
   SPI.transfer(value>>4);                  //shift high byte
   SPI.transfer(value<<4 & 255);            //shift low byte
-  digitalWrite(slaveSelectPin,HIGH);
+  *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   SPI.endTransaction();
 }
 
@@ -146,10 +140,11 @@ void LaserDiode::fade(){
   // }
 }
 
-LaserDiode left(6,A0);
-int leftSetPoint = 1014;
-LaserDiode right(5,A1);
-int rightSetPoint = 60;
+// LaserDiode left(&DDRD,&PORTD,2,A3);
+// int leftSetPoint = 20;
+// LaserDiode right(&DDRB,&PORTB,0,A4);
+// int rightSetPoint = 20;
+// int rightSetPoint = 60;
 int meterVal = 0;
 int powerMeter = A2;
 
@@ -157,66 +152,104 @@ int powerMeter = A2;
 int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
 bool active = false;
+
+LaserDiode left(&DDRD,&PORTD,2,A3);
+
+
 void setup() {
   SPI.begin();
   Serial.begin(115200);  
   Serial.println("hello. is this thing on?");
-  left.off();
-  right.off();
 
-  while(!Serial.available()){
-    //wait
-  }
-  while(Serial.available()){
-    Serial.read();
-  }
+  // left.off();
+  // right.off();
+
+  // while(!Serial.available()){
+  //   //wait
+  // }
+  // while(Serial.available()){
+  //   Serial.read();
+  // }
+  Serial.println("started!");
+
+  // int leftSetPoint = 20;
+  // left.sendDAC(1050);
+  // right.sendDAC(4000);
 
 }
 
 void loop() {
-  triggerEvent(leftSetPoint,&left,true);
+  left.sendDAC(500);
   delay(1000);
-  triggerBoth(leftSetPoint,rightSetPoint);
-  delay(1000);
-  triggerEvent(rightSetPoint,&right,true);
-  delay(5000);  
-  Serial.println();
+  left.sendDAC(3000);
+  delay(1000);  
+  // if (Serial.available()){
+  //   char msg = Serial.read();
+  //   // if (msg=='1'){
+  //   //   leftSetPoint+=100;
+  //   //   Serial.println(leftSetPoint);  
+  //   //   triggerEvent(leftSetPoint,&left,true);      
+  //   // }
+  //   // else if (msg=='2'){
+  //   //   leftSetPoint-=100;
+  //   //   Serial.println(leftSetPoint);    
+  //   //   triggerEvent(leftSetPoint,&left,true);  
+  //   // }
+
+  //   if (msg=='1'){
+  //     rightSetPoint+=100;
+  //     Serial.println(rightSetPoint);  
+  //     triggerEvent(rightSetPoint,&right,true);      
+  //   }
+  //   else if (msg=='2'){
+  //     rightSetPoint-=100;
+  //     Serial.println(rightSetPoint);    
+  //     triggerEvent(rightSetPoint,&right,true);  
+  //   }
+  // }
+  // triggerEvent(leftSetPoint,&left,true);
+  // delay(1000);
+  // triggerBoth(leftSetPoint,rightSetPoint);
+  // delay(1000);
+  // triggerEvent(rightSetPoint,&right,true);
+  // delay(5000);  
+  // Serial.println();
 }
 
 void isolationTest(){
-  delay(5000);
-  Serial.print("Before left: ");    
-  feedbackReadings();
-  triggerEvent(951,&left,true);
-  delay(1000);  
-  Serial.print("Before right: ");  
-  feedbackReadings();  
-  triggerEvent(74,&right,true);
+  // delay(5000);
+  // Serial.print("Before left: ");    
+  // feedbackReadings();
+  // triggerEvent(951,&left,true);
+  // delay(1000);  
+  // Serial.print("Before right: ");  
+  // feedbackReadings();  
+  // triggerEvent(74,&right,true);
 }
 void feedbackReadings(){ 
-  Serial.print(analogRead(left.analogPin));
-  Serial.print(", ");
-  Serial.println(analogRead(right.analogPin));
+  // Serial.print(analogRead(left.analogPin));
+  // Serial.print(", ");
+  // Serial.println(analogRead(right.analogPin));
 }
 
 void calibrate(){
-  // int a = EEPROM.read(0)<<8;// high byte
-  // int b = EEPROM.read(1);
-  // Serial.print("last Value:");
-  // Serial.println(a|b,DEC);
-  // delay(5000);
-  int tryPower  = 1005;
-  while ( meterVal <96){
-    tryPower++;
-    meterVal =  triggerEvent(tryPower,&left,true);
-    Serial.print("Try: ");
-    Serial.print(tryPower);
-    Serial.print(", Result: ");
-    Serial.println(meterVal);
-    delay(2000);
-  }
-  EEPROM.write(0,tryPower>>8);// high byte
-  EEPROM.write(1,tryPower&255);//low byte
-  Serial.println("Done!");
-  Serial.print(tryPower);
+  // // int a = EEPROM.read(0)<<8;// high byte
+  // // int b = EEPROM.read(1);
+  // // Serial.print("last Value:");
+  // // Serial.println(a|b,DEC);
+  // // delay(5000);
+  // int tryPower  = 1005;
+  // while ( meterVal <96){
+  //   tryPower++;
+  //   meterVal =  triggerEvent(tryPower,&left,true);
+  //   Serial.print("Try: ");
+  //   Serial.print(tryPower);
+  //   Serial.print(", Result: ");
+  //   Serial.println(meterVal);
+  //   delay(2000);
+  // }
+  // EEPROM.write(0,tryPower>>8);// high byte
+  // EEPROM.write(1,tryPower&255);//low byte
+  // Serial.println("Done!");
+  // Serial.print(tryPower);
 }
