@@ -59,9 +59,9 @@ boolean requestACK = false;
 #ifdef ENABLE_ATC
   // RFM69_ATC radio;
   // RFM69_ATC(uint8_t slaveSelectPin=RF69_SPI_CS, uint8_t interruptPin=RF69_IRQ_PIN, bool isRFM69HW=false, uint8_t interruptNum=RF69_IRQ_NUM) :
-  RFM69_ATC radio(10, 2,false, digitalPinToInterrupt(2));  
+  RFM69_ATC radio(10, 2,true, digitalPinToInterrupt(2));  
 #else
-  // RFM69 radio;
+  RFM69 radio;
 #endif
 
 #define BR_300KBPS             //run radio at max rate of 300kbps!
@@ -110,28 +110,28 @@ void Blink(byte PIN, int DELAY_MS)
 long lastPeriod = 0;
 
 void loop() {
-  //process any serial input
-  if (Serial.available() > 0){
-    char input = Serial.read();
-    if (input >= 48 && input <= 57) //[0,9]
-    {
-      TRANSMITPERIOD = 100 * (input-48);
-      if (TRANSMITPERIOD == 0) TRANSMITPERIOD = 1000;
-      Serial.print("\nChanging delay to ");
-      Serial.print(TRANSMITPERIOD);
-      Serial.println("ms\n");
-    }
-  }
+  // //process any serial input
+  // if (Serial.available() > 0){
+  //   char input = Serial.read();
+  //   if (input >= 48 && input <= 57) //[0,9]
+  //   {
+  //     TRANSMITPERIOD = 100 * (input-48);
+  //     if (TRANSMITPERIOD == 0) TRANSMITPERIOD = 1000;
+  //     Serial.print("\nChanging delay to ");
+  //     Serial.print(TRANSMITPERIOD);
+  //     Serial.println("ms\n");
+  //   }
+  // }
 
   //check for any received packets
   if (radio.receiveDone()){
-    Serial.print("[message from node ");
-    Serial.print(radio.SENDERID, DEC);
-    Serial.print("] ");
-    for (byte i = 0; i < radio.DATALEN; i++){
-      Serial.print((char)radio.DATA[i]);
-    }
-    Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+    // Serial.print("[message from node ");
+    // Serial.print(radio.SENDERID, DEC);
+    // Serial.print("] ");
+    // for (byte i = 0; i < radio.DATALEN; i++){
+    //   Serial.print((char)radio.DATA[i]);
+    // }
+    // Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
     if (radio.ACKRequested()){
       radio.sendACK();
       Serial.print(" - ACK sent");
@@ -140,25 +140,5 @@ void loop() {
     Serial.println();
   }
 
-  int currPeriod = millis()/TRANSMITPERIOD;
-  if (currPeriod != lastPeriod)
-  {
-    lastPeriod=currPeriod;
-    Serial.print("Sending[");
-    Serial.print(sendSize);
-    Serial.print("]: ");
-    for(byte i = 0; i < sendSize; i++)
-      Serial.print((char)payload[i]);
-    timeSent = micros();
-    if (radio.sendWithRetry(GATEWAYID, payload, 1)){
-      timeSent = micros()-timeSent;
-      Serial.print(" trip: ");Serial.println(timeSent);
-    }
-    else{
-      Serial.print(" no response :(");
-    } 
-    sendSize = (sendSize + 1) % 31;
-    Serial.println();
-    Blink(LED,3);
-  }
+
 }

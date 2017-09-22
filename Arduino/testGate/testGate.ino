@@ -35,21 +35,22 @@
 #define NETWORKID     100  //the same on all nodes that talk to each other
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
 #define FREQUENCY     RF69_915MHZ
-// #define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
+#define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
 //*********************************************************************************************
 //Auto Transmission Control - dials down transmit power to save battery
 //Usually you do not need to always transmit at max output power
 //By reducing TX power even a little you save a significant amount of battery power
 //This setting enables this gateway to work with remote nodes that have ATC enabled to
 //dial their power down to only the required level
-// #define ENABLE_ATC    //comment out this line to disable AUTO TRANSMISSION CONTROL
+#define ENABLE_ATC    //comment out this line to disable AUTO TRANSMISSION CONTROL
 //*********************************************************************************************
 #define SERIAL_BAUD   115200
 #define BR_300KBPS             //run radio at max rate of 300kbps!
-#define LED           9 // Moteinos have LEDs on D9
+#define LED           13 // Moteinos have LEDs on D9
 
 #ifdef ENABLE_ATC
-  RFM69_ATC radio;
+  // RFM69_ATC radio;
+  RFM69_ATC radio(8, 7,true, digitalPinToInterrupt(7));  //slave select,interrupt pin, isRFM69HW, interruptNum
 #else
   RFM69 radio;
 #endif
@@ -67,10 +68,6 @@ void setup() {
   char buff[50];
   sprintf(buff, "\nListening at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
   Serial.println(buff);
-  
-#ifdef ENABLE_ATC
-  Serial.println("RFM69_ATC Enabled (Auto Transmission Control)");
-#endif
 
 #ifdef BR_300KBPS
   radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
@@ -84,28 +81,19 @@ void setup() {
 
   pinMode(LED, OUTPUT);
 }
-
-byte ackCount=0;
-uint32_t packetCount = 0;
+unsigned int timeSent = 0;
 void loop() {
-  //process any serial input
-  if (Serial.available() > 0)
-  {
-    char input = Serial.read();    
-    if (input == 't')
-    {
-      byte temperature =  radio.readTemperature(-1); // -1 = user cal factor, adjust for correct ambient
-      byte fTemp = 1.8 * temperature + 32; // 9/5=1.8
-      Serial.print( "Radio Temp is ");
-      Serial.print(temperature);
-      Serial.print("C, ");
-      Serial.print(fTemp); //converting to F loses some resolution, obvious when C is on edge between 2 values (ie 26C=78F, 27C=80F)
-      Serial.println('F');
-    }
+  timeSent = micros();  
+  if (radio.sendWithRetry(12, "T", 8, 0)){  // 0 = only 1 attempt, no retries
+    timeSent = micros()-timeSent;
+    Serial.print(" trip: ");Serial.println(timeSent);
   }
+  else{
+     Serial.println("nothing");
+  }
+  delay(1000);
   if (radio.receiveDone())
   {
-    Serial.print("#[");Serial.print(++packetCount);Serial.print(']');
     Serial.print('[');Serial.print(radio.SENDERID, DEC);Serial.print("] ");
     for (byte i = 0; i < radio.DATALEN; i++)
       Serial.print((char)radio.DATA[i]);
@@ -116,18 +104,6 @@ void loop() {
       byte theNodeID = radio.SENDERID;
       radio.sendACK();
       Serial.print(" - ACK sent.");
-
-      // When a node requests an ACK, respond to the ACK
-      // and also send a packet requesting an ACK (every 3rd one only)
-      // This way both TX/RX NODE functions are tested on 1 end at the GATEWAY
-      if (ackCount++%3==0)
-      {
-        Serial.print(" Pinging node ");Serial.print(theNodeID);Serial.print(" - ACK...");
-        delay(3); //need this when sending right after reception .. ?
-        if (radio.sendWithRetry(theNodeID, "ACK TEST", 8, 0))  // 0 = only 1 attempt, no retries
-          Serial.print("ok!");
-        else Serial.print("nothing");
-      }
     }
     Serial.println();
     Blink(LED,3);
@@ -140,3 +116,24 @@ void Blink(byte PIN, int msDelay)
   delay(msDelay);
   digitalWrite(PIN,LOW);
 }
+
+  // int currPeriod = millis()/TRANSMITPERIOD;
+  // if (currPeriod != lastPeriod)
+  // {
+  //   lastPeriod=currPeriod;
+  //   Serial.print("Sending[");
+  //   Serial.print(sendSize);
+  //   Serial.print("]: ");
+  //   for(byte i = 0; i < sendSize; i++)
+  //     Serial.print((char)payload[i]);
+  //   timeSent = micros();
+  //   if (radio.sendWithRetry(GATEWAYID, payload, 1)){
+
+  //   }
+  //   else{
+  //     Serial.print(" no response :(");
+  //   } 
+  //   sendSize = (sendSize + 1) % 31;
+  //   Serial.println();
+  //   Blink(LED,3);
+  // }
