@@ -35,8 +35,26 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #include <avr/pgmspace.h>
 #include <SPI.h>
 #include <EEPROM.h>
+#include <RFM69.h>         //get it here: https://www.github.com/lowpowerlab/rfm69
+#include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
+#include <SparkFunBQ27441.h>  //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
 
-
+//*********************************************************************************************
+#define NODEID        12    //must be unique for each node on same network (range up to 254, 255 is used for broadcast)
+#define NETWORKID     100  //the same on all nodes that talk to each other (range up to 255)
+#define GATEWAYID     1
+//Match frequency to the hardware version of the radio on your Moteino (uncomment one):
+#define FREQUENCY     RF69_915MHZ
+#define IS_RFM69HW_HCW  //uncomment only for RFM69HW/HCW! Leave out if you have RFM69W/CW!
+//*********************************************************************************************
+//Auto Transmission Control - dials down transmit power to save battery
+//Usually you do not need to always transmit at max output power
+//By reducing TX power even a little you save a significant amount of battery power
+//This setting enables this gateway to work with remote nodes that have ATC enabled to
+//dial their power down to only the required level (ATC_RSSI)
+#define ATC_RSSI      -80
+RFM69_ATC radio(7, 1,true, digitalPinToInterrupt(1)); 
+//*********************************************************************************************
 
 #define LEFT 0
 #define RIGHT 1
@@ -136,11 +154,6 @@ void LaserDiode::fade(){
   // }
 }
 
-// LaserDiode left(&DDRD,&PORTD,2,A3);
-// int leftSetPoint = 20;
-// LaserDiode right(&DDRB,&PORTB,0,A4);
-// int rightSetPoint = 20;
-// int rightSetPoint = 60;
 int meterVal = 0;
 int powerMeter = A2;
 
@@ -158,20 +171,60 @@ int leftSetPoint = 64;
 void setup() {
   SPI.begin();
   Serial.begin(115200);  
-  Serial.println("hello. is this thing on?");
-  Serial.println("started!");
+
+  // Laser Diodes
   right.off();
   left.off();
+
+  // Indicator LED
   pinMode(indicatorLED,OUTPUT);
-  // digitalWrite(indicatorLED,HIGH);
+
+  //*** Radio ***//
+  radio.initialize(FREQUENCY,NODEID,NETWORKID);
+  radio.enableAutoPower(ATC_RSSI);  
+  radio.encrypt(null);
+  radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
+  radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
+  radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
+  radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
+  radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
+
+  //*** Battery Monitor ***//
+  setupBQ27441();
+  
 }
 
 void loop() {
+    //check for any received packets
+    if (radio.receiveDone()){
+      // Serial.print("[message from node ");
+      // Serial.print(radio.SENDERID, DEC);
+      // Serial.print("] ");
+      // for (byte i = 0; i < radio.DATALEN; i++){
+      if (radio.ACKRequested()){
+        radio.sendACK();
+        Serial.print(" - ACK sent ");
+      }
+      char receivedMsg = radio.DATA[0];
+      if (receivedMsg=='T'){
+        triggerBoth(leftSetPoint,rightSetPoint);
+      }
+      if (receivedMsg=='B'){
+        reportBattery();
+      }
+      Serial.print("received: ");
+      Serial.println(receivedMsg);
+      
+      // }
+      // Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+
+    }
   // combinedTest();
   
   // if (Serial.available()){
   //   char msg = Serial.read();
-
 
   //   // if (msg=='1'){
   //   //   rightSetPoint+=20;
@@ -283,4 +336,50 @@ void pauseUntilCommand(){
   while(Serial.available()){
     Serial.read();
   }
+}
+
+void reportBattery(){
+    // Read battery stats from the BQ27441-G1A
+    unsigned int soc = lipo.soc();  // Read state-of-charge (%)
+    unsigned int volts = lipo.voltage(); // Read battery voltage (mV)
+    int current = lipo.current(AVG); // Read average current (mA)
+    unsigned int fullCapacity = lipo.capacity(FULL); // Read full capacity (mAh)
+    unsigned int capacity = lipo.capacity(REMAIN); // Read remaining capacity (mAh)
+    int power = lipo.power(); // Read average power draw (mW)
+    int health = lipo.soh(); // Read state-of-health (%)
+  
+    // Now print out those values:
+    String toPrint = String(soc) + "% | ";
+    toPrint += String(volts) + " mV | ";
+    toPrint += String(current) + " mA | ";
+    toPrint += String(capacity) + " / ";
+    toPrint += String(fullCapacity) + " mAh | ";
+    toPrint += String(power) + " mW | ";
+    toPrint += String(health) + "%";
+    
+    Serial.println(toPrint);
+
+    char buff[65];
+    toPrint.toCharArray(buff,65);
+    byte buffLen=strlen(buff);
+    radio.sendWithRetry(1, buff, buffLen);
+}
+
+void setupBQ27441(void)
+{
+  // Use lipo.begin() to initialize the BQ27441-G1A and confirm that it's
+  // connected and communicating.
+  if (!lipo.begin()) // begin() will return true if communication is successful
+  {
+	// If communication fails, print an error message and loop forever.
+    Serial.println("Error: Unable to communicate with BQ27441.");
+    Serial.println("  Check wiring and try again.");
+    Serial.println("  (Battery must be plugged into Battery Babysitter!)");
+    while (1) ;
+  }
+  Serial.println("Connected to BQ27441!");
+  
+  // Uset lipo.setCapacity(BATTERY_CAPACITY) to set the design capacity
+  // of your battery.
+  lipo.setCapacity(400);
 }

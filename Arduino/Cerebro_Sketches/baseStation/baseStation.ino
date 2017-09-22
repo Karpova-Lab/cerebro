@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2017 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,270 +22,103 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/*
-Cerebro Base Station(CBS) emits IR signals to communicate with Cerebro.
-CBS has two modes: USB and MBED. In USB mode, CBS can be triggered either by a high signal on pin 3, or through serial
-communication coming from serialSender. In MBED mode, CBS is triggered by serial communication coming from an MBED.
-Based on code from Adafruit IR sensor tutorial: https://learn.adafruit.com/ir-sensor/making-an-intervalometer
-Upload to ATtiny85 at 8MHz for proper timing. ATtiny core for Arduino IDE found here: https://code.google.com/p/arduino-tiny/
-*/
+#include <RFM69.h>         //get it here: https://www.github.com/lowpowerlab/rfm69
+#include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
+#include <SPI.h>           //included with Arduino IDE install (www.arduino.cc)
 
-#include <EEPROM.h>         //***Burned bootloader should have EESAVE bit (Fuse high bit no 3) set low to prevent EEPROM from being cleared whenever a sketch is uploaded***
-#include <Cerebro.h>
-#include <SoftwareSerial.h>
-#include <avr/wdt.h>
-Cerebro cerebro(BASESTATION);
-SoftwareSerial mySerial(3,4);
-#define triggerIn_reg PINB
-#define stopIn_reg    PINB
-#define triggerIn   2              //pin 7 on 85
-#define stopIn      0              //pin 5 on 85
-#define CONTINUATION 1
-String startupMsg;
-unsigned long timeOffset;
-byte values[numParameters][6];
-byte version = 24;
-unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
-long triggerClock = 0;
-unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
-                          We don't want Base Station's log file to be filled with "Stop Sent" events that weren't applicable to Cerebro.
-                          Therefore, Base Station filters Bcontrol commands, only emitting stop signals to Cerebro if we think
-                          Cerebro is in the middle of a pulse. Likewise for trigger events, we only emit trigger signals if we do NOT think
-                          Cerebro is in the middle of a pulse*/
+//*********************************************************************************************
+//************ IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
+//*********************************************************************************************
+#define NODEID        1    //unique for each node on same network
+#define NETWORKID     100  //the same on all nodes that talk to each other
+//Match frequency to the hardware version of the radio on your Moteino (uncomment one):
+#define FREQUENCY     RF69_915MHZ
+//*********************************************************************************************
+#define BR_300KBPS          //run radio at max rate of 300kbps!
+#define LED           13 
 
-void setup()   {
-  MCUSR = 0;  //clear MCU register of previous reset flags
-  wdt_disable();//disable watchdog timer
-  pinMode(triggerIn, INPUT);
-  pinMode(stopIn, INPUT);
-  mySerial.begin(9600);
-  spamFilter = EEPROM.read(0)<<8 | EEPROM.read(1); //recall spamFilter from memory
-  triggerClock = -spamFilter;
+RFM69 radio(8, 7,true, digitalPinToInterrupt(7));  //slave select,interrupt pin, isRFM69HW, interruptNum
+  
+void setup() {
+  Serial.begin(115200);
+  delay(10);
+  radio.initialize(FREQUENCY,NODEID,NETWORKID);
+  radio.setHighPower(); //must include this only for RFM69HW/HCW!
+  radio.encrypt(null);  
+  radio.promiscuous(false);
+  char buff[50];
+  sprintf(buff, "\nListening at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+  Serial.println(buff);
 
-  //setup time synchronization//
-  byte msgLength = 0;
-  while (!mySerial.available()){}       // wait until serial data is available
-  while (mySerial.available()) {        //once available, read and store the message that was sent
-    startupMsg+= (char)mySerial.read();
-    msgLength++;
-    delay(2);
-  }
-  if (msgLength < 2) {                   //if the chip was just reset through software there is going to be a leftover 'R' in the serial buffer. That's not the message we want.
-    startupMsg = "";
-    while (!mySerial.available()) {}
-    while (mySerial.available()) {
-      startupMsg+= (char)mySerial.read();
-      delay(1);
-    }
-  }
-  mySerial.print(startupMsg);
-  mySerial.print(version);
-  mySerial.print(",");
-  mySerial.print(spamFilter);
-  mySerial.print("\r");
-  timeOffset = millis();
+#ifdef BR_300KBPS
+  radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
+  radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
+  radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
+  radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
+  radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
+  radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
+#endif
+
+  pinMode(LED, OUTPUT);
 }
-
-
+unsigned int timeSent = 0;
 
 void loop() {
-  //if we read high signal on pin 7, send a trigger to cerebro
-  if (triggerIn_reg & (1<<triggerIn)) {
-    while(triggerIn_reg & (1<<triggerIn)){} //wait until signal goes low
-    triggerFromBase();
+  if (Serial.available()){
+    char msg = Serial.read();
+    timeSent = micros();  
+    if (radio.sendWithRetry(12, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
+      timeSent = micros()-timeSent;
+      Serial.print(" trip: ");Serial.println(timeSent);
+    }
+    else{
+       Serial.println("nothing");
+    }
   }
-  //if we read a high signal on pin 5, send a stop command to cerebro
-  if (stopIn_reg & (1<<stopIn)) {
-    while(stopIn_reg & (1<<stopIn)){}       //wait until signal goes low
-    stopFromBase();
-  }
-  //if we get a serial messsage from Xavier
-  if (mySerial.available()) {
-    parseMsg(readMsg());
+
+  if (radio.receiveDone())
+  {
+    Serial.print('[');Serial.print(radio.SENDERID, DEC);Serial.print("] ");
+    for (byte i = 0; i < radio.DATALEN; i++)
+      Serial.print((char)radio.DATA[i]);
+    Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
+    
+    if (radio.ACKRequested())
+    {
+      byte theNodeID = radio.SENDERID;
+      radio.sendACK();
+      Serial.print(" - ACK sent.");
+    }
+    Serial.println();
+    Blink(LED,3);
   }
 }
 
-
-byte readMsg(){
-  byte digitIndex = 0;
-  byte valueIndex = 0;
-  while (mySerial.available()) {
-    char msg = mySerial.read();
-    if (msg == ',') {
-      digitIndex = 0;
-      valueIndex++;
-    }
-    else {
-      values[valueIndex][digitIndex] = msg;
-      digitIndex++;
-      values[valueIndex][5] = digitIndex; //the number of digits that have been read in
-      delay(20);
-    }
-  }
-  return valueIndex;
+void Blink(byte PIN, int msDelay)
+{
+  digitalWrite(PIN,HIGH);
+  delay(msDelay);
+  digitalWrite(PIN,LOW);
 }
 
-void parseMsg(byte numValues){
-  //Commands received will be single characters ('T' or 'D' etc.)
-  //In the special case that new parameters are received ('12345,12345,12345,12345,12345'), read in the ascii chacaters that were sent (they represent integers separated by commas).
-  //Each  values[i] has 6 bytes, the first 5 bytes are for the ascii characters representing digits 0-9, the last byte (index 5) is reserved for storing the number of "digits" received.
-  //Later on, cerebro.send() function converts these strings of "digits" to actual integers and then sends them as binary data.
+  // int currPeriod = millis()/TRANSMITPERIOD;
+  // if (currPeriod != lastPeriod)
+  // {
+  //   lastPeriod=currPeriod;
+  //   Serial.print("Sending[");
+  //   Serial.print(sendSize);
+  //   Serial.print("]: ");
+  //   for(byte i = 0; i < sendSize; i++)
+  //     Serial.print((char)payload[i]);
+  //   timeSent = micros();
+  //   if (radio.sendWithRetry(GATEWAYID, payload, 1)){
 
-  //received ASCII "T", send trigger to cerebro
-  if (values[0][0] == 'T') {
-    triggerFromBase();
-  }
-  //received ASCII "D", send start then stop for reception test.
-  else if (values[0][0] == 'D') {
-    cerebro.test();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Test Sent\r"));
-  }
-  //received ASCII "S", send stop command to cerebro.
-  else if (values[0][0] == 'S') {
-    stopFromBase();
-  }
-  else if (values[0][0] == 'Q') {
-    cerebro.stop();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Debug Stop Sent\r"));
-  }
-  else if (values[0][0] == 'C') {
-    cerebro.trigger(CONTINUATION);
-    triggerClock = millis();
-    mySerial.print(triggerClock - timeOffset);
-    mySerial.print(F(",Debug Continuation Sent\r"));
-  }
-  //received ASCII "E", send save to EEPROM command to cerebro.
-  else if (values[0][0] == 'E' ){
-    cerebro.saveEEPROM();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Save Sent\r"));
-  }
-  //received ASCII "R", reset MCU.
-  else if (values[0][0] == 'R') {
-    while(mySerial.available()){
-      mySerial.read();
-    }
-    wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
-    while(1){}              // do nothing and wait for the reset
-  }
-  //receiveed ASCII "V", reply with version
-  else if (values[0][0] == 'V') {
-    mySerial.print(F("Base Station Firmware Version,"));
-    mySerial.print(version);
-    mySerial.print("\r");
-  }
-  //receiveed ASCII "L", toggle the IR Lamp
-  else if (values[0][0] == 'L'){
-    if (cerebro.isNormallyOn){
-      cerebro.toggle(0);
-    }
-    else {
-      cerebro.toggle(1);
-    }
-  }
-  //receiveed ASCII "F", update spamFilter value
-  if (values[0][0] == 'F'){
-    spamFilter = 0;
-    for (int i = 0; i < values[1][5]; i++) {
-      spamFilter = spamFilter + (values[1][i] - 48) * powers[values[1][5] - i - 1];
-    }
-    saveVal(spamFilter);
-    mySerial.print(F("Filter updated to "));
-    mySerial.print(spamFilter);
-    mySerial.print(" ms\r");
-  }
-  else if (values[0][0] == 'X') {
-    cerebro.sendBinary(117,7);
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Calibration Vector Sent\r"));
-  }
-  else if (values[0][0] == 'H') {
-    cerebro.sendBinary(97,7);
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Hardware Vector Sent\r"));
-  }
-  else if (values[0][0] == 'M') {
-    cerebro.dumpMemory();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Memory Dump Sent\r"));
-  }
-  else if (values[0][0] == 'A') {
-    cerebro.resetAddress();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Address Reset Sent\r"));
-  }
-  else if (values[0][0] == 'P') {
-    cerebro.sendBinary(36,7); //sends message that sets the powerTest flag
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",New Power Sent\r"));
-  }
-  else if (values[0][0] == 'Z') {
-    cerebro.implantCharacterize();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Implant Characterization Routine Start Sent\r"));
-  }
-  else if (values[0][0] == 'K') {
-    cerebro.diodeCharacterize();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Diode Characterization Routine Start Sent\r"));
-  }
-  //received values to pass along to cerebro. Send 8 bytes of data to cerebro.
-  else if (numValues==numParameters-1){
-    //convert read ascii digits to an integer
-    unsigned int decnum[numParameters];
-    for( int k=0; k<numParameters; k++){
-        decnum[k] = 0;
-        for (int i = 0; i < values[k][5]; i++) {
-          decnum[k] = decnum[k] + (values[k][i] - 48) * powers[values[k][5] - i - 1];
-        }
-    }
-    mySerial.print(millis() - timeOffset);
-    cerebro.send(decnum);
-    mySerial.print(F(",New Parameters Sent"));
-    for (int i = 0; i<numParameters; i++){
-      mySerial.print(",");
-      mySerial.print(decnum[i]);
-    }
-    mySerial.print("\r");
-  }
-}
-
-void triggerFromBase(){
-  unsigned long tSinceTrigger = millis() - triggerClock;
-  if (tSinceTrigger>spamFilter){
-    cerebro.trigger();
-    triggerClock = millis();
-    mySerial.print(triggerClock - timeOffset);
-    mySerial.print(F(",Trigger Sent\r"));
-  }
-  else{
-    cerebro.trigger(CONTINUATION);
-    triggerClock = millis();
-    mySerial.print(triggerClock - timeOffset);
-    mySerial.print(F(",Continue Sent,"));
-    mySerial.print(tSinceTrigger);
-    mySerial.print("\r");
-  }
-}
-
-void stopFromBase(){
-  unsigned long tSinceTrigger = millis() - triggerClock;
-  if (tSinceTrigger<spamFilter){
-    cerebro.stop();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Stop Sent,"));
-    mySerial.print(tSinceTrigger);
-    mySerial.print("\r");
-    triggerClock = -spamFilter; //prevents back to back stop signals from being sent
-  }
-}
-
-void saveVal(int saveValue){
-  EEPROM.write(0,saveValue >> 8);
-  EEPROM.write(1,saveValue & 255);
-}
-
-void recallVal(){
-}
+  //   }
+  //   else{
+  //     Serial.print(" no response :(");
+  //   } 
+  //   sendSize = (sendSize + 1) % 31;
+  //   Serial.println();
+  //   Blink(LED,3);
+  // }
