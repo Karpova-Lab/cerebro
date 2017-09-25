@@ -70,28 +70,24 @@ void loop() {
     timeSent = micros();  
     if (radio.sendWithRetry(12, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
       timeSent = micros()-timeSent;
-      Serial.print(" trip: ");Serial.println(timeSent);
+      Serial.print("\n[");Serial.print(timeSent);Serial.print("] ");
     }
     else{
-       Serial.println("nothing");
+       Serial.println("ACK not received");
     }
   }
-
   if (radio.receiveDone())
   {
-    Serial.print('[');Serial.print(radio.SENDERID, DEC);Serial.print("] ");
-    for (byte i = 0; i < radio.DATALEN; i++)
-      Serial.print((char)radio.DATA[i]);
-    Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
-    
+    for (byte i = 0; i < radio.DATALEN; i++){
+      Serial.print((char)radio.DATA[i]); 
+    }
     if (radio.ACKRequested())
     {
       byte theNodeID = radio.SENDERID;
       radio.sendACK();
       Serial.print(" - ACK sent.");
     }
-    Serial.println();
-    Blink(LED,3);
+    Blink(LED,50);
   }
 }
 
@@ -101,24 +97,3 @@ void Blink(byte PIN, int msDelay)
   delay(msDelay);
   digitalWrite(PIN,LOW);
 }
-
-  // int currPeriod = millis()/TRANSMITPERIOD;
-  // if (currPeriod != lastPeriod)
-  // {
-  //   lastPeriod=currPeriod;
-  //   Serial.print("Sending[");
-  //   Serial.print(sendSize);
-  //   Serial.print("]: ");
-  //   for(byte i = 0; i < sendSize; i++)
-  //     Serial.print((char)payload[i]);
-  //   timeSent = micros();
-  //   if (radio.sendWithRetry(GATEWAYID, payload, 1)){
-
-  //   }
-  //   else{
-  //     Serial.print(" no response :(");
-  //   } 
-  //   sendSize = (sendSize + 1) % 31;
-  //   Serial.println();
-  //   Blink(LED,3);
-  // }

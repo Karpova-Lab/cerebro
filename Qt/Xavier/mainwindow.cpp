@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.31.0\nUpdated:\t5/19/2017";
+        QString aboutString = "\t2.0.0\nUpdated:\t9/25/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -110,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
             baseFilter_label = new QLabel("Filter Duration:");
         serialMonitorLayout->addWidget(baseFilter_label,1,0);
             baseMonitor = new QPlainTextEdit();
-            baseMonitor->setMinimumWidth(300);
+            baseMonitor->setMinimumWidth(500);
             baseMonitor->setMinimumHeight(500);
         serialMonitorLayout->addWidget(baseMonitor,2,0,1,6);
             eeprom_btn = new QPushButton();
@@ -296,8 +296,8 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(testProgress,2,0,1,2);
             abort_btn = new QPushButton("Stop");
         triggerLayout->addWidget(abort_btn,1,1);
-            memoryDump_btn = new QPushButton("Memory Dump");
-        triggerLayout->addWidget(memoryDump_btn,3,0);
+            batteryStatus_btn = new QPushButton("Battery Status");
+        triggerLayout->addWidget(batteryStatus_btn,3,0);
             resetAddress_btn = new QPushButton("Reset Address");
         triggerLayout->addWidget(resetAddress_btn,3,1);
             macroText = new QLineEdit();
@@ -349,7 +349,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout->addWidget(adjustBox,1,0);
     mainLayout->addWidget(charBox,2,0);
     mainLayout->addWidget(bugBox,3,0);
-    mainLayout->addWidget(downloaderBox,0,3,5,1);
+//    mainLayout->addWidget(downloaderBox,0,3,5,1);
 //    mainLayout->setColumnStretch(2,1);
 //    mainLayout->setRowStretch(5,1);
 
@@ -364,11 +364,11 @@ MainWindow::MainWindow(QWidget *parent)
     usbTag = "COM";
     usbDescription = "USB Serial Port";
 #elif __APPLE__ //---------Mac USB parse settings---------------
-    usbTag  = "cu.usbserial";
-    usbDescription = "FT230X Basic UART";
+    usbTag  = "cu.usbmodem";
+    usbDescription = "Feather 32u4";
 #elif __linux__ //---------Linux USB parse settings-------------
     usbTag  = "ttyUSB";
-    usbDescription = "FT230X Basic UART";
+    usbDescription = "Feather 32u4";
 #endif
 
     //program setup
@@ -435,7 +435,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
-    connect(memoryDump_btn,SIGNAL(clicked(bool)),this,SLOT(dumpMemory()));
+    connect(batteryStatus_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
     connect(resetAddress_btn,SIGNAL(clicked(bool)),this,SLOT(resetAddress()));
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
 
@@ -576,7 +576,7 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
-    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select Rig
+    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -623,7 +623,7 @@ void MainWindow::connectBasePort()
             tempPortName.remove(QChar (')'));
             //open serial connection
             serial->setPortName(tempPortName);
-            serial->setBaudRate(QSerialPort::Baud9600);
+            serial->setBaudRate(QSerialPort::Baud115200);
             serial->setDataBits(QSerialPort::Data8);
             serial->setParity(QSerialPort::NoParity);
             serial->setStopBits(QSerialPort::OneStop);
@@ -636,11 +636,11 @@ void MainWindow::connectBasePort()
             else{
                 setWindowTitle("Debug Mode");
             }
-            QString rst = "R";
-            serial->write(rst.toLocal8Bit());
-            clearBase_btn->setEnabled(false);
-            connect_btn->setEnabled(false);
-            QTimer::singleShot(1000, this, SLOT(sendTime()));
+//            QString rst = "R";
+//            serial->write(rst.toLocal8Bit());
+//            clearBase_btn->setEnabled(false);
+//            connect_btn->setEnabled(false);
+//            QTimer::singleShot(1000, this, SLOT(sendTime()));
             baseConnected = true;
             errorThrown = false;
         }
@@ -725,7 +725,6 @@ void MainWindow::readSerial()
     baseMonitor->ensureCursorVisible();
     if(!receivedBaseInfo){
         QString buffer = baseMonitor->toPlainText();
-        qDebug()<<buffer.count('\n')<<buffer.count('_')<<buffer.count(',');
         if (buffer.count('\n')==1 && buffer.count('_')==4 && buffer.count(',')==5){
             receivedBaseInfo = true;
             QStringList baseInfo = buffer.trimmed().split(',');
@@ -804,14 +803,14 @@ void MainWindow::readLog()
 void MainWindow::clearMonitor()
 {
     baseMonitor->clear();
-    receivedBaseInfo = false;
-    baseFilter_label->setText("Filter Duration:");
-    if(baseConnected){
-        QString rst = "R";
-        serial->write(rst.toLocal8Bit());
-        clearBase_btn->setEnabled(false);
-    }
-    QTimer::singleShot(1000, this, SLOT(sendTime()));
+//    receivedBaseInfo = false;
+//    baseFilter_label->setText("Filter Duration:");
+//    if(baseConnected){
+//        QString rst = "R";
+//        serial->write(rst.toLocal8Bit());
+//        clearBase_btn->setEnabled(false);
+//    }
+//    QTimer::singleShot(1000, this, SLOT(sendTime()));
 }
 
 void MainWindow::clearMonitor2()
@@ -1104,8 +1103,8 @@ void MainWindow::macro(){
     qDebug()<<msg<<"sent";
 }
 
-void MainWindow::dumpMemory(){
-    QString msg = "M";
+void MainWindow::getBatteryStatus(){
+    QString msg = "B";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }

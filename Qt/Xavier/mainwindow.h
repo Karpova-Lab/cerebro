@@ -122,11 +122,12 @@ private:
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*memoryDump_btn,*resetAddress_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*resetAddress_btn,*macro_btn;;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 
     //Download Monitor
+    QWindow*                downloaderWindow;
     QGroupBox*              downloaderBox;
     QPushButton*            refresh2_btn,*connect2_btn,*saveMonitor_btn,*clearDownload_btn;
     QGridLayout*            connectionLayout2;
@@ -171,7 +172,7 @@ private slots:
     void triggerPushed();
     void triggerChecked();
     void resetAddress();
-    void dumpMemory();
+    void getBatteryStatus();
 
     //Cerebro Parmeters
     void trainChecked();

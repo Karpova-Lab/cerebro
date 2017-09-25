@@ -108,7 +108,8 @@ bool LaserDiode::off(){
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
-  SPI.transfer16(0);
+  SPI.transfer(0);                  //shift high byte
+  SPI.transfer(0);            //shift low byte
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   if (DAClevel==4095){
     isMaxed = true;
@@ -122,7 +123,8 @@ void LaserDiode::sendDAC(unsigned int value) {
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
-  SPI.transfer16(value);
+  SPI.transfer(value>>4);                  //shift high byte
+  SPI.transfer(value<<4 & 255);            //shift low byte
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   SPI.endTransaction();
 }
@@ -193,53 +195,52 @@ void setup() {
 
   //*** Battery Monitor ***//
   setupBQ27441();
+  char readyMessage[10] = "Cerebro On";
+  byte buffLen=strlen(readyMessage);
+  radio.send(GATEWAYID, readyMessage, buffLen);
   
 }
 
 void loop() {
-    //check for any received packets
-    if (radio.receiveDone()){
-      // Serial.print("[message from node ");
-      // Serial.print(radio.SENDERID, DEC);
-      // Serial.print("] ");
-      // for (byte i = 0; i < radio.DATALEN; i++){
-      if (radio.ACKRequested()){
-        radio.sendACK();
-        Serial.print(" - ACK sent ");
-      }
-      char receivedMsg = radio.DATA[0];
-      if (receivedMsg=='T'){
-        triggerBoth(leftSetPoint,rightSetPoint);
-      }
-      if (receivedMsg=='B'){
-        reportBattery();
-      }
-      Serial.print("received: ");
-      Serial.println(receivedMsg);
-      
-      // }
-      // Serial.print("   [RX_RSSI:");Serial.print(radio.RSSI);Serial.print("]");
-
+  //check for any received packets
+  if (radio.receiveDone()){
+    if (radio.ACKRequested()){
+      radio.sendACK();
+      Serial.print(" - ACK sent ");
     }
+    char receivedMsg = radio.DATA[0];
+    if (receivedMsg=='T'){
+      triggerBoth(leftSetPoint,rightSetPoint);
+    }
+    if (receivedMsg=='B'){
+      reportBattery();
+    }
+    Serial.print("received: ");
+    Serial.println(receivedMsg);
+  }
   // combinedTest();
   
   // if (Serial.available()){
   //   char msg = Serial.read();
-
-  //   // if (msg=='1'){
-  //   //   rightSetPoint+=20;
-  //   //   Serial.println(rightSetPoint);  
-  //   //   triggerEvent(rightSetPoint,&right,true);      
-  //   // }
-  //   // else if (msg=='2'){
-  //   //   rightSetPoint-=20;
-  //   //   Serial.println(rightSetPoint);    
-  //   //   triggerEvent(rightSetPoint,&right,true);  
-  //   // }
+  //   testDAC(msg);
   // }
 
 }
 
+void testDAC(char msg){
+  if (msg=='1'){
+    left.sendDAC(200);
+  }
+  if (msg=='2'){
+    left.sendDAC(4000);
+  }
+  if (msg=='3'){
+    right.sendDAC(200);
+  }
+  if (msg=='4'){
+    right.sendDAC(4000);
+  }      
+}
 void leftTune(char msg){
   if (msg=='1'){
     leftSetPoint+=50;
@@ -362,7 +363,7 @@ void reportBattery(){
     char buff[65];
     toPrint.toCharArray(buff,65);
     byte buffLen=strlen(buff);
-    radio.sendWithRetry(1, buff, buffLen);
+    radio.send(1, buff, buffLen);
 }
 
 void setupBQ27441(void)
