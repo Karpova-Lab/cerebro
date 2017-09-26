@@ -1,5 +1,5 @@
 int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,unsigned int rampDur, bool useFeedback){
-  unsigned long onClock,offClock,trainClock,delayClock,alt=0;
+  unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
@@ -59,17 +59,17 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,unsigned int ram
   return _meterValue;
 }
 
-void triggerBoth(unsigned int leftPower, unsigned int rightPower){
-  unsigned long onClock,offClock,trainClock,delayClock,alt=0;
+void triggerBoth(){
+  unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
-  unsigned int onDelay,onTime,offTime,trainDur,rampDur;
+  unsigned int onDelay,onTime,offTime,trainDur,rampDuration;
   onDelay = 0;
   onTime = 1000;
   offTime = 0;
   trainDur = 0;
-  rampDur = 0;
+  rampDuration = 2000;
   if (onDelay>0){
     while ((millis()-delayClock)<onDelay){
       //wait. be ready to stop if interrupted.
@@ -82,9 +82,9 @@ void triggerBoth(unsigned int leftPower, unsigned int rightPower){
     //else if onClock hasn't expired, turn on/keep on the laser
     if ((millis()-onClock)<onTime){
       right.sendDAC(right.DAClevel);
-      right.feedback(rightPower); //increase or decrease DAClevel to reach desired lightPower
+      right.feedback(right.setPoint); //increase or decrease DAClevel to reach desired lightPower
       left.sendDAC(left.DAClevel);
-      left.feedback(leftPower);
+      left.feedback(left.setPoint);
       offClock = millis();
     }
     //else if offClock hasn't expired, turn off/keep off light
@@ -101,9 +101,19 @@ void triggerBoth(unsigned int leftPower, unsigned int rightPower){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
-      // if (rampDur>0){
-      //   // thediode->fade();
-      // }
+      if (rampDuration>0){
+        unsigned long fadeClock;
+        for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
+          fadeClock = millis();
+          left.feedback(left.setPoint*i/100);
+          left.sendDAC(left.DAClevel);
+          right.feedback(right.setPoint*i/100);
+          right.sendDAC(right.DAClevel);
+          while((millis()-fadeClock)<(rampDuration/100)){
+            //wait
+          }
+        }
+      }
       // Serial.print("\tduring: ");  
       // feedbackReadings();
       // Serial.println(thediode->DAClevel);   

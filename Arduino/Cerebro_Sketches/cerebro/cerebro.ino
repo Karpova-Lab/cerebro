@@ -59,10 +59,8 @@ Payload waveform;
 int meterVal = 0;
 int powerMeter = A2;
 const byte indicatorLED = A5; //32u4 pin 41
-LaserDiode right(&DDRD,&PORTD,2,A3);
-int rightSetPoint = 114;
-LaserDiode left(&DDRB,&PORTB,0,A4);
-int leftSetPoint = 64;
+LaserDiode right(&DDRD,&PORTD,2,A3,114);
+LaserDiode left(&DDRB,&PORTB,0,A4,64);
 Radio radio;
 
 //---------function prototypes---------//
@@ -90,30 +88,30 @@ void setup() {
 
 void loop() {
   //check for any received packets
-  // if (radio.receiveDone()){
-  //   if (radio.DATALEN == sizeof(Payload)){
-  //     updateWaveform();
-  //   }
-  //   else{
-  //     if (radio.ACKRequested()){
-  //       radio.sendACK();
-  //       Serial.println("ACK sent");
-  //     }
-  //     char receivedMsg = radio.DATA[0];
-  //     if (receivedMsg=='T'){
-  //       triggerBoth(leftSetPoint,rightSetPoint);
-  //     }
-  //     else if (receivedMsg=='B'){
-  //       reportBattery();
-  //     }
-  //     Serial.print("received: ");
-  //     Serial.println(receivedMsg);
-  //   }
-  // }
-  triggerEvent(leftSetPoint,&left,2000,true);  
-  delay(8000);
-  triggerEvent(leftSetPoint,&left,0,true);  
-  delay(8000);
+  if (radio.receiveDone()){
+    if (radio.DATALEN == sizeof(Payload)){
+      updateWaveform();
+    }
+    else{
+      if (radio.ACKRequested()){
+        radio.sendACK();
+        Serial.println("ACK sent");
+      }
+      char receivedMsg = radio.DATA[0];
+      if (receivedMsg=='T'){
+        triggerBoth();
+      }
+      else if (receivedMsg=='B'){
+        reportBattery();
+      }
+      Serial.print("received: ");
+      Serial.println(receivedMsg);
+    }
+  }
+  // triggerEvent(leftSetPoint,&left,2000,true);  
+  // delay(8000);
+  // triggerEvent(leftSetPoint,&left,0,true);  
+  // delay(8000);
   // combinedTest();
   
   // if (Serial.available()){
@@ -154,58 +152,58 @@ void testDAC(char msg){
   }      
 }
 void leftTune(char msg){
-  switch (msg){
-    case '1':
-      leftSetPoint+=50;
-      Serial.println(leftSetPoint);  
-      triggerEvent(leftSetPoint,&left,true);  
-      break;
-    case '2':
-      leftSetPoint+=10;
-      Serial.println(leftSetPoint);    
-      triggerEvent(leftSetPoint,&left,true);  
-      break;
-    case '3':
-      leftSetPoint+=5;
-      Serial.println(leftSetPoint);    
-      triggerEvent(leftSetPoint,&left,true);  
-      break;
-    case '4':
-      leftSetPoint++;
-      Serial.println(leftSetPoint);    
-      triggerEvent(leftSetPoint,&left,true);   
-      break;
-    case '7':
-      leftSetPoint--;
-      Serial.println(leftSetPoint);    
-      triggerEvent(leftSetPoint,&left,true);  
-      break;
-    case '8':
-      leftSetPoint-=5;
-      Serial.println(leftSetPoint);    
-      triggerEvent(leftSetPoint,&left,true);  
-      break;
-    case '9':
-      leftSetPoint-=10;
-      Serial.println(leftSetPoint);    
-      triggerEvent(leftSetPoint,&left,true);  
-      break;
-    case '0':
-      leftSetPoint-=50;
-      Serial.println(leftSetPoint);  
-      triggerEvent(leftSetPoint,&left,true);  
-      break;    
-  }
+  // switch (msg){
+  //   case '1':
+  //     leftSetPoint+=50;
+  //     Serial.println(leftSetPoint);  
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;
+  //   case '2':
+  //     leftSetPoint+=10;
+  //     Serial.println(leftSetPoint);    
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;
+  //   case '3':
+  //     leftSetPoint+=5;
+  //     Serial.println(leftSetPoint);    
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;
+  //   case '4':
+  //     leftSetPoint++;
+  //     Serial.println(leftSetPoint);    
+  //     triggerEvent(leftSetPoint,&left,true);   
+  //     break;
+  //   case '7':
+  //     leftSetPoint--;
+  //     Serial.println(leftSetPoint);    
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;
+  //   case '8':
+  //     leftSetPoint-=5;
+  //     Serial.println(leftSetPoint);    
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;
+  //   case '9':
+  //     leftSetPoint-=10;
+  //     Serial.println(leftSetPoint);    
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;
+  //   case '0':
+  //     leftSetPoint-=50;
+  //     Serial.println(leftSetPoint);  
+  //     triggerEvent(leftSetPoint,&left,true);  
+  //     break;    
+  // }
 }
 
 void combinedTest(){
-  triggerEvent(leftSetPoint,&left,true);
-  delay(1000);
-  triggerBoth(leftSetPoint,rightSetPoint);
-  delay(1000);
-  triggerEvent(rightSetPoint,&right,true);
-  delay(5000);  
-  Serial.println();
+  // triggerEvent(leftSetPoint,&left,true);
+  // delay(1000);
+  // triggerBoth(leftSetPoint,rightSetPoint);
+  // delay(1000);
+  // triggerEvent(rightSetPoint,&right,true);
+  // delay(5000);  
+  // Serial.println();
 }
 
 void isolationTest(){

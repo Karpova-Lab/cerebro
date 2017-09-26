@@ -1,9 +1,10 @@
 #include "LaserDiode.h"
-LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin){
+LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin, int16_t _setPoint){
   slaveOutputReg = _slaveOutputReg;
   slaveSelectPin = _slavePin;
   analogPin = _analogPin;
-  isMaxed = false;
+  setPoint = _setPoint;
+  DACisMaxed = false;
   *slaveDirReg |= (1<<slaveSelectPin);       //set slave select pin as output
   *slaveOutputReg |= (1<<slaveSelectPin);  //Set slave select HIGH (LOW selects the chip)    
 }
@@ -16,7 +17,7 @@ bool LaserDiode::off(){
   SPI.transfer(0);            //shift low byte
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   if (DAClevel==4095){
-    isMaxed = true;
+    DACisMaxed = true;
   }
   DAClevel = 0;
   SPI.endTransaction();   
@@ -35,9 +36,9 @@ void LaserDiode::sendDAC(unsigned int value) {
 
 void LaserDiode::feedback(int setPoint){
   const float KP = 0.2;
-  int photocellVoltage = analogRead(analogPin);
-  photocellVoltage = analogRead(analogPin);
-  int error = setPoint-photocellVoltage;
+  int photoTransistorVoltage = analogRead(analogPin);
+  photoTransistorVoltage = analogRead(analogPin);
+  int error = setPoint-photoTransistorVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {
     DAClevel = 4095;
@@ -52,7 +53,7 @@ void LaserDiode::fade(int rampDuration){
   unsigned int param1;
   for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
     fadeClock = millis();
-    feedback(64*i/100);
+    feedback(setPoint*i/100);
     sendDAC(DAClevel);
     while((millis()-fadeClock)<(rampDuration/100)){
       //wait
