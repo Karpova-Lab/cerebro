@@ -1,14 +1,13 @@
-int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedback){
+int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,unsigned int rampDur, bool useFeedback){
   unsigned long onClock,offClock,trainClock,delayClock,alt=0;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
-  unsigned int onDelay,onTime,offTime,trainDur,rampDur;
+  unsigned int onDelay,onTime,offTime,trainDur;
   onDelay = 0;
   onTime = 1000;
   offTime = 0;
   trainDur = 0;
-  rampDur = 0;
   int _meterValue;
   if (onDelay>0){
     while ((millis()-delayClock)<onDelay){
@@ -45,7 +44,7 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,bool useFeedback
     else{
       if (useFeedback){
         if (rampDur>0){
-          thediode->fade();
+          thediode->fade(rampDur);
         }
       }
       // Serial.print("\tduring: ");  

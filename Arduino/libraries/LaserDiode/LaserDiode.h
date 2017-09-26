@@ -15,6 +15,6 @@ public:
   bool off();
   void sendDAC(unsigned int value);
   void feedback(int setPoint);
-  void fade();
+  void fade(int setLevel);
 };
 #endif

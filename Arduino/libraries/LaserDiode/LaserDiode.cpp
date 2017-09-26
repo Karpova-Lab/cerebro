@@ -47,17 +47,15 @@ void LaserDiode::feedback(int setPoint){
   }
 }
 
-void LaserDiode::fade(){
-  // unsigned long fadeClock;
-  // unsigned int param1;
-  // byte stepSize = 114
-  // for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
-  //   fadeClock = millis();
-  //   param1 = eepromReadByte(k)<<8;
-  //   feedback(word(param1|eepromReadByte(k+1)));
-  //   sendDAC(DAClevel);
-  //   while((millis()-fadeClock)<(waveform[RAMP_DUR]/100)){
-  //     //wait
-  //   }
-  // }
+void LaserDiode::fade(int rampDuration){
+  unsigned long fadeClock;
+  unsigned int param1;
+  for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
+    fadeClock = millis();
+    feedback(64*i/100);
+    sendDAC(DAClevel);
+    while((millis()-fadeClock)<(rampDuration/100)){
+      //wait
+    }
+  }
 }
