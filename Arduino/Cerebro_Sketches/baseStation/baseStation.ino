@@ -38,7 +38,16 @@ SOFTWARE.
 #define LED           13 
 
 RFM69 radio(8, 7,true, digitalPinToInterrupt(7));  //slave select,interrupt pin, isRFM69HW, interruptNum
-  
+
+typedef struct {
+  unsigned int startDelay;
+  unsigned int onTime;
+  unsigned int offTime;
+  unsigned int trainDur;
+  unsigned int rampDur;
+} Payload;
+Payload waveform;
+
 void setup() {
   Serial.begin(115200);
   delay(10);
@@ -61,20 +70,38 @@ void setup() {
 #endif
 
   pinMode(LED, OUTPUT);
+
+  waveform.startDelay=0;
+  waveform.onTime = 100;
+  waveform.offTime = 150;
+  waveform.trainDur = 2000;
+  waveform.rampDur = 0;
+
 }
 unsigned int timeSent = 0;
 
 void loop() {
   if (Serial.available()){
     char msg = Serial.read();
-    timeSent = micros();  
-    if (radio.sendWithRetry(12, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
-      timeSent = micros()-timeSent;
-      Serial.print("\n[");Serial.print(timeSent);Serial.print("] ");
+    if (msg=='D'){
+      if (radio.sendWithRetry(12, (const void*)(&waveform), sizeof(waveform))){
+        Serial.print(" ok!");        
+      }
+      else{
+        Serial.println("failure");
+      }
     }
     else{
-       Serial.println("ACK not received");
+      timeSent = micros();  
+      if (radio.sendWithRetry(12, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
+        timeSent = micros()-timeSent;
+        Serial.print("\n[");Serial.print(timeSent);Serial.print("] ");
+      }
+      else{
+         Serial.println("ACK not received");
+      }
     }
+    
   }
   if (radio.receiveDone())
   {

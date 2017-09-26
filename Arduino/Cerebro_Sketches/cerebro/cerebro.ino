@@ -71,7 +71,7 @@ const char string_4[] PROGMEM = "Ramp_Duration,";
 // Then set up a table to refer to your strings.
 const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
 char label[20];            // make sure this is large enough for the largest string it must hold
-unsigned int waveform[NUMPARAM] = {};
+// unsigned int waveform[NUMPARAM] = {};
 int error;
 const float KP = 0.2;
 bool isSettled = false;
@@ -79,6 +79,15 @@ unsigned int tempPower = 0;
 byte vectorIndex = 0;
 unsigned int powerLevel;
 
+typedef struct {
+  unsigned int startDelay;
+  unsigned int onTime;
+  unsigned int offTime;
+  unsigned int trainDur;
+  unsigned int rampDur;
+} Payload;
+
+Payload waveform;
 
 class LaserDiode{
 public:
@@ -145,6 +154,7 @@ void LaserDiode::feedback(int setPoint){
 void LaserDiode::fade(){
   // unsigned long fadeClock;
   // unsigned int param1;
+  // byte stepSize = 114
   // for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
   //   fadeClock = millis();
   //   param1 = eepromReadByte(k)<<8;
@@ -195,6 +205,7 @@ void setup() {
 
   //*** Battery Monitor ***//
   setupBQ27441();
+  
   char readyMessage[10] = "Cerebro On";
   byte buffLen=strlen(readyMessage);
   radio.send(GATEWAYID, readyMessage, buffLen);
@@ -204,19 +215,38 @@ void setup() {
 void loop() {
   //check for any received packets
   if (radio.receiveDone()){
-    if (radio.ACKRequested()){
-      radio.sendACK();
-      Serial.print(" - ACK sent ");
+    if (radio.DATALEN == sizeof(Payload)){
+      if (radio.ACKRequested()){
+        radio.sendACK();
+        Serial.println(" - ACK sent ");
+      }
+      waveform = *(Payload*)radio.DATA;
+      Serial.print("Start Delay = ");
+      Serial.println(waveform.startDelay);
+      Serial.print("On = ");
+      Serial.println(waveform.onTime);
+      Serial.print("Off = ");
+      Serial.println(waveform.offTime);
+      Serial.print("Train = ");
+      Serial.println(waveform.trainDur);
+      Serial.print("Ramp = ");
+      Serial.println(waveform.rampDur);
     }
-    char receivedMsg = radio.DATA[0];
-    if (receivedMsg=='T'){
-      triggerBoth(leftSetPoint,rightSetPoint);
+    else{
+      if (radio.ACKRequested()){
+        radio.sendACK();
+        Serial.print(" - ACK sent ");
+      }
+      char receivedMsg = radio.DATA[0];
+      if (receivedMsg=='T'){
+        triggerBoth(leftSetPoint,rightSetPoint);
+      }
+      else if (receivedMsg=='B'){
+        reportBattery();
+      }
+      Serial.print("received: ");
+      Serial.println(receivedMsg);
     }
-    if (receivedMsg=='B'){
-      reportBattery();
-    }
-    Serial.print("received: ");
-    Serial.println(receivedMsg);
   }
   // combinedTest();
   
