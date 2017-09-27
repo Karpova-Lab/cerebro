@@ -1,9 +1,9 @@
 #include "LaserDiode.h"
-LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin, int16_t _setPoint){
+LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin){
   slaveOutputReg = _slaveOutputReg;
   slaveSelectPin = _slavePin;
   analogPin = _analogPin;
-  setPoint = _setPoint;
+  setPoint = 0;
   DACisMaxed = false;
   *slaveDirReg |= (1<<slaveSelectPin);       //set slave select pin as output
   *slaveOutputReg |= (1<<slaveSelectPin);  //Set slave select HIGH (LOW selects the chip)    

@@ -45,8 +45,26 @@ typedef struct {
   unsigned int offTime;
   unsigned int trainDur;
   unsigned int rampDur;
-} Payload;
-Payload waveform;
+} WaveformData;
+WaveformData waveform;
+
+typedef struct {
+  unsigned int variable;
+  unsigned int value;
+} IntegerPayload;
+IntegerPayload radioMessage;
+
+typedef struct {
+  byte  serialNumber;
+  byte  firmware;
+  WaveformData waveform;
+  unsigned int lSetPoint;
+  unsigned int rSetPoint;
+} Status;
+Status currentInfo;
+
+char csValues[5][6];  //2D array, first dimension 0-number of parameters, 2nd dimension holds up to 5 Ascii characters that represent digits 
+                                  //of a integer. the final spot in the second dimension holds the number of digits read in for that parameter
 
 void setup() {
   Serial.begin(115200);
@@ -83,12 +101,20 @@ unsigned int timeSent = 0;
 void loop() {
   if (Serial.available()){
     char msg = Serial.read();
-    if (msg=='D'){
-      if (radio.sendWithRetry(12, (const void*)(&waveform), sizeof(waveform))){
-        Serial.print(" ok!");        
+    if (msg=='W'){
+      readMsg();
+      parseWaveform();
+      sendWaveform();
+    }
+    else if (msg=='S' || msg == 'L' || msg == 'R'){
+      readMsg();
+      radioMessage.variable = msg;
+      radioMessage.value = convertAsciiValsToIntegers(0);
+      if (radio.sendWithRetry(12, (const void*)(&radioMessage), sizeof(radioMessage))){
+        Serial.println("data received");        
       }
       else{
-        Serial.println("failure");
+        Serial.println("data send fail");
       }
     }
     else{
@@ -103,19 +129,36 @@ void loop() {
     }
     
   }
-  if (radio.receiveDone())
-  {
-    for (byte i = 0; i < radio.DATALEN; i++){
-      Serial.print((char)radio.DATA[i]); 
-    }
-    if (radio.ACKRequested())
-    {
-      byte theNodeID = radio.SENDERID;
+  if (radio.receiveDone()){
+    if (radio.DATALEN == sizeof(currentInfo)){ //received a waveform data 
       radio.sendACK();
-      Serial.print(" - ACK sent.");
+      currentInfo = *(Status*)radio.DATA;  //update waveform
+      printInfo();      
     }
-    Blink(LED,50);
+    else{
+      for (byte i = 0; i < radio.DATALEN; i++){
+        Serial.print((char)radio.DATA[i]); 
+      }
+      if (radio.ACKRequested()){
+        byte theNodeID = radio.SENDERID;
+        radio.sendACK();
+        Serial.print(" - ACK sent.");
+      }
+      Blink(LED,50);
+    }
   }
+}
+
+void printInfo(){
+  Serial.print("\nSerial Number: ");Serial.println(currentInfo.serialNumber);
+  Serial.print("Firmware Version: ");Serial.println(currentInfo.serialNumber); 
+  Serial.print("Left set Point: ");Serial.println(currentInfo.lSetPoint);
+  Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);   
+  Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);       
+  Serial.print("On Time: "); Serial.println(currentInfo.waveform.onTime);     
+  Serial.print("Off Time: "); Serial.println(currentInfo.waveform.offTime);      
+  Serial.print("Train Duration: "); Serial.println(currentInfo.waveform.trainDur);
+  Serial.print("Ramp Duration: "); Serial.println(currentInfo.waveform.rampDur);  
 }
 
 void Blink(byte PIN, int msDelay)
@@ -123,4 +166,47 @@ void Blink(byte PIN, int msDelay)
   digitalWrite(PIN,HIGH);
   delay(msDelay);
   digitalWrite(PIN,LOW);
+}
+
+void readMsg(){
+  byte digitIndex = 0;
+  byte valueIndex = -1;
+  while (Serial.available()) {
+    char msg = Serial.read();
+    if (msg == ',') {
+      digitIndex = 0;
+      valueIndex++;
+    }
+    else {
+      csValues[valueIndex][digitIndex] = msg-48;// convert the ascii character to the number it represents and store it
+      digitIndex++;
+      csValues[valueIndex][5] = digitIndex; //the number of digits that have been read in
+      delay(20);
+    }
+  }
+}
+
+unsigned int convertAsciiValsToIntegers(byte whichParameter){
+  unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+  unsigned int integerVal = 0;
+  byte numDigits = csValues[whichParameter][5];
+  for (int i = 0; i < numDigits; i++) {
+    integerVal = integerVal + csValues[whichParameter][i] * powers[numDigits - i - 1];
+  }
+  return integerVal;
+}
+void parseWaveform(){
+  waveform.startDelay = convertAsciiValsToIntegers(0);
+  waveform.onTime = convertAsciiValsToIntegers(1);
+  waveform.offTime = convertAsciiValsToIntegers(2);
+  waveform.trainDur = convertAsciiValsToIntegers(3);
+  waveform.rampDur = convertAsciiValsToIntegers(4);
+}
+void sendWaveform(){
+  if (radio.sendWithRetry(12, (const void*)(&waveform), sizeof(waveform))){
+    Serial.println("waveform received");        
+  }
+  else{
+    Serial.println("waveform send fail");
+  }
 }

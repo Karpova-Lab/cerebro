@@ -12,7 +12,7 @@ public:
   int16_t DAClevel;
   int16_t setPoint;
 
-  LaserDiode(volatile uint8_t *slaveDirReg, volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin, int16_t _setpoint);
+  LaserDiode(volatile uint8_t *slaveDirReg, volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin);
   bool off();
   void sendDAC(unsigned int value);
   void feedback(int setPoint);

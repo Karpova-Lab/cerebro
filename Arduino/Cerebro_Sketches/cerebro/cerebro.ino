@@ -38,14 +38,11 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #include <LaserDiode.h>
 #include <Radio.h>
 
-const char string_0[] PROGMEM = "Start_Delay,";
-const char string_1[] PROGMEM = "On_Time,";
-const char string_2[] PROGMEM = "Off_Time,";
-const char string_3[] PROGMEM = "Train_Duration,";
-const char string_4[] PROGMEM = "Ramp_Duration,";
+#define SERIAL_NUMBER_ADDRESS 0
+#define WAVEFORM_ADDRESS 1
+#define LEFT_SETPOINT_ADDRESS 11
+#define RIGHT_SETPOINT_ADDRESS 13
 
-// Then set up a table to refer to your strings.
-const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
 
 typedef struct {
   unsigned int startDelay;
@@ -53,14 +50,30 @@ typedef struct {
   unsigned int offTime;
   unsigned int trainDur;
   unsigned int rampDur;
-} Payload;
-Payload waveform;
+} WaveformData;
+WaveformData waveform;
+
+typedef struct {
+  unsigned int variable;
+  unsigned int value;
+} IntegerPayload;
+IntegerPayload radioMessage;
+
+typedef struct {
+  byte  serialNumber;
+  byte  firmware;
+  WaveformData waveform;
+  unsigned int lSetPoint;
+  unsigned int rSetPoint;
+} Status;
+Status currentInfo;
 
 int meterVal = 0;
 int powerMeter = A2;
 const byte indicatorLED = A5; //32u4 pin 41
-LaserDiode right(&DDRD,&PORTD,2,A3,114);
-LaserDiode left(&DDRB,&PORTB,0,A4,64);
+
+LaserDiode left(&DDRB,&PORTB,0,A4);
+LaserDiode right(&DDRD,&PORTD,2,A3);
 Radio radio;
 
 //---------function prototypes---------//
@@ -71,8 +84,13 @@ void setup() {
   Serial.begin(115200);  
 
   // Laser Diodes
-  right.off();
+  EEPROM.get(LEFT_SETPOINT_ADDRESS,left.setPoint);
+  EEPROM.get(RIGHT_SETPOINT_ADDRESS,right.setPoint);
   left.off();
+  right.off();
+
+  // Initialize waveform
+  EEPROM.get(WAVEFORM_ADDRESS,waveform);
 
   // Indicator LED
   pinMode(indicatorLED,OUTPUT);
@@ -89,23 +107,46 @@ void setup() {
 void loop() {
   //check for any received packets
   if (radio.receiveDone()){
-    if (radio.DATALEN == sizeof(Payload)){
-      updateWaveform();
+    // Serial.print("data length = ");Serial.println(radio.DATALEN);    
+    if (radio.DATALEN==1){ //received a command or a request for data
+      sendACK();
+      Serial.print("received: ");
+      Serial.println((char)radio.DATA[0]);
+      switch (radio.DATA[0]){
+        case 'T':
+          triggerBoth();break;
+        case 'B':
+          reportBattery();break;
+        case 'I':            
+          sendInfo();break;
+        default:
+          Serial.println("Command not recognized");break;
+      }
+    }
+    else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data 
+      sendACK();
+      waveform = *(WaveformData*)radio.DATA;  //update waveform
+      EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory
+    }
+    else if (radio.DATALEN == sizeof(radioMessage)){ //received a variable update
+      sendACK();
+      radioMessage = *(IntegerPayload*)radio.DATA;
+      switch (radioMessage.variable){
+        case 'S': // Receiving a new Cerebro S/N
+          EEPROM.update(SERIAL_NUMBER_ADDRESS, radioMessage.value);
+          break;
+        case 'L': // Receiving a new left setpoint
+          left.setPoint = radioMessage.value;                   //update setpoint 
+          EEPROM.put(LEFT_SETPOINT_ADDRESS,left.setPoint);     //save new setpoint to memory     
+          break;
+        case 'R': // Receiving a new right setpoint
+          right.setPoint = radioMessage.value;                  //update setpoint 
+          EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
+          break;
+      }
     }
     else{
-      if (radio.ACKRequested()){
-        radio.sendACK();
-        Serial.println("ACK sent");
-      }
-      char receivedMsg = radio.DATA[0];
-      if (receivedMsg=='T'){
-        triggerBoth();
-      }
-      else if (receivedMsg=='B'){
-        reportBattery();
-      }
-      Serial.print("received: ");
-      Serial.println(receivedMsg);
+      Serial.println("Unexpected Data size received");
     }
   }
   // triggerEvent(leftSetPoint,&left,2000,true);  
@@ -119,24 +160,40 @@ void loop() {
   //   testDAC(msg);
   // }
 }
+void sendInfo(){
+  currentInfo.serialNumber = EEPROM.read(SERIAL_NUMBER_ADDRESS);
+  currentInfo.firmware = version;
+  currentInfo.waveform = waveform;
+  currentInfo.lSetPoint = left.setPoint;
+  currentInfo.rSetPoint = right.setPoint;
+  if (radio.sendWithRetry(1, (const void*)(&currentInfo), sizeof(currentInfo))){
+    Serial.println("data sent successfully");
+  }
+  else{
+    Serial.println("Info failure send fail");
+  }
+  printInfo();
+}
 
-void updateWaveform(){
+void printInfo(){
+  Serial.print("Serial Number: ");Serial.println(currentInfo.serialNumber);
+  Serial.print("Firmware Version: ");Serial.println(currentInfo.serialNumber); 
+  Serial.print("Left set Point: ");Serial.println(currentInfo.lSetPoint);
+  Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);   
+  Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);       
+  Serial.print("On Time: "); Serial.println(currentInfo.waveform.onTime);     
+  Serial.print("Off Time: "); Serial.println(currentInfo.waveform.offTime);      
+  Serial.print("Train Duration: "); Serial.println(currentInfo.waveform.trainDur);
+  Serial.print("Ramp Duration: "); Serial.println(currentInfo.waveform.rampDur);  
+}
+
+void sendACK(){
   if (radio.ACKRequested()){
     radio.sendACK();
-    Serial.println("ACK sent");
+    // Serial.println("ACK sent");
   }
-  waveform = *(Payload*)radio.DATA;
-  Serial.print("Start Delay = ");
-  Serial.println(waveform.startDelay);
-  Serial.print("On = ");
-  Serial.println(waveform.onTime);
-  Serial.print("Off = ");
-  Serial.println(waveform.offTime);
-  Serial.print("Train = ");
-  Serial.println(waveform.trainDur);
-  Serial.print("Ramp = ");
-  Serial.println(waveform.rampDur);
 }
+
 void testDAC(char msg){
   if (msg=='1'){
     left.sendDAC(200);
