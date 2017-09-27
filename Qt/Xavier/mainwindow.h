@@ -122,7 +122,7 @@ private:
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*resetAddress_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*getInfo_btn,*macro_btn;;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 
@@ -171,7 +171,7 @@ private slots:
     void macro();
     void triggerPushed();
     void triggerChecked();
-    void resetAddress();
+    void getInfo();
     void getBatteryStatus();
 
     //Cerebro Parmeters

@@ -298,8 +298,8 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(abort_btn,1,1);
             batteryStatus_btn = new QPushButton("Battery Status");
         triggerLayout->addWidget(batteryStatus_btn,3,0);
-            resetAddress_btn = new QPushButton("Reset Address");
-        triggerLayout->addWidget(resetAddress_btn,3,1);
+            getInfo_btn = new QPushButton("Get Cerebro Info");
+        triggerLayout->addWidget(getInfo_btn,3,1);
             macroText = new QLineEdit();
 //                macroText->setFixedWidth(40);
         triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
@@ -436,7 +436,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
     connect(batteryStatus_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
-    connect(resetAddress_btn,SIGNAL(clicked(bool)),this,SLOT(resetAddress()));
+    connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getInfo()));
     connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
 
     //Calibration
@@ -844,7 +844,7 @@ void MainWindow::set()
             fadeTime = QString::number(fade_spn->value());
         }
     }
-    QString msg = startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
+    QString msg = "W,"+ startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
     QMessageBox confirmUpdate;
         confirmUpdate.setWindowTitle("Confirm Parameter Change");
         confirmUpdate.setIcon(QMessageBox::Question);
@@ -862,7 +862,7 @@ void MainWindow::set()
     if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
         last_settings->setText("Last Parameters Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
-        QTimer::singleShot(500, this, SLOT(updateFilter()));
+//        QTimer::singleShot(500, this, SLOT(updateFilter()));
     }
 }
 
@@ -1109,8 +1109,8 @@ void MainWindow::getBatteryStatus(){
     qDebug()<<msg<<"sent";
 }
 
-void MainWindow::resetAddress(){
-    QString msg = "A";
+void MainWindow::getInfo(){
+    QString msg = "I";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
