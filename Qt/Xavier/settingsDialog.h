@@ -25,11 +25,11 @@ public:
 
     QGroupBox*              sessionListsBox;
     QGridLayout*            sessionListsLayout;
-    QLabel*                 rigLabel, *ratLabel, *cerebroLabel;
-    QListWidget*            rigVals,*ratVals, *cerebroVals;
-    QPushButton*            add1_btn,*add2_btn,*add3_btn;
-    QLineEdit*              newItem1,*newItem2,*newItem3;
-    QPushButton*            rmv1_btn,*rmv2_btn,*rmv3_btn;
+    QLabel*                 rigLabel, *ratLabel;
+    QListWidget*            rigVals,*ratVals;
+    QPushButton*            add1_btn,*add2_btn;
+    QLineEdit*              newItem1,*newItem2;
+    QPushButton*            rmv1_btn,*rmv2_btn;
 
     QGroupBox*              portEditBox;
     QGridLayout*            portEditLayout;
@@ -51,7 +51,7 @@ public:
     QGridLayout*            featuresLayout;
     QCheckBox*              pythonCheckbox,*mcubeCheckbox,*histogramCheckbox;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
-    QStringList             rigList,ratList,cerebroList;
+    QStringList             rigList,ratList;
 
     QPushButton*            okButton;
 

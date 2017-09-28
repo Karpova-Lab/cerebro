@@ -74,13 +74,13 @@ private:
     //Experimental Setup
     QGroupBox*              equipmentBox;
     QGridLayout*            equipmentLayout;
-    QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QListWidget*            rigSelect,*ratSelect,*cerebroSelect;
+    QLabel*                 rig_lbl,*rat_lbl;
+    QListWidget*            rigSelect,*ratSelect;
     QComboBox*              serialPortList;
     QLabel*                 connectBS_label;
     QPushButton*            refresh_btn,*connect_btn;
     QCheckBox*              debugCheckbox;
-    QStringList             aliasStringList,rigList,ratList,cerebroList;
+    QStringList             aliasStringList,rigList,ratList;
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;

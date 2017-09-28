@@ -75,14 +75,10 @@ MainWindow::MainWindow(QWidget *parent)
         equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
             rat_lbl = new QLabel("Rat ID");
         equipmentLayout->addWidget(rat_lbl,0,2,Qt::AlignCenter);
-            cerebro_lbl = new QLabel("Cerebro #");
-        equipmentLayout->addWidget(cerebro_lbl,0,3,Qt::AlignCenter);
             rigSelect = new QListWidget();
         equipmentLayout->addWidget(rigSelect,1,1,4,1,Qt::AlignTop);
             ratSelect = new QListWidget();
         equipmentLayout->addWidget(ratSelect,1,2,4,1,Qt::AlignTop);
-            cerebroSelect = new QListWidget();
-        equipmentLayout->addWidget(cerebroSelect,1,3,4,1,Qt::AlignTop);
             connectBS_label = new QLabel("Base Station Serial Port");
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
             refresh_btn = new QPushButton("Rescan");
@@ -485,21 +481,17 @@ void MainWindow::applySettings()
     settings.beginGroup("sessionLists");
         rigList = settings.value("rigList").toStringList();
         ratList = settings.value("ratList").toStringList();
-        cerebroList = settings.value("cerebroList").toStringList();
     settings.endGroup();
 
     //populate the list widgets
     rigSelect->clear();
     ratSelect->clear();
-    cerebroSelect->clear();
     rigSelect->addItems(rigList);
     ratSelect->addItems(ratList);
-    cerebroSelect->addItems(cerebroList);
     int itemHeight = 25;
     int itemWidth = 75;
     rigSelect->setMaximumSize(itemWidth,itemHeight*rigSelect->count());
     ratSelect->setMaximumSize(itemWidth,itemHeight*ratSelect->count());
-    cerebroSelect->setMaximumSize(itemWidth,itemHeight*cerebroSelect->count());
 
     //
     settings.beginGroup("Features");
@@ -592,22 +584,13 @@ void MainWindow::connectBasePort()
         alert.setWindowTitle("Missing Rat ID");
         alert.exec();
     }
-    else if((cerebroSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select cerebro
-        QMessageBox alert;
-        alert.setText("Please select a Cerebro # to continue");
-        alert.setIcon(QMessageBox::Warning);
-        alert.setWindowTitle("Missing Cerebro #");
-        alert.exec();
-    }
     else{ //  disable and enable components depending on whether we are connecting or disconnecting to the base station
         gotoSettings->setEnabled(baseConnected);
         toggleDebug->setEnabled(baseConnected);
         rig_lbl->setEnabled(baseConnected);
         rat_lbl->setEnabled(baseConnected);
-        cerebro_lbl->setEnabled(baseConnected);
         rigSelect->setEnabled(baseConnected);
         ratSelect->setEnabled(baseConnected);
-        cerebroSelect->setEnabled(baseConnected);
         connectBS_label->setEnabled(baseConnected);
         serialPortList->setEnabled(baseConnected);
         refresh_btn->setEnabled(baseConnected);
@@ -710,7 +693,7 @@ void MainWindow::sendTime()
     startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
     QString startup;
     if (!debugOn){
-        startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+        startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text());
     }
     else{
         startup = QString("%1,%2,%3,%4,").arg(startTime,"99","99","99");
@@ -993,7 +976,6 @@ void MainWindow::saveFile()
                 }
                 rigSelect->clearSelection();
                 ratSelect->clearSelection();
-                cerebroSelect->clearSelection();
                 baseMonitor->clear();
                 debugOn = false;
                 showDebug();
@@ -1150,17 +1132,14 @@ void MainWindow::showDebug(){
     if (debugOn){
         rigSelect->setEnabled(false);
         ratSelect->setEnabled(false);
-        cerebroSelect->setEnabled(false);
         rigSelect->clearSelection();
         ratSelect->clearSelection();
-        cerebroSelect->clearSelection();
         connect_btn->setText("Start Session (Debug Mode)");
         toggleDebug->setText("Exit Debug Mode");
     }
     else{
         rigSelect->setEnabled(true);
         ratSelect->setEnabled(true);
-        cerebroSelect->setEnabled(true);
         connect_btn->setText("Start Session");
         toggleDebug->setText("Enter Debug Mode");
     }
