@@ -151,7 +151,7 @@ void loop() {
 
 void printInfo(){
   Serial.print("\nSerial Number: ");Serial.println(currentInfo.serialNumber);
-  Serial.print("Firmware Version: ");Serial.println(currentInfo.serialNumber); 
+  Serial.print("Firmware Version: ");Serial.println(currentInfo.firmware); 
   Serial.print("Left set Point: ");Serial.println(currentInfo.lSetPoint);
   Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);   
   Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);       

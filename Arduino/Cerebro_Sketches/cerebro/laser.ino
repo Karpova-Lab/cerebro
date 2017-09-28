@@ -42,11 +42,6 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,unsigned int ram
           thediode->fade(rampDur);
         }
       }
-      // Serial.print("\tduring: ");  
-      // feedbackReadings();
-      // Serial.print(thediode->DAClevel);
-      // Serial.print(",");
-      // Serial.println(analogRead(thediode->analogPin));
       _meterValue = analogRead(powerMeter);         
       laserEnabled = thediode->off();
     }
@@ -66,10 +61,20 @@ void triggerBoth(){
   }
   onClock=trainClock=millis();
   while(laserEnabled){   
-    // //check if another command (abort or continuation) has been sent since the trigger was activated
-    // reset clock on continuation. or abort waveform.
+    //check if another command (abort or continuation) has been sent since the trigger was activated
+    if (radio.receiveDone()){
+      if (radio.DATALEN==1){ 
+        if (radio.DATA[0]=='A'){  //abort
+          left.off();
+          laserEnabled = right.off();         
+        }
+        else if (radio.DATA[0]=='C'){ //continuation
+          onClock=trainClock=millis();          
+        }
+      }
+    }
     //else if onClock hasn't expired, turn on/keep on the laser
-    if ((millis()-onClock)<waveform.onTime){
+    else if ((millis()-onClock)<waveform.onTime){
       right.sendDAC(right.DAClevel);
       right.feedback(right.setPoint); //increase or decrease DAClevel to reach desired lightPower
       left.sendDAC(left.DAClevel);
@@ -103,9 +108,6 @@ void triggerBoth(){
           }
         }
       }
-      // Serial.print("\tduring: ");  
-      // feedbackReadings();
-      // Serial.println(thediode->DAClevel);   
       Serial.print("L: DAC: ");
       Serial.print(left.DAClevel);
       Serial.print(" SET: ");   
@@ -118,9 +120,8 @@ void triggerBoth(){
       Serial.print(right.setPoint);
       Serial.print(" FBK: ");      
       Serial.println(analogRead(right.analogPin));
-      laserEnabled = left.off();
+      left.off();
       laserEnabled = right.off();
-
     }
   }
 }

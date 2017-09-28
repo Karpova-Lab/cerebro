@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t2.0.0\nUpdated:\t9/25/2017";
+        QString aboutString = "\t2.0.0\nUpdated:\t9/28/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -114,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent)
             baseMonitor->setMinimumHeight(500);
         serialMonitorLayout->addWidget(baseMonitor,2,0,1,6);
             eeprom_btn = new QPushButton();
-            eeprom_btn->setText("(While the rat is still in the rig)\nClick to End Session");
+            eeprom_btn->setText("Save Session");
         serialMonitorLayout->addWidget(eeprom_btn,3,0,1,6);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
@@ -269,6 +269,7 @@ MainWindow::MainWindow(QWidget *parent)
     sendFadeDialog->setWindowFlags(sendFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
     sendFadeDialog->setMaximumWidth(0);
     sendFadeDialog->setMaximumHeight(0);
+    sendFadeDialog->setModal(false);
     sendFadeDialog->setLayout(sendFadeLayout);
 
     //Triggering & debugging
@@ -362,7 +363,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 #ifdef _WIN32   //--------Windows USB parse settings------------
     usbTag = "COM";
-    usbDescription = "USB Serial Port";
+    usbDescription = "Adafruit Feather 32u4 (800C:00)";
 #elif __APPLE__ //---------Mac USB parse settings---------------
     usbTag  = "cu.usbmodem";
     usbDescription = "Feather 32u4";
@@ -445,7 +446,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(startImplant_btn,SIGNAL(clicked()),this,SLOT(sendImplantStart()));
     connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
-    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(exec()));
+    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
     connect(createVecBtn,SIGNAL(clicked(bool)),createFadeDialog,SLOT(exec()));
 }
 
@@ -533,7 +534,8 @@ void MainWindow::fillBasestationPorts()
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         if (!info.isBusy()){
-            if(info.description()==usbDescription){
+            qDebug()<<info.description();
+            if(info.description()==usbDescription){                
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
                     if (!aliasStringList.filter(info.portName())[0].contains("Downloader",Qt::CaseInsensitive)){
                         list << aliasStringList.filter(info.portName())[0];
@@ -859,11 +861,11 @@ void MainWindow::set()
                     " ms\nTrain Duration:\t" + trainDur +
                     " ms\nFade Time:\t" + fadeTime + " ms");
 //                    "\n\nThe command filter will be automatically updated to " + QString::number(baseFilter_spn->value()) + " ms");
-    if (confirmUpdate.exec() == QMessageBox::Yes){
+//    if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
         last_settings->setText("Last Parameters Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
 //        QTimer::singleShot(500, this, SLOT(updateFilter()));
-    }
+//    }
 }
 
 void MainWindow::sendTrigger()
@@ -1093,7 +1095,7 @@ void MainWindow::EEPROM(){
 }
 
 void MainWindow::abort(){
-    QString msg = "S";
+    QString msg = "A";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
