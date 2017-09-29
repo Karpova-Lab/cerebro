@@ -52,7 +52,6 @@ public:
     QCheckBox*              pythonCheckbox,*mcubeCheckbox,*histogramCheckbox;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
     QStringList             rigList,ratList;
-
     QPushButton*            okButton;
 
 

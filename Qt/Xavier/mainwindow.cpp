@@ -109,9 +109,12 @@ MainWindow::MainWindow(QWidget *parent)
             baseMonitor->setMinimumWidth(500);
             baseMonitor->setMinimumHeight(500);
         serialMonitorLayout->addWidget(baseMonitor,2,0,1,6);
-            eeprom_btn = new QPushButton();
-            eeprom_btn->setText("Save Session");
-        serialMonitorLayout->addWidget(eeprom_btn,3,0,1,6);
+            saveMonitor_btn = new QPushButton();
+            saveMonitor_btn->setText("Save Session");
+            saveMonitor_btn->setMinimumWidth(125);
+            saveMonitor_btn->setMinimumHeight(40);
+            saveMonitor_btn->setEnabled(true);
+        serialMonitorLayout->addWidget(saveMonitor_btn,3,0,1,6);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
@@ -307,9 +310,9 @@ MainWindow::MainWindow(QWidget *parent)
     bugBox->setPalette(Qt::gray);
 
     //Download Monitor
-    downloaderBox = new QGroupBox();
+    downloaderDialog = new QDialog();
         connectionLayout2 = new QGridLayout();
-            connectLU_label = new QLabel("Downloader Serial Port");
+            connectLU_label = new QLabel("Cerebro Serial Port");
         connectionLayout2->addWidget(connectLU_label,0,0,1,3,Qt::AlignCenter);
             refresh2_btn = new QPushButton("Rescan");
         connectionLayout2->addWidget(refresh2_btn,1,0);
@@ -327,16 +330,11 @@ MainWindow::MainWindow(QWidget *parent)
         connectionLayout2->addWidget(clearDownload_btn,3,2,Qt::AlignRight);
             downloadMonitor = new QPlainTextEdit();
             downloadMonitor->setMinimumWidth(275);
+            downloadMonitor->setMinimumHeight(400);
             downloadMonitor->setEnabled(false);
         connectionLayout2->addWidget(downloadMonitor,4,0,1,3);
         connectionLayout2->setRowStretch(4,1);
-            saveMonitor_btn = new QPushButton();
-            saveMonitor_btn->setText("Save Session");
-            saveMonitor_btn->setMinimumWidth(125);
-            saveMonitor_btn->setMinimumHeight(40);
-            saveMonitor_btn->setEnabled(false);
-        connectionLayout2->addWidget(saveMonitor_btn,5,0,1,3);
-    downloaderBox->setLayout(connectionLayout2);
+    downloaderDialog->setLayout(connectionLayout2);
 
 
     //Add Elements to Main Layout
@@ -346,7 +344,6 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout->addWidget(adjustBox,1,0);
     mainLayout->addWidget(charBox,2,0);
     mainLayout->addWidget(bugBox,3,0);
-//    mainLayout->addWidget(downloaderBox,0,3,5,1);
 //    mainLayout->setColumnStretch(2,1);
 //    mainLayout->setRowStretch(5,1);
 
@@ -415,7 +412,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clearBase_btn,SIGNAL(clicked()),this,SLOT(clearMonitor()));
     connect(clearDownload_btn,SIGNAL(clicked()),this,SLOT(clearMonitor2()));
     connect(saveMonitor_btn,SIGNAL(clicked()),this,SLOT(saveFile()));
-    connect(eeprom_btn,SIGNAL(clicked()),this,SLOT(EEPROM()));
 
     //Cerebro Parameters
     connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
@@ -440,7 +436,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(startImplant_btn,SIGNAL(clicked()),this,SLOT(sendImplantStart()));
-    connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
+//    connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
+    connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
     connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
     connect(createVecBtn,SIGNAL(clicked(bool)),createFadeDialog,SLOT(exec()));
@@ -600,7 +597,6 @@ void MainWindow::connectBasePort()
         bugBox->setEnabled(!baseConnected && debugOn);
 //        baseSettingsBox->setEnabled(!baseConnected);
         baseBox->setEnabled(!baseConnected);
-        saveMonitor_btn->setEnabled(downloadConnected && !baseConnected);
         if(!baseConnected){ //connect to serial port
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
@@ -626,6 +622,7 @@ void MainWindow::connectBasePort()
 //            clearBase_btn->setEnabled(false);
 //            connect_btn->setEnabled(false);
 //            QTimer::singleShot(1000, this, SLOT(sendTime()));
+            startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
             baseConnected = true;
             errorThrown = false;
         }
@@ -662,7 +659,6 @@ void MainWindow::connectDownloadPort()
         downloadMonitor->setEnabled(!downloadConnected);
         download_title->setEnabled(!downloadConnected);
         clearDownload_btn->setEnabled(!downloadConnected);
-        saveMonitor_btn->setEnabled(!downloadConnected && baseConnected);
         if(!downloadConnected){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
@@ -981,51 +977,6 @@ void MainWindow::saveFile()
                 showDebug();
             }
         }
-        //save the cerebro log
-        saveName2 = QFileDialog::getSaveFileName(this,
-            tr("Save Cerebro Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime+"_cerebroLog", tr("(*.csv)") );
-        if (!saveName2.isEmpty()){
-            QFile file2(saveName2);
-            file2.open(QIODevice::WriteOnly | QIODevice::Text);
-            QTextStream out2(&file2);
-            QString log2 = downloadMonitor->toPlainText();
-            log2 = log2.mid(log2.indexOf("Ver,",Qt::CaseSensitive)); //remove any garbage that comes before the start of the log, indicated by "Ver,"
-            out2 << log2;
-            file2.close();
-            downloadMonitor->clear();
-            if(pythonEnabled){
-                // Run python script to summarize data from base station and cerebro logs
-                QProcess *process = new QProcess(this);
-                QString plotArg;
-                if (showHistogram){
-                    plotArg = "save and histogram";
-                }
-                else{
-                    plotArg = "save only";
-                }
-                QStringList pythonArgs;
-                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<plotArg; //pass the two log file locations into the python script
-                process->start("python",pythonArgs);
-                process->waitForFinished(-1);
-                QString errorString = process->readAllStandardError();
-                //Display summary in a popup message
-                QMessageBox alert;
-                if (errorString.isEmpty()){
-                    alert.setWindowTitle("Session Summary");
-                    alert.setText(process->readAll());
-                    alert.exec();
-                }
-                else{
-        //            alert.setWindowTitle("Error");
-        //            alert.setText(errorString);
-        //            alert.exec();
-                    QFile file3(saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_errorText.txt");
-                    file3.open(QIODevice::WriteOnly | QIODevice::Text);
-                    QTextStream out3(&file3);
-                    out3 << errorString;
-                }
-            }
-        }
     }
 }
 
@@ -1066,15 +1017,6 @@ void MainWindow::updateFilter(){
     QTimer::singleShot(500, this, SLOT(clearMonitor()));
  }
 
-
-void MainWindow::EEPROM(){
-    QString msg = "E";
-    serial->write(msg.toLocal8Bit());
-    qDebug()<<msg<<"sent";
-    if (!(connect2_btn->isChecked())){ //prevents download port dropdown text from being cleared if already connected
-        fillDownloaderPorts();
-    }
-}
 
 void MainWindow::abort(){
     QString msg = "A";

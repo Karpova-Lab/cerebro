@@ -63,7 +63,7 @@ private:
     bool                    errorThrown;
     int                     baseFilter;
     QString                 startTime;
-    QString                 saveName1,saveName2;
+    QString                 saveName1;
     bool                    repeatOn;
 
     //Menus
@@ -88,7 +88,7 @@ private:
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
-    QPushButton*            eeprom_btn;
+    QPushButton*            saveMonitor_btn;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
@@ -127,9 +127,8 @@ private:
     QLineEdit*              macroText;
 
     //Download Monitor
-    QWindow*                downloaderWindow;
-    QGroupBox*              downloaderBox;
-    QPushButton*            refresh2_btn,*connect2_btn,*saveMonitor_btn,*clearDownload_btn;
+    QDialog*                downloaderDialog;
+    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn;
     QGridLayout*            connectionLayout2;
     QComboBox*              serialPortList2;
     QLabel*                 connectLU_label,*download_title;
@@ -167,7 +166,6 @@ private slots:
     //Debug Commands
     void sendTrigger();
     void abort();
-    void EEPROM();
     void macro();
     void triggerPushed();
     void triggerChecked();
