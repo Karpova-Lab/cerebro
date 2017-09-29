@@ -6,7 +6,6 @@
 #include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
 
 //*********************************************************************************************
-#define NODEID        12    //must be unique for each node on same network (range up to 254, 255 is used for broadcast)
 #define NETWORKID     100  //the same on all nodes that talk to each other (range up to 255)
 #define GATEWAYID     1
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
@@ -20,10 +19,39 @@
 //dial their power down to only the required level (ATC_RSSI)
 #define ATC_RSSI      -80
 
+typedef struct {
+  unsigned int startDelay;
+  unsigned int onTime;
+  unsigned int offTime;
+  unsigned int trainDur;
+  unsigned int rampDur;
+} WaveformData;
+
+typedef struct {
+  unsigned int variable;
+  unsigned int value;
+} IntegerPayload;
+
+typedef struct {
+  byte  serialNumber;
+  byte  firmware;
+  WaveformData waveform;
+  unsigned int lSetPoint;
+  unsigned int rSetPoint;
+} Status;
+
+typedef struct {
+  unsigned int soc;
+  unsigned int volts;
+  unsigned int capacity;
+} Battery;
+
 class Radio: public RFM69_ATC {
 public:
-  Radio():RFM69_ATC(7, 1,true, digitalPinToInterrupt(1)){
+  Radio(uint8_t slaveSelectPin, uint8_t interruptPin):
+  RFM69_ATC(slaveSelectPin, interruptPin,true, digitalPinToInterrupt(interruptPin)){
   }
-  void radioSetup();
+
+  void radioSetup(uint8_t nodeID,bool autoPowe);
 };
 #endif

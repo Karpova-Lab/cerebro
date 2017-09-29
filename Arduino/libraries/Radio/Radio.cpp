@@ -1,9 +1,11 @@
 #include "Radio.h"
 
-void Radio::radioSetup(){
+void Radio::radioSetup(uint8_t nodeID, bool autoPower){
   //*** Radio ***//
-  initialize(FREQUENCY,NODEID,NETWORKID);
-  enableAutoPower(ATC_RSSI);  
+  initialize(FREQUENCY,nodeID,NETWORKID);
+  if (autoPower){
+    enableAutoPower(ATC_RSSI);  
+  }
   encrypt(null);
   writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
   writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)

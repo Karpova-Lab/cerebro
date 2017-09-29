@@ -22,81 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#include <RFM69.h>         //get it here: https://www.github.com/lowpowerlab/rfm69
-#include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
+#include <Radio.h>
 #include <SPI.h>           //included with Arduino IDE install (www.arduino.cc)
 
-//*********************************************************************************************
-//************ IMPORTANT SETTINGS - YOU MUST CHANGE/CONFIGURE TO FIT YOUR HARDWARE *************
-//*********************************************************************************************
-#define NODEID        1    //unique for each node on same network
-#define NETWORKID     100  //the same on all nodes that talk to each other
-//Match frequency to the hardware version of the radio on your Moteino (uncomment one):
-#define FREQUENCY     RF69_915MHZ
-//*********************************************************************************************
-#define BR_300KBPS          //run radio at max rate of 300kbps!
-#define LED           13 
-
-RFM69 radio(8, 7,true, digitalPinToInterrupt(7));  //slave select,interrupt pin, isRFM69HW, interruptNum
-
-typedef struct {
-  unsigned int startDelay;
-  unsigned int onTime;
-  unsigned int offTime;
-  unsigned int trainDur;
-  unsigned int rampDur;
-} WaveformData;
+const int LED = 13;
+Radio radio(8,7); //slave select pin, interrupt pin, NODE ID
 WaveformData waveform;
-
-typedef struct {
-  unsigned int variable;
-  unsigned int value;
-} IntegerPayload;
 IntegerPayload radioMessage;
-
-typedef struct {
-  byte  serialNumber;
-  byte  firmware;
-  WaveformData waveform;
-  unsigned int lSetPoint;
-  unsigned int rSetPoint;
-} Status;
 Status currentInfo;
-
+Battery battery;
 char csValues[5][6];  //2D array, first dimension 0-number of parameters, 2nd dimension holds up to 5 Ascii characters that represent digits 
-                                  //of a integer. the final spot in the second dimension holds the number of digits read in for that parameter
+                      //of a integer. the final spot in the second dimension holds the number of digits read in for that parameter
+unsigned int timeSent = 0;
 
 void setup() {
   Serial.begin(115200);
   delay(10);
-  radio.initialize(FREQUENCY,NODEID,NETWORKID);
-  radio.setHighPower(); //must include this only for RFM69HW/HCW!
-  radio.encrypt(null);  
-  radio.promiscuous(false);
-  char buff[50];
-  sprintf(buff, "\nListening at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(buff);
-
-#ifdef BR_300KBPS
-  radio.writeReg(0x03, 0x00);  //REG_BITRATEMSB: 300kbps (0x006B, see DS p20)
-  radio.writeReg(0x04, 0x6B);  //REG_BITRATELSB: 300kbps (0x006B, see DS p20)
-  radio.writeReg(0x19, 0x40);  //REG_RXBW: 500kHz
-  radio.writeReg(0x1A, 0x80);  //REG_AFCBW: 500kHz
-  radio.writeReg(0x05, 0x13);  //REG_FDEVMSB: 300khz (0x1333)
-  radio.writeReg(0x06, 0x33);  //REG_FDEVLSB: 300khz (0x1333)
-  radio.writeReg(0x29, 240);   //set REG_RSSITHRESH to -120dBm
-#endif
-
   pinMode(LED, OUTPUT);
-
-  waveform.startDelay=0;
-  waveform.onTime = 100;
-  waveform.offTime = 150;
-  waveform.trainDur = 2000;
-  waveform.rampDur = 0;
-
+  radio.radioSetup(1,false); //nodeID, autopower on;
+  
 }
-unsigned int timeSent = 0;
 
 void loop() {
   if (Serial.available()){
@@ -135,6 +80,11 @@ void loop() {
       currentInfo = *(Status*)radio.DATA;  //update waveform
       printInfo();      
     }
+    else if (radio.DATALEN == sizeof(battery)){ //received a waveform data 
+      radio.sendACK();
+      battery = *(Battery*)radio.DATA;  //update waveform
+      printBattery();      
+    }
     else{
       for (byte i = 0; i < radio.DATALEN; i++){
         Serial.print((char)radio.DATA[i]); 
@@ -152,8 +102,8 @@ void loop() {
 void printInfo(){
   Serial.print("\nSerial Number: ");Serial.println(currentInfo.serialNumber);
   Serial.print("Firmware Version: ");Serial.println(currentInfo.firmware); 
-  Serial.print("Left set Point: ");Serial.println(currentInfo.lSetPoint);
-  Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);   
+  Serial.print("Left Set Point: ");Serial.println(currentInfo.lSetPoint);
+  Serial.print("Right Set Point: ");Serial.println(currentInfo.rSetPoint);   
   Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);       
   Serial.print("On Time: "); Serial.println(currentInfo.waveform.onTime);     
   Serial.print("Off Time: "); Serial.println(currentInfo.waveform.offTime);      
@@ -209,4 +159,13 @@ void sendWaveform(){
   else{
     Serial.println("waveform send fail");
   }
+}
+
+void printBattery(){
+  // Now print out those values:
+  String toPrint = String(battery.soc) + "% | ";
+  toPrint += String(battery.volts) + " mV | ";
+  toPrint += String(battery.capacity) + " mAh remaining ";
+
+  Serial.println(toPrint);
 }

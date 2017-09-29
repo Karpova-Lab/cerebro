@@ -120,8 +120,9 @@ void triggerBoth(){
       Serial.print(right.setPoint);
       Serial.print(" FBK: ");      
       Serial.println(analogRead(right.analogPin));
-      left.off();
+      left.off(); 
       laserEnabled = right.off();
+      //send alert if feedbacks aren't what were expected
     }
   }
 }

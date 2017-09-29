@@ -43,38 +43,18 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #define LEFT_SETPOINT_ADDRESS 11
 #define RIGHT_SETPOINT_ADDRESS 13
 
-
-typedef struct {
-  unsigned int startDelay;
-  unsigned int onTime;
-  unsigned int offTime;
-  unsigned int trainDur;
-  unsigned int rampDur;
-} WaveformData;
 WaveformData waveform;
-
-typedef struct {
-  unsigned int variable;
-  unsigned int value;
-} IntegerPayload;
 IntegerPayload radioMessage;
-
-typedef struct {
-  byte  serialNumber;
-  byte  firmware;
-  WaveformData waveform;
-  unsigned int lSetPoint;
-  unsigned int rSetPoint;
-} Status;
 Status currentInfo;
-
+Battery battery;
 int meterVal = 0;
 int powerMeter = A2;
 const byte indicatorLED = A5; //32u4 pin 41
 
 LaserDiode left(&DDRB,&PORTB,0,A4);
 LaserDiode right(&DDRD,&PORTD,2,A3);
-Radio radio;
+
+Radio radio(7,1);
 
 //---------function prototypes---------//
 int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, unsigned int rampDur, bool useFeedback=true );
@@ -98,7 +78,7 @@ void setup() {
   //*** Battery Monitor ***//
   setupBQ27441();
   
-  radio.radioSetup();
+  radio.radioSetup(12,true); //nodeID, autopower on;
   char readyMessage[15] = "\nCerebro On\n";
   byte buffLen=strlen(readyMessage);
   radio.send(GATEWAYID, readyMessage, buffLen);  
@@ -149,16 +129,6 @@ void loop() {
       Serial.println("Unexpected Data size received");
     }
   }
-  // triggerEvent(leftSetPoint,&left,2000,true);  
-  // delay(8000);
-  // triggerEvent(leftSetPoint,&left,0,true);  
-  // delay(8000);
-  // combinedTest();
-  
-  // if (Serial.available()){
-  //   char msg = Serial.read();
-  //   testDAC(msg);
-  // }
 }
 void sendInfo(){
   currentInfo.serialNumber = EEPROM.read(SERIAL_NUMBER_ADDRESS);
@@ -194,20 +164,6 @@ void sendACK(){
   }
 }
 
-void testDAC(char msg){
-  if (msg=='1'){
-    left.sendDAC(200);
-  }
-  if (msg=='2'){
-    left.sendDAC(4000);
-  }
-  if (msg=='3'){
-    right.sendDAC(200);
-  }
-  if (msg=='4'){
-    right.sendDAC(4000);
-  }      
-}
 void leftTune(char msg){
   // switch (msg){
   //   case '1':
@@ -281,25 +237,18 @@ void feedbackReadings(){
 }
 
 void calibrate(){
-  // // int a = EEPROM.read(0)<<8;// high byte
-  // // int b = EEPROM.read(1);
-  // // Serial.print("last Value:");
-  // // Serial.println(a|b,DEC);
-  // // delay(5000);
-  // int tryPower  = 1005;
-  // while ( meterVal <96){
-  //   tryPower++;
-  //   meterVal =  triggerEvent(tryPower,&left,true);
-  //   Serial.print("Try: ");
-  //   Serial.print(tryPower);
-  //   Serial.print(", Result: ");
-  //   Serial.println(meterVal);
-  //   delay(2000);
-  // }
-  // EEPROM.write(0,tryPower>>8);// high byte
-  // EEPROM.write(1,tryPower&255);//low byte
-  // Serial.println("Done!");
-  // Serial.print(tryPower);
+  int tryPower  = 1005;
+  while ( meterVal <96){
+    tryPower++;
+    meterVal =  triggerEvent(tryPower,&left,true);
+    Serial.print("Try: ");
+    Serial.print(tryPower);
+    Serial.print(", Result: ");
+    Serial.println(meterVal);
+    delay(2000);
+  }
+  Serial.println("Done!");
+  Serial.print(tryPower);
 }
 
 void pauseUntilCommand(){
@@ -312,24 +261,19 @@ void pauseUntilCommand(){
 }
 
 void reportBattery(){
-    // Read battery stats from the BQ27441-G1A
-    unsigned int soc = lipo.soc();  // Read state-of-charge (%)
-    unsigned int volts = lipo.voltage(); // Read battery voltage (mV)
-    int current = lipo.current(AVG); // Read average current (mA)
-    unsigned int capacity = lipo.capacity(REMAIN); // Read remaining capacity (mAh)
-  
-    // Now print out those values:
-    String toPrint = String(soc) + "% | ";
-    toPrint += String(volts) + " mV | ";
-    toPrint += String(current) + " mA | ";
-    toPrint += String(capacity) + " mAh remaining ";
+  // Read battery stats from the BQ27441-G1A
+  battery.soc = lipo.soc();
+  battery.volts = lipo.voltage();
+  battery.capacity = lipo.capacity(REMAIN);
 
-    Serial.println(toPrint);
+  printBattery();
 
-    char buff[65];
-    toPrint.toCharArray(buff,65);
-    byte buffLen=strlen(buff);
-    radio.send(1, buff, buffLen);
+  if (radio.sendWithRetry(1, (const void*)(&battery), sizeof(battery))){
+    Serial.println("battery info sent successfully");
+  }
+  else{
+    Serial.println("battery info send fail");
+  }
 }
 
 void setupBQ27441(void)
@@ -338,13 +282,26 @@ void setupBQ27441(void)
   {
 	// If communication fails, print an error message and loop forever.
     Serial.println("Error: Unable to communicate with BQ27441.");
-    while(1){
-      digitalWrite(indicatorLED,HIGH);
-      delay(1000);
-      digitalWrite(indicatorLED,LOW);
-      delay(1000);
-    }
+    blinkError();
   }
   Serial.println("Connected to BQ27441!");
   lipo.setCapacity(400);
+}
+
+void blinkError(){
+  while(1){
+    digitalWrite(indicatorLED,HIGH);
+    delay(1000);
+    digitalWrite(indicatorLED,LOW);
+    delay(1000);
+  }
+}
+
+void printBattery(){
+  // Now print out those values:
+  String toPrint = String(battery.soc) + "% | ";
+  toPrint += String(battery.volts) + " mV | ";
+  toPrint += String(battery.capacity) + " mAh remaining ";
+
+  Serial.println(toPrint);
 }
