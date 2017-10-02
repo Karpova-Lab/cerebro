@@ -1,4 +1,4 @@
-int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,unsigned int rampDur, bool useFeedback){
+int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedback){
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
@@ -38,10 +38,12 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode,unsigned int ram
     //else the end of the waveform has been reached. turn off the light.
     else{
       if (useFeedback){
-        if (rampDur>0){
-          thediode->fade(rampDur);
+        if (waveform.rampDur>0){
+          thediode->fade(waveform.rampDur);
         }
       }
+      Serial.println("during: ");  
+      feedbackReadings();
       _meterValue = analogRead(powerMeter);         
       laserEnabled = thediode->off();
     }
@@ -66,10 +68,12 @@ void triggerBoth(){
       if (radio.DATALEN==1){ 
         if (radio.DATA[0]=='A'){  //abort
           left.off();
-          laserEnabled = right.off();         
+          laserEnabled = right.off();
+          sendACK();      
         }
         else if (radio.DATA[0]=='C'){ //continuation
-          onClock=trainClock=millis();          
+          onClock=trainClock=millis();     
+          sendACK();     
         }
       }
     }

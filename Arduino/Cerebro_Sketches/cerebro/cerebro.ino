@@ -57,7 +57,7 @@ LaserDiode right(&DDRD,&PORTD,2,A3);
 Radio radio(7,1);
 
 //---------function prototypes---------//
-int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, unsigned int rampDur, bool useFeedback=true );
+int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
 void setup() {
   SPI.begin();
@@ -99,6 +99,10 @@ void loop() {
           reportBattery();break;
         case 'I':            
           sendInfo();break;
+        case 'i':
+          isolationTest();break;
+        case 'c':
+          combinedTest();break;
         default:
           Serial.println("Command not recognized");break;
       }
@@ -123,10 +127,46 @@ void loop() {
           right.setPoint = radioMessage.value;                  //update setpoint 
           EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
           break;
+        case 'l': // Receiving a new left setpoint
+          triggerEvent(radioMessage.value,&left,true);
+          break;
+        case 'r': // Receiving a new right setpoint
+          triggerEvent(radioMessage.value,&right,true);
+          break;
       }
     }
     else{
       Serial.println("Unexpected Data size received");
+    }
+  }
+
+  if (Serial.available()){
+    bool isLeft = false;
+    bool isRight = false;
+    char whichDiode = Serial.read();
+    if (whichDiode=='l'){
+      isLeft = true;
+      Serial.println("left");
+    }
+    else if (whichDiode == 'r'){
+      isRight = true;
+    }
+    char msg[20] = {};
+    byte msgIndex = 0;
+    while(Serial.available()){ 
+      msg[msgIndex] = Serial.read()-48;
+      msgIndex++;      
+    }
+    unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+    unsigned int integerVal = 0;
+    for (int i = 0; i < msgIndex; i++) {
+      integerVal = integerVal + msg[i] * powers[msgIndex-1-i];
+    }
+    if (isLeft){
+      triggerEvent(integerVal,&left,true);
+    }
+    else if (isRight){
+      triggerEvent(integerVal,&right,true);
     }
   }
 }
@@ -164,76 +204,30 @@ void sendACK(){
   }
 }
 
-void leftTune(char msg){
-  // switch (msg){
-  //   case '1':
-  //     leftSetPoint+=50;
-  //     Serial.println(leftSetPoint);  
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;
-  //   case '2':
-  //     leftSetPoint+=10;
-  //     Serial.println(leftSetPoint);    
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;
-  //   case '3':
-  //     leftSetPoint+=5;
-  //     Serial.println(leftSetPoint);    
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;
-  //   case '4':
-  //     leftSetPoint++;
-  //     Serial.println(leftSetPoint);    
-  //     triggerEvent(leftSetPoint,&left,true);   
-  //     break;
-  //   case '7':
-  //     leftSetPoint--;
-  //     Serial.println(leftSetPoint);    
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;
-  //   case '8':
-  //     leftSetPoint-=5;
-  //     Serial.println(leftSetPoint);    
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;
-  //   case '9':
-  //     leftSetPoint-=10;
-  //     Serial.println(leftSetPoint);    
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;
-  //   case '0':
-  //     leftSetPoint-=50;
-  //     Serial.println(leftSetPoint);  
-  //     triggerEvent(leftSetPoint,&left,true);  
-  //     break;    
-  // }
-}
-
 void combinedTest(){
-  // triggerEvent(leftSetPoint,&left,true);
-  // delay(1000);
-  // triggerBoth(leftSetPoint,rightSetPoint);
-  // delay(1000);
-  // triggerEvent(rightSetPoint,&right,true);
-  // delay(5000);  
-  // Serial.println();
+  triggerEvent(left.setPoint,&left,true);
+  delay(1000);
+  triggerBoth();
+  delay(1000);
+  triggerEvent(right.setPoint,&right,true);
+  delay(5000);  
+  Serial.println();
 }
 
 void isolationTest(){
-  // delay(5000);
-  // Serial.print("Before left: ");    
-  // feedbackReadings();
-  // triggerEvent(951,&left,true);
-  // delay(1000);  
-  // Serial.print("Before right: ");  
-  // feedbackReadings();  
-  // triggerEvent(74,&right,true);
+  Serial.print("Before left: ");    
+  feedbackReadings();
+  triggerEvent(left.setPoint,&left,true);
+  delay(1000);  
+  Serial.print("Before right: ");  
+  feedbackReadings();  
+  triggerEvent(right.setPoint,&right,true);
 }
 
 void feedbackReadings(){ 
-  // Serial.print(analogRead(left.analogPin));
-  // Serial.print(", ");
-  // Serial.println(analogRead(right.analogPin));
+  Serial.print(analogRead(left.analogPin));
+  Serial.print(", ");
+  Serial.println(analogRead(right.analogPin));
 }
 
 void calibrate(){

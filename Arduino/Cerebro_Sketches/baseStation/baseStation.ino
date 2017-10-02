@@ -51,7 +51,7 @@ void loop() {
       parseWaveform();
       sendWaveform();
     }
-    else if (msg=='S' || msg == 'L' || msg == 'R'){
+    else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){
       readMsg();
       radioMessage.variable = msg;
       radioMessage.value = convertAsciiValsToIntegers(0);
@@ -69,7 +69,7 @@ void loop() {
         Serial.print("\n[");Serial.print(timeSent);Serial.print("] ");
       }
       else{
-         Serial.println("ACK not received");
+         Serial.println("\nACK not received");
       }
     }
     
