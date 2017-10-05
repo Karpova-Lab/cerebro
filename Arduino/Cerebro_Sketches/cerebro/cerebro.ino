@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 62;
+const byte version = 63;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -48,11 +48,11 @@ IntegerPayload radioMessage;
 Status currentInfo;
 Battery battery;
 int meterVal = 0;
-int powerMeter = A2;
+int powerMeter = A3;
 const byte indicatorLED = A5; //32u4 pin 41
 
 LaserDiode left(&DDRB,&PORTB,0,A4);
-LaserDiode right(&DDRD,&PORTD,2,A3);
+LaserDiode right(&DDRD,&PORTD,2,A2);
 
 Radio radio(7,1);
 
@@ -128,9 +128,11 @@ void loop() {
           EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
           break;
         case 'l': // Receiving a new left setpoint
+          Serial.println("\nTriggering Left @ ");Serial.println(radioMessage.value);
           triggerEvent(radioMessage.value,&left,true);
           break;
         case 'r': // Receiving a new right setpoint
+          Serial.println("\nTriggering Right @");Serial.println(radioMessage.value);        
           triggerEvent(radioMessage.value,&right,true);
           break;
       }
@@ -157,7 +159,7 @@ void loop() {
       msg[msgIndex] = Serial.read()-48;
       msgIndex++;      
     }
-    unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+    unsigned long powers[4] = {1, 10, 100, 1000};
     unsigned int integerVal = 0;
     for (int i = 0; i < msgIndex; i++) {
       integerVal = integerVal + msg[i] * powers[msgIndex-1-i];

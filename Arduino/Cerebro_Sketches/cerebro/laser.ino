@@ -44,7 +44,8 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
       }
       Serial.println("during: ");  
       feedbackReadings();
-      _meterValue = analogRead(powerMeter);         
+      _meterValue = analogRead(powerMeter);   
+      Serial.print("power meter: ");Serial.println(_meterValue);     
       laserEnabled = thediode->off();
     }
   }
