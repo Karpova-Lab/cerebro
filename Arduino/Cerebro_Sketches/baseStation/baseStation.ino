@@ -25,7 +25,7 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>           //included with Arduino IDE install (www.arduino.cc)
 
-const int LED = 13;
+const int LED = 12;
 Radio radio(8,7); //slave select pin, interrupt pin, NODE ID
 WaveformData waveform;
 IntegerPayload radioMessage;
@@ -45,6 +45,7 @@ void setup() {
 
 void loop() {
   if (Serial.available()){
+    digitalWrite(LED,HIGH);
     char msg = Serial.read();
     if (msg=='W'){
       readMsg();
@@ -65,10 +66,12 @@ void loop() {
     else{
       timeSent = micros();  
       if (radio.sendWithRetry(12, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
+        digitalWrite(LED,LOW);
         timeSent = micros()-timeSent;
         Serial.print("\n[");Serial.print(timeSent);Serial.print("] ");
       }
       else{
+        digitalWrite(LED,LOW);        
          Serial.println("\nACK not received");
       }
     }
@@ -137,7 +140,7 @@ void readMsg(){
 }
 
 unsigned int convertAsciiValsToIntegers(byte whichParameter){
-  unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
+  unsigned long powers[5] = {1, 10, 100, 1000, 10000};
   unsigned int integerVal = 0;
   byte numDigits = csValues[whichParameter][5];
   for (int i = 0; i < numDigits; i++) {
