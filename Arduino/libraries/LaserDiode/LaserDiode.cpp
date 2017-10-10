@@ -37,7 +37,6 @@ void LaserDiode::sendDAC(unsigned int value) {
 void LaserDiode::feedback(int setPoint){
   const float KP = 0.2;
   int photoTransistorVoltage = analogRead(analogPin);
-  photoTransistorVoltage = analogRead(analogPin);
   int error = setPoint-photoTransistorVoltage;
   DAClevel = DAClevel+int(error*KP);
   if (DAClevel>4095) {

@@ -102,7 +102,8 @@ private:
     //Characterization Commands
     QGroupBox*              charBox;
     QGridLayout*            charLayout;
-    QPushButton*            startImplant_btn,*startDiode_btn,*initialize_btn;
+    QSpinBox*               leftDiode_spn,*rightDiode_spn;
+    QPushButton*            leftTest_btn,*leftSet_btn,*rightTest_btn,*rightSet_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
 
     //Calibration Dialogs
     QDialog*                sendFadeDialog,*createFadeDialog;
@@ -122,7 +123,7 @@ private:
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*getInfo_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*getInfo_btn,*macro_btn,*isBasePresent_btn;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 
@@ -167,8 +168,6 @@ private slots:
     void sendTrigger();
     void abort();
     void macro();
-    void triggerPushed();
-    void triggerChecked();
     void getInfo();
     void getBatteryStatus();
 
@@ -184,8 +183,8 @@ private slots:
     void chooseFile();
     void getCalVals(QString calibrateDataPath);
     void useDropped(const QMimeData *mimeData);
-    void sendImplantStart();
-    void sendDiodeStart();
+    void sendToDiode();
+    void testCombined();
     void sendCalVector();
     void sendCalGroups();
     void sendHardwareVals();

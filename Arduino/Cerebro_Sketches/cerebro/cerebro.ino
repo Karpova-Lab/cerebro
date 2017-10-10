@@ -40,13 +40,15 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 
 #define SERIAL_NUMBER_ADDRESS 0
 #define WAVEFORM_ADDRESS 1
-#define LEFT_SETPOINT_ADDRESS 11
-#define RIGHT_SETPOINT_ADDRESS 13
+#define LEFT_SETPOINT_ADDRESS 13
+#define RIGHT_SETPOINT_ADDRESS 15
 
 WaveformData waveform;
 IntegerPayload radioMessage;
 Status currentInfo;
 Battery battery;
+Feedback diodeStats;
+
 int meterVal = 0;
 int powerMeter = A3;
 const byte indicatorLED = A5; //32u4 pin 41
@@ -79,9 +81,10 @@ void setup() {
   setupBQ27441();
   
   radio.radioSetup(12,true); //nodeID, autopower on;
-  char readyMessage[15] = "\nCerebro On\n";
+  char readyMessage[22] = "\nCerebro Connected\n";
   byte buffLen=strlen(readyMessage);
   radio.send(GATEWAYID, readyMessage, buffLen);  
+  sendInfo();
 }
 
 void loop() {
@@ -90,8 +93,8 @@ void loop() {
     // Serial.print("data length = ");Serial.println(radio.DATALEN);    
     if (radio.DATALEN==1){ //received a command or a request for data
       sendACK();
-      Serial.print("received: ");
-      Serial.println((char)radio.DATA[0]);
+      // Serial.print("received: ");
+      // Serial.println((char)radio.DATA[0]);
       switch (radio.DATA[0]){
         case 'T':
           triggerBoth();break;
@@ -128,11 +131,11 @@ void loop() {
           EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
           break;
         case 'l': // Receiving a new left setpoint
-          Serial.println("\nTriggering Left @ ");Serial.println(radioMessage.value);
+          Serial.print("\nTriggering Left @ ");Serial.println(radioMessage.value);
           triggerEvent(radioMessage.value,&left,true);
           break;
         case 'r': // Receiving a new right setpoint
-          Serial.println("\nTriggering Right @");Serial.println(radioMessage.value);        
+          Serial.print("\nTriggering Right @");Serial.println(radioMessage.value);        
           triggerEvent(radioMessage.value,&right,true);
           break;
       }
@@ -269,6 +272,21 @@ void reportBattery(){
   }
   else{
     Serial.println("battery info send fail");
+  }
+}
+
+void reportLaserStats(){
+  // Read battery stats from the BQ27441-G1A
+  diodeStats.leftFBK = analogRead(left.analogPin);
+  diodeStats.rightFBK = analogRead(right.analogPin);
+  diodeStats.leftDAC = left.DAClevel;
+  diodeStats.rightDAC = right.DAClevel;
+  
+  if (radio.sendWithRetry(1, (const void*)(&diodeStats), sizeof(diodeStats))){
+    Serial.println("laser stats sent");
+  }
+  else{
+    Serial.println("laser stats send fail");
   }
 }
 

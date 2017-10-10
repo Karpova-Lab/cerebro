@@ -20,11 +20,11 @@
 #define ATC_RSSI      -80
 
 typedef struct {
-  unsigned int startDelay;
-  unsigned int onTime;
-  unsigned int offTime;
-  unsigned int trainDur;
-  unsigned int rampDur;
+  unsigned int  startDelay;
+  unsigned int  onTime;
+  unsigned int  offTime;
+  unsigned long trainDur;
+  unsigned int  rampDur;
 } WaveformData;
 
 typedef struct {
@@ -45,6 +45,13 @@ typedef struct {
   unsigned int volts;
   unsigned int capacity;
 } Battery;
+
+typedef struct {
+  unsigned int leftFBK;
+  unsigned int rightFBK;
+  unsigned int leftDAC;
+  unsigned int rightDAC;
+} Feedback;
 
 class Radio: public RFM69_ATC {
 public:

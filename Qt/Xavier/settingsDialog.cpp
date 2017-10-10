@@ -239,10 +239,10 @@ void settingsDialog::openSettings()
     portDropdown->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
-        if(info.description()==usbDescription){
+//        if(info.description()==usbDescription){
             list << info.portName();
             portDropdown->addItem(list.first(), list);
-        }
+//        }
     }
     //GetaAlias stringlist from memory
     settings.beginGroup("sessionLists");

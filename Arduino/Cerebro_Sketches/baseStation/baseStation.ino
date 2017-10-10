@@ -25,13 +25,14 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>           //included with Arduino IDE install (www.arduino.cc)
 
-const int LED = 12;
+const int LED = 13;
 Radio radio(8,7); //slave select pin, interrupt pin, NODE ID
 WaveformData waveform;
 IntegerPayload radioMessage;
 Status currentInfo;
 Battery battery;
-char csValues[5][6];  //2D array, first dimension 0-number of parameters, 2nd dimension holds up to 5 Ascii characters that represent digits 
+Feedback diodeStats;
+char csValues[5][8];  //2D array, first dimension 0-number of parameters, 2nd dimension holds up to 5 Ascii characters that represent digits 
                       //of a integer. the final spot in the second dimension holds the number of digits read in for that parameter
 unsigned int timeSent = 0;
 
@@ -56,12 +57,16 @@ void loop() {
       readMsg();
       radioMessage.variable = msg;
       radioMessage.value = convertAsciiValsToIntegers(0);
+      Serial.print("\nSending '"); Serial.print(msg);Serial.print("' ") ;Serial.print(radioMessage.value);Serial.print("...");
       if (radio.sendWithRetry(12, (const void*)(&radioMessage), sizeof(radioMessage))){
         Serial.println("data received");        
       }
       else{
         Serial.println("data send fail");
       }
+    }
+    else if(msg=='?'){
+      Serial.println("Base Station Connected");
     }
     else{
       timeSent = micros();  
@@ -83,10 +88,15 @@ void loop() {
       currentInfo = *(Status*)radio.DATA;  //update waveform
       printInfo();      
     }
-    else if (radio.DATALEN == sizeof(battery)){ //received a waveform data 
+    else if (radio.DATALEN == sizeof(battery)){ //received a battery data 
       radio.sendACK();
-      battery = *(Battery*)radio.DATA;  //update waveform
+      battery = *(Battery*)radio.DATA;  
       printBattery();      
+    }    
+    else if (radio.DATALEN == sizeof(diodeStats)){ //diode stats data
+      radio.sendACK();
+      diodeStats = *(Feedback*)radio.DATA;  
+      printDiodeStats();    
     }
     else{
       for (byte i = 0; i < radio.DATALEN; i++){
@@ -114,6 +124,15 @@ void printInfo(){
   Serial.print("Ramp Duration: "); Serial.println(currentInfo.waveform.rampDur);  
 }
 
+void printDiodeStats(){
+  Serial.print("Left | Set: ");Serial.print(currentInfo.lSetPoint);
+  Serial.print(" | FBK: ");Serial.print(diodeStats.leftFBK);
+  Serial.print(" | DAC: ");Serial.println(diodeStats.leftDAC);  
+  Serial.print("Right | Set: ");Serial.print(currentInfo.rSetPoint);
+  Serial.print(" | FBK: ");Serial.print(diodeStats.rightFBK);
+  Serial.print(" | DAC: ");Serial.println(diodeStats.rightDAC);  
+}
+
 void Blink(byte PIN, int msDelay)
 {
   digitalWrite(PIN,HIGH);
@@ -133,16 +152,16 @@ void readMsg(){
     else {
       csValues[valueIndex][digitIndex] = msg-48;// convert the ascii character to the number it represents and store it
       digitIndex++;
-      csValues[valueIndex][5] = digitIndex; //the number of digits that have been read in
+      csValues[valueIndex][7] = digitIndex; //the number of digits that have been read in
       delay(20);
     }
   }
 }
 
-unsigned int convertAsciiValsToIntegers(byte whichParameter){
-  unsigned long powers[5] = {1, 10, 100, 1000, 10000};
-  unsigned int integerVal = 0;
-  byte numDigits = csValues[whichParameter][5];
+unsigned long convertAsciiValsToIntegers(byte whichParameter){
+  unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000,1000000};
+  unsigned long integerVal = 0;
+  byte numDigits = csValues[whichParameter][7];
   for (int i = 0; i < numDigits; i++) {
     integerVal = integerVal + csValues[whichParameter][i] * powers[numDigits - i - 1];
   }

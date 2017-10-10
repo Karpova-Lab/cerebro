@@ -11,10 +11,22 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
   }
   onClock=trainClock=millis();
   while(laserEnabled){   
-    // //check if another command (abort or continuation) has been sent since the trigger was activated
+    //check if another command (abort or continuation) has been sent since the trigger was activated
     // reset clock on continuation. or abort waveform.
+    if (radio.receiveDone()){
+      if (radio.DATALEN==1){ 
+        if (radio.DATA[0]=='A'){  //abort
+          laserEnabled = thediode->off();
+          sendACK();      
+        }
+        else if (radio.DATA[0]=='C'){ //continuation
+          onClock=trainClock=millis();     
+          sendACK();     
+        }
+      }
+    }
     //else if onClock hasn't expired, turn on/keep on the laser
-    if ((millis()-onClock)<waveform.onTime){
+    else if ((millis()-onClock)<waveform.onTime){
       if(!useFeedback){
         thediode->sendDAC(desiredPower);
       }
@@ -42,10 +54,11 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
           thediode->fade(waveform.rampDur);
         }
       }
-      Serial.println("during: ");  
-      feedbackReadings();
-      _meterValue = analogRead(powerMeter);   
-      Serial.print("power meter: ");Serial.println(_meterValue);     
+      // Serial.println("during: ");  
+      // feedbackReadings();
+      // _meterValue = analogRead(powerMeter);   
+      // Serial.print("power meter: ");Serial.println(_meterValue);     
+      reportLaserStats();
       laserEnabled = thediode->off();
     }
   }
@@ -113,18 +126,19 @@ void triggerBoth(){
           }
         }
       }
-      Serial.print("L: DAC: ");
-      Serial.print(left.DAClevel);
-      Serial.print(" SET: ");   
-      Serial.print(left.setPoint);
-      Serial.print(" FBK: ");      
-      Serial.println(analogRead(left.analogPin)); 
-      Serial.print("R: DAC: ");
-      Serial.print(right.DAClevel);
-      Serial.print(" SET: ");   
-      Serial.print(right.setPoint);
-      Serial.print(" FBK: ");      
-      Serial.println(analogRead(right.analogPin));
+      // Serial.print("L: DAC: ");
+      // Serial.print(left.DAClevel);
+      // Serial.print(" SET: ");   
+      // Serial.print(left.setPoint);
+      // Serial.print(" FBK: ");      
+      // Serial.println(analogRead(left.analogPin)); 
+      // Serial.print("R: DAC: ");
+      // Serial.print(right.DAClevel);
+      // Serial.print(" SET: ");   
+      // Serial.print(right.setPoint);
+      // Serial.print(" FBK: ");      
+      // Serial.println(analogRead(right.analogPin));
+      reportLaserStats();     
       left.off(); 
       laserEnabled = right.off();
       //send alert if feedbacks aren't what were expected

@@ -120,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //Waveform Adjustment
-    adjustBox = new QGroupBox("Cerebro's Parameters");
+    adjustBox = new QGroupBox("Waveform Parameters");
         adjustmentLayout = new QGridLayout();
             power_lbl = new QLabel("Power Level");
             power_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -175,7 +175,7 @@ MainWindow::MainWindow(QWidget *parent)
             trainDuration_lbl->setVisible(false);
         adjustmentLayout->addWidget(trainDuration_lbl,7,0);
             trainDuration_spn = new QSpinBox();
-            trainDuration_spn->setRange(0,65535);
+            trainDuration_spn->setRange(0,9999999);
             trainDuration_spn->setSingleStep(250);
             trainDuration_spn->setSuffix(" ms");
             trainDuration_spn->setAlignment(Qt::AlignCenter);
@@ -204,12 +204,30 @@ MainWindow::MainWindow(QWidget *parent)
     //Characterization
     charBox = new QGroupBox("Implant Construction Tools");
         charLayout = new QGridLayout();
-            startDiode_btn = new QPushButton("Start Diode Characterization");
-        charLayout->addWidget(startDiode_btn,0,0);
-            startImplant_btn = new QPushButton("Start Implant Characterization");
-        charLayout->addWidget(startImplant_btn,1,0);
+            leftDiode_spn = new QSpinBox();
+            leftDiode_spn->setRange(0,1023);
+            leftDiode_spn->setAlignment(Qt::AlignCenter);
+        charLayout->addWidget(leftDiode_spn,0,0,1,1);
+            rightDiode_spn = new QSpinBox();
+            rightDiode_spn->setRange(0,1023);
+            rightDiode_spn->setAlignment(Qt::AlignCenter);
+        charLayout->addWidget(rightDiode_spn,0,1,1,1);
+            leftTest_btn = new QPushButton("Test Left");
+        charLayout->addWidget(leftTest_btn,1,0,1,1);
+            rightTest_btn = new QPushButton("Test Right");
+        charLayout->addWidget(rightTest_btn,1,1,1,1);
+            leftSet_btn = new QPushButton("Set Left");
+        charLayout->addWidget(leftSet_btn,2,0,1,1);
+            rightSet_btn = new QPushButton("Set Right");
+        charLayout->addWidget(rightSet_btn,2,1,1,1);
+//            isolationTest_btn = new QPushButton("Isolation Test");
+//        charLayout->addWidget(isolationTest_btn,3,0,1,1);
+            combinedTest_btn = new QPushButton("Combined Test");
+        charLayout->addWidget(combinedTest_btn,3,0,1,2);
+            startDiode_btn = new QPushButton("Cerebro Monitor");
+        charLayout->addWidget(startDiode_btn,4,0,1,2);
             initialize_btn = new QPushButton("Send Power Values to Cerebro");
-        charLayout->addWidget(initialize_btn,2,0);
+        charLayout->addWidget(initialize_btn,5,0,1,2);
     charBox->setLayout(charLayout);
     charBox->setEnabled(false);
     charBox->setPalette(Qt::gray);
@@ -274,18 +292,6 @@ MainWindow::MainWindow(QWidget *parent)
     //Triggering & debugging
     bugBox = new QGroupBox("Debug");
         triggerLayout = new QGridLayout();
-            trigger_checkbox = new QCheckBox();
-            trigger_checkbox->setText("Test Mode");
-        triggerLayout->addWidget(trigger_checkbox,0,0,Qt::AlignRight);
-            trials_spn = new QSpinBox();
-            trials_spn->setMinimum(0);
-            trials_spn->setMaximum(10000);
-            trials_spn->setSingleStep(10);
-            trials_spn->setSuffix(" test signals");
-            trials_spn->setAlignment(Qt::AlignCenter);
-            trials_spn->setValue(10);
-            trials_spn->setEnabled(false);
-        triggerLayout->addWidget(trials_spn,0,1,Qt::AlignLeft);
             trigger_btn = new QPushButton;
             trigger_btn->setText("Trigger");
             trigger_btn->setAutoDefault(true);
@@ -300,11 +306,13 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(batteryStatus_btn,3,0);
             getInfo_btn = new QPushButton("Get Cerebro Info");
         triggerLayout->addWidget(getInfo_btn,3,1);
+            isBasePresent_btn = new QPushButton("Base Station Present?");
+        triggerLayout->addWidget(isBasePresent_btn,4,1);
             macroText = new QLineEdit();
 //                macroText->setFixedWidth(40);
-        triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
+        triggerLayout->addWidget(macroText,5,0,Qt::AlignRight);
             macro_btn = new QPushButton("Send Text");
-        triggerLayout->addWidget(macro_btn,4,1);
+        triggerLayout->addWidget(macro_btn,5,1);
     bugBox->setLayout(triggerLayout);
     bugBox->setEnabled(false);
     bugBox->setPalette(Qt::gray);
@@ -319,7 +327,7 @@ MainWindow::MainWindow(QWidget *parent)
             serialPortList2 = new QComboBox();
             serialPortList2->setMinimumWidth(150);
         connectionLayout2->addWidget(serialPortList2,1,1,1,2);
-            connect2_btn = new QPushButton("Connect to Downloader");
+            connect2_btn = new QPushButton("Connect to Cerebro");
             connect2_btn->setCheckable(true);
         connectionLayout2->addWidget(connect2_btn,2,0,1,3);
             download_title = new QLabel("<h3><u>Cerebro Monitor</u>:");
@@ -418,8 +426,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(offTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
     connect(fade_checkbox,SIGNAL(clicked()),this,SLOT(fadeChecked()));
     connect(sendSettings_btn,SIGNAL(clicked()),this,SLOT(set()));
-    connect(trigger_btn,SIGNAL(clicked()),this,SLOT(triggerPushed()));
-    connect(trigger_checkbox,SIGNAL(clicked()),this,SLOT(triggerChecked()));
     connect(singleShot,SIGNAL(clicked()),this,SLOT(trainChecked()));
     connect(pulseTrain,SIGNAL(clicked()),this,SLOT(trainChecked()));
     connect(newPower_btn,SIGNAL(clicked(bool)),this,SLOT(sendNewPower()));
@@ -430,13 +436,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
     connect(batteryStatus_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
     connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getInfo()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
+    connect(trigger_btn,SIGNAL(clicked()),this,SLOT(sendTrigger()));
+//    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
 
     //Calibration
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
-    connect(startImplant_btn,SIGNAL(clicked()),this,SLOT(sendImplantStart()));
-//    connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
+    connect(leftTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(leftSet_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(rightTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(rightSet_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
     connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
@@ -524,7 +534,7 @@ void MainWindow::fillBasestationPorts()
         QStringList list;
         if (!info.isBusy()){
             qDebug()<<info.description();
-            if(info.description()==usbDescription){                
+//            if(info.description()==usbDescription){
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
                     if (!aliasStringList.filter(info.portName())[0].contains("Downloader",Qt::CaseInsensitive)){
                         list << aliasStringList.filter(info.portName())[0];
@@ -535,7 +545,7 @@ void MainWindow::fillBasestationPorts()
                     list << info.portName();
                     serialPortList->addItem(list.first(), list);
                 }
-            }
+//            }
         }
     }
     refresh_btn->setDown(0);
@@ -603,13 +613,14 @@ void MainWindow::connectBasePort()
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
             //open serial connection
+            qDebug()<<tempPortName;
             serial->setPortName(tempPortName);
             serial->setBaudRate(QSerialPort::Baud115200);
             serial->setDataBits(QSerialPort::Data8);
             serial->setParity(QSerialPort::NoParity);
             serial->setStopBits(QSerialPort::OneStop);
             serial->setFlowControl(QSerialPort::NoFlowControl);
-            serial->open(QIODevice::ReadWrite);
+            qDebug()<<serial->open(QIODevice::ReadWrite);
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
             if(!debugOn){
@@ -850,55 +861,10 @@ void MainWindow::set()
 void MainWindow::sendTrigger()
 {
     QString msg = "T";
-    if (inTestloop){
-        testCount++;
-        testProgress->setValue(testCount);
-        if (testCount==trials_spn->value()){
-            triggerPushed();
-        }
-    }
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
 
-void MainWindow::triggerPushed()
-{
-    if(trigger_checkbox->isChecked()){
-        bool flag = 0;
-        if(!flag){
-            inTestloop = !inTestloop;
-            if(inTestloop){
-                timer->start(2000);
-                testProgress->setVisible(true);
-                testProgress->setValue(0);
-                testProgress->setMaximum(trials_spn->value());
-                trigger_btn->setText("Stop Testing");
-            }
-            else{
-                timer->stop();
-                testProgress->setVisible(false);
-                trigger_btn->setText("Begin Test");
-                testCount = 0;
-            }
-            trigger_checkbox->setEnabled(!inTestloop);
-            trials_spn->setEnabled(!inTestloop);
-        }
-    }
-    else{
-        sendTrigger();
-    }
-}
-
-void MainWindow::triggerChecked()
-{
-    trials_spn->setEnabled(!trials_spn->isEnabled());
-    if(!trigger_checkbox->isChecked()){
-        trigger_btn->setText("Trigger");
-    }
-    else{
-        trigger_btn->setText("Begin Test");
-    }
-}
 
 void MainWindow::trainChecked()
 {
@@ -1292,16 +1258,34 @@ void MainWindow::getCalVals(QString calibrateDataPath ){
     createFadeDialog->close();
 }
 
-void MainWindow::sendImplantStart()
+void MainWindow::sendToDiode()
 {
-    QString msg = "Z";
+    QString msg = "";
+    QString value = "";
+    if (sender()==leftTest_btn){
+        msg = "l";
+        value =  QString::number(leftDiode_spn->value());
+    }
+    else if (sender()==leftSet_btn){
+        msg = "L";
+        value =  QString::number(leftDiode_spn->value());
+    }
+    else if (sender()==rightTest_btn){
+        msg = "r";
+        value =  QString::number(rightDiode_spn->value());
+    }
+    else if (sender()==rightSet_btn){
+        msg = "R";
+        value =  QString::number(rightDiode_spn->value());
+    }
+    msg = msg + "," + value;
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
 
-void MainWindow::sendDiodeStart()
+void MainWindow::testCombined()
 {
-    QString msg = "K";
+    QString msg = "c";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
