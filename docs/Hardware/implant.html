@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Head Implant &mdash; Cerebro 0.0.6 documentation</title>
+  <title>Head Implant &mdash; Cerebro 1.0.0 documentation</title>
   
 
+  
+  
   
   
 
@@ -33,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 1.0.0 documentation" href="../index.html"/>
         <link rel="next" title="Base Station" href="base station.html"/>
         <link rel="prev" title="Cerebro" href="cerebro.html"/> 
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.0.0
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Head Implant</a><ul>
@@ -115,8 +121,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">Cerebro</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cerebro</a>
+        
       </nav>
 
 
@@ -125,23 +133,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>Head Implant</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Head Implant</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="../_sources/Hardware/implant.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -217,7 +242,7 @@
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>Implant PCB</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><a class="reference external" href="https://oshpark.com/shared_projects/5K1XYmmy">OSH Park</a></td>
 </tr>
 <tr class="row-odd"><td>2</td>
@@ -247,7 +272,7 @@
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Liquid electric tape</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><a class="reference external" href="http://www.amazon.com/Star-brite-Liquid-Electrical-Tape/dp/B000QUW4EE/ref=sr_1_1?ie=UTF8&amp;qid=1463746324&amp;sr=8-1&amp;keywords=electrical+tape+liquid+tube">Amazon</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
@@ -261,7 +286,7 @@
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>0805 6.8 kΩ Resistor</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 </tr>
 </tbody>
 </table>
@@ -319,7 +344,7 @@ The light power produced by the laser diodes is a function of current and case t
 We can use a feeback loop to maintain a constant photoresistor voltage, and therefore a constant fiber tip light power output
 (assuming the light power at the fiber tip is proportional to the light hitting the photoresistor).</p>
 <p>If the photoresistor had a linear response to light power, we could just make 1 measurement of the light output at a known photoresistor voltage
-and find a proportionality constant. However, the photoresistor doesn&#8217;t have a linear response:</p>
+and find a proportionality constant. However, the photoresistor doesn’t have a linear response:</p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/photcellResponse.png"><img alt="../_images/photcellResponse.png" src="../_images/photcellResponse.png" style="width: 377.5px; height: 267.0px;" /></a>
 </div>
@@ -335,7 +360,7 @@ characterize the relationship between photoresistor voltage and fiber tip light 
 <a class="reference internal image-reference" href="../_images/fixture.jpg"><img alt="../_images/fixture.jpg" src="../_images/fixture.jpg" style="width: 509.09999999999997px; height: 363.0px;" /></a>
 </div>
 <ol class="arabic simple" start="2">
-<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs&#8217; Power Meter Software</a> and change the following settings:</li>
+<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs’ Power Meter Software</a> and change the following settings:</li>
 </ol>
 <blockquote>
 <div><ul class="simple">
@@ -355,7 +380,7 @@ characterize the relationship between photoresistor voltage and fiber tip light 
 <ol class="arabic simple" start="3">
 <li>Make sure Cerbero is turned on.</li>
 <li>Open up Xavier and start a new session.  <a class="reference internal" href="../Software/Xavier.html#start-session"><span class="std std-ref">How to start a session</span></a></li>
-<li>In the &#8220;Cerebro&#8217;s Construction Tools&#8221; section click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Implant</span> <span class="pre">Characterization</span></code>. Cerebro&#8217;s amber light will turn on to indicate that the characterization routine has begun.</li>
+<li>In the “Cerebro’s Construction Tools” section click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Implant</span> <span class="pre">Characterization</span></code>. Cerebro’s amber light will turn on to indicate that the characterization routine has begun.</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/sendCalTrigger.png"><img alt="../_images/sendCalTrigger.png" src="../_images/sendCalTrigger.png" style="width: 299.0px; height: 138.0px;" /></a>
@@ -370,15 +395,18 @@ characterize the relationship between photoresistor voltage and fiber tip light 
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="base station.html" class="btn btn-neutral float-right" title="Base Station" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="base station.html" class="btn btn-neutral float-right" title="Base Station" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cerebro.html" class="btn btn-neutral" title="Cerebro" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cerebro.html" class="btn btn-neutral" title="Cerebro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -388,7 +416,7 @@ characterize the relationship between photoresistor voltage and fiber tip light 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Apr 03, 2017.
+      Last updated on Oct 11, 2017.
 
     </p>
   </div>
@@ -410,10 +438,11 @@ characterize the relationship between photoresistor voltage and fiber tip light 
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.6',
+            VERSION:'1.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

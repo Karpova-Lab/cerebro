@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 58;
+const byte version = 62;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // #define MCUBE //uncomment to disable feedback during a trigger
 // #define OLDBOARD //uncomment if uploading code to Cerebro 4.7 or older
@@ -96,18 +96,16 @@ const char string_1[] PROGMEM = "On_Time,";
 const char string_2[] PROGMEM = "Off_Time,";
 const char string_3[] PROGMEM = "Train_Duration,";
 const char string_4[] PROGMEM = "Ramp_Duration,";
-const char string_5[] PROGMEM = "Power_Level,";
 
 #define ON_DELAY  0
 #define ON_TIME   1
 #define OFF_TIME  2
 #define TRAIN_DUR 3
 #define RAMP_DUR  4
-#define PWR_LVL   5
 
 // Then set up a table to refer to your strings.
-const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4, string_5};
-char buffer[20];            // make sure this is large enough for the largest string it must hold
+const char* const parameterLabels[] PROGMEM = {string_0, string_1, string_2, string_3, string_4};
+char label[20];            // make sure this is large enough for the largest string it must hold
 unsigned int waveform[NUMPARAM] = {};
 unsigned int onDelay = 2000;
 char marksReceived;
@@ -133,6 +131,7 @@ unsigned int LD;
 
 const char saveMemoryFlag = -1;
 const char memoryDumpFlag = -2;
+const char resetAddressFlag = -3;
 
 #ifdef MCUBE
 int DAClevel = 725;
@@ -141,7 +140,8 @@ int DAClevel = 0;
 #endif
 
 //---------function prototypes---------//
-void characterizeRoutine();
+void characterizeDiode();
+void characterizeImplant();
 void triggerEvent(unsigned int desiredPower, bool useFeedback=true);
 void feedback(int setPoint);
 void fade();
@@ -155,16 +155,18 @@ void save2EEPROM();
 void readAddresses(int start, int finish);
 void printEEPROM();
 void myShift(int val);
-void sendDAC(int value);
+void sendDAC(unsigned int value);
 bool laserOFF();
 void updateFadeVector(uint16_t (&marks)[NUMPULSES],byte offset);
 void updateHardware(uint16_t (&marks)[NUMPULSES]);
 void printFadeVector();
 void printParameters();
+int getLightLevel();
+void recordLightLevel(int lightLevel);
 
 void setup() {
   ///////////Analog setup////////////////////////////
-  ADMUX = 2;       //Vcc is used as the analog reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13 of datasheet
+  ADMUX = B00000010;       //Vcc used as analog reference reference. PA2 is pin 11 on ATtiny84. ADMUX explained in SECTION 16.13.1 of datasheet
   ADCSRA |= (1<<ADPS2) | (1<<ADPS1);  //set division factor of 64. ADC frequncy = 8Mhz/64=125khz (ADC needs to be in 50-200khz range)
   ADCSRA |= (1<<ADEN);                //enable the ADC
   ////////////Digital setup//////////////////////////
@@ -217,9 +219,14 @@ void loop() {
   }
   else if(implantMode || diodeMode){
     digitalWrite(indicatorLED,HIGH);
-    characterizeRoutine();
-    implantMode = false;
-    diodeMode = false;
+    if(diodeMode){
+      characterizeDiode();
+      diodeMode = false;
+    }
+    else if(implantMode){
+      characterizeImplant();
+      implantMode = false;
+    }
     digitalWrite(indicatorLED,LOW);
   }
   else if (powerTestMode){
@@ -241,181 +248,13 @@ void loop() {
   else if (marksReceived == saveMemoryFlag) {         //save data to EEPROM upon receiving exactly 26 marks
     save2EEPROM();
   }
-}
-
-void characterizeRoutine(){
-  bool firstMax = true;
-  unsigned int dlay = 15000;
-  if (!implantMode){
-    dlay = 500;
-  }
-  delay(dlay);
-  for (int b = 500; b<751; b+=50){
-    triggerEvent(b);
-    delay(dlay);
-  }
-  for (int b = 760; b<901; b+=10){
-    triggerEvent(b);
-    delay(dlay);
-  }
-  for (int b = 905; b<1026; b+=5){
-    if(!isMaxed){
-      triggerEvent(b);
-      delay(dlay);
-    }
-    else if(firstMax){
-      triggerEvent(b);
-      firstMax = false;
-    }
-  }
-}
-
-void triggerEvent(unsigned int desiredPower,bool useFeedback){
-  isSettled = false;
-  unsigned long onClock,offClock,trainClock,delayClock,alt=0;
-  bool laserEnabled = true; //set flag for entering waveform loop
-  bool newPulse = true;      //
-  bool triggerRecorded = false;
-  delayClock=millis();              //reset clocks
-  byte rcvd = 0;
-  unsigned int onDelay,onTime,offTime,trainDur,rampDur;
-  if (implantMode){
-    onDelay = 0;
-    onTime = 2000;
-    offTime = 0;
-    trainDur = 0;
-    rampDur = 0;
-  }
-  else if(diodeMode){
-    onDelay = 0;
-    onTime = 300;
-    offTime = 0;
-    trainDur = 0;
-    rampDur = 0;
-  }
-  else{
-    onDelay = waveform[ON_DELAY];
-    onTime = waveform[ON_TIME];
-    offTime = waveform[OFF_TIME];
-    trainDur = waveform[TRAIN_DUR];
-    rampDur  = waveform[RAMP_DUR];
-  }
-  if (onDelay>0){
-    while ((millis()-delayClock)<waveform[ON_DELAY]){
-      if (!(IR_inputReg & (1<<IR_pin))){
-        while(! (IR_inputReg & (1<<IR_pin))){
-          //wait until stop pulse is finished
-        }
-        rcvd = listenForIR(5000);
-        if (stopMatch){
-          laserEnabled = laserOFF();
-          if (address < memorySize) {       //record abort event
-            recordEvent('A');
-          }
-          stopMatch = false;
-        }
-        rcvd = 0;
-      }
-    }
-  }
-  onClock=trainClock=millis();
-  while(laserEnabled){
-    //check if another command (abort or continuation) has been sent since the trigger was activated
-    if (!(IR_inputReg & (1<<IR_pin))){
-      while(! (IR_inputReg & (1<<IR_pin))){
-        //wait until stop pulse is finished
-      }
-      rcvd = listenForIR(5000);
-      if (trigMatch){
-        onClock = millis();
-        trainClock = millis();
-        if (address < memorySize) {       //record continue event
-          recordEvent('C');
-        }
-        trigMatch = false;
-      }
-      else if (stopMatch){
-        if (rampDur>0){
-          fade();
-        }
-        laserEnabled = laserOFF();
-        if (address < memorySize) {       //record abort event
-          recordEvent('A');
-        }
-        stopMatch = false;
-      }
-      rcvd = 0;
-    }
-    //else if onClock hasn't expired, turn on/keep on the laser
-    else if ((millis()-onClock)<onTime){
-      if(!useFeedback){
-        sendDAC(desiredPower);
-      }
-      else{
-        sendDAC(DAClevel);                //Laser on
-        if(alt%interval==0){              //it takes time for the photocell to respond, so only implement feedback every fourth loop
-          feedback(desiredPower);         //increase or decrease DAClevel to reach desired lightPower
-        }
-        alt++;
-      }
-      if (!triggerRecorded){           //event has not yet been recorded
-        if (address < memorySize) {    //record trigger event
-          recordEvent('T');
-        }
-        triggerRecorded = true;
-      }
-      offClock = millis();
-    }
-    //else if offClock hasn't expired, turn off/keep off light
-    else if((millis()-offClock)<offTime){
-      if (newPulse){                   //if the laser is on then turn it off, otherwise do nothing (i.e. leave turned off)
-        newPulse = laserOFF();         //laserOn = false
-      }
-    }
-    //else if trainClock hasn't expired, restart the light pulse
-    else if((millis()-trainClock)<trainDur){
-      newPulse = true;
-      onClock = millis();
-    }
-    //else the end of the waveform has been reached. turn off the light.
-    else{
-      if (useFeedback){
-        if (rampDur>0 && !implantMode && !diodeMode && !powerTestMode){
-          fade();
-        }
-      }
-      if(implantMode || diodeMode){
-        mySerial.println(DAClevel);
-      }
-      laserEnabled = laserOFF();
-    }
-  }
-}
-
-void feedback(int setPoint){
-  ADCSRA |= (1<<ADSC);                    //start analog conversion
-  loop_until_bit_is_clear(ADCSRA,ADSC);   //wait until conversion is done
-  int photocellVoltage = ADC;
-  error = setPoint-photocellVoltage;
-  DAClevel = DAClevel+int(error*KP);
-  if (DAClevel>4095) {
-    DAClevel = 4095;
-  }
-  else if (DAClevel<0){
-    DAClevel = 0;
-  }
-}
-
-void fade(){
-  unsigned long fadeClock;
-  unsigned int param1;
-  for (int k = FADE_START; k < FADE_START+200 ; k+=2) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
-    fadeClock = millis();
-    param1 = eepromReadByte(k)<<8;
-    feedback(word(param1|eepromReadByte(k+1)));
-    sendDAC(DAClevel);
-    while((millis()-fadeClock)<(waveform[RAMP_DUR]/100)){
-      //wait
+  else if (marksReceived == resetAddressFlag){
+    address = LOG_START; // reset address
+    for (byte i=0; i <3; i ++){
+      digitalWrite(indicatorLED,HIGH);
+      delay(100);
+      digitalWrite(indicatorLED,LOW);
+      delay(100);
     }
   }
 }
@@ -498,6 +337,9 @@ byte listenForIR(int timeout=0) {
         else if (pulsePairIndex==7 && convertBIN(marks,7)==76){ //set saveMemory flag
           return saveMemoryFlag;
         }
+        else if (pulsePairIndex==7 && convertBIN(marks,7)==77){ //set resetAddress flag
+          return resetAddressFlag;
+        }
         // else{ //We received a message that we don't understand
         //   mySerial.println(pulsePairIndex);
         // }
@@ -511,227 +353,4 @@ byte listenForIR(int timeout=0) {
     marks[pulsePairIndex] = markLength;
     pulsePairIndex++;
   }
-}
-
-void updateWaveform(uint16_t (&marks)[NUMPULSES]){
-  //Record the current waveform parameters to the eeprom log. This way we can recall the previous parameters when looking back on a log that contains mid-session parameter changes
-  eepromWriteByte(address,'P');
-  address++;
-  for (byte m = 0; m<NUMPARAM; m++){
-    eepromWriteByte(address,waveform[m]>>8);
-    eepromWriteByte(address+1,waveform[m] & 255);
-    address+=2;
-  }
-  //Convert the received marks into integers and set them as the waveform parameters
-  for (int k = 0; k<NUMPARAM; k++){
-    waveform[k] = convertBIN(marks,16,7+16*k);
-  }
-  //Save the freshly updated waveform parameters to the designated parameter block (addresses 2-9) so they can be recalled when cerebro is turned off between sessions
-  for (byte m = 0; m<NUMPARAM; m++){
-    eepromWriteByte(2*m+2,waveform[m]>>8);
-    eepromWriteByte(2*m+3,waveform[m] & 255);
-  }
-  printParameters();
-}
-
-void updateFadeVector(uint16_t (&marks)[NUMPULSES],byte offset){
-  unsigned int fadeValue  = 0;
-  for (byte m = 0; m<NUMPARAM; m++){    //write values to eeprom
-    fadeValue = convertBIN(marks,16,7+16*m);
-    eepromWriteByte(FADE_START+offset+2*m,fadeValue>>8);
-    eepromWriteByte(FADE_START+offset+2*m+1,fadeValue & 255);
-  }
-  powerLevel = word(eepromReadByte(FADE_START)<<8|eepromReadByte(FADE_START+1)); //read powerLevel from eeprom
-}
-
-void updateHardware(uint16_t (&marks)[NUMPULSES]){
-  unsigned int hardwareValue  = 0;
-  for (byte m = 0; m<2; m++){   //only care about 2 values, Cerebro # and Laser Diode #
-    hardwareValue = convertBIN(marks,16,7+16*m);
-    eepromWriteByte(2*m+12,hardwareValue>>8);
-    eepromWriteByte(2*m+13,hardwareValue & 255);
-  }
-}
-
-unsigned int convertBIN(uint16_t (&marks)[NUMPULSES],byte numMarks=4,byte start=0){
-  byte trueThresh = 225;
-  unsigned int key = 0;
-  for (int i = 0; i <numMarks; i++){
-    key = key<<1 | marks[start + i]>trueThresh;
-  }
-  return key;
-}
-
-void recordEvent(byte letter){
-  unsigned long temp = millis();
-  eepromWriteByte(address , letter);
-  eepromWriteByte(address + 1, temp >>16 & 255);
-  eepromWriteByte(address + 2, temp >> 8 & 255 );
-  eepromWriteByte(address + 3, temp & 255);
-  address+=4;
-}
-
-void eepromWriteByte( unsigned int writeAddress, byte data ) {
-  TinyWireM.beginTransmission(0x50);
-  TinyWireM.write(writeAddress >> 8);  // MSB
-  delay(1);
-  TinyWireM.write(writeAddress & 255); // LSB
-  delay(1);
-  TinyWireM.write(data);
-  delay(1);
-  TinyWireM.endTransmission();
-  delay(1);
-}
-
-byte eepromReadByte( unsigned int readAddress ) {  //"Random Read" read operation from FT24C64A Two-Wire Serial EEPROM datasheet
-  //dummy write instruction
-  TinyWireM.beginTransmission(0x50);
-  TinyWireM.write(readAddress >> 8);  // MSB
-  TinyWireM.write(readAddress & 255); // LSB
-  TinyWireM.endTransmission();
-  //"Current Address Read" read operation from datasheet
-  TinyWireM.requestFrom(0x50,1);
-  while(!TinyWireM.available()){
-    ;//wait
-  }
-  return TinyWireM.receive();
-}
-
-void save2EEPROM(){
-  //in the first 2 bytes of memory store the last address used
-  eepromWriteByte(0,address>>8);
-  eepromWriteByte(1,address & 255);
-}
-
-void readAddresses(int start, int finish){
-  long stamp;
-  long first;
-  unsigned int second;
-  byte third;
-  for (int k = start; k < finish ; k++) {  //print the list of events.
-    first = eepromReadByte(k+1);
-    second = eepromReadByte(k+2);
-    third = eepromReadByte(k+3);
-    if(char(eepromReadByte(k))=='T'){
-      stamp = first<<16|second<<8|third;                    //combine bytes to get timestamp
-      mySerial.print(stamp);
-      mySerial.print(",");
-      mySerial.print(F("trigger\r"));
-      k+=3;
-    }
-    else if (char(eepromReadByte(k))=='A'){
-      stamp = first<<16|second<<8|third;
-      mySerial.print(stamp);
-      mySerial.print(",");
-      mySerial.print(F("abort\r"));
-      k+=3;
-    }
-    else if (char(eepromReadByte(k))=='C'){
-      stamp = first<<16|second<<8|third;
-      mySerial.print(stamp);
-      mySerial.print(",");
-      mySerial.print(F("continue\r"));
-      k+=3;
-    }
-    else if (char(eepromReadByte(k))=='P'){
-      unsigned int param1;
-      for (int i = 0; i<NUMPARAM; i++){
-        param1 = eepromReadByte(k+1+2*i)<<8;
-        strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));    //Necessary casts and dereferencing
-        mySerial.print(buffer);
-        mySerial.print(word(param1|eepromReadByte(k+2*(i+1))));
-        mySerial.print('\r');
-      }
-      k+=NUMPARAM*2;
-    }
-    else{
-      mySerial.println(F("error"));
-    }
-  }
-}
-
-void printEEPROM(){
-  mySerial.print(F("Ver,"));
-  mySerial.print(version);
-  mySerial.print('\r');
-  unsigned int endingAddress = (eepromReadByte(0)<<8|eepromReadByte(1));
-  readAddresses(LOG_START,endingAddress);   //print the list of events
-  strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[PWR_LVL])));
-  mySerial.print(buffer);
-  mySerial.print(powerLevel);
-  mySerial.print('\r');
-  for (int i = 0; i<NUMPARAM; i++){
-    strcpy_P(buffer, (char*)pgm_read_word(&(parameterLabels[i])));
-    mySerial.print(buffer);
-    mySerial.print(waveform[i]);
-    mySerial.print("\r");
-  }
-}
-
-void myShift(int val){                  //shifts out data MSB first
-  for (int i = 7; i > -1; i--){
-    if(val & (1<<i)){                   //shift high bit
-      DATA_outputReg |= (1<<DATA_pin);
-    }
-    else{                               // shift low bit
-      DATA_outputReg &= ~(1<<DATA_pin);
-    }
-    CLK_outputReg |= (1<<CLK_pin);      //clock high
-    CLK_outputReg &= ~(1<<CLK_pin);     //clock low
-  }
-}
-
-void sendDAC(int value) {
-  LATCH_outputReg &= ~(1<<LATCH_pin); //latch low selects the chip
-  myShift(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
-  myShift(value>>4);                  //shift high byte
-  myShift(value<<4 & 255);            //shift low byte
-  LATCH_outputReg |= (1<<LATCH_pin);  //latch high de-selects the chip
-}
-
-bool laserOFF(){
-  LATCH_outputReg &= ~(1<<LATCH_pin); //latch low
-  myShift(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
-  myShift(0);
-  myShift(0);
-  LATCH_outputReg |= (1<<LATCH_pin);  //latch high
-  #ifndef MCUBE
-  if (DAClevel==4095){
-    isMaxed = true;
-  }
-  DAClevel = 0;
-  #endif
-  return false;
-}
-
-void printFadeVector(){
-  for (int k = FADE_START; k < FADE_START+200 ; k+=NUMPARAM*2) {
-    unsigned int param1;
-    for (int i = 0; i<NUMPARAM; i++){
-      param1 = eepromReadByte(k+2*i)<<8;
-      mySerial.print(word(param1|eepromReadByte(k+1+2*i)));
-      if(i!=NUMPARAM-1){
-        mySerial.print(',');
-      }
-    }
-    mySerial.print('\r');
-  }
-}
-
-void printParameters(){
-    char delimeter = '~';
-    mySerial.print("&");
-    mySerial.print(version);
-    mySerial.print(delimeter);
-    mySerial.print(cerebroNum);
-    mySerial.print(delimeter);
-    mySerial.print(LD);
-    mySerial.print(delimeter);
-    mySerial.print(powerLevel);
-    mySerial.print(delimeter);
-    for (int i  = 0 ; i<NUMPARAM; i++){
-      mySerial.print(waveform[i]);
-      mySerial.print(delimeter) ;
-    }
-    mySerial.println("*");
 }

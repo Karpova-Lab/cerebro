@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utility Shield &mdash; Cerebro 0.0.6 documentation</title>
+  <title>Utility Shield &mdash; Cerebro 1.0.0 documentation</title>
   
 
+  
+  
   
   
 
@@ -33,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 1.0.0 documentation" href="../index.html"/>
         <link rel="next" title="Charging Dock" href="charging dock.html"/>
         <link rel="prev" title="Base Station" href="base station.html"/> 
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.0.0
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
@@ -114,8 +120,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">Cerebro</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cerebro</a>
+        
       </nav>
 
 
@@ -124,23 +132,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>Utility Shield</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Utility Shield</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="../_sources/Hardware/utility shield.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -175,7 +200,7 @@
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>Utility Shield PCB</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><a class="reference external" href="https://oshpark.com/shared_projects/NacBaAQJ">OSH Park</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
@@ -212,7 +237,7 @@
 <td><a class="reference download internal" href="../_downloads/LTST-C191KRKT.pdf" download=""><code class="xref download docutils literal"><span class="pre">LTST-C191KRKT</span></code></a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>Breakaway 0.1&#8221; male pins</td>
+<td>Breakaway 0.1” male pins</td>
 <td><a class="reference download internal" href="../_downloads/68001-420HLF.pdf" download=""><code class="xref download docutils literal"><span class="pre">68001-420HLF</span></code></a></td>
 </tr>
 <tr class="row-even"><td>1</td>
@@ -221,19 +246,19 @@
 </tr>
 <tr class="row-odd"><td>2</td>
 <td>0805 100 Ω Resistor</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>0805 27 kΩ Resistor</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 </tr>
 <tr class="row-odd"><td>2</td>
 <td>0805 4.7 μF Capacitor</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>0805 10 μF Capacitor</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 </tr>
 </tbody>
 </table>
@@ -254,7 +279,7 @@
 <span id="arduino-setup"></span><h2>Setting up Arduino IDE<a class="headerlink" href="#setting-up-arduino-ide" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>Download and install <a class="reference external" href="https://www.arduino.cc/en/Main/Software">Arduino Software</a></li>
-<li>Open up your Arduino Sketchbook folder. It should be located in your main &#8220;Documents&#8221; folder with the name &#8220;Arduino&#8221;. If you cannot find it, open the Arduino Application and go to <strong>File -&gt; Preferences</strong>. The location of your Sketchbook folder is shown at the top of the preferences window. Your Sketchbook folder will have your current projects and a &#8220;libraries&#8221; folder.</li>
+<li>Open up your Arduino Sketchbook folder. It should be located in your main “Documents” folder with the name “Arduino”. If you cannot find it, open the Arduino Application and go to <strong>File -&gt; Preferences</strong>. The location of your Sketchbook folder is shown at the top of the preferences window. Your Sketchbook folder will have your current projects and a “libraries” folder.</li>
 </ol>
 <blockquote>
 <div><div class="figure align-center">
@@ -266,13 +291,13 @@
 </div></blockquote>
 <ol class="arabic simple" start="3">
 <li>Download and unzip <a class="reference download internal" href="../_downloads/Arduino_cerebro.zip" download=""><code class="xref download docutils literal"><span class="pre">Arduino_cerebro.zip</span></code></a></li>
-<li>Transfer the &#8220;Cerebro_sketches&#8221; and &#8220;Hardware&#8221; folders into your Arduino Sketchbook folder</li>
+<li>Transfer the “Cerebro_sketches” and “Hardware” folders into your Arduino Sketchbook folder</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/transfer_sketches_hardware.png"><img alt="../_images/transfer_sketches_hardware.png" src="../_images/transfer_sketches_hardware.png" style="width: 1240.0px; height: 447.0px;" /></a>
 </div>
 <ol class="arabic simple" start="5">
-<li>Transfer the remaining library folders into the &#8220;libraries&#8221; folder</li>
+<li>Transfer the remaining library folders into the “libraries” folder</li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/transfer_libraries.png"><img alt="../_images/transfer_libraries.png" src="../_images/transfer_libraries.png" style="width: 1258.0px; height: 462.0px;" /></a>
@@ -294,8 +319,8 @@ correct pins on various AVR microcontrollers.</p>
 <li>Make the following selections under the <strong>Tools</strong> menu:</li>
 </ol>
 <div class="line-block">
-<div class="line"><strong>Board:</strong> &#8220;Arduino/Genuino Uno&#8221;</div>
-<div class="line"><strong>Port:</strong> &#8220;COMXX (Arduino/Genuino Uno)&#8221;</div>
+<div class="line"><strong>Board:</strong> “Arduino/Genuino Uno”</div>
+<div class="line"><strong>Port:</strong> “COMXX (Arduino/Genuino Uno)”</div>
 <div class="line"><br /></div>
 </div>
 <div class="figure align-center">
@@ -321,15 +346,18 @@ correct pins on various AVR microcontrollers.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="charging dock.html" class="btn btn-neutral float-right" title="Charging Dock" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="charging dock.html" class="btn btn-neutral float-right" title="Charging Dock" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="base station.html" class="btn btn-neutral" title="Base Station" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="base station.html" class="btn btn-neutral" title="Base Station" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -339,7 +367,7 @@ correct pins on various AVR microcontrollers.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Apr 03, 2017.
+      Last updated on Oct 11, 2017.
 
     </p>
   </div>
@@ -361,10 +389,11 @@ correct pins on various AVR microcontrollers.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.6',
+            VERSION:'1.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>IR Remote &mdash; Cerebro 0.0.6 documentation</title>
+  <title>IR Remote &mdash; Cerebro 1.0.0 documentation</title>
   
 
+  
+  
   
   
 
@@ -33,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 0.0.6 documentation" href="../index.html"/>
+    <link rel="top" title="Cerebro 1.0.0 documentation" href="../index.html"/>
         <link rel="next" title="Downloader Cord" href="downloader cord.html"/>
         <link rel="prev" title="Charging Dock" href="charging dock.html"/> 
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.0.0
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
@@ -101,7 +107,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#user-guide">User Guide</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#demonstration-video">Demonstration Video</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#checking-cerebro-s-waveform-parameters">Checking Cerebro&#8217;s Waveform Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-cerebro-s-waveform-parameters">Checking Cerebro’s Waveform Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#editing-and-sending-waveform-parameters">Editing and Sending Waveform Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#triggering-a-light-pulse">Triggering a light pulse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stopping-a-light-pulse">Stopping a light pulse</a></li>
@@ -125,8 +131,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">Cerebro</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cerebro</a>
+        
       </nav>
 
 
@@ -135,23 +143,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>IR Remote</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>IR Remote</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="../_sources/Hardware/remote.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -186,7 +211,7 @@
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>IR Remote PCB</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><a class="reference external" href="https://oshpark.com/shared_projects/uwKQoRvr">OSH Park</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
@@ -196,7 +221,7 @@
 </tr>
 <tr class="row-even"><td>1</td>
 <td>OLED display</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><a class="reference external" href="https://www.adafruit.com/products/938">Adafruit</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
@@ -266,9 +291,9 @@
 <li>Open up the Arduino application and make the following selections under the <strong>Tools</strong> menu:</li>
 </ol>
 <div class="line-block">
-<div class="line"><strong>Board:</strong> &#8220;Arduino/Genuino Uno&#8221;</div>
-<div class="line"><strong>Port:</strong> &#8220;COMXX (Arduino/Genuino Uno)&#8221;</div>
-<div class="line"><strong>Programmer</strong>: &#8220;Arduino as ISP&#8221;</div>
+<div class="line"><strong>Board:</strong> “Arduino/Genuino Uno”</div>
+<div class="line"><strong>Port:</strong> “COMXX (Arduino/Genuino Uno)”</div>
+<div class="line"><strong>Programmer</strong>: “Arduino as ISP”</div>
 <div class="line"><br /></div>
 </div>
 <div class="figure align-center">
@@ -287,7 +312,7 @@
 <a class="reference internal image-reference" href="../_images/remote_firmware.png"><img alt="../_images/remote_firmware.png" src="../_images/remote_firmware.png" style="width: 499.0px; height: 224.0px;" /></a>
 </div>
 <ol class="arabic simple" start="6">
-<li>Upload the firmware by selecting <strong>Sketch &#8211;&gt; Upload Using Programmer</strong></li>
+<li>Upload the firmware by selecting <strong>Sketch –&gt; Upload Using Programmer</strong></li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/upload_using_programmer.png"><img alt="../_images/upload_using_programmer.png" src="../_images/upload_using_programmer.png" style="width: 500.0px; height: 237.0px;" /></a>
@@ -300,7 +325,7 @@
 <h3>Demonstration Video<a class="headerlink" href="#demonstration-video" title="Permalink to this headline">¶</a></h3>
 <iframe src="https://player.vimeo.com/video/175858239?title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>
 <div class="section" id="checking-cerebro-s-waveform-parameters">
-<span id="remote-check"></span><h3>Checking Cerebro&#8217;s Waveform Parameters<a class="headerlink" href="#checking-cerebro-s-waveform-parameters" title="Permalink to this headline">¶</a></h3>
+<span id="remote-check"></span><h3>Checking Cerebro’s Waveform Parameters<a class="headerlink" href="#checking-cerebro-s-waveform-parameters" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li>Turn on the IR Remote</li>
 <li>With Cerebro turned off, plug it into the IR Remote</li>
@@ -315,25 +340,25 @@
 <li>Rotate the knob to make coarse adjustments (clockwise to increase, counterclockwise to decrease)</li>
 <li>Press, hold and rotate to make fine adjustments.</li>
 <li>Click the rotary knob again to return to highlighting parameters</li>
-<li>When finished editing, Press and hold the &#8220;B&#8221; button to send the new parameters to Cerebro. The display will show &#8220;Parameters Sent&#8221;</li>
+<li>When finished editing, Press and hold the “B” button to send the new parameters to Cerebro. The display will show “Parameters Sent”</li>
 </ol>
 </div>
 <div class="section" id="triggering-a-light-pulse">
 <h3>Triggering a light pulse<a class="headerlink" href="#triggering-a-light-pulse" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Press and release the &#8220;A&#8221; button. The display will show &#8220;Trigger Sent&#8221;</li>
+<li>Press and release the “A” button. The display will show “Trigger Sent”</li>
 </ol>
 </div>
 <div class="section" id="stopping-a-light-pulse">
 <h3>Stopping a light pulse<a class="headerlink" href="#stopping-a-light-pulse" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Press and release the &#8220;B&#8221; button. The display will show &#8220;Stop Sent&#8221;</li>
+<li>Press and release the “B” button. The display will show “Stop Sent”</li>
 </ol>
 </div>
 <div class="section" id="starting-a-calibration-routine">
 <h3>Starting a Calibration Routine<a class="headerlink" href="#starting-a-calibration-routine" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Press and hold the &#8220;A&#8221; button. The display will show &#8220;Calibrate Sent&#8221;</li>
+<li>Press and hold the “A” button. The display will show “Calibrate Sent”</li>
 <li>The yellow light on Cerebro will turn on, indicating that it has begun its calibration routine</li>
 </ol>
 </div>
@@ -342,15 +367,18 @@
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="downloader cord.html" class="btn btn-neutral float-right" title="Downloader Cord" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="downloader cord.html" class="btn btn-neutral float-right" title="Downloader Cord" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="charging dock.html" class="btn btn-neutral" title="Charging Dock" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="charging dock.html" class="btn btn-neutral" title="Charging Dock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -360,7 +388,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Apr 03, 2017.
+      Last updated on Oct 11, 2017.
 
     </p>
   </div>
@@ -382,10 +410,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.6',
+            VERSION:'1.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

@@ -50,7 +50,7 @@ Navigate into the folder you just created and then clone the contents of the Cer
 .. code::
 
    cd mylocalrepo/
-   git clone https://github.com/alustig3/Cerebro.git .
+   git clone https://github.com/Karpova-Lab/cerebro.git .
 
 From a Mac terminal it will look like this:
 
@@ -61,7 +61,7 @@ From a Mac terminal it will look like this:
 Using SourceTree
 ````````````````
 1. Navigate to File -> New/Clone
-2. Paste ``https://github.com/alustig3/Cerebro.git`` as the source/URL
+2. Paste ``https://github.com/Karpova-Lab/cerebro.git`` as the source/URL
 3. The files now exist locally on your computer
 
 .. image:: sourcetree_clone/cloneFromURL.png
@@ -75,7 +75,7 @@ Using SourceTree
 .. image:: sourcetree_clone/local_files.png
   :align: center
   :scale: 100 %
-  
+
 Circuit Board Design
 ====================
 

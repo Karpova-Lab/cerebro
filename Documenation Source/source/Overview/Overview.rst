@@ -171,6 +171,6 @@ Xavier
 Xavier is a GUI for sending and logging Base Station commands. Since communication between Cerebro and Base Station is unidirectional, in order to truly know what occurs throughout an experiment,
 every event that is received by Cerebro is also saved to an onboard log.  After an experiment is complete, Cerebro's onboard logfile can be
 downloaded into Xavier. The two log files can then be saved and analyzed to confirm that everything that was sent by Base Station was in fact received and executed by Cerebro.
-Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.
+Xavier provides an easy interface for sending parameter changes and can also be used as a debugging tool.
 
 :doc:`More info... <../Software/Xavier>`
