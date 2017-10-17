@@ -35,8 +35,7 @@ IntegerPayload radioMessage;
 Status currentInfo;
 Battery battery;
 Feedback diodeStats;
-char csValues[5][8];  //2D array, first dimension 0-number of parameters, 2nd dimension holds up to 5 Ascii characters that represent digits 
-                      //of a integer. the final spot in the second dimension holds the number of digits read in for that parameter
+unsigned long dataVals[5];
 unsigned int timeSent = 0;
 unsigned int msgCount = 0;
 unsigned long startTime = 0;
@@ -67,21 +66,21 @@ void loop() {
   if (Serial1.available()){
     digitalWrite(LED,HIGH);
     char msg = Serial1.read();
-    // Serial1.print("received "); Serial1.println(msg);
-    if (msg=='W'){
-      // char msgData[30] = "";
-      // Serial1.readBytesUntil('\n',msgData,30);
-      // Serial1.println(String(msgData));
-      delay(500);   
-      readMsg();
-      parseWaveform();
+    if (msg=='W'){  //Send waveform data
+      char msgData[30] = "";
+      Serial1.readBytesUntil('\n',msgData,30);
+      Serial1.println(String(msgData)); 
+      parseData(msgData);
+      assignDataToWaveform();
       sendWaveform();
     }
-    else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){
-      delay(500);     
-      readMsg();
+    else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){ //parse data then send radio message with integer
+      char msgData[30] = "";
+      Serial1.readBytesUntil('\n',msgData,30);
+      Serial1.println(String(msgData)); 
+      parseData(msgData);    
       radioMessage.variable = msg;
-      radioMessage.value = convertDigitsToNumbers(0);
+      radioMessage.value = dataVals[0];
       Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(radioMessage.value);Serial1.print("...");
       if (radio.sendWithRetry(12, (const void*)(&radioMessage), sizeof(radioMessage))){
         Serial1.println("data received");        
@@ -90,7 +89,7 @@ void loop() {
         Serial1.println("data send fail");
       }
     }
-    else if (msg=='T'){
+    else if (msg=='T'){ //Send radio message with msg count
       radioMessage.variable = msg;
       msgCount++;
       radioMessage.value = msgCount;
@@ -150,6 +149,17 @@ void loop() {
   }
 }
 
+void parseData(char* dataMessage){
+  char* msgPointer;
+  msgPointer = strtok(dataMessage,",");
+  char i = 0;
+  while (msgPointer!=NULL){
+    dataVals[i] = atol(msgPointer);   
+    msgPointer = strtok(NULL,",");
+    i++;
+  }
+}
+
 
 void printInfo(){
   Serial1.print("*");Serial1.print(currentInfo.serialNumber);
@@ -190,49 +200,15 @@ void Blink(byte PIN, int msDelay)
   digitalWrite(PIN,LOW);
 }
 
-void readMsg(){
-  byte digitIndex = 0;
-  byte valueIndex = -1;
-  while (Serial1.available()) {
-    char msg = Serial1.read();
-    if (msg == ',') {
-      digitIndex = 0;
-      valueIndex++;
-    }
-    else {
-      csValues[valueIndex][digitIndex] = msg-48;// convert the ascii character to the number it represents and store it
-      digitIndex++;
-      csValues[valueIndex][7] = digitIndex; //the number of digits that have been read in
-      delay(100);
-    }
-  }
+void assignDataToWaveform(){
+  waveform.startDelay = dataVals[0];
+  waveform.onTime = dataVals[1];
+  waveform.offTime = dataVals[2];
+  waveform.trainDur = dataVals[3];
+  waveform.rampDur = dataVals[4];
 }
 
-unsigned long convertDigitsToNumbers(byte whichParameter){
-  unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000,1000000};
-  unsigned long integerVal = 0;
-  byte numDigits = csValues[whichParameter][7];
-  for (int i = 0; i < numDigits; i++) {
-    integerVal = integerVal + csValues[whichParameter][i] * powers[numDigits - i - 1];
-  }
-  return integerVal;
-}
-void parseWaveform(){
-  waveform.startDelay = convertDigitsToNumbers(0);
-  waveform.onTime = convertDigitsToNumbers(1);
-  waveform.offTime = convertDigitsToNumbers(2);
-  waveform.trainDur = convertDigitsToNumbers(3);
-  waveform.rampDur = convertDigitsToNumbers(4);
-  Serial1.print("Parsed Waveform ");
-  Serial1.println(waveform.startDelay);
-  Serial1.println(waveform.onTime);
-  Serial1.println(waveform.offTime);
-  Serial1.println(waveform.trainDur);
-  Serial1.println(waveform.rampDur);
-  
-}
 void sendWaveform(){
-
   if (radio.sendWithRetry(12, (const void*)(&waveform), sizeof(waveform))){
     Serial1.println("\nwaveform received");        
   }
