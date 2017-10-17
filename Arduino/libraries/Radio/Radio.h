@@ -28,7 +28,7 @@ typedef struct {
 } WaveformData;
 
 typedef struct {
-  unsigned int variable;
+  unsigned char variable;
   unsigned int value;
 } IntegerPayload;
 

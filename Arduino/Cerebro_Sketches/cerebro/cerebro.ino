@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 63;
+const byte version = 64;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -42,6 +42,7 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #define WAVEFORM_ADDRESS 1
 #define LEFT_SETPOINT_ADDRESS 13
 #define RIGHT_SETPOINT_ADDRESS 15
+#define MISSING_ARRAY_ADDRESS 17
 
 WaveformData waveform;
 IntegerPayload radioMessage;
@@ -57,6 +58,8 @@ LaserDiode left(&DDRB,&PORTB,0,A4);
 LaserDiode right(&DDRD,&PORTD,2,A2);
 
 Radio radio(7,1);
+unsigned int msgCount = 0;
+unsigned int missedCount = 0;
 
 //---------function prototypes---------//
 int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
@@ -76,6 +79,14 @@ void setup() {
 
   // Indicator LED
   pinMode(indicatorLED,OUTPUT);
+  digitalWrite(indicatorLED,HIGH);
+  delay(1000);
+  digitalWrite(indicatorLED,LOW);
+  delay(1000);  
+  digitalWrite(indicatorLED,HIGH);
+  delay(1000);
+  digitalWrite(indicatorLED,LOW);
+  
 
   //*** Battery Monitor ***//
   setupBQ27441();
@@ -93,11 +104,7 @@ void loop() {
     // Serial.print("data length = ");Serial.println(radio.DATALEN);    
     if (radio.DATALEN==1){ //received a command or a request for data
       sendACK();
-      // Serial.print("received: ");
-      // Serial.println((char)radio.DATA[0]);
       switch (radio.DATA[0]){
-        case 'T':
-          triggerBoth();break;
         case 'B':
           reportBattery();break;
         case 'I':            
@@ -106,6 +113,8 @@ void loop() {
           isolationTest();break;
         case 'c':
           combinedTest();break;
+        case 'M':
+          printMissed();break;
         default:
           Serial.println("Command not recognized");break;
       }
@@ -119,6 +128,10 @@ void loop() {
       sendACK();
       radioMessage = *(IntegerPayload*)radio.DATA;
       switch (radioMessage.variable){
+        case 'T':
+          triggerBoth();
+          checkForMiss();
+          break;
         case 'S': // Receiving a new Cerebro S/N
           EEPROM.update(SERIAL_NUMBER_ADDRESS, radioMessage.value);
           break;
@@ -205,7 +218,17 @@ void printInfo(){
 void sendACK(){
   if (radio.ACKRequested()){
     radio.sendACK();
-    // Serial.println("ACK sent");
+  }
+}
+
+void checkForMiss(){
+  msgCount++;
+  if (msgCount!=radioMessage.value){
+    for (msgCount; msgCount<radioMessage.value; msgCount++){
+      EEPROM.put(MISSING_ARRAY_ADDRESS + 2*missedCount,msgCount);
+      missedCount++;
+      //store i in array of missed messages.
+    }
   }
 }
 
@@ -275,21 +298,6 @@ void reportBattery(){
   }
 }
 
-void reportLaserStats(){
-  // Read battery stats from the BQ27441-G1A
-  diodeStats.leftFBK = analogRead(left.analogPin);
-  diodeStats.rightFBK = analogRead(right.analogPin);
-  diodeStats.leftDAC = left.DAClevel;
-  diodeStats.rightDAC = right.DAClevel;
-  
-  if (radio.sendWithRetry(1, (const void*)(&diodeStats), sizeof(diodeStats))){
-    Serial.println("laser stats sent");
-  }
-  else{
-    Serial.println("laser stats send fail");
-  }
-}
-
 void setupBQ27441(void)
 {
   if (!lipo.begin()) // begin() will return true if communication is successful
@@ -318,4 +326,14 @@ void printBattery(){
   toPrint += String(battery.capacity) + " mAh remaining ";
 
   Serial.println(toPrint);
+}
+
+void printMissed(){
+  unsigned int missed;
+  Serial.println("missed,");Serial.println(missedCount);
+  for (int i = 0; i <missedCount; i++ ){
+    EEPROM.get(MISSING_ARRAY_ADDRESS+2*i,missed);
+    Serial.println(missed);
+  }
+  Serial.println("done");
 }

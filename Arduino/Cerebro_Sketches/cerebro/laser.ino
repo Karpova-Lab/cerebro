@@ -83,10 +83,12 @@ void triggerBoth(){
         if (radio.DATA[0]=='A'){  //abort
           left.off();
           laserEnabled = right.off();
+          checkForMiss();
           sendACK();      
         }
         else if (radio.DATA[0]=='C'){ //continuation
-          onClock=trainClock=millis();     
+          onClock=trainClock=millis();   
+          checkForMiss();  
           sendACK();     
         }
       }
@@ -126,22 +128,28 @@ void triggerBoth(){
           }
         }
       }
-      // Serial.print("L: DAC: ");
-      // Serial.print(left.DAClevel);
-      // Serial.print(" SET: ");   
-      // Serial.print(left.setPoint);
-      // Serial.print(" FBK: ");      
-      // Serial.println(analogRead(left.analogPin)); 
-      // Serial.print("R: DAC: ");
-      // Serial.print(right.DAClevel);
-      // Serial.print(" SET: ");   
-      // Serial.print(right.setPoint);
-      // Serial.print(" FBK: ");      
-      // Serial.println(analogRead(right.analogPin));
-      reportLaserStats();     
+      // reportLaserStats();     
       left.off(); 
       laserEnabled = right.off();
+      if (lipo.capacity(REMAIN)<20){
+        reportBattery();
+      }
       //send alert if feedbacks aren't what were expected
     }
+  }
+}
+
+void reportLaserStats(){
+  // Read battery stats from the BQ27441-G1A
+  diodeStats.leftFBK = analogRead(left.analogPin);
+  diodeStats.rightFBK = analogRead(right.analogPin);
+  diodeStats.leftDAC = left.DAClevel;
+  diodeStats.rightDAC = right.DAClevel;
+  
+  if (radio.sendWithRetry(1, (const void*)(&diodeStats), sizeof(diodeStats))){
+    Serial.println("laser stats sent");
+  }
+  else{
+    Serial.println("laser stats send fail");
   }
 }
