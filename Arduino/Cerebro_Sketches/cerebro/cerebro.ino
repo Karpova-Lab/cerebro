@@ -91,10 +91,10 @@ void setup() {
   //*** Battery Monitor ***//
   setupBQ27441();
   
-  radio.radioSetup(12,true); //nodeID, autopower on;
+  radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
   char readyMessage[22] = "\nCerebro Connected\n";
   byte buffLen=strlen(readyMessage);
-  radio.send(GATEWAYID, readyMessage, buffLen);  
+  radio.send(BASESTATION, readyMessage, buffLen);  
   sendInfo();
 }
 

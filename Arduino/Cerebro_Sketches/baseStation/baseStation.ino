@@ -25,6 +25,8 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>
 
+const byte version = 25;
+
 const int LED = 13;
 const int triggerPin = 5;
 const int stopPin = 6;
@@ -82,7 +84,7 @@ void loop() {
       radioMessage.variable = msg;
       radioMessage.value = dataVals[0];
       Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(radioMessage.value);Serial1.print("...");
-      if (radio.sendWithRetry(12, (const void*)(&radioMessage), sizeof(radioMessage))){
+      if (radio.sendWithRetry(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage))){
         Serial1.println("data received");        
       }
       else{
@@ -94,26 +96,24 @@ void loop() {
       msgCount++;
       radioMessage.value = msgCount;
       Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.println(msg);
-      radio.send(12, (const void*)(&radioMessage), sizeof(radioMessage));
+      radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
     }
     else if(msg=='?'){
-      Serial1.println("Base Station Connected");
+      Serial1.println(version);
     }
     else if (msg=='N'){
       startNewSession();
     }
-    else{ // "I" for info 
+    else if (msg!='\n'){ // "I" for info 
       timeSent = micros();  
-      if (radio.sendWithRetry(12, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
+      if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
         digitalWrite(LED,LOW);
-        timeSent = micros()-timeSent;
-        Serial1.print("\n[");Serial1.print(timeSent);Serial1.print("] ");
       }
       else{
         digitalWrite(LED,LOW);        
         Serial1.println("\nACK not received");
       }
-    }    
+    }
   }
 
 
@@ -209,7 +209,7 @@ void assignDataToWaveform(){
 }
 
 void sendWaveform(){
-  if (radio.sendWithRetry(12, (const void*)(&waveform), sizeof(waveform))){
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&waveform), sizeof(waveform))){
     Serial1.println("\nwaveform received");        
   }
   else{

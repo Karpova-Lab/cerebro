@@ -128,7 +128,7 @@ void triggerBoth(){
           }
         }
       }
-      // reportLaserStats();     
+      reportLaserStats();     
       left.off(); 
       laserEnabled = right.off();
       if (lipo.capacity(REMAIN)<20){
