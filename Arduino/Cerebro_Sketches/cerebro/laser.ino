@@ -69,17 +69,20 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
 }
 
 void triggerBoth(){
+  int countdownMS = Watchdog.enable(64);
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
   if (waveform.startDelay>0){
     while ((millis()-delayClock)<waveform.startDelay){
+      Watchdog.reset();      
       //wait. be ready to stop if interrupted.
     }
   }
   onClock=trainClock=millis();
-  while(laserEnabled){   
+  while(laserEnabled){
+    Watchdog.reset();    
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (radio.receiveDone()){
       if (radio.DATALEN == sizeof(radioMessage)){
@@ -88,6 +91,7 @@ void triggerBoth(){
           case 'A':
             left.off();
             laserEnabled = right.off();
+            Watchdog.disable();            
             checkForMiss();
             break;
           case 'C':
@@ -135,6 +139,7 @@ void triggerBoth(){
       reportLaserStats();     
       left.off(); 
       laserEnabled = right.off();
+      Watchdog.disable();
       if (lipo.capacity(REMAIN)<20){
         reportBattery();
       }

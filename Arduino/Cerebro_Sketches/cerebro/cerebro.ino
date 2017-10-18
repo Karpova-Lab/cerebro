@@ -37,6 +37,8 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #include <SparkFunBQ27441.h>  //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
 #include <LaserDiode.h>
 #include <Radio.h>
+#include <Adafruit_SleepyDog.h>
+
 
 #define SERIAL_NUMBER_ADDRESS 0
 #define WAVEFORM_ADDRESS 1
@@ -66,13 +68,14 @@ int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedba
 
 void setup() {
   SPI.begin();
-  Serial.begin(115200);  
-
   // Laser Diodes
   EEPROM.get(LEFT_SETPOINT_ADDRESS,left.setPoint);
   EEPROM.get(RIGHT_SETPOINT_ADDRESS,right.setPoint);
   left.off();
   right.off();
+  
+
+  Serial.begin(115200);  
 
   // Initialize waveform
   EEPROM.get(WAVEFORM_ADDRESS,waveform);
@@ -85,8 +88,7 @@ void setup() {
   delay(1000);  
   digitalWrite(indicatorLED,HIGH);
   delay(1000);
-  digitalWrite(indicatorLED,LOW);
-  
+  digitalWrite(indicatorLED,LOW);  
 
   //*** Battery Monitor ***//
   setupBQ27441();
@@ -111,9 +113,9 @@ void loop() {
           sendInfo();break;
         case 'i':
           isolationTest();break;
-        case 'c':
+          case 'c':
           combinedTest();break;
-        case 'M':
+          case 'M':
           printMissed();break;
         default:
           Serial.println("Command not recognized");break;
@@ -202,6 +204,8 @@ void sendInfo(){
     Serial.println("Info failure send fail");
   }
   printInfo();
+  delay(100);
+  reportBattery();
 }
 
 void printInfo(){
@@ -228,7 +232,6 @@ void checkForMiss(){
     for (msgCount; msgCount<radioMessage.value; msgCount++){
       EEPROM.put(MISSING_ARRAY_ADDRESS + 2*missedCount,msgCount);
       missedCount++;
-      //store i in array of missed messages.
     }
   }
 }
