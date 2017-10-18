@@ -14,14 +14,17 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
     //check if another command (abort or continuation) has been sent since the trigger was activated
     // reset clock on continuation. or abort waveform.
     if (radio.receiveDone()){
-      if (radio.DATALEN==1){ 
-        if (radio.DATA[0]=='A'){  //abort
-          laserEnabled = thediode->off();
-          sendACK();      
-        }
-        else if (radio.DATA[0]=='C'){ //continuation
-          onClock=trainClock=millis();     
-          sendACK();     
+      if (radio.DATALEN == sizeof(radioMessage)){
+        radioMessage = *(IntegerPayload*)radio.DATA;
+        switch (radioMessage.variable){
+          case 'A':
+            laserEnabled = thediode->off();          
+            sendACK();
+            break;
+          case 'C':
+            onClock=trainClock=millis();   
+            sendACK(); 
+            break;
         }
       }
     }

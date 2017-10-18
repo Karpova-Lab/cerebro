@@ -82,6 +82,7 @@ void loop() {
       parseData(msgData);    
       radioMessage.variable = msg;
       radioMessage.value = valsFromParse[0];
+      triggerClock = millis();      
       Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(radioMessage.value);Serial1.print("...");
       if (radio.sendWithRetry(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage))){
         Serial1.print("data received");Serial1.print("\n");    
