@@ -120,9 +120,10 @@ void loop() {
       }
     }
     else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data 
-      sendACK();
       waveform = *(WaveformData*)radio.DATA;  //update waveform
       EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory
+      delay(1000);
+      sendInfo();
     }
     else if (radio.DATALEN == sizeof(radioMessage)){ //received a variable update
       sendACK();

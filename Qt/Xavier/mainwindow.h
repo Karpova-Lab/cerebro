@@ -89,6 +89,8 @@ private:
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
     QPushButton*            saveMonitor_btn;
+    QString                 baseBuffer;
+    QProgressBar*           batteryIndicator;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
@@ -170,6 +172,7 @@ private slots:
     void macro();
     void getInfo();
     void getBatteryStatus();
+    void checkForBase();
 
     //Cerebro Parmeters
     void trainChecked();

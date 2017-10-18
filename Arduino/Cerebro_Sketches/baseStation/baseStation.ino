@@ -37,10 +37,11 @@ IntegerPayload radioMessage;
 Status currentInfo;
 Battery battery;
 Feedback diodeStats;
-unsigned long dataVals[5];
-unsigned int timeSent = 0;
+unsigned long valsFromParse[5];
 unsigned int msgCount = 0;
 unsigned long startTime = 0;
+unsigned long spamFilter = 0;
+unsigned long triggerClock = 0;
 
 void setup() {
   Serial1.begin(57600);
@@ -56,12 +57,12 @@ void loop() {
   ////////////Receive Message From Bcontrol
   if (digitalRead(triggerPin)) {
     while(digitalRead(triggerPin)){} //wait until signal goes low
-    triggerFromTTL();
+    stopCommandReceived();
   }
   //if we read a high signal on pin 6, send a stop command to cerebro
   if (digitalRead(stopPin)) {
     while(digitalRead(stopPin)){}       //wait until signal goes low
-    stopFromTTL();
+    triggerCommandReceived();
   }
 
   ///////////Receive Message From Xavier//////////////////
@@ -71,7 +72,6 @@ void loop() {
     if (msg=='W'){  //Send waveform data
       char msgData[30] = "";
       Serial1.readBytesUntil('\n',msgData,30);
-      Serial1.println(String(msgData)); 
       parseData(msgData);
       assignDataToWaveform();
       sendWaveform();
@@ -79,44 +79,39 @@ void loop() {
     else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){ //parse data then send radio message with integer
       char msgData[30] = "";
       Serial1.readBytesUntil('\n',msgData,30);
-      Serial1.println(String(msgData)); 
       parseData(msgData);    
       radioMessage.variable = msg;
-      radioMessage.value = dataVals[0];
+      radioMessage.value = valsFromParse[0];
       Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(radioMessage.value);Serial1.print("...");
       if (radio.sendWithRetry(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage))){
-        Serial1.println("data received");        
+        Serial1.print("data received");Serial1.print("\n");    
       }
       else{
-        Serial1.println("data send fail");
+        Serial1.print("data send fail");Serial1.print("\n");
       }
     }
     else if (msg=='T'){ //Send radio message with msg count
-      radioMessage.variable = msg;
-      msgCount++;
-      radioMessage.value = msgCount;
-      Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.println(msg);
-      radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
+      triggerCommandReceived();
+    }
+    else if (msg=='A'){ 
+      stopCommandReceived();
     }
     else if(msg=='?'){
-      Serial1.println(version);
+      Serial1.print(version);Serial1.print("\n");
     }
     else if (msg=='N'){
       startNewSession();
     }
     else if (msg!='\n'){ // "I" for info 
-      timeSent = micros();  
       if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
         digitalWrite(LED,LOW);
       }
       else{
         digitalWrite(LED,LOW);        
-        Serial1.println("\nACK not received");
+        Serial1.print("\nACK not received");Serial1.print("\n");
       }
     }
   }
-
-
 
   ///////////Receive Message From Cerebro///////
   if (radio.receiveDone()){
@@ -154,7 +149,7 @@ void parseData(char* dataMessage){
   msgPointer = strtok(dataMessage,",");
   char i = 0;
   while (msgPointer!=NULL){
-    dataVals[i] = atol(msgPointer);   
+    valsFromParse[i] = atol(msgPointer);   
     msgPointer = strtok(NULL,",");
     i++;
   }
@@ -162,6 +157,7 @@ void parseData(char* dataMessage){
 
 
 void printInfo(){
+  updateFilter();
   Serial1.print("*");Serial1.print(currentInfo.serialNumber);
   Serial1.print("~");Serial1.print(currentInfo.firmware); 
   Serial1.print("~");Serial1.print(currentInfo.lSetPoint);
@@ -173,15 +169,15 @@ void printInfo(){
   Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur); 
   Serial1.print("&"); 
 
-  Serial1.print("\nSerial Number: ");Serial1.println(currentInfo.serialNumber);
-  Serial1.print("Firmware Version: ");Serial1.println(currentInfo.firmware); 
-  Serial1.print("Left Set Point: ");Serial1.println(currentInfo.lSetPoint);
-  Serial1.print("Right Set Point: ");Serial1.println(currentInfo.rSetPoint);   
-  Serial1.print("Start Delay: "); Serial1.println(currentInfo.waveform.startDelay);       
-  Serial1.print("On Time: "); Serial1.println(currentInfo.waveform.onTime);     
-  Serial1.print("Off Time: "); Serial1.println(currentInfo.waveform.offTime);      
-  Serial1.print("Train Duration: "); Serial1.println(currentInfo.waveform.trainDur);
-  Serial1.print("Ramp Duration: "); Serial1.println(currentInfo.waveform.rampDur);  
+  Serial1.print("\nSerial Number: ");Serial1.print(currentInfo.serialNumber);Serial1.print("\n");
+  Serial1.print("Firmware Version: ");Serial1.print(currentInfo.firmware);Serial1.print("\n");
+  Serial1.print("Left Set Point: ");Serial1.print(currentInfo.lSetPoint);Serial1.print("\n");
+  Serial1.print("Right Set Point: ");Serial1.print(currentInfo.rSetPoint); Serial1.print("\n");  
+  Serial1.print("Start Delay: "); Serial1.print(currentInfo.waveform.startDelay);Serial1.print("\n");    
+  Serial1.print("On Time: "); Serial1.print(currentInfo.waveform.onTime);Serial1.print("\n");
+  Serial1.print("Off Time: "); Serial1.print(currentInfo.waveform.offTime);Serial1.print("\n");
+  Serial1.print("Train Duration: "); Serial1.print(currentInfo.waveform.trainDur);Serial1.print("\n");
+  Serial1.print("Ramp Duration: "); Serial1.print(currentInfo.waveform.rampDur);Serial1.print("\n");
 }
 
 void printDiodeStats(){
@@ -190,7 +186,7 @@ void printDiodeStats(){
   Serial1.print(diodeStats.leftDAC);Serial1.print(",");
   Serial1.print(currentInfo.rSetPoint);Serial1.print(",");
   Serial1.print(diodeStats.rightFBK);Serial1.print(",");
-  Serial1.println(diodeStats.rightDAC);  
+  Serial1.print(diodeStats.rightDAC);Serial1.print("\n");
 }
 
 void Blink(byte PIN, int msDelay)
@@ -200,21 +196,26 @@ void Blink(byte PIN, int msDelay)
   digitalWrite(PIN,LOW);
 }
 
+void updateFilter(){
+  if (waveform.trainDur>0){
+    spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.trainDur;
+  }
+  else{
+    spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.onTime;
+  }
+}
+
 void assignDataToWaveform(){
-  waveform.startDelay = dataVals[0];
-  waveform.onTime = dataVals[1];
-  waveform.offTime = dataVals[2];
-  waveform.trainDur = dataVals[3];
-  waveform.rampDur = dataVals[4];
+  waveform.startDelay = valsFromParse[0];
+  waveform.onTime = valsFromParse[1];
+  waveform.offTime = valsFromParse[2];
+  waveform.trainDur = valsFromParse[3];
+  waveform.rampDur = valsFromParse[4];
+
 }
 
 void sendWaveform(){
-  if (radio.sendWithRetry(CEREBRO, (const void*)(&waveform), sizeof(waveform))){
-    Serial1.println("\nwaveform received");        
-  }
-  else{
-    Serial1.println("waveform send fail");
-  }
+  radio.send(CEREBRO, (const void*)(&waveform), sizeof(waveform));
   msgCount++;  
 }
 
@@ -224,39 +225,39 @@ void printBattery(){
   toPrint += String(battery.volts) + " mV | ";
   toPrint += String(battery.capacity) + " mAh remaining ";
 
-  Serial1.println(toPrint);
+  Serial1.print(toPrint);Serial1.print("\n");
 }
 
 void startNewSession(){
   msgCount = 0;  
 }
 
-void triggerFromTTL(){
-  // unsigned long tSinceTrigger = millis() - triggerClock;
-  // if (tSinceTrigger>spamFilter){
-  //   cerebro.trigger();
-  //   triggerClock = millis();
-  //   mySerial1.print(triggerClock - timeOffset);
-  //   mySerial1.print(F(",Trigger Sent\r"));
-  // }
-  // else{
-  //   cerebro.trigger(CONTINUATION);
-  //   triggerClock = millis();
-  //   mySerial1.print(triggerClock - timeOffset);
-  //   mySerial1.print(F(",Continue Sent,"));
-  //   mySerial1.print(tSinceTrigger);
-  //   mySerial1.print("\r");
-  // }
+void triggerCommandReceived(){
+  msgCount++;
+  unsigned long tSinceTrigger = millis() - triggerClock;
+  if (tSinceTrigger>spamFilter){
+    radioMessage.variable = 'T';    
+    radioMessage.value = msgCount;
+    Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print((char)radioMessage.variable);Serial1.print("\n");
+    radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
+    triggerClock = millis();
+  }
+  else{
+    radioMessage.variable = 'C';    
+    radioMessage.value = msgCount;
+    Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print((char)radioMessage.variable);Serial1.print(",");Serial1.print(tSinceTrigger);Serial1.print("\n");
+    radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
+    triggerClock = millis();    
+  }
 }
 
-void stopFromTTL(){
-  // unsigned long tSinceTrigger = millis() - triggerClock;
-  // if (tSinceTrigger<spamFilter){
-  //   cerebro.stop();
-  //   mySerial1.print(millis() - timeOffset);
-  //   mySerial1.print(F(",Stop Sent,"));
-  //   mySerial1.print(tSinceTrigger);
-  //   mySerial1.print("\r");
-  //   triggerClock = -spamFilter; //prevents back to back stop signals from being sent
-  // }
+void stopCommandReceived(){
+  unsigned long tSinceTrigger = millis() - triggerClock;
+  if (tSinceTrigger<spamFilter){
+    radioMessage.variable = 'A';    
+    radioMessage.value = msgCount;
+    Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print((char)radioMessage.variable);Serial1.print(",");Serial1.print(tSinceTrigger);Serial1.print("\n");
+    radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
+    triggerClock = -spamFilter; //prevents back to back stop signals from being sent
+  }
 }

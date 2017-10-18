@@ -79,17 +79,18 @@ void triggerBoth(){
   while(laserEnabled){   
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (radio.receiveDone()){
-      if (radio.DATALEN==1){ 
-        if (radio.DATA[0]=='A'){  //abort
-          left.off();
-          laserEnabled = right.off();
-          checkForMiss();
-          sendACK();      
-        }
-        else if (radio.DATA[0]=='C'){ //continuation
-          onClock=trainClock=millis();   
-          checkForMiss();  
-          sendACK();     
+      if (radio.DATALEN == sizeof(radioMessage)){
+        radioMessage = *(IntegerPayload*)radio.DATA;
+        switch (radioMessage.variable){
+          case 'A':
+            left.off();
+            laserEnabled = right.off();
+            checkForMiss();
+            break;
+          case 'C':
+            onClock=trainClock=millis();   
+            checkForMiss(); 
+            break;
         }
       }
     }

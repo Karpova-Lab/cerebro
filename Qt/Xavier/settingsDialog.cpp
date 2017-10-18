@@ -265,7 +265,9 @@ void settingsDialog::openSettings()
     histogramCheckbox->setChecked(showHistogram);
     mcubeCheckbox->setChecked(mcubeEnabled);
 
+    qDebug()<<"about to show";
     this->exec();
+    qDebug()<<"postion"<<this->pos();
 }
 
 void settingsDialog::addAlias()
