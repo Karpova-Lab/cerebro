@@ -98,18 +98,23 @@ void loop() {
       stopCommandReceived();
     }
     else if(msg=='?'){
+      startTime = millis();
+      msgCount = 0;
       Serial1.print(version);Serial1.print("\n");
-    }
-    else if (msg=='N'){
-      startNewSession();
+      msg = 'I';
+      if (radio.sendWithRetry(CEREBRO, &msg, 1, 2)){ 
+      }
+      else{      
+        Serial1.print("\nCould not Connect to Cerebro");Serial1.print("\n");
+      }
     }
     else if (msg!='\n'){ // "I" for info 
       if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
         digitalWrite(LED,LOW);
       }
       else{
-        digitalWrite(LED,LOW);        
-        Serial1.print("\nACK not received");Serial1.print("\n");
+        Serial1.print("Tried Sending ''");Serial1.print(msg);
+        Serial1.print("'', ACK not received");Serial1.print("\n");
       }
     }
   }
@@ -168,20 +173,10 @@ void printInfo(){
   Serial1.print("~"); Serial1.print(currentInfo.waveform.offTime);      
   Serial1.print("~"); Serial1.print(currentInfo.waveform.trainDur);
   Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur); 
-  Serial1.print("&"); 
-
-  Serial1.print("\nSerial Number: ");Serial1.print(currentInfo.serialNumber);Serial1.print("\n");
-  Serial1.print("Firmware Version: ");Serial1.print(currentInfo.firmware);Serial1.print("\n");
-  Serial1.print("Left Set Point: ");Serial1.print(currentInfo.lSetPoint);Serial1.print("\n");
-  Serial1.print("Right Set Point: ");Serial1.print(currentInfo.rSetPoint); Serial1.print("\n");  
-  Serial1.print("Start Delay: "); Serial1.print(currentInfo.waveform.startDelay);Serial1.print("\n");    
-  Serial1.print("On Time: "); Serial1.print(currentInfo.waveform.onTime);Serial1.print("\n");
-  Serial1.print("Off Time: "); Serial1.print(currentInfo.waveform.offTime);Serial1.print("\n");
-  Serial1.print("Train Duration: "); Serial1.print(currentInfo.waveform.trainDur);Serial1.print("\n");
-  Serial1.print("Ramp Duration: "); Serial1.print(currentInfo.waveform.rampDur);Serial1.print("\n");
 }
 
 void printDiodeStats(){
+  Serial1.print("fbk,");
   Serial1.print(currentInfo.lSetPoint);Serial1.print(",");
   Serial1.print(diodeStats.leftFBK);Serial1.print(",");
   Serial1.print(diodeStats.leftDAC);Serial1.print(",");
@@ -221,16 +216,8 @@ void sendWaveform(){
 }
 
 void printBattery(){
-  // Now print out those values:
-  String toPrint = String(battery.soc) + "% | ";
-  toPrint += String(battery.volts) + " mV | ";
-  toPrint += String(battery.capacity) + " mAh remaining ";
-
-  Serial1.print(toPrint);Serial1.print("\n");
-}
-
-void startNewSession(){
-  msgCount = 0;  
+  Serial1.print("~"); Serial1.print(battery.soc);
+  Serial1.print("&");
 }
 
 void triggerCommandReceived(){
@@ -253,6 +240,7 @@ void triggerCommandReceived(){
 }
 
 void stopCommandReceived(){
+  msgCount++;  
   unsigned long tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger<spamFilter){
     radioMessage.variable = 'A';    
