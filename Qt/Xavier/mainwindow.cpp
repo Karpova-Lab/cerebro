@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
         equipmentLayout = new QGridLayout();
             rig_lbl = new QLabel("Rig #");
         equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
-            rat_lbl = new QLabel("Rat: Implant, LSet, RSet");
+            rat_lbl = new QLabel("Rat-implant: (LSet/RSet)");
         equipmentLayout->addWidget(rat_lbl,0,2,1,2,Qt::AlignCenter);
             rigSelect = new QListWidget();
         equipmentLayout->addWidget(rigSelect,1,1,4,1,Qt::AlignTop);
@@ -143,8 +143,9 @@ MainWindow::MainWindow(QWidget *parent)
             batteryIndicator->setMinimum(0);
             batteryIndicator->setMaximum(100);
             batteryIndicator->setTextVisible(true);
+            batteryIndicator->setFormat("Battery Level = %p%");
         cerStatusLayout->addWidget(batteryIndicator,1,0,1,9);
-            getInfo_btn = new QPushButton("Refresh Battery Status");
+            getInfo_btn = new QPushButton("Refresh");
         cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setEnabled(false);
@@ -629,8 +630,6 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
-    QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,()\\s\/]"),QString::SkipEmptyParts);
-    qDebug()<<"rat info "<<ratInfo;
     if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
@@ -679,8 +678,13 @@ void MainWindow::connectBasePort()
             qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
+
             if(!debugOn){
-                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );}
+                QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
+                qDebug()<<"rat info "<<ratInfo;
+                leftDiode_spn->setValue(ratInfo[2].toInt());
+                rightDiode_spn->setValue(ratInfo[3].toInt());
+                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratInfo[0] );}
             else{
                 setWindowTitle("Debug Mode");
             }
@@ -754,13 +758,7 @@ void MainWindow::sendTime()
 {
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-        QString startup;
-        if (!debugOn){
-            startup = QString("%1,%2,%3,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text());
-        }
-        else{
-            startup = QString("%1,%2,%3,").arg(startTime,"99","99");
-        }
+        QString startup =  QString("%1,").arg(startTime);
         baseMonitor->textCursor().insertText(startup);
         checkForBase();
         connect_btn->setEnabled(true);
@@ -788,8 +786,8 @@ void MainWindow::readSerial()
         if (onboardParams.length()==10){//received cerebro info
             serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
             cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
-            Lset_lbl->setText("Lset\n"+onboardParams[2]); leftDiode_spn->setValue(onboardParams[2].toInt());
-            Rset_lbl->setText("Rset\n"+onboardParams[3]); rightDiode_spn->setValue(onboardParams[3].toInt());
+            Lset_lbl->setText("Lset\n"+onboardParams[2]);
+            Rset_lbl->setText("Rset\n"+onboardParams[3]);
             cerDelay_lbl->setText("Delay\n"+onboardParams[4]); startDelay_spn->setValue(onboardParams[4].toInt());
             cerOn_lbl->setText("On\n"+onboardParams[5]); onTime_spn->setValue(onboardParams[5].toInt());
             cerOff_lbl->setText("Off\n"+onboardParams[6]); offTime_spn->setValue(onboardParams[6].toInt());
