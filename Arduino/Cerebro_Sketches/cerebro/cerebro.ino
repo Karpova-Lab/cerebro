@@ -62,6 +62,7 @@ LaserDiode right(&DDRD,&PORTD,2,A2);
 Radio radio(7,1);
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
+byte batteryUpdateFrequency = 20;
 
 //---------function prototypes---------//
 int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
@@ -132,8 +133,8 @@ void loop() {
       radioMessage = *(IntegerPayload*)radio.DATA;
       switch (radioMessage.variable){
         case 'T':
+          checkForMiss();      
           triggerBoth();
-          checkForMiss();
           break;
         case 'S': // Receiving a new Cerebro S/N
           EEPROM.update(SERIAL_NUMBER_ADDRESS, radioMessage.value);
@@ -197,15 +198,13 @@ void sendInfo(){
   currentInfo.waveform = waveform;
   currentInfo.lSetPoint = left.setPoint;
   currentInfo.rSetPoint = right.setPoint;
+  currentInfo.battery = lipo.soc();
   if (radio.sendWithRetry(1, (const void*)(&currentInfo), sizeof(currentInfo))){
     Serial.println("data sent successfully");
   }
   else{
     Serial.println("Info failure send fail");
   }
-  printInfo();
-  delay(100);
-  reportBattery();
 }
 
 void printInfo(){
@@ -291,9 +290,6 @@ void reportBattery(){
   battery.soc = lipo.soc();
   battery.volts = lipo.voltage();
   battery.capacity = lipo.capacity(REMAIN);
-
-  printBattery();
-
   if (radio.sendWithRetry(1, (const void*)(&battery), sizeof(battery))){
     Serial.println("battery info sent successfully");
   }

@@ -82,15 +82,21 @@ private:
     QCheckBox*              debugCheckbox;
     QStringList             aliasStringList,rigList,ratList;
 
+    //Cerebro Status
+    QGroupBox*              cerStatusBox;
+    QGridLayout*            cerStatusLayout;
+    QLabel*                 serialNumber_lbl,*cerFirmware_lbl,*Lset_lbl,*Rset_lbl,*cerDelay_lbl,*cerOn_lbl,*cerOff_lbl,*cerTrain_lbl,*cerRamp_lbl;
+    QPushButton*            getInfo_btn;
+    QProgressBar*           batteryIndicator;
+
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 serial_title,*baseFilter_label;
+    QLabel*                 baseFilter_label;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
     QPushButton*            saveMonitor_btn;
     QString                 baseBuffer;
-    QProgressBar*           batteryIndicator;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
@@ -125,7 +131,7 @@ private:
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*getInfo_btn,*macro_btn,*isBasePresent_btn;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*macro_btn;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 

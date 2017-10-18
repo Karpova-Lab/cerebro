@@ -173,6 +173,8 @@ void printInfo(){
   Serial1.print("~"); Serial1.print(currentInfo.waveform.offTime);      
   Serial1.print("~"); Serial1.print(currentInfo.waveform.trainDur);
   Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur); 
+  Serial1.print("~");Serial1.print(currentInfo.battery);Serial1.print("&");
+  
 }
 
 void printDiodeStats(){
@@ -216,7 +218,8 @@ void sendWaveform(){
 }
 
 void printBattery(){
-  Serial1.print("~"); Serial1.print(battery.soc);
+  Serial1.print("*");
+  Serial1.print(battery.soc);
   Serial1.print("&");
 }
 

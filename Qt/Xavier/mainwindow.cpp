@@ -72,14 +72,14 @@ MainWindow::MainWindow(QWidget *parent)
     equipmentBox = new QGroupBox("Session Setup");
         equipmentLayout = new QGridLayout();
             rig_lbl = new QLabel("Rig #");
-        equipmentLayout->addWidget(rig_lbl,0,0,Qt::AlignCenter);
+        equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
             rat_lbl = new QLabel("Rat: Implant, LSet, RSet");
-        equipmentLayout->addWidget(rat_lbl,0,1,1,2,Qt::AlignCenter);
+        equipmentLayout->addWidget(rat_lbl,0,2,1,2,Qt::AlignCenter);
             rigSelect = new QListWidget();
-        equipmentLayout->addWidget(rigSelect,1,0,4,1,Qt::AlignTop);
+        equipmentLayout->addWidget(rigSelect,1,1,4,1,Qt::AlignTop);
             ratSelect = new QListWidget();
             ratSelect->setMinimumWidth(150);
-        equipmentLayout->addWidget(ratSelect,1,1,4,2,Qt::AlignTop|Qt::AlignHCenter);
+        equipmentLayout->addWidget(ratSelect,1,2,4,2,Qt::AlignTop|Qt::AlignHCenter);
             connectBS_label = new QLabel("Base Station Serial Port");
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
             refresh_btn = new QPushButton("Rescan");
@@ -96,37 +96,78 @@ MainWindow::MainWindow(QWidget *parent)
         equipmentLayout->setColumnStretch(8,1);
     equipmentBox->setLayout(equipmentLayout);
 
-    //Base station monitor
-    baseBox = new QGroupBox();
-        serialMonitorLayout = new QGridLayout();
-            serial_title = new QLabel("<h3><u>Base Station Monitor</u>");
-        serialMonitorLayout->addWidget(serial_title,0,0,1,6,Qt::AlignCenter);
-        clearBase_btn = new QPushButton();
-            clearBase_btn->setText("Clear Monitor");
-        serialMonitorLayout->addWidget(clearBase_btn,1,4,1,2,Qt::AlignRight);
-            isBasePresent_btn = new QPushButton("Check Connection");
-        serialMonitorLayout->addWidget(isBasePresent_btn,1,0,1,2);
-            baseFilter_label = new QLabel("Filter Duration:");
-        serialMonitorLayout->addWidget(baseFilter_label,2,0);
-            baseMonitor = new QPlainTextEdit();
-            baseMonitor->setMinimumWidth(300);
-            baseMonitor->setMinimumHeight(450);
-        serialMonitorLayout->addWidget(baseMonitor,3,0,1,5);
-            saveMonitor_btn = new QPushButton();
-            saveMonitor_btn->setText("Save Session");
-            saveMonitor_btn->setMinimumHeight(40);
-            saveMonitor_btn->setEnabled(true);
-        serialMonitorLayout->addWidget(saveMonitor_btn,4,0,1,6);
+    //Cerebro Status
+    cerStatusBox = new QGroupBox("Cerebro Status");
+        cerStatusLayout = new QGridLayout();
+            serialNumber_lbl = new QLabel("Serial #\n");
+            serialNumber_lbl->setAlignment(Qt::AlignCenter);
+            serialNumber_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(serialNumber_lbl,0,0);
+            cerFirmware_lbl = new QLabel("Firmware\n");
+            cerFirmware_lbl->setAlignment(Qt::AlignCenter);
+            cerFirmware_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerFirmware_lbl,0,1);
+            Lset_lbl = new QLabel("Lset\n");
+            Lset_lbl->setAlignment(Qt::AlignCenter);
+            Lset_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(Lset_lbl,0,2);
+            Rset_lbl = new QLabel("Rset\n");
+            Rset_lbl->setAlignment(Qt::AlignCenter);
+            Rset_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(Rset_lbl,0,3);
+            cerDelay_lbl = new QLabel("Delay\n");
+            cerDelay_lbl->setAlignment(Qt::AlignCenter);
+            cerDelay_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerDelay_lbl,0,4);
+            cerOn_lbl = new QLabel("On\n");
+            cerOn_lbl->setAlignment(Qt::AlignCenter);
+            cerOn_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerOn_lbl,0,5);
+            cerOff_lbl = new QLabel("Off\n");
+            cerOff_lbl->setAlignment(Qt::AlignCenter);
+            cerOff_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerOff_lbl,0,6);
+            cerTrain_lbl = new QLabel("Train\n");
+            cerTrain_lbl->setAlignment(Qt::AlignCenter);
+            cerTrain_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerTrain_lbl,0,7);
+            cerRamp_lbl = new QLabel("Ramp\n");
+            cerRamp_lbl->setAlignment(Qt::AlignCenter);
+            cerRamp_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerRamp_lbl,0,8);
             batteryIndicator = new QProgressBar();
-            batteryIndicator->setOrientation(Qt::Vertical);
+            batteryIndicator->setOrientation(Qt::Horizontal);
+            batteryIndicator->setAlignment(Qt::AlignHCenter);
             batteryIndicator->setMinimumWidth(30);
             batteryIndicator->setValue(0);
             batteryIndicator->setMinimum(0);
             batteryIndicator->setMaximum(100);
-            batteryIndicator->setEnabled(false);
-            batteryIndicator->setFormat("%v bob");
             batteryIndicator->setTextVisible(true);
-        serialMonitorLayout->addWidget(batteryIndicator,3,5);
+        cerStatusLayout->addWidget(batteryIndicator,1,0,1,9);
+            getInfo_btn = new QPushButton("Refresh Battery Status");
+        cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
+    cerStatusBox->setLayout(cerStatusLayout);
+    cerStatusBox->setEnabled(false);
+
+
+
+    //Base station monitor
+    baseBox = new QGroupBox("Base Station Monitor");
+        serialMonitorLayout = new QGridLayout();
+        clearBase_btn = new QPushButton();
+            clearBase_btn->setText("Clear Monitor");
+        serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
+            baseFilter_label = new QLabel("Filter Duration:");
+        serialMonitorLayout->addWidget(baseFilter_label,0,0);
+            baseMonitor = new QPlainTextEdit();
+            baseMonitor->setMinimumWidth(300);
+            baseMonitor->setMinimumHeight(380);
+        serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
+            saveMonitor_btn = new QPushButton();
+            saveMonitor_btn->setText("Save Session");
+            saveMonitor_btn->setMinimumHeight(40);
+            saveMonitor_btn->setEnabled(true);
+        serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,6);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
@@ -236,8 +277,8 @@ MainWindow::MainWindow(QWidget *parent)
 //        charLayout->addWidget(isolationTest_btn,3,0,1,1);
             combinedTest_btn = new QPushButton("Combined Test");
         charLayout->addWidget(combinedTest_btn,3,0,1,2);
-            initialize_btn = new QPushButton("Send Power Values to Cerebro");
-        charLayout->addWidget(initialize_btn,4,0,1,2);
+//            initialize_btn = new QPushButton("Send Power Values to Cerebro");
+//        charLayout->addWidget(initialize_btn,4,0,1,2);
     charBox->setLayout(charLayout);
     charBox->setEnabled(false);
     charBox->setPalette(Qt::gray);
@@ -312,15 +353,11 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(testProgress,2,0,1,2);
             abort_btn = new QPushButton("Stop");
         triggerLayout->addWidget(abort_btn,1,1);
-            batteryStatus_btn = new QPushButton("Battery Status");
-        triggerLayout->addWidget(batteryStatus_btn,3,0);
-            getInfo_btn = new QPushButton("Get Cerebro Info");
-        triggerLayout->addWidget(getInfo_btn,3,1);
             macroText = new QLineEdit();
 //                macroText->setFixedWidth(40);
-        triggerLayout->addWidget(macroText,5,0,Qt::AlignRight);
+        triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
             macro_btn = new QPushButton("Send Text");
-        triggerLayout->addWidget(macro_btn,5,1);
+        triggerLayout->addWidget(macro_btn,4,1);
             startDiode_btn = new QPushButton("Cerebro Monitor");
         triggerLayout->addWidget(startDiode_btn,6,0,1,2);
     bugBox->setLayout(triggerLayout);
@@ -358,10 +395,11 @@ MainWindow::MainWindow(QWidget *parent)
     //Add Elements to Main Layout
     mainLayout = new QGridLayout();
     mainLayout->addWidget(equipmentBox,0,0,1,3);
-    mainLayout->addWidget(baseBox,1,1,4,2);
-    mainLayout->addWidget(adjustBox,1,0);
-    mainLayout->addWidget(charBox,2,0);
-    mainLayout->addWidget(bugBox,3,0);
+    mainLayout->addWidget(cerStatusBox,1,0,1,3);
+    mainLayout->addWidget(baseBox,2,1,4,2);
+    mainLayout->addWidget(adjustBox,2,0);
+    mainLayout->addWidget(charBox,3,0);
+    mainLayout->addWidget(bugBox,4,0);
 //    mainLayout->setColumnStretch(2,1);
 //    mainLayout->setRowStretch(5,1);
 
@@ -444,11 +482,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
-    connect(batteryStatus_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
     connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getInfo()));
     connect(trigger_btn,SIGNAL(clicked()),this,SLOT(sendTrigger()));
-    connect(isBasePresent_btn,SIGNAL(clicked(bool)),this,SLOT(checkForBase()));
-
 
 //    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
 
@@ -462,7 +497,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
-    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
+//    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
     connect(createVecBtn,SIGNAL(clicked(bool)),createFadeDialog,SLOT(exec()));
 }
 
@@ -594,6 +629,8 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
+    QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,()\\s\/]"),QString::SkipEmptyParts);
+    qDebug()<<"rat info "<<ratInfo;
     if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
@@ -624,6 +661,7 @@ void MainWindow::connectBasePort()
         bugBox->setEnabled(!baseConnected && debugOn);
 //        baseSettingsBox->setEnabled(!baseConnected);
         baseBox->setEnabled(!baseConnected);
+        cerStatusBox->setEnabled(!baseConnected);
         if(!baseConnected){ //connect to serial port
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
@@ -664,7 +702,7 @@ void MainWindow::connectBasePort()
             showDebug();
             baseConnected = false;
             receivedBaseInfo = false;
-            baseFilter_label->setText("Filter Duration:");
+            clearMonitor();
         }
     }
     connect_btn->setChecked(baseConnected);
@@ -714,18 +752,20 @@ void MainWindow::connectDownloadPort()
 
 void MainWindow::sendTime()
 {
-    startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-    QString startup;
-    if (!debugOn){
-        startup = QString("%1,%2,%3,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text());
+    if (serial->isOpen()){
+        startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
+        QString startup;
+        if (!debugOn){
+            startup = QString("%1,%2,%3,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text());
+        }
+        else{
+            startup = QString("%1,%2,%3,").arg(startTime,"99","99");
+        }
+        baseMonitor->textCursor().insertText(startup);
+        checkForBase();
+        connect_btn->setEnabled(true);
+        clearBase_btn->setEnabled(true);
     }
-    else{
-        startup = QString("%1,%2,%3,").arg(startTime,"99","99");
-    }
-    baseMonitor->textCursor().insertText(startup);
-    checkForBase();
-    connect_btn->setEnabled(true);
-    clearBase_btn->setEnabled(true);
 }
 
 void MainWindow::readSerial()
@@ -743,44 +783,41 @@ void MainWindow::readSerial()
         baseBuffer.remove(dataStart,dataEnd+1-dataStart);
         qDebug()<<"buffer "<<baseBuffer;
         QStringList onboardParams = dataString.split("~");
-        qDebug()<<"data = "<<onboardParams ;
-        leftDiode_spn->setValue(onboardParams[2].toInt());
-        rightDiode_spn->setValue(onboardParams[3].toInt());
-        startDelay_spn->setValue(onboardParams[4].toInt());
-        onTime_spn->setValue(onboardParams[5].toInt());
-        offTime_spn->setValue(onboardParams[6].toInt());
-        int trainDurationData = onboardParams[7].toInt();
-        if(trainDurationData){
-            pulseTrain->setChecked(true);
-            trainChecked();
+        qDebug()<<"data = "<<onboardParams;
+        qDebug()<<"length "<<onboardParams.length();
+        if (onboardParams.length()==10){//received cerebro info
+            serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
+            cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
+            Lset_lbl->setText("Lset\n"+onboardParams[2]); leftDiode_spn->setValue(onboardParams[2].toInt());
+            Rset_lbl->setText("Rset\n"+onboardParams[3]); rightDiode_spn->setValue(onboardParams[3].toInt());
+            cerDelay_lbl->setText("Delay\n"+onboardParams[4]); startDelay_spn->setValue(onboardParams[4].toInt());
+            cerOn_lbl->setText("On\n"+onboardParams[5]); onTime_spn->setValue(onboardParams[5].toInt());
+            cerOff_lbl->setText("Off\n"+onboardParams[6]); offTime_spn->setValue(onboardParams[6].toInt());
+            cerTrain_lbl->setText("Train\n"+onboardParams[7]); int trainDurationData = onboardParams[7].toInt();
+            if(trainDurationData){
+                pulseTrain->setChecked(true);
+                trainChecked();
+            }
+            else{
+                singleShot->setChecked(true);
+                trainChecked();
+            }
+            trainDuration_spn->setValue(trainDurationData);
+            cerRamp_lbl->setText("Ramp\n"+ onboardParams[8]);
+            if (onboardParams[8].toInt()){
+                fade_checkbox->setChecked(true);
+                fade_spn->setValue(onboardParams[8].toInt());
+            }
+            else{
+                fade_checkbox->setChecked(false);
+            }
+            fadeChecked();
+            updateFilter();
+            batteryIndicator->setValue(onboardParams[9].toInt());
         }
-        else{
-            singleShot->setChecked(true);
-            trainChecked();
+        else if (onboardParams.length()==1){ //received battery update
+            batteryIndicator->setValue(onboardParams[0].toInt());
         }
-        trainDuration_spn->setValue(trainDurationData);
-        if (onboardParams[8].toInt()){
-            fade_checkbox->setChecked(true);
-            fade_spn->setValue(onboardParams[8].toInt());
-        }
-        else{
-            fade_checkbox->setChecked(false);
-        }
-        fadeChecked();
-        updateFilter();
-
-//        QMessageBox showParams;
-//        showParams.setWindowTitle("Cerebro #" + onboardParams[0]  + " - LD #" + onboardParams[2]);
-//        showParams.setStandardButtons(QMessageBox::Ok);
-//        showParams.setText(
-//                "Firmware:\t" + onboardParams[0] +
-//                "\n\nPower Level:\t" + onboardParams[3] +
-//                "\n\nStart Delay:\t"+ onboardParams[4]+
-//                onTimeString + onboardParams[5] +
-//                offTimeString + onboardParams[6] +
-//                " ms\nTrain Duration:\t" + onboardParams[7] +
-//                " ms\nFade Time:\t" + onboardParams[8] + " ms" );
-//        showParams.exec();
     }
     if (baseBuffer.indexOf("\n")>-1){ //if we come the end of the line reaches the buffer, print the buffer to the monitor
         baseMonitor->insertPlainText(baseBuffer);
@@ -824,6 +861,17 @@ void MainWindow::readLog()
 void MainWindow::clearMonitor()
 {
     baseMonitor->clear();
+    baseFilter_label->setText("Filter Duration:");
+    batteryIndicator->setValue(0);
+    serialNumber_lbl->setText("Serial#\n");
+    cerFirmware_lbl->setText("Firmware#\n");
+    Lset_lbl->setText("Lset\n");
+    Rset_lbl->setText("Rset\n");
+    cerDelay_lbl->setText("Delay\n");
+    cerOn_lbl->setText("On\n");
+    cerOff_lbl->setText("Off\n");
+    cerTrain_lbl->setText("Train\n");
+    cerRamp_lbl->setText("Ramp\n");
 //    receivedBaseInfo = false;
 //    baseFilter_label->setText("Filter Duration:");
 //    if(baseConnected){
@@ -950,7 +998,7 @@ void MainWindow::saveFile()
         if (!ratNumber.isEmpty()){
             //save the base station log
             saveName1 = QFileDialog::getSaveFileName(this,
-                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime +"_base station",tr("(*.csv)") );
+                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime +"_baseLog",tr("(*.csv)") );
             qDebug()<<saveName1;
             if (!saveName1.isEmpty()){
                 QFile file(saveName1);
@@ -977,7 +1025,6 @@ void MainWindow::saveFile()
 
 void MainWindow::errorMsg()
 {
-//    qDebug()<<"serial error:"<<serial->error();
     if (((serial->error()==11)|(serial->error()==7)|(serial->error()==8)|(serial->error()==9)&& errorThrown==false)){                //http://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
         errorThrown = true;
         baseMonitor->textCursor().insertText("ERROR\r");
@@ -991,8 +1038,6 @@ void MainWindow::errorMsg()
     }
 }
 
-
-
 void MainWindow::updateFilter(){
     if (singleShot->isChecked()){
         baseFilter = startDelay_spn->value() + onTime_spn->value();
@@ -1001,13 +1046,6 @@ void MainWindow::updateFilter(){
         baseFilter = startDelay_spn->value()+ trainDuration_spn->value();
     }
     baseFilter_label->setText("Filter Duration: "+ QString::number(baseFilter) + " ms");
-
-//    QMessageBox baseUpdated;
-//        baseUpdated.setWindowTitle("Command Filter Updated");
-//        baseUpdated.setIcon(QMessageBox::Information);
-//        baseUpdated.setText("Base Station's command filter has automatically been updated to <b>" + QString::number(baseFilter) + " ms</b>");
-//    baseUpdated.exec();
-//    QTimer::singleShot(1000, this, SLOT(clearMonitor()));
  }
 
 

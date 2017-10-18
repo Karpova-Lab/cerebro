@@ -18,6 +18,7 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
         radioMessage = *(IntegerPayload*)radio.DATA;
         switch (radioMessage.variable){
           case 'A':
+            reportLaserStats();          
             laserEnabled = thediode->off();          
             sendACK();
             break;
@@ -89,6 +90,7 @@ void triggerBoth(){
         radioMessage = *(IntegerPayload*)radio.DATA;
         switch (radioMessage.variable){
           case 'A':
+            reportLaserStats();
             left.off();
             laserEnabled = right.off();
             Watchdog.disable();            
@@ -140,7 +142,10 @@ void triggerBoth(){
       left.off(); 
       laserEnabled = right.off();
       Watchdog.disable();
-      if (lipo.capacity(REMAIN)<20){
+      if (msgCount%batteryUpdateFrequency==0){
+        reportBattery();
+      }
+      if (lipo.capacity(REMAIN)<15){
         reportBattery();
       }
       //send alert if feedbacks aren't what were expected

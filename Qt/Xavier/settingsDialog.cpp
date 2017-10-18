@@ -122,7 +122,7 @@ settingsDialog::settingsDialog(QWidget *parent)
     settingsLayout->addWidget(directoryBox);
     settingsLayout->addWidget(sessionListsBox);
     settingsLayout->addWidget(portEditBox);
-    settingsLayout->addWidget(featuresBox);
+//    settingsLayout->addWidget(featuresBox);
     settingsLayout->addWidget(okButton);
 
     this->setWindowTitle("Settings");

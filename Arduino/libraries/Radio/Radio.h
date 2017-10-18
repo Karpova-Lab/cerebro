@@ -39,6 +39,7 @@ typedef struct {
   WaveformData waveform;
   unsigned int lSetPoint;
   unsigned int rSetPoint;
+  byte battery;
 } Status;
 
 typedef struct {
