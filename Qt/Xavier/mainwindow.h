@@ -65,6 +65,7 @@ private:
     QString                 startTime;
     QString                 saveName1;
     bool                    repeatOn;
+    int                     titleLeftPower, titleRightPower;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
@@ -162,6 +163,9 @@ private slots:
     void connectBasePort();
     void connectDownloadPort();
     void sendTime();
+    void matchLeftPower();
+    void matchRightPower();
+
 
     //Monitors
     void errorMsg();

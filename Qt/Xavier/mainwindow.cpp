@@ -682,8 +682,8 @@ void MainWindow::connectBasePort()
             if(!debugOn){
                 QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
                 qDebug()<<"rat info "<<ratInfo;
-                leftDiode_spn->setValue(ratInfo[2].toInt());
-                rightDiode_spn->setValue(ratInfo[3].toInt());
+                titleLeftPower = ratInfo[2].toInt();
+                titleRightPower = ratInfo[3].toInt();
                 setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratInfo[0] );}
             else{
                 setWindowTitle("Debug Mode");
@@ -756,9 +756,11 @@ void MainWindow::connectDownloadPort()
 
 void MainWindow::sendTime()
 {
+
+    baseMonitor->clear();
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-        QString startup =  QString("%1,").arg(startTime);
+        QString startup =  QString("Start Time, %1").arg(startTime);
         baseMonitor->textCursor().insertText(startup);
         checkForBase();
         connect_btn->setEnabled(true);
@@ -774,7 +776,7 @@ void MainWindow::readSerial()
     }
     int dataStart = baseBuffer.indexOf("*");
     int dataEnd = baseBuffer.indexOf("&");
-    qDebug()<<"bufer,datastart,dataend"<<baseBuffer<<dataStart<<dataEnd;
+    qDebug()<<"buffer,datastart,dataend"<<baseBuffer<<dataStart<<dataEnd;
 
     if (dataStart!=-1 && dataEnd!=-1){
         QString dataString = baseBuffer.mid(dataStart+1,dataEnd-dataStart-1);
@@ -786,8 +788,15 @@ void MainWindow::readSerial()
         if (onboardParams.length()==10){//received cerebro info
             serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
             cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
-            Lset_lbl->setText("Lset\n"+onboardParams[2]);
-            Rset_lbl->setText("Rset\n"+onboardParams[3]);
+            Lset_lbl->setText("Lset\n"+onboardParams[2]);leftDiode_spn->setValue(onboardParams[2].toInt());
+            Rset_lbl->setText("Rset\n"+onboardParams[3]);rightDiode_spn->setValue(onboardParams[3].toInt());
+            if (!debugOn){
+                if ((onboardParams[2].toInt() != titleLeftPower) || (onboardParams[3].toInt() != titleRightPower)){
+                    matchLeftPower();
+                    QTimer::singleShot(500, this, SLOT(matchRightPower()));
+                }
+            }
+
             cerDelay_lbl->setText("Delay\n"+onboardParams[4]); startDelay_spn->setValue(onboardParams[4].toInt());
             cerOn_lbl->setText("On\n"+onboardParams[5]); onTime_spn->setValue(onboardParams[5].toInt());
             cerOff_lbl->setText("Off\n"+onboardParams[6]); offTime_spn->setValue(onboardParams[6].toInt());
@@ -870,13 +879,6 @@ void MainWindow::clearMonitor()
     cerOff_lbl->setText("Off\n");
     cerTrain_lbl->setText("Train\n");
     cerRamp_lbl->setText("Ramp\n");
-//    receivedBaseInfo = false;
-//    baseFilter_label->setText("Filter Duration:");
-//    if(baseConnected){
-//        QString rst = "R";
-//        serial->write(rst.toLocal8Bit());
-//        clearBase_btn->setEnabled(false);
-//    }
     QTimer::singleShot(1000, this, SLOT(sendTime()));
 }
 
@@ -1327,6 +1329,18 @@ void MainWindow::getCalVals(QString calibrateDataPath ){
     createFadeDialog->close();
 }
 
+void MainWindow::matchLeftPower(){
+    QString msg = "L," + QString::number(titleLeftPower) +"\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::matchRightPower(){
+    QString msg = "R," + QString::number(titleRightPower) +"\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+    clearMonitor();
+}
 void MainWindow::sendToDiode()
 {
     QString msg = "";
