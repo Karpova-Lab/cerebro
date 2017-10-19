@@ -100,7 +100,7 @@ void loop() {
     else if(msg=='?'){
       startTime = millis();
       msgCount = 0;
-      Serial1.print(version);Serial1.print("\n");
+      Serial1.print("\nBase Version,");Serial1.print(version);Serial1.print("\n");
       msg = 'I';
       if (radio.sendWithRetry(CEREBRO, &msg, 1, 2)){ 
       }
@@ -135,6 +135,11 @@ void loop() {
       radio.sendACK();
       diodeStats = *(Feedback*)radio.DATA;  
       printDiodeStats();    
+    }
+    else if (radio.DATALEN == sizeof(radioMessage)){ //diode stats data
+      radio.sendACK();
+      radioMessage = *(IntegerPayload*)radio.DATA;  
+      Serial1.print(radioMessage.variable);Serial1.print(",");Serial1.print(radioMessage.value);Serial1.print("\n"); 
     }
     else{
       for (byte i = 0; i < radio.DATALEN; i++){
@@ -174,11 +179,22 @@ void printInfo(){
   Serial1.print("~"); Serial1.print(currentInfo.waveform.trainDur);
   Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur); 
   Serial1.print("~");Serial1.print(currentInfo.battery);Serial1.print("&");
+
+  Serial1.print("Serial Number, ");Serial1.print(currentInfo.serialNumber);Serial1.print("\n");
+  Serial1.print("Firmware Version, ");Serial1.print(currentInfo.firmware);Serial1.print("\n");
+  Serial1.print("Left Set Point, ");Serial1.print(currentInfo.lSetPoint);Serial1.print("\n");
+  Serial1.print("Right Set Point, ");Serial1.print(currentInfo.rSetPoint); Serial1.print("\n");  
+  Serial1.print("Start Delay, "); Serial1.print(currentInfo.waveform.startDelay);Serial1.print("\n");    
+  Serial1.print("On Time, "); Serial1.print(currentInfo.waveform.onTime);Serial1.print("\n");
+  Serial1.print("Off Time, "); Serial1.print(currentInfo.waveform.offTime);Serial1.print("\n");
+  Serial1.print("Train Duration, "); Serial1.print(currentInfo.waveform.trainDur);Serial1.print("\n");
+  Serial1.print("Ramp Duration, "); Serial1.print(currentInfo.waveform.rampDur);Serial1.print("\n");
+  Serial1.print("Battery Level, "); Serial1.print(currentInfo.battery);Serial1.print("\n");  
   
 }
 
 void printDiodeStats(){
-  Serial1.print("fbk,");
+  Serial1.print("F,");
   Serial1.print(currentInfo.lSetPoint);Serial1.print(",");
   Serial1.print(diodeStats.leftFBK);Serial1.print(",");
   Serial1.print(diodeStats.leftDAC);Serial1.print(",");

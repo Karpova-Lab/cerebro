@@ -290,7 +290,7 @@ void reportBattery(){
   battery.soc = lipo.soc();
   battery.volts = lipo.voltage();
   battery.capacity = lipo.capacity(REMAIN);
-  if (radio.sendWithRetry(1, (const void*)(&battery), sizeof(battery))){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&battery), sizeof(battery))){
     Serial.println("battery info sent successfully");
   }
   else{
@@ -331,9 +331,24 @@ void printBattery(){
 void printMissed(){
   unsigned int missed;
   Serial.println("missed,");Serial.println(missedCount);
-  for (int i = 0; i <missedCount; i++ ){
-    EEPROM.get(MISSING_ARRAY_ADDRESS+2*i,missed);
+  radioMessage.variable = 'M'; 
+  radioMessage.value = (int)missed;
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
     Serial.println(missed);
+  }
+  else{
+    Serial.println("Sending again");
+  }  
+  radioMessage.variable = 'm';
+  for (int i = 0; i <missed; i++ ){
+    EEPROM.get(MISSING_ARRAY_ADDRESS+2*i,missed);
+    radioMessage.value = (int)missed;
+    if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
+      Serial.println(missed);
+    }
+    else{
+      Serial.println("Sending again");
+    }    
   }
   Serial.println("done");
 }
