@@ -90,10 +90,23 @@ void triggerBoth(){
         radioMessage = *(IntegerPayload*)radio.DATA;
         switch (radioMessage.variable){
           case 'A':
+            Watchdog.disable();            
+            if (waveform.rampDur>0){
+              unsigned long fadeClock;
+              for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
+                fadeClock = millis();
+                left.feedback(left.setPoint*i/100);
+                left.sendDAC(left.DAClevel);
+                right.feedback(right.setPoint*i/100);
+                right.sendDAC(right.DAClevel);
+                while((millis()-fadeClock)<(waveform.rampDur/100)){
+                  //wait
+                }
+              }
+            }
             reportLaserStats();
             left.off();
             laserEnabled = right.off();
-            Watchdog.disable();            
             checkForMiss();
             break;
           case 'C':
@@ -125,6 +138,7 @@ void triggerBoth(){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
+      Watchdog.disable();      
       if (waveform.rampDur>0){
         unsigned long fadeClock;
         for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
@@ -141,7 +155,6 @@ void triggerBoth(){
       reportLaserStats();     
       left.off(); 
       laserEnabled = right.off();
-      Watchdog.disable();
       if (msgCount%batteryUpdateFrequency==0){
         reportBattery();
       }
