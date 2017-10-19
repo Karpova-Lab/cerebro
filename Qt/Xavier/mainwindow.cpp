@@ -152,8 +152,6 @@ MainWindow::MainWindow(QWidget *parent)
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setEnabled(false);
 
-
-
     //Base station monitor
     baseBox = new QGroupBox("Base Station Monitor");
         serialMonitorLayout = new QGridLayout();

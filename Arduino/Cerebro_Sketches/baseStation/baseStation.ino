@@ -25,7 +25,7 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>
 
-const byte version = 25;
+const byte version = 30;
 
 const int LED = 13;
 const int triggerPin = 5;
