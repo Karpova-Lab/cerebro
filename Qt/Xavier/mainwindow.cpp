@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t2.0.0\nUpdated:\t9/28/2017";
+        QString aboutString = "\t2.0.0\nUpdated:\t10/19/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -142,10 +142,12 @@ MainWindow::MainWindow(QWidget *parent)
             batteryIndicator->setValue(0);
             batteryIndicator->setMinimum(0);
             batteryIndicator->setMaximum(100);
-            batteryIndicator->setTextVisible(true);
-            batteryIndicator->setFormat("Battery Level = %p%");
-        cerStatusLayout->addWidget(batteryIndicator,1,0,1,9);
-            getInfo_btn = new QPushButton("Refresh");
+            batteryIndicator->setTextVisible(false);
+            batteryIndicator->setFormat("Battery=%p%");
+        cerStatusLayout->addWidget(batteryIndicator,1,1,1,8);
+            battery_lbl = new QLabel(batteryIndicator->text());
+        cerStatusLayout->addWidget(battery_lbl,1,0,1,1,Qt::AlignRight);
+            getInfo_btn = new QPushButton("Get Battery Level");
         cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setEnabled(false);
@@ -820,9 +822,12 @@ void MainWindow::readSerial()
             fadeChecked();
             updateFilter();
             batteryIndicator->setValue(onboardParams[9].toInt());
+            battery_lbl->setText(batteryIndicator->text());
         }
         else if (onboardParams.length()==1){ //received battery update
             batteryIndicator->setValue(onboardParams[0].toInt());
+            battery_lbl->setText(batteryIndicator->text());
+
         }
     }
     if (baseBuffer.indexOf("\n")>-1){ //if we come the end of the line reaches the buffer, print the buffer to the monitor
@@ -869,6 +874,7 @@ void MainWindow::clearMonitor()
     baseMonitor->clear();
     baseFilter_label->setText("Filter Duration:");
     batteryIndicator->setValue(0);
+    battery_lbl->setText(batteryIndicator->text());
     serialNumber_lbl->setText("Serial#\n");
     cerFirmware_lbl->setText("Firmware#\n");
     Lset_lbl->setText("Lset\n");

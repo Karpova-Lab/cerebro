@@ -90,6 +90,7 @@ private:
     QLabel*                 serialNumber_lbl,*cerFirmware_lbl,*Lset_lbl,*Rset_lbl,*cerDelay_lbl,*cerOn_lbl,*cerOff_lbl,*cerTrain_lbl,*cerRamp_lbl;
     QPushButton*            getInfo_btn;
     QProgressBar*           batteryIndicator;
+    QLabel*                 battery_lbl;
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
