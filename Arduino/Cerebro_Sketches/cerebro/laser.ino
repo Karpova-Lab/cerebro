@@ -53,16 +53,12 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
+      reportLaserStats();      
       if (useFeedback){
         if (waveform.rampDur>0){
           thediode->fade(waveform.rampDur);
         }
       }
-      // Serial.println("during: ");  
-      // feedbackReadings();
-      // _meterValue = analogRead(powerMeter);   
-      // Serial.print("power meter: ");Serial.println(_meterValue);     
-      reportLaserStats();
       laserEnabled = thediode->off();
     }
   }
@@ -138,7 +134,8 @@ void triggerBoth(){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
-      Watchdog.disable();      
+      Watchdog.disable();
+      reportLaserStats();           
       if (waveform.rampDur>0){
         unsigned long fadeClock;
         for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
@@ -152,7 +149,6 @@ void triggerBoth(){
           }
         }
       }
-      reportLaserStats();     
       left.off(); 
       laserEnabled = right.off();
       if (msgCount%batteryUpdateFrequency==0){
