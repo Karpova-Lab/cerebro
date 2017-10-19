@@ -131,6 +131,7 @@ void loop() {
       Serial1.print("*");
       Serial1.print(battery.soc);
       Serial1.print("&");    
+      Serial1.print("B,");Serial1.print(battery.soc);Serial1.print("\n");
     }    
     else if (radio.DATALEN == sizeof(diodeStats)){ //diode stats data
       radio.sendACK();

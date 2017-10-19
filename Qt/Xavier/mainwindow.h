@@ -66,6 +66,7 @@ private:
     QString                 saveName1;
     bool                    repeatOn;
     int                     titleLeftPower, titleRightPower;
+    QString                 ratNumber;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;

@@ -483,7 +483,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
-    connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getInfo()));
+    connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
     connect(trigger_btn,SIGNAL(clicked()),this,SLOT(sendTrigger()));
 
 //    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
@@ -678,18 +678,17 @@ void MainWindow::connectBasePort()
             qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
-
             if(!debugOn){
                 QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
                 qDebug()<<"rat info "<<ratInfo;
+                ratNumber = ratInfo[0];
                 titleLeftPower = ratInfo[2].toInt();
                 titleRightPower = ratInfo[3].toInt();
                 setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratInfo[0] );}
             else{
+                ratNumber = "9999";
                 setWindowTitle("Debug Mode");
             }
-//            QString rst = "R";
-//            serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
             connect_btn->setEnabled(false);
             QTimer::singleShot(1000, this, SLOT(sendTime()));
@@ -961,13 +960,9 @@ void MainWindow::trainChecked()
 
 void MainWindow::saveFile()
 {
-    QString ratNumber;
-    if(debugOn){
-        ratNumber = "9999";
-    }
-    else{
-        ratNumber = ratSelect->currentItem()->text();
-    }
+    QString msg = "M";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
     bool continueSaving = true;
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");

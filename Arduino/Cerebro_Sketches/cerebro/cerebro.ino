@@ -95,7 +95,7 @@ void setup() {
   setupBQ27441();
   
   radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
-  char readyMessage[22] = "\nCerebro Connected\n";
+  char readyMessage[22] = "\nCerebro Connected!\n";
   byte buffLen=strlen(readyMessage);
   radio.send(BASESTATION, readyMessage, buffLen);  
   sendInfo();
@@ -330,6 +330,8 @@ void printBattery(){
 }
 
 void printMissed(){
+  reportBattery();
+  delay(500);
   unsigned int missed;
   Serial.print("missed,");Serial.println(missedCount);
   radioMessage.variable = 'M'; 
