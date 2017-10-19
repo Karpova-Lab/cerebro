@@ -137,10 +137,10 @@ void loop() {
       diodeStats = *(Feedback*)radio.DATA;  
       printDiodeStats();    
     }
-    else if (radio.DATALEN == sizeof(radioMessage)){ //diode stats data
+    else if (radio.DATALEN == sizeof(radioMessage)){ //
       radio.sendACK();
       radioMessage = *(IntegerPayload*)radio.DATA;  
-      Serial1.print(radioMessage.variable);Serial1.print(",");Serial1.print(radioMessage.value);Serial1.print("\n"); 
+      Serial1.print((char)radioMessage.variable);Serial1.print(",");Serial1.print(radioMessage.value);Serial1.print("\n"); 
     }
     else{
       for (byte i = 0; i < radio.DATALEN; i++){
@@ -188,7 +188,7 @@ void printInfo(){
   Serial1.print("~");Serial1.print(currentInfo.battery);Serial1.print("&");
 
   Serial1.print("Serial Number, ");Serial1.print(currentInfo.serialNumber);Serial1.print("\n");
-  Serial1.print("Firmware Version, ");Serial1.print(currentInfo.firmware);Serial1.print("\n");
+  Serial1.print("Cerebro Version, ");Serial1.print(currentInfo.firmware);Serial1.print("\n");
   Serial1.print("Left Set Point, ");Serial1.print(currentInfo.lSetPoint);Serial1.print("\n");
   Serial1.print("Right Set Point, ");Serial1.print(currentInfo.rSetPoint); Serial1.print("\n");  
   Serial1.print("Start Delay, "); Serial1.print(currentInfo.waveform.startDelay);Serial1.print("\n");    

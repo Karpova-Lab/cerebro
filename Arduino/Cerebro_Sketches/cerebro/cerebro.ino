@@ -110,7 +110,8 @@ void loop() {
       switch (radio.DATA[0]){
         case 'B':
           reportBattery();break;
-        case 'I':            
+        case 'I':    
+          msgCount = 0;        
           sendInfo();break;
         case 'i':
           isolationTest();break;
@@ -330,17 +331,17 @@ void printBattery(){
 
 void printMissed(){
   unsigned int missed;
-  Serial.println("missed,");Serial.println(missedCount);
+  Serial.print("missed,");Serial.println(missedCount);
   radioMessage.variable = 'M'; 
-  radioMessage.value = (int)missed;
+  radioMessage.value = missedCount;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
-    Serial.println(missed);
+    Serial.print("Sent");Serial.println(missedCount);
   }
   else{
     Serial.println("Sending again");
   }  
   radioMessage.variable = 'm';
-  for (int i = 0; i <missed; i++ ){
+  for (int i = 0; i <missedCount; i++ ){
     EEPROM.get(MISSING_ARRAY_ADDRESS+2*i,missed);
     radioMessage.value = (int)missed;
     if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
