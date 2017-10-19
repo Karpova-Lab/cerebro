@@ -114,9 +114,9 @@ void loop() {
           sendInfo();break;
         case 'i':
           isolationTest();break;
-          case 'c':
+        case 'c':
           combinedTest();break;
-          case 'M':
+        case 'M':
           printMissed();break;
         default:
           Serial.println("Command not recognized");break;

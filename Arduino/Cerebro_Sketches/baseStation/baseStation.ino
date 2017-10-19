@@ -73,8 +73,7 @@ void loop() {
       char msgData[30] = "";
       Serial1.readBytesUntil('\n',msgData,30);
       parseData(msgData);
-      assignDataToWaveform();
-      sendWaveform();
+      updateWaveform();
     }
     else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){ //parse data then send radio message with integer
       char msgData[30] = "";
@@ -129,7 +128,9 @@ void loop() {
     else if (radio.DATALEN == sizeof(battery)){ //received a battery data 
       radio.sendACK();
       battery = *(Battery*)radio.DATA;  
-      printBattery();      
+      Serial1.print("*");
+      Serial1.print(battery.soc);
+      Serial1.print("&");    
     }    
     else if (radio.DATALEN == sizeof(diodeStats)){ //diode stats data
       radio.sendACK();
@@ -150,7 +151,6 @@ void loop() {
         radio.sendACK();
         Serial1.print(" - ACK sent.");
       }
-      Blink(LED,50);
     }
   }
 }
@@ -168,7 +168,14 @@ void parseData(char* dataMessage){
 
 
 void printInfo(){
-  updateFilter();
+  //update filter
+  if (waveform.trainDur>0){
+    spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.trainDur;
+  }
+  else{
+    spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.onTime;
+  }
+  
   Serial1.print("*");Serial1.print(currentInfo.serialNumber);
   Serial1.print("~");Serial1.print(currentInfo.firmware); 
   Serial1.print("~");Serial1.print(currentInfo.lSetPoint);
@@ -203,40 +210,14 @@ void printDiodeStats(){
   Serial1.print(diodeStats.rightDAC);Serial1.print("\n");
 }
 
-void Blink(byte PIN, int msDelay)
-{
-  digitalWrite(PIN,HIGH);
-  delay(msDelay);
-  digitalWrite(PIN,LOW);
-}
-
-void updateFilter(){
-  if (waveform.trainDur>0){
-    spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.trainDur;
-  }
-  else{
-    spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.onTime;
-  }
-}
-
-void assignDataToWaveform(){
+void updateWaveform(){
   waveform.startDelay = valsFromParse[0];
   waveform.onTime = valsFromParse[1];
   waveform.offTime = valsFromParse[2];
   waveform.trainDur = valsFromParse[3];
   waveform.rampDur = valsFromParse[4];
-
-}
-
-void sendWaveform(){
   radio.send(CEREBRO, (const void*)(&waveform), sizeof(waveform));
   msgCount++;  
-}
-
-void printBattery(){
-  Serial1.print("*");
-  Serial1.print(battery.soc);
-  Serial1.print("&");
 }
 
 void triggerCommandReceived(){
