@@ -111,7 +111,8 @@ void loop() {
         case 'B':
           reportBattery();break;
         case 'I':    
-          msgCount = 0;        
+          msgCount = 0;
+          missedCount = 0;        
           sendInfo();break;
         case 'i':
           isolationTest();break;
