@@ -45,10 +45,10 @@ MainWindow::MainWindow(QWidget *parent)
         gotoApplocation = new QAction(this);
         gotoApplocation->setText("App install directory");
     goMenu->addAction(gotoApplocation);
-    toolMenu = menuBar()->addMenu("Analyze");
-        graphResults = new QAction(this);
-        graphResults->setText("Create graph from session logs");
-    toolMenu->addAction(graphResults);
+//    toolMenu = menuBar()->addMenu("Analyze");
+//        graphResults = new QAction(this);
+//        graphResults->setText("Create graph from session logs");
+//    toolMenu->addAction(graphResults);
     helpMenu = menuBar()->addMenu("Help");
         gotoDocs = new QAction(this);
         gotoDocs->setText("User Guide");
@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t1.31.0\nUpdated:\t5/19/2017";
+        QString aboutString = "\t2.0.1\nUpdated:\t10/20/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -73,16 +73,13 @@ MainWindow::MainWindow(QWidget *parent)
         equipmentLayout = new QGridLayout();
             rig_lbl = new QLabel("Rig #");
         equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
-            rat_lbl = new QLabel("Rat ID");
-        equipmentLayout->addWidget(rat_lbl,0,2,Qt::AlignCenter);
-            cerebro_lbl = new QLabel("Cerebro #");
-        equipmentLayout->addWidget(cerebro_lbl,0,3,Qt::AlignCenter);
+            rat_lbl = new QLabel("Rat-implant: (LSet/RSet)");
+        equipmentLayout->addWidget(rat_lbl,0,2,1,2,Qt::AlignCenter);
             rigSelect = new QListWidget();
         equipmentLayout->addWidget(rigSelect,1,1,4,1,Qt::AlignTop);
             ratSelect = new QListWidget();
-        equipmentLayout->addWidget(ratSelect,1,2,4,1,Qt::AlignTop);
-            cerebroSelect = new QListWidget();
-        equipmentLayout->addWidget(cerebroSelect,1,3,4,1,Qt::AlignTop);
+            ratSelect->setMinimumWidth(150);
+        equipmentLayout->addWidget(ratSelect,1,2,4,2,Qt::AlignTop|Qt::AlignHCenter);
             connectBS_label = new QLabel("Base Station Serial Port");
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
             refresh_btn = new QPushButton("Rescan");
@@ -99,29 +96,85 @@ MainWindow::MainWindow(QWidget *parent)
         equipmentLayout->setColumnStretch(8,1);
     equipmentBox->setLayout(equipmentLayout);
 
+    //Cerebro Status
+    cerStatusBox = new QGroupBox("Cerebro Status");
+        cerStatusLayout = new QGridLayout();
+            serialNumber_lbl = new QLabel("Serial #\n");
+            serialNumber_lbl->setAlignment(Qt::AlignCenter);
+            serialNumber_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(serialNumber_lbl,0,0);
+            cerFirmware_lbl = new QLabel("Firmware\n");
+            cerFirmware_lbl->setAlignment(Qt::AlignCenter);
+            cerFirmware_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerFirmware_lbl,0,1);
+            Lset_lbl = new QLabel("Lset\n");
+            Lset_lbl->setAlignment(Qt::AlignCenter);
+            Lset_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(Lset_lbl,0,2);
+            Rset_lbl = new QLabel("Rset\n");
+            Rset_lbl->setAlignment(Qt::AlignCenter);
+            Rset_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(Rset_lbl,0,3);
+            cerDelay_lbl = new QLabel("Delay\n");
+            cerDelay_lbl->setAlignment(Qt::AlignCenter);
+            cerDelay_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerDelay_lbl,0,4);
+            cerOn_lbl = new QLabel("On\n");
+            cerOn_lbl->setAlignment(Qt::AlignCenter);
+            cerOn_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerOn_lbl,0,5);
+            cerOff_lbl = new QLabel("Off\n");
+            cerOff_lbl->setAlignment(Qt::AlignCenter);
+            cerOff_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerOff_lbl,0,6);
+            cerTrain_lbl = new QLabel("Train\n");
+            cerTrain_lbl->setAlignment(Qt::AlignCenter);
+            cerTrain_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerTrain_lbl,0,7);
+            cerRamp_lbl = new QLabel("Ramp\n");
+            cerRamp_lbl->setAlignment(Qt::AlignCenter);
+            cerRamp_lbl->setWordWrap(true);
+        cerStatusLayout->addWidget(cerRamp_lbl,0,8);
+            batteryIndicator = new QProgressBar();
+            batteryIndicator->setOrientation(Qt::Horizontal);
+            batteryIndicator->setAlignment(Qt::AlignHCenter);
+            batteryIndicator->setMinimumWidth(30);
+            batteryIndicator->setValue(0);
+            batteryIndicator->setMinimum(0);
+            batteryIndicator->setMaximum(100);
+            batteryIndicator->setTextVisible(false);
+            batteryIndicator->setFormat("Battery=%p%");
+        cerStatusLayout->addWidget(batteryIndicator,1,1,1,8);
+            battery_lbl = new QLabel(batteryIndicator->text());
+        cerStatusLayout->addWidget(battery_lbl,1,0,1,1,Qt::AlignRight);
+            getInfo_btn = new QPushButton("Get Battery Level");
+        cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
+    cerStatusBox->setLayout(cerStatusLayout);
+    cerStatusBox->setEnabled(false);
+
     //Base station monitor
-    baseBox = new QGroupBox();
+    baseBox = new QGroupBox("Base Station Monitor");
         serialMonitorLayout = new QGridLayout();
-            serial_title = new QLabel("<h3><u>Base Station Monitor</u>:");
-        serialMonitorLayout->addWidget(serial_title,0,0,1,4);
         clearBase_btn = new QPushButton();
-            clearBase_btn->setText("Clear Monitor");
+            clearBase_btn->setText("Restart Session");
         serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
             baseFilter_label = new QLabel("Filter Duration:");
-        serialMonitorLayout->addWidget(baseFilter_label,1,0);
+        serialMonitorLayout->addWidget(baseFilter_label,0,0);
             baseMonitor = new QPlainTextEdit();
             baseMonitor->setMinimumWidth(300);
-            baseMonitor->setMinimumHeight(500);
-        serialMonitorLayout->addWidget(baseMonitor,2,0,1,6);
-            eeprom_btn = new QPushButton();
-            eeprom_btn->setText("(While the rat is still in the rig)\nClick to End Session");
-        serialMonitorLayout->addWidget(eeprom_btn,3,0,1,6);
+            baseMonitor->setMinimumHeight(380);
+        serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
+            saveMonitor_btn = new QPushButton();
+            saveMonitor_btn->setText("Save Session");
+            saveMonitor_btn->setMinimumHeight(40);
+            saveMonitor_btn->setEnabled(true);
+        serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,6);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
 
     //Waveform Adjustment
-    adjustBox = new QGroupBox("Cerebro's Parameters");
+    adjustBox = new QGroupBox("Waveform Parameters");
         adjustmentLayout = new QGridLayout();
             power_lbl = new QLabel("Power Level");
             power_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -176,7 +229,7 @@ MainWindow::MainWindow(QWidget *parent)
             trainDuration_lbl->setVisible(false);
         adjustmentLayout->addWidget(trainDuration_lbl,7,0);
             trainDuration_spn = new QSpinBox();
-            trainDuration_spn->setRange(0,65535);
+            trainDuration_spn->setRange(0,9999999);
             trainDuration_spn->setSingleStep(250);
             trainDuration_spn->setSuffix(" ms");
             trainDuration_spn->setAlignment(Qt::AlignCenter);
@@ -205,12 +258,28 @@ MainWindow::MainWindow(QWidget *parent)
     //Characterization
     charBox = new QGroupBox("Implant Construction Tools");
         charLayout = new QGridLayout();
-            startDiode_btn = new QPushButton("Start Diode Characterization");
-        charLayout->addWidget(startDiode_btn,0,0);
-            startImplant_btn = new QPushButton("Start Implant Characterization");
-        charLayout->addWidget(startImplant_btn,1,0);
-            initialize_btn = new QPushButton("Send Power Values to Cerebro");
-        charLayout->addWidget(initialize_btn,2,0);
+            leftDiode_spn = new QSpinBox();
+            leftDiode_spn->setRange(0,1023);
+            leftDiode_spn->setAlignment(Qt::AlignCenter);
+        charLayout->addWidget(leftDiode_spn,0,0,1,1);
+            rightDiode_spn = new QSpinBox();
+            rightDiode_spn->setRange(0,1023);
+            rightDiode_spn->setAlignment(Qt::AlignCenter);
+        charLayout->addWidget(rightDiode_spn,0,1,1,1);
+            leftTest_btn = new QPushButton("Test Left");
+        charLayout->addWidget(leftTest_btn,1,0,1,1);
+            rightTest_btn = new QPushButton("Test Right");
+        charLayout->addWidget(rightTest_btn,1,1,1,1);
+            leftSet_btn = new QPushButton("Set Left");
+        charLayout->addWidget(leftSet_btn,2,0,1,1);
+            rightSet_btn = new QPushButton("Set Right");
+        charLayout->addWidget(rightSet_btn,2,1,1,1);
+//            isolationTest_btn = new QPushButton("Isolation Test");
+//        charLayout->addWidget(isolationTest_btn,3,0,1,1);
+            combinedTest_btn = new QPushButton("Combined Test");
+        charLayout->addWidget(combinedTest_btn,3,0,1,2);
+//            initialize_btn = new QPushButton("Send Power Values to Cerebro");
+//        charLayout->addWidget(initialize_btn,4,0,1,2);
     charBox->setLayout(charLayout);
     charBox->setEnabled(false);
     charBox->setPalette(Qt::gray);
@@ -269,23 +338,12 @@ MainWindow::MainWindow(QWidget *parent)
     sendFadeDialog->setWindowFlags(sendFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
     sendFadeDialog->setMaximumWidth(0);
     sendFadeDialog->setMaximumHeight(0);
+    sendFadeDialog->setModal(false);
     sendFadeDialog->setLayout(sendFadeLayout);
 
     //Triggering & debugging
     bugBox = new QGroupBox("Debug");
         triggerLayout = new QGridLayout();
-            trigger_checkbox = new QCheckBox();
-            trigger_checkbox->setText("Test Mode");
-        triggerLayout->addWidget(trigger_checkbox,0,0,Qt::AlignRight);
-            trials_spn = new QSpinBox();
-            trials_spn->setMinimum(0);
-            trials_spn->setMaximum(10000);
-            trials_spn->setSingleStep(10);
-            trials_spn->setSuffix(" test signals");
-            trials_spn->setAlignment(Qt::AlignCenter);
-            trials_spn->setValue(10);
-            trials_spn->setEnabled(false);
-        triggerLayout->addWidget(trials_spn,0,1,Qt::AlignLeft);
             trigger_btn = new QPushButton;
             trigger_btn->setText("Trigger");
             trigger_btn->setAutoDefault(true);
@@ -296,30 +354,28 @@ MainWindow::MainWindow(QWidget *parent)
         triggerLayout->addWidget(testProgress,2,0,1,2);
             abort_btn = new QPushButton("Stop");
         triggerLayout->addWidget(abort_btn,1,1);
-            memoryDump_btn = new QPushButton("Memory Dump");
-        triggerLayout->addWidget(memoryDump_btn,3,0);
-            resetAddress_btn = new QPushButton("Reset Address");
-        triggerLayout->addWidget(resetAddress_btn,3,1);
             macroText = new QLineEdit();
 //                macroText->setFixedWidth(40);
         triggerLayout->addWidget(macroText,4,0,Qt::AlignRight);
             macro_btn = new QPushButton("Send Text");
         triggerLayout->addWidget(macro_btn,4,1);
+            startDiode_btn = new QPushButton("Cerebro Monitor");
+        triggerLayout->addWidget(startDiode_btn,6,0,1,2);
     bugBox->setLayout(triggerLayout);
     bugBox->setEnabled(false);
     bugBox->setPalette(Qt::gray);
 
     //Download Monitor
-    downloaderBox = new QGroupBox();
+    downloaderDialog = new QDialog();
         connectionLayout2 = new QGridLayout();
-            connectLU_label = new QLabel("Downloader Serial Port");
+            connectLU_label = new QLabel("Cerebro Serial Port");
         connectionLayout2->addWidget(connectLU_label,0,0,1,3,Qt::AlignCenter);
             refresh2_btn = new QPushButton("Rescan");
         connectionLayout2->addWidget(refresh2_btn,1,0);
             serialPortList2 = new QComboBox();
             serialPortList2->setMinimumWidth(150);
         connectionLayout2->addWidget(serialPortList2,1,1,1,2);
-            connect2_btn = new QPushButton("Connect to Downloader");
+            connect2_btn = new QPushButton("Connect to Cerebro");
             connect2_btn->setCheckable(true);
         connectionLayout2->addWidget(connect2_btn,2,0,1,3);
             download_title = new QLabel("<h3><u>Cerebro Monitor</u>:");
@@ -330,26 +386,21 @@ MainWindow::MainWindow(QWidget *parent)
         connectionLayout2->addWidget(clearDownload_btn,3,2,Qt::AlignRight);
             downloadMonitor = new QPlainTextEdit();
             downloadMonitor->setMinimumWidth(275);
+            downloadMonitor->setMinimumHeight(400);
             downloadMonitor->setEnabled(false);
         connectionLayout2->addWidget(downloadMonitor,4,0,1,3);
         connectionLayout2->setRowStretch(4,1);
-            saveMonitor_btn = new QPushButton();
-            saveMonitor_btn->setText("Save Session");
-            saveMonitor_btn->setMinimumWidth(125);
-            saveMonitor_btn->setMinimumHeight(40);
-            saveMonitor_btn->setEnabled(false);
-        connectionLayout2->addWidget(saveMonitor_btn,5,0,1,3);
-    downloaderBox->setLayout(connectionLayout2);
+    downloaderDialog->setLayout(connectionLayout2);
 
 
     //Add Elements to Main Layout
     mainLayout = new QGridLayout();
     mainLayout->addWidget(equipmentBox,0,0,1,3);
-    mainLayout->addWidget(baseBox,1,1,4,2);
-    mainLayout->addWidget(adjustBox,1,0);
-    mainLayout->addWidget(charBox,2,0);
-    mainLayout->addWidget(bugBox,3,0);
-    mainLayout->addWidget(downloaderBox,0,3,5,1);
+    mainLayout->addWidget(cerStatusBox,1,0,1,3);
+    mainLayout->addWidget(baseBox,2,1,4,2);
+    mainLayout->addWidget(adjustBox,2,0);
+    mainLayout->addWidget(charBox,3,0);
+    mainLayout->addWidget(bugBox,4,0);
 //    mainLayout->setColumnStretch(2,1);
 //    mainLayout->setRowStretch(5,1);
 
@@ -362,13 +413,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 #ifdef _WIN32   //--------Windows USB parse settings------------
     usbTag = "COM";
-    usbDescription = "USB Serial Port";
+    usbDescription = "Adafruit Feather 32u4 (800C:00)";
 #elif __APPLE__ //---------Mac USB parse settings---------------
-    usbTag  = "cu.usbserial";
-    usbDescription = "FT230X Basic UART";
+    usbTag  = "cu.usbmodem";
+    usbDescription = "Feather 32u4";
 #elif __linux__ //---------Linux USB parse settings-------------
     usbTag  = "ttyUSB";
-    usbDescription = "FT230X Basic UART";
+    usbDescription = "Feather 32u4";
 #endif
 
     //program setup
@@ -397,7 +448,7 @@ MainWindow::MainWindow(QWidget *parent)
     //menu functions
     connect(openDir,SIGNAL(triggered()),this,SLOT(gotoDir()));
     connect(gotoApplocation,SIGNAL(triggered()),this,SLOT(gotoAppLocation()));
-    connect(graphResults,SIGNAL(triggered(bool)),this,SLOT(getGraphs()));
+//    connect(graphResults,SIGNAL(triggered(bool)),this,SLOT(getGraphs()));
     connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
     connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
     connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
@@ -418,15 +469,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clearBase_btn,SIGNAL(clicked()),this,SLOT(clearMonitor()));
     connect(clearDownload_btn,SIGNAL(clicked()),this,SLOT(clearMonitor2()));
     connect(saveMonitor_btn,SIGNAL(clicked()),this,SLOT(saveFile()));
-    connect(eeprom_btn,SIGNAL(clicked()),this,SLOT(EEPROM()));
 
     //Cerebro Parameters
     connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
     connect(offTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
     connect(fade_checkbox,SIGNAL(clicked()),this,SLOT(fadeChecked()));
     connect(sendSettings_btn,SIGNAL(clicked()),this,SLOT(set()));
-    connect(trigger_btn,SIGNAL(clicked()),this,SLOT(triggerPushed()));
-    connect(trigger_checkbox,SIGNAL(clicked()),this,SLOT(triggerChecked()));
     connect(singleShot,SIGNAL(clicked()),this,SLOT(trainChecked()));
     connect(pulseTrain,SIGNAL(clicked()),this,SLOT(trainChecked()));
     connect(newPower_btn,SIGNAL(clicked(bool)),this,SLOT(sendNewPower()));
@@ -435,17 +483,22 @@ MainWindow::MainWindow(QWidget *parent)
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
     connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
     connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
-    connect(memoryDump_btn,SIGNAL(clicked(bool)),this,SLOT(dumpMemory()));
-    connect(resetAddress_btn,SIGNAL(clicked(bool)),this,SLOT(resetAddress()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
+    connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
+    connect(trigger_btn,SIGNAL(clicked()),this,SLOT(sendTrigger()));
+
+//    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
 
     //Calibration
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
-    connect(startImplant_btn,SIGNAL(clicked()),this,SLOT(sendImplantStart()));
-    connect(startDiode_btn,SIGNAL(clicked()),this,SLOT(sendDiodeStart()));
+    connect(leftTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(leftSet_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(rightTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(rightSet_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
+    connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
-    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(exec()));
+//    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
     connect(createVecBtn,SIGNAL(clicked(bool)),createFadeDialog,SLOT(exec()));
 }
 
@@ -484,21 +537,17 @@ void MainWindow::applySettings()
     settings.beginGroup("sessionLists");
         rigList = settings.value("rigList").toStringList();
         ratList = settings.value("ratList").toStringList();
-        cerebroList = settings.value("cerebroList").toStringList();
     settings.endGroup();
 
     //populate the list widgets
     rigSelect->clear();
     ratSelect->clear();
-    cerebroSelect->clear();
     rigSelect->addItems(rigList);
     ratSelect->addItems(ratList);
-    cerebroSelect->addItems(cerebroList);
     int itemHeight = 25;
     int itemWidth = 75;
     rigSelect->setMaximumSize(itemWidth,itemHeight*rigSelect->count());
     ratSelect->setMaximumSize(itemWidth,itemHeight*ratSelect->count());
-    cerebroSelect->setMaximumSize(itemWidth,itemHeight*cerebroSelect->count());
 
     //
     settings.beginGroup("Features");
@@ -506,7 +555,7 @@ void MainWindow::applySettings()
         showHistogram = settings.value("showHistogram").toBool();
         mcubeEnabled = settings.value("mcubeEnabled").toBool();
     settings.endGroup();
-    toolMenu->setEnabled(pythonEnabled);
+//    toolMenu->setEnabled(pythonEnabled);
     power_lbl->setVisible(mcubeEnabled);
     power_spn->setVisible(mcubeEnabled);
     newPower_btn->setVisible(mcubeEnabled);
@@ -533,7 +582,12 @@ void MainWindow::fillBasestationPorts()
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         if (!info.isBusy()){
-            if(info.description()==usbDescription){
+            qDebug()<<info.description();
+            qDebug()<<"manufacturer"<<info.manufacturer();
+            qDebug()<<info.portName();
+            qDebug()<<info.productIdentifier();
+            qDebug()<<info.serialNumber();
+            if(info.manufacturer().contains("Cypress")){
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
                     if (!aliasStringList.filter(info.portName())[0].contains("Downloader",Qt::CaseInsensitive)){
                         list << aliasStringList.filter(info.portName())[0];
@@ -576,7 +630,7 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
-    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select Rig
+    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -590,22 +644,13 @@ void MainWindow::connectBasePort()
         alert.setWindowTitle("Missing Rat ID");
         alert.exec();
     }
-    else if((cerebroSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select cerebro
-        QMessageBox alert;
-        alert.setText("Please select a Cerebro # to continue");
-        alert.setIcon(QMessageBox::Warning);
-        alert.setWindowTitle("Missing Cerebro #");
-        alert.exec();
-    }
     else{ //  disable and enable components depending on whether we are connecting or disconnecting to the base station
         gotoSettings->setEnabled(baseConnected);
         toggleDebug->setEnabled(baseConnected);
         rig_lbl->setEnabled(baseConnected);
         rat_lbl->setEnabled(baseConnected);
-        cerebro_lbl->setEnabled(baseConnected);
         rigSelect->setEnabled(baseConnected);
         ratSelect->setEnabled(baseConnected);
-        cerebroSelect->setEnabled(baseConnected);
         connectBS_label->setEnabled(baseConnected);
         serialPortList->setEnabled(baseConnected);
         refresh_btn->setEnabled(baseConnected);
@@ -615,29 +660,35 @@ void MainWindow::connectBasePort()
         bugBox->setEnabled(!baseConnected && debugOn);
 //        baseSettingsBox->setEnabled(!baseConnected);
         baseBox->setEnabled(!baseConnected);
-        saveMonitor_btn->setEnabled(downloadConnected && !baseConnected);
+        cerStatusBox->setEnabled(!baseConnected);
         if(!baseConnected){ //connect to serial port
             //isolate the COMXX part of the port name
             QString tempPortName = serialPortList->currentText();
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
             //open serial connection
+            qDebug()<<tempPortName;
             serial->setPortName(tempPortName);
-            serial->setBaudRate(QSerialPort::Baud9600);
+            serial->setBaudRate(57600);
             serial->setDataBits(QSerialPort::Data8);
             serial->setParity(QSerialPort::NoParity);
             serial->setStopBits(QSerialPort::OneStop);
             serial->setFlowControl(QSerialPort::NoFlowControl);
-            serial->open(QIODevice::ReadWrite);
+            qDebug()<<serial->open(QIODevice::ReadWrite);
+            qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
             if(!debugOn){
-                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratSelect->currentItem()->text() );}
+                QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
+                qDebug()<<"rat info "<<ratInfo;
+                ratNumber = ratInfo[0];
+                titleLeftPower = ratInfo[2].toInt();
+                titleRightPower = ratInfo[3].toInt();
+                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratInfo[0] );}
             else{
+                ratNumber = "9999";
                 setWindowTitle("Debug Mode");
             }
-            QString rst = "R";
-            serial->write(rst.toLocal8Bit());
             clearBase_btn->setEnabled(false);
             connect_btn->setEnabled(false);
             QTimer::singleShot(1000, this, SLOT(sendTime()));
@@ -654,7 +705,7 @@ void MainWindow::connectBasePort()
             showDebug();
             baseConnected = false;
             receivedBaseInfo = false;
-            baseFilter_label->setText("Filter Duration:");
+            clearMonitor();
         }
     }
     connect_btn->setChecked(baseConnected);
@@ -677,7 +728,6 @@ void MainWindow::connectDownloadPort()
         downloadMonitor->setEnabled(!downloadConnected);
         download_title->setEnabled(!downloadConnected);
         clearDownload_btn->setEnabled(!downloadConnected);
-        saveMonitor_btn->setEnabled(!downloadConnected && baseConnected);
         if(!downloadConnected){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
@@ -705,36 +755,86 @@ void MainWindow::connectDownloadPort()
 
 void MainWindow::sendTime()
 {
-    startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-    QString startup;
-    if (!debugOn){
-        startup = QString("%1,%2,%3,%4,").arg(startTime,rigSelect->currentItem()->text(),ratSelect->currentItem()->text(),cerebroSelect->currentItem()->text());
+//    baseMonitor->clear();
+    if (serial->isOpen()){
+        startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
+        QString startup =  QString("\nStart Time, %1").arg(startTime);
+        baseMonitor->textCursor().insertText(startup);
+        checkForBase();
+        connect_btn->setEnabled(true);
+        clearBase_btn->setEnabled(true);
     }
-    else{
-        startup = QString("%1,%2,%3,%4,").arg(startTime,"99","99","99");
-    }
-    serial->write(startup.toLocal8Bit());
-    connect_btn->setEnabled(true);
-    clearBase_btn->setEnabled(true);
 }
 
 void MainWindow::readSerial()
 {
     baseMonitor->moveCursor(QTextCursor::End);
-    baseMonitor->insertPlainText(serial->readAll());
-    baseMonitor->ensureCursorVisible();
-    if(!receivedBaseInfo){
-        QString buffer = baseMonitor->toPlainText();
-        qDebug()<<buffer.count('\n')<<buffer.count('_')<<buffer.count(',');
-        if (buffer.count('\n')==1 && buffer.count('_')==4 && buffer.count(',')==5){
-            receivedBaseInfo = true;
-            QStringList baseInfo = buffer.trimmed().split(',');
-            baseFilter_label->setText("Filter Duration: "+ baseInfo[5]+ " ms");
+    while(!serial->atEnd()){
+        baseBuffer += serial->readAll();
+    }
+    int dataStart = baseBuffer.indexOf("*");
+    int dataEnd = baseBuffer.indexOf("&");
+    qDebug()<<"buffer,datastart,dataend"<<baseBuffer<<dataStart<<dataEnd;
+
+    if (dataStart!=-1 && dataEnd!=-1){
+        QString dataString = baseBuffer.mid(dataStart+1,dataEnd-dataStart-1);
+//        baseBuffer.remove(dataStart,dataEnd+1-dataStart);
+        qDebug()<<"buffer "<<baseBuffer;
+        QStringList onboardParams = dataString.split("~");
+        qDebug()<<"data = "<<onboardParams;
+        qDebug()<<"length "<<onboardParams.length();
+        if (onboardParams.length()==10){//received cerebro info
+            serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
+            cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
+            Lset_lbl->setText("Lset\n"+onboardParams[2]);leftDiode_spn->setValue(onboardParams[2].toInt());
+            Rset_lbl->setText("Rset\n"+onboardParams[3]);rightDiode_spn->setValue(onboardParams[3].toInt());
+            if (!debugOn){
+                if ((onboardParams[2].toInt() != titleLeftPower) || (onboardParams[3].toInt() != titleRightPower)){
+                    qDebug()<<"There's a mismatch";
+                    matchLeftPower();
+                    QTimer::singleShot(500, this, SLOT(matchRightPower()));
+                }
+            }
+
+            cerDelay_lbl->setText("Delay\n"+onboardParams[4]); startDelay_spn->setValue(onboardParams[4].toInt());
+            cerOn_lbl->setText("On\n"+onboardParams[5]); onTime_spn->setValue(onboardParams[5].toInt());
+            cerOff_lbl->setText("Off\n"+onboardParams[6]); offTime_spn->setValue(onboardParams[6].toInt());
+            cerTrain_lbl->setText("Train\n"+onboardParams[7]); int trainDurationData = onboardParams[7].toInt();
+            if(trainDurationData){
+                pulseTrain->setChecked(true);
+                trainChecked();
+            }
+            else{
+                singleShot->setChecked(true);
+                trainChecked();
+            }
+            trainDuration_spn->setValue(trainDurationData);
+            cerRamp_lbl->setText("Ramp\n"+ onboardParams[8]);
+            if (onboardParams[8].toInt()){
+                fade_checkbox->setChecked(true);
+                fade_spn->setValue(onboardParams[8].toInt());
+            }
+            else{
+                fade_checkbox->setChecked(false);
+            }
+            fadeChecked();
+            updateFilter();
+            batteryIndicator->setValue(onboardParams[9].toInt());
+            battery_lbl->setText(batteryIndicator->text());
         }
-        else if (buffer.count('\n')>1){
-            receivedBaseInfo = true; //stop searching if we haven't found it after the first line
+        else if (onboardParams.length()==1){ //received battery update
+            batteryIndicator->setValue(onboardParams[0].toInt());
+            battery_lbl->setText(batteryIndicator->text());
+
         }
     }
+    int newLineIndex = baseBuffer.lastIndexOf("\n");
+    if (newLineIndex>-1 ){ //if we come the end of the line reaches the buffer, print the buffer to the monitor
+        qDebug()<<"newline Index"<<newLineIndex<<baseBuffer.mid(0,newLineIndex+1)<<"||"<<baseBuffer.mid(newLineIndex+1,baseBuffer.length()-newLineIndex-1);
+        baseMonitor->insertPlainText(baseBuffer.mid(0,newLineIndex+1));
+        baseBuffer = baseBuffer.mid(newLineIndex+1,baseBuffer.length()-newLineIndex-1);
+    }
+    baseMonitor->ensureCursorVisible();
 }
 void MainWindow::readLog()
 {
@@ -751,39 +851,7 @@ void MainWindow::readLog()
                 downloadMonitor->insertPlainText(buffer.mid(0,andIndex-1));
             }
             QStringList onboardParams = buffer.mid(andIndex+1,starIndex).split('~');
-            power_spn->setValue(onboardParams[3].toInt());
-            startDelay_spn->setValue(onboardParams[4].toInt());
-            onTime_spn->setValue(onboardParams[5].toInt());
-            offTime_spn->setValue(onboardParams[6].toInt());
-            if(onboardParams[7].toInt()){
-                pulseTrain->setChecked(true);
-                trainChecked();
-            }
-            else{
-                singleShot->setChecked(true);
-                trainChecked();
-            }
-            trainDuration_spn->setValue(onboardParams[7].toInt());
-            if (onboardParams[8].toInt()){
-                fade_checkbox->setChecked(true);
-                fade_spn->setValue(onboardParams[8].toInt());
-            }
-            else{
-                fade_checkbox->setChecked(false);
-            }
-            fadeChecked();
-            QMessageBox showParams;
-            showParams.setWindowTitle("Cerebro #" + onboardParams[1]  + " - LD #" + onboardParams[2]);
-            showParams.setStandardButtons(QMessageBox::Ok);
-            showParams.setText(
-                    "Firmware:\t" + onboardParams[0] +
-                    "\n\nPower Level:\t" + onboardParams[3] +
-                    "\n\nStart Delay:\t"+ onboardParams[4]+
-                    onTimeString + onboardParams[5] +
-                    offTimeString + onboardParams[6] +
-                    " ms\nTrain Duration:\t" + onboardParams[7] +
-                    " ms\nFade Time:\t" + onboardParams[8] + " ms" );
-            showParams.exec();
+
 //            if(baseConnected){
 //                QMessageBox filterMsg;
 //                filterMsg.setWindowTitle("Update Base Station Command Filter");
@@ -803,14 +871,19 @@ void MainWindow::readLog()
 
 void MainWindow::clearMonitor()
 {
-    baseMonitor->clear();
-    receivedBaseInfo = false;
+//    baseMonitor->clear();
     baseFilter_label->setText("Filter Duration:");
-    if(baseConnected){
-        QString rst = "R";
-        serial->write(rst.toLocal8Bit());
-        clearBase_btn->setEnabled(false);
-    }
+    batteryIndicator->setValue(0);
+    battery_lbl->setText(batteryIndicator->text());
+    serialNumber_lbl->setText("Serial#\n");
+    cerFirmware_lbl->setText("Firmware#\n");
+    Lset_lbl->setText("Lset\n");
+    Rset_lbl->setText("Rset\n");
+    cerDelay_lbl->setText("Delay\n");
+    cerOn_lbl->setText("On\n");
+    cerOff_lbl->setText("Off\n");
+    cerTrain_lbl->setText("Train\n");
+    cerRamp_lbl->setText("Ramp\n");
     QTimer::singleShot(1000, this, SLOT(sendTime()));
 }
 
@@ -845,7 +918,8 @@ void MainWindow::set()
             fadeTime = QString::number(fade_spn->value());
         }
     }
-    QString msg = startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime;
+    QString msg = "W,"+ startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime+"\n";
+    qDebug()<<"message sent"<<msg;
     QMessageBox confirmUpdate;
         confirmUpdate.setWindowTitle("Confirm Parameter Change");
         confirmUpdate.setIcon(QMessageBox::Question);
@@ -860,65 +934,20 @@ void MainWindow::set()
                     " ms\nTrain Duration:\t" + trainDur +
                     " ms\nFade Time:\t" + fadeTime + " ms");
 //                    "\n\nThe command filter will be automatically updated to " + QString::number(baseFilter_spn->value()) + " ms");
-    if (confirmUpdate.exec() == QMessageBox::Yes){
+//    if (confirmUpdate.exec() == QMessageBox::Yes){
         serial->write(msg.toLocal8Bit());
         last_settings->setText("Last Parameters Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
-        QTimer::singleShot(500, this, SLOT(updateFilter()));
-    }
+//        QTimer::singleShot(500, this, SLOT(updateFilter()));
+//    }
 }
 
 void MainWindow::sendTrigger()
 {
     QString msg = "T";
-    if (inTestloop){
-        testCount++;
-        testProgress->setValue(testCount);
-        if (testCount==trials_spn->value()){
-            triggerPushed();
-        }
-    }
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
 
-void MainWindow::triggerPushed()
-{
-    if(trigger_checkbox->isChecked()){
-        bool flag = 0;
-        if(!flag){
-            inTestloop = !inTestloop;
-            if(inTestloop){
-                timer->start(2000);
-                testProgress->setVisible(true);
-                testProgress->setValue(0);
-                testProgress->setMaximum(trials_spn->value());
-                trigger_btn->setText("Stop Testing");
-            }
-            else{
-                timer->stop();
-                testProgress->setVisible(false);
-                trigger_btn->setText("Begin Test");
-                testCount = 0;
-            }
-            trigger_checkbox->setEnabled(!inTestloop);
-            trials_spn->setEnabled(!inTestloop);
-        }
-    }
-    else{
-        sendTrigger();
-    }
-}
-
-void MainWindow::triggerChecked()
-{
-    trials_spn->setEnabled(!trials_spn->isEnabled());
-    if(!trigger_checkbox->isChecked()){
-        trigger_btn->setText("Trigger");
-    }
-    else{
-        trigger_btn->setText("Begin Test");
-    }
-}
 
 void MainWindow::trainChecked()
 {
@@ -933,19 +962,13 @@ void MainWindow::trainChecked()
         fade_spn->setVisible(false);
         fade_checkbox->setChecked(false);
     }
-
-
 }
 
 void MainWindow::saveFile()
 {
-    QString ratNumber;
-    if(debugOn){
-        ratNumber = "9999";
-    }
-    else{
-        ratNumber = ratSelect->currentItem()->text();
-    }
+    QString msg = "M";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
     bool continueSaving = true;
     //get the default save directory
     QSettings settings("Bobcat Engineering","CCS");
@@ -976,7 +999,7 @@ void MainWindow::saveFile()
         if (!ratNumber.isEmpty()){
             //save the base station log
             saveName1 = QFileDialog::getSaveFileName(this,
-                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime +"_base station",tr("(*.csv)") );
+                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime +"_baseLog",tr("(*.csv)") );
             qDebug()<<saveName1;
             if (!saveName1.isEmpty()){
                 QFile file(saveName1);
@@ -992,55 +1015,9 @@ void MainWindow::saveFile()
                 }
                 rigSelect->clearSelection();
                 ratSelect->clearSelection();
-                cerebroSelect->clearSelection();
                 baseMonitor->clear();
                 debugOn = false;
                 showDebug();
-            }
-        }
-        //save the cerebro log
-        saveName2 = QFileDialog::getSaveFileName(this,
-            tr("Save Cerebro Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime+"_cerebroLog", tr("(*.csv)") );
-        if (!saveName2.isEmpty()){
-            QFile file2(saveName2);
-            file2.open(QIODevice::WriteOnly | QIODevice::Text);
-            QTextStream out2(&file2);
-            QString log2 = downloadMonitor->toPlainText();
-            log2 = log2.mid(log2.indexOf("Ver,",Qt::CaseSensitive)); //remove any garbage that comes before the start of the log, indicated by "Ver,"
-            out2 << log2;
-            file2.close();
-            downloadMonitor->clear();
-            if(pythonEnabled){
-                // Run python script to summarize data from base station and cerebro logs
-                QProcess *process = new QProcess(this);
-                QString plotArg;
-                if (showHistogram){
-                    plotArg = "save and histogram";
-                }
-                else{
-                    plotArg = "save only";
-                }
-                QStringList pythonArgs;
-                pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<saveName1<<saveName2<<plotArg; //pass the two log file locations into the python script
-                process->start("python",pythonArgs);
-                process->waitForFinished(-1);
-                QString errorString = process->readAllStandardError();
-                //Display summary in a popup message
-                QMessageBox alert;
-                if (errorString.isEmpty()){
-                    alert.setWindowTitle("Session Summary");
-                    alert.setText(process->readAll());
-                    alert.exec();
-                }
-                else{
-        //            alert.setWindowTitle("Error");
-        //            alert.setText(errorString);
-        //            alert.exec();
-                    QFile file3(saveDirectoryPath + "/" + ratNumber + "/" + saveTime.toString("yyyy_MM_dd_hh_mm")+"_errorText.txt");
-                    file3.open(QIODevice::WriteOnly | QIODevice::Text);
-                    QTextStream out3(&file3);
-                    out3 << errorString;
-                }
             }
         }
     }
@@ -1049,7 +1026,6 @@ void MainWindow::saveFile()
 
 void MainWindow::errorMsg()
 {
-//    qDebug()<<"serial error:"<<serial->error();
     if (((serial->error()==11)|(serial->error()==7)|(serial->error()==8)|(serial->error()==9)&& errorThrown==false)){                //http://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
         errorThrown = true;
         baseMonitor->textCursor().insertText("ERROR\r");
@@ -1063,8 +1039,6 @@ void MainWindow::errorMsg()
     }
 }
 
-
-
 void MainWindow::updateFilter(){
     if (singleShot->isChecked()){
         baseFilter = startDelay_spn->value() + onTime_spn->value();
@@ -1072,46 +1046,35 @@ void MainWindow::updateFilter(){
     else{
         baseFilter = startDelay_spn->value()+ trainDuration_spn->value();
     }
-    QString msg = "F,"+ QString::number(baseFilter);
-    serial->write(msg.toLocal8Bit());
-    qDebug()<<msg<<"sent";
-    QMessageBox baseUpdated;
-        baseUpdated.setWindowTitle("Command Filter Updated");
-        baseUpdated.setIcon(QMessageBox::Information);
-        baseUpdated.setText("Base Station's command filter has automatically been updated to <b>" + QString::number(baseFilter) + " ms</b>");
-    baseUpdated.exec();
-    QTimer::singleShot(500, this, SLOT(clearMonitor()));
+    baseFilter_label->setText("Filter Duration: "+ QString::number(baseFilter) + " ms");
  }
 
 
-void MainWindow::EEPROM(){
-    QString msg = "E";
-    serial->write(msg.toLocal8Bit());
-    qDebug()<<msg<<"sent";
-    if (!(connect2_btn->isChecked())){ //prevents download port dropdown text from being cleared if already connected
-        fillDownloaderPorts();
-    }
-}
-
 void MainWindow::abort(){
-    QString msg = "S";
+    QString msg = "A\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
 void MainWindow::macro(){
-    QString msg = macroText->text();
+    QString msg = macroText->text()+"\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
 
-void MainWindow::dumpMemory(){
-    QString msg = "M";
+void MainWindow::getBatteryStatus(){
+    QString msg = "B\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
 
-void MainWindow::resetAddress(){
-    QString msg = "A";
+void MainWindow::checkForBase(){
+    QString msg = "?\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<"sent";
+}
+
+void MainWindow::getInfo(){
+    QString msg = "I\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
@@ -1149,18 +1112,15 @@ void MainWindow::showDebug(){
     if (debugOn){
         rigSelect->setEnabled(false);
         ratSelect->setEnabled(false);
-        cerebroSelect->setEnabled(false);
         rigSelect->clearSelection();
         ratSelect->clearSelection();
-        cerebroSelect->clearSelection();
-        connect_btn->setText("Start Session (Debug Mode)");
+        connect_btn->setText("Connect to Base Station (Debug Mode)");
         toggleDebug->setText("Exit Debug Mode");
     }
     else{
         rigSelect->setEnabled(true);
         ratSelect->setEnabled(true);
-        cerebroSelect->setEnabled(true);
-        connect_btn->setText("Start Session");
+        connect_btn->setText("Connect to Base Station");
         toggleDebug->setText("Enter Debug Mode");
     }
 }
@@ -1170,7 +1130,7 @@ void MainWindow::fadeChecked(){
 }
 
 void MainWindow::openDocs(){
-//    opens readthedocs.com documentation
+//    opens online documentation
     QUrl site = QUrl::fromEncoded( "https://karpova-lab.github.io/cerebro/Software/Xavier.html");
     QDesktopServices::openUrl(site);
 //    //opens local html file
@@ -1370,16 +1330,46 @@ void MainWindow::getCalVals(QString calibrateDataPath ){
     createFadeDialog->close();
 }
 
-void MainWindow::sendImplantStart()
-{
-    QString msg = "Z";
+void MainWindow::matchLeftPower(){
+    QString msg = "L," + QString::number(titleLeftPower) +"\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
 
-void MainWindow::sendDiodeStart()
+void MainWindow::matchRightPower(){
+    QString msg = "R," + QString::number(titleRightPower) +"\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+    clearMonitor();
+}
+void MainWindow::sendToDiode()
 {
-    QString msg = "K";
+    QString msg = "";
+    QString value = "";
+    if (sender()==leftTest_btn){
+        msg = "l";
+        value =  QString::number(leftDiode_spn->value());
+    }
+    else if (sender()==leftSet_btn){
+        msg = "L";
+        value =  QString::number(leftDiode_spn->value());
+    }
+    else if (sender()==rightTest_btn){
+        msg = "r";
+        value =  QString::number(rightDiode_spn->value());
+    }
+    else if (sender()==rightSet_btn){
+        msg = "R";
+        value =  QString::number(rightDiode_spn->value());
+    }
+    msg = msg + "," + value+"\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::testCombined()
+{
+    QString msg = "c\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }

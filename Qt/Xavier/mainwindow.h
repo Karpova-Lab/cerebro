@@ -63,8 +63,10 @@ private:
     bool                    errorThrown;
     int                     baseFilter;
     QString                 startTime;
-    QString                 saveName1,saveName2;
+    QString                 saveName1;
     bool                    repeatOn;
+    int                     titleLeftPower, titleRightPower;
+    QString                 ratNumber;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
@@ -74,21 +76,30 @@ private:
     //Experimental Setup
     QGroupBox*              equipmentBox;
     QGridLayout*            equipmentLayout;
-    QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QListWidget*            rigSelect,*ratSelect,*cerebroSelect;
+    QLabel*                 rig_lbl,*rat_lbl;
+    QListWidget*            rigSelect,*ratSelect;
     QComboBox*              serialPortList;
     QLabel*                 connectBS_label;
     QPushButton*            refresh_btn,*connect_btn;
     QCheckBox*              debugCheckbox;
-    QStringList             aliasStringList,rigList,ratList,cerebroList;
+    QStringList             aliasStringList,rigList,ratList;
+
+    //Cerebro Status
+    QGroupBox*              cerStatusBox;
+    QGridLayout*            cerStatusLayout;
+    QLabel*                 serialNumber_lbl,*cerFirmware_lbl,*Lset_lbl,*Rset_lbl,*cerDelay_lbl,*cerOn_lbl,*cerOff_lbl,*cerTrain_lbl,*cerRamp_lbl;
+    QPushButton*            getInfo_btn;
+    QProgressBar*           batteryIndicator;
+    QLabel*                 battery_lbl;
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 serial_title,*baseFilter_label;
+    QLabel*                 baseFilter_label;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
-    QPushButton*            eeprom_btn;
+    QPushButton*            saveMonitor_btn;
+    QString                 baseBuffer;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
@@ -102,7 +113,8 @@ private:
     //Characterization Commands
     QGroupBox*              charBox;
     QGridLayout*            charLayout;
-    QPushButton*            startImplant_btn,*startDiode_btn,*initialize_btn;
+    QSpinBox*               leftDiode_spn,*rightDiode_spn;
+    QPushButton*            leftTest_btn,*leftSet_btn,*rightTest_btn,*rightSet_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
 
     //Calibration Dialogs
     QDialog*                sendFadeDialog,*createFadeDialog;
@@ -122,13 +134,13 @@ private:
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*memoryDump_btn,*resetAddress_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*macro_btn;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 
     //Download Monitor
-    QGroupBox*              downloaderBox;
-    QPushButton*            refresh2_btn,*connect2_btn,*saveMonitor_btn,*clearDownload_btn;
+    QDialog*                downloaderDialog;
+    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn;
     QGridLayout*            connectionLayout2;
     QComboBox*              serialPortList2;
     QLabel*                 connectLU_label,*download_title;
@@ -153,6 +165,9 @@ private slots:
     void connectBasePort();
     void connectDownloadPort();
     void sendTime();
+    void matchLeftPower();
+    void matchRightPower();
+
 
     //Monitors
     void errorMsg();
@@ -166,12 +181,10 @@ private slots:
     //Debug Commands
     void sendTrigger();
     void abort();
-    void EEPROM();
     void macro();
-    void triggerPushed();
-    void triggerChecked();
-    void resetAddress();
-    void dumpMemory();
+    void getInfo();
+    void getBatteryStatus();
+    void checkForBase();
 
     //Cerebro Parmeters
     void trainChecked();
@@ -185,8 +198,8 @@ private slots:
     void chooseFile();
     void getCalVals(QString calibrateDataPath);
     void useDropped(const QMimeData *mimeData);
-    void sendImplantStart();
-    void sendDiodeStart();
+    void sendToDiode();
+    void testCombined();
     void sendCalVector();
     void sendCalGroups();
     void sendHardwareVals();

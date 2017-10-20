@@ -10,10 +10,10 @@ settingsDialog::settingsDialog(QWidget *parent)
         usbDescription = "USB Serial Port";
     #elif __APPLE__ //---------Mac USB parse settings---------------
         usbTag  = "cu.usbserial";
-        usbDescription = "FT230X Basic UART";
+        usbDescription = "Feather 32u4";
     #elif __linux__ //---------Linux USB parse settings-------------
         usbTag  = "ttyUSB";
-        usbDescription = "FT230X Basic UART";
+        usbDescription = "Feather 32u4";
     #endif
     //Save directory editor
     directoryBox = new QGroupBox("Edit Default Save Directory");
@@ -59,19 +59,6 @@ settingsDialog::settingsDialog(QWidget *parent)
             rmv2_btn= new QPushButton("Remove Selected Rat ID");
             rmv2_btn->setFocusPolicy(Qt::NoFocus);
         sessionListsLayout->addWidget(rmv2_btn,3,2,1,2);
-        //3rd listbox//
-            cerebroLabel = new QLabel("Cerebro #");
-        sessionListsLayout->addWidget(cerebroLabel,0,4,1,2,Qt::AlignCenter);
-            cerebroVals = new QListWidget();
-        sessionListsLayout->addWidget(cerebroVals,2,4,1,2);
-            add3_btn= new QPushButton("Add Cerebro #");
-            add3_btn->setFocusPolicy(Qt::NoFocus);
-        sessionListsLayout->addWidget(add3_btn,1,5);
-            newItem3 = new QLineEdit();
-        sessionListsLayout->addWidget(newItem3,1,4);
-            rmv3_btn= new QPushButton("Remove Selected Cerebro #");
-            rmv3_btn->setFocusPolicy(Qt::NoFocus);
-        sessionListsLayout->addWidget(rmv3_btn,3,4,1,2);
     sessionListsBox->setLayout(sessionListsLayout);
 
     //alias assignment box
@@ -135,7 +122,7 @@ settingsDialog::settingsDialog(QWidget *parent)
     settingsLayout->addWidget(directoryBox);
     settingsLayout->addWidget(sessionListsBox);
     settingsLayout->addWidget(portEditBox);
-    settingsLayout->addWidget(featuresBox);
+//    settingsLayout->addWidget(featuresBox);
     settingsLayout->addWidget(okButton);
 
     this->setWindowTitle("Settings");
@@ -146,13 +133,10 @@ settingsDialog::settingsDialog(QWidget *parent)
 
     connect(add1_btn,SIGNAL(clicked()),this,SLOT(addListItem()));
     connect(add2_btn,SIGNAL(clicked()),this,SLOT(addListItem()));
-    connect(add3_btn,SIGNAL(clicked()),this,SLOT(addListItem()));
     connect(newItem1,SIGNAL(returnPressed()),this,SLOT(addListItem()));
     connect(newItem2,SIGNAL(returnPressed()),this,SLOT(addListItem()));
-    connect(newItem3,SIGNAL(returnPressed()),this,SLOT(addListItem()));
     connect(rmv1_btn,SIGNAL(clicked()),this,SLOT(removeItem()));
     connect(rmv2_btn,SIGNAL(clicked()),this,SLOT(removeItem()));
-    connect(rmv3_btn,SIGNAL(clicked()),this,SLOT(removeItem()));
     connect(this,SIGNAL(rejected()),this,SLOT(saveChanges()));
     connect(changeDir_btn,SIGNAL(clicked()),this,SLOT(setPath()));
     connect(addAlias_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
@@ -176,7 +160,6 @@ void settingsDialog::saveChanges(){
     settings.beginGroup("sessionLists");
         settings.setValue("rigList",rigList);
         settings.setValue("ratList",ratList);
-        settings.setValue("cerebroList",cerebroList);
         settings.setValue("portList",aliasStringList);
     settings.endGroup();
 
@@ -203,12 +186,6 @@ void settingsDialog::removeItem()
             delete ratVals->currentItem();
         }
     }
-    else if(sender()==rmv3_btn && cerebroVals->count()>0){
-        if(cerebroVals->selectedItems().size()!=0){
-            cerebroList.removeOne(cerebroVals->currentItem()->text());
-            delete cerebroVals->currentItem();
-        }
-    }
 }
 
 void settingsDialog::addListItem()
@@ -225,11 +202,6 @@ void settingsDialog::addListItem()
         tempList = ratVals;
         tempTxtbox = newItem2;
         tempStringList = &ratList;
-    }
-    else if(sender()== add3_btn || sender()== newItem3){
-        tempList = cerebroVals;
-        tempTxtbox = newItem3;
-        tempStringList = &cerebroList;
     }
     QString temp = tempTxtbox->text();
     if (!tempStringList->contains(temp) && temp!=""){ //only adds string if it doesn't exist already and if the string isn't blank
@@ -249,34 +221,28 @@ void settingsDialog::openSettings()
     settings.beginGroup("sessionLists");
         rigList = settings.value("rigList").toStringList();
         ratList = settings.value("ratList").toStringList();
-        cerebroList = settings.value("cerebroList").toStringList();
     settings.endGroup();
     // populate the listwidgets in the settings dialog with the items in the lists we got from memory
     rigVals->clear();
     ratVals->clear();
-    cerebroVals->clear();
     for (int i = 0;i< rigList.count(); i++){
         rigVals->addItem(rigList.value(i));
     }
     for (int i = 0;i< ratList.count(); i++){
         ratVals->addItem(ratList.value(i));
     }
-    for (int i = 0;i< cerebroList.count(); i++){
-        cerebroVals->addItem(cerebroList.value(i));
-    }
     rigVals->clearSelection();
     ratVals->clearSelection();
-    cerebroVals->clearSelection();
 
     //--Edit COM Port Labels--//
     //populate the combobox
     portDropdown->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
-        if(info.description()==usbDescription){
+//        if(info.description()==usbDescription){
             list << info.portName();
             portDropdown->addItem(list.first(), list);
-        }
+//        }
     }
     //GetaAlias stringlist from memory
     settings.beginGroup("sessionLists");
@@ -299,7 +265,9 @@ void settingsDialog::openSettings()
     histogramCheckbox->setChecked(showHistogram);
     mcubeCheckbox->setChecked(mcubeEnabled);
 
+    qDebug()<<"about to show";
     this->exec();
+    qDebug()<<"postion"<<this->pos();
 }
 
 void settingsDialog::addAlias()
