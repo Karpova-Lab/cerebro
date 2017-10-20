@@ -86,7 +86,8 @@ void triggerBoth(){
         radioMessage = *(IntegerPayload*)radio.DATA;
         switch (radioMessage.variable){
           case 'A':
-            Watchdog.disable();            
+            Watchdog.disable();  
+            reportLaserStats();            
             if (waveform.rampDur>0){
               unsigned long fadeClock;
               for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
@@ -100,7 +101,6 @@ void triggerBoth(){
                 }
               }
             }
-            reportLaserStats();
             left.off();
             laserEnabled = right.off();
             checkForMiss();

@@ -25,7 +25,7 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>
 
-const byte version = 30;
+const byte version = 31;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -130,7 +130,7 @@ void loop() {
       battery = *(Battery*)radio.DATA;  
       Serial1.print("*");
       Serial1.print(battery.soc);
-      Serial1.print("&");    
+      Serial1.print("&\n");    
       Serial1.print("B,");Serial1.print(battery.soc);Serial1.print("\n");
     }    
     else if (radio.DATALEN == sizeof(diodeStats)){ //diode stats data
@@ -186,7 +186,7 @@ void printInfo(){
   Serial1.print("~"); Serial1.print(currentInfo.waveform.offTime);      
   Serial1.print("~"); Serial1.print(currentInfo.waveform.trainDur);
   Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur); 
-  Serial1.print("~");Serial1.print(currentInfo.battery);Serial1.print("&");
+  Serial1.print("~");Serial1.print(currentInfo.battery);Serial1.print("&\n");
 
   Serial1.print("Serial Number, ");Serial1.print(currentInfo.serialNumber);Serial1.print("\n");
   Serial1.print("Cerebro Version, ");Serial1.print(currentInfo.firmware);Serial1.print("\n");

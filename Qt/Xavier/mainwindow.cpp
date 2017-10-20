@@ -45,10 +45,10 @@ MainWindow::MainWindow(QWidget *parent)
         gotoApplocation = new QAction(this);
         gotoApplocation->setText("App install directory");
     goMenu->addAction(gotoApplocation);
-    toolMenu = menuBar()->addMenu("Analyze");
-        graphResults = new QAction(this);
-        graphResults->setText("Create graph from session logs");
-    toolMenu->addAction(graphResults);
+//    toolMenu = menuBar()->addMenu("Analyze");
+//        graphResults = new QAction(this);
+//        graphResults->setText("Create graph from session logs");
+//    toolMenu->addAction(graphResults);
     helpMenu = menuBar()->addMenu("Help");
         gotoDocs = new QAction(this);
         gotoDocs->setText("User Guide");
@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t2.0.0\nUpdated:\t10/19/2017";
+        QString aboutString = "\t2.0.1\nUpdated:\t10/20/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -156,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent)
     baseBox = new QGroupBox("Base Station Monitor");
         serialMonitorLayout = new QGridLayout();
         clearBase_btn = new QPushButton();
-            clearBase_btn->setText("Clear Monitor");
+            clearBase_btn->setText("Restart Session");
         serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
             baseFilter_label = new QLabel("Filter Duration:");
         serialMonitorLayout->addWidget(baseFilter_label,0,0);
@@ -448,7 +448,7 @@ MainWindow::MainWindow(QWidget *parent)
     //menu functions
     connect(openDir,SIGNAL(triggered()),this,SLOT(gotoDir()));
     connect(gotoApplocation,SIGNAL(triggered()),this,SLOT(gotoAppLocation()));
-    connect(graphResults,SIGNAL(triggered(bool)),this,SLOT(getGraphs()));
+//    connect(graphResults,SIGNAL(triggered(bool)),this,SLOT(getGraphs()));
     connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
     connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
     connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
@@ -555,7 +555,7 @@ void MainWindow::applySettings()
         showHistogram = settings.value("showHistogram").toBool();
         mcubeEnabled = settings.value("mcubeEnabled").toBool();
     settings.endGroup();
-    toolMenu->setEnabled(pythonEnabled);
+//    toolMenu->setEnabled(pythonEnabled);
     power_lbl->setVisible(mcubeEnabled);
     power_spn->setVisible(mcubeEnabled);
     newPower_btn->setVisible(mcubeEnabled);
@@ -755,11 +755,10 @@ void MainWindow::connectDownloadPort()
 
 void MainWindow::sendTime()
 {
-
-    baseMonitor->clear();
+//    baseMonitor->clear();
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-        QString startup =  QString("Start Time, %1").arg(startTime);
+        QString startup =  QString("\nStart Time, %1").arg(startTime);
         baseMonitor->textCursor().insertText(startup);
         checkForBase();
         connect_btn->setEnabled(true);
@@ -779,7 +778,7 @@ void MainWindow::readSerial()
 
     if (dataStart!=-1 && dataEnd!=-1){
         QString dataString = baseBuffer.mid(dataStart+1,dataEnd-dataStart-1);
-        baseBuffer.remove(dataStart,dataEnd+1-dataStart);
+//        baseBuffer.remove(dataStart,dataEnd+1-dataStart);
         qDebug()<<"buffer "<<baseBuffer;
         QStringList onboardParams = dataString.split("~");
         qDebug()<<"data = "<<onboardParams;
@@ -791,6 +790,7 @@ void MainWindow::readSerial()
             Rset_lbl->setText("Rset\n"+onboardParams[3]);rightDiode_spn->setValue(onboardParams[3].toInt());
             if (!debugOn){
                 if ((onboardParams[2].toInt() != titleLeftPower) || (onboardParams[3].toInt() != titleRightPower)){
+                    qDebug()<<"There's a mismatch";
                     matchLeftPower();
                     QTimer::singleShot(500, this, SLOT(matchRightPower()));
                 }
@@ -828,9 +828,11 @@ void MainWindow::readSerial()
 
         }
     }
-    if (baseBuffer.indexOf("\n")>-1){ //if we come the end of the line reaches the buffer, print the buffer to the monitor
-        baseMonitor->insertPlainText(baseBuffer);
-        baseBuffer = "";
+    int newLineIndex = baseBuffer.lastIndexOf("\n");
+    if (newLineIndex>-1 ){ //if we come the end of the line reaches the buffer, print the buffer to the monitor
+        qDebug()<<"newline Index"<<newLineIndex<<baseBuffer.mid(0,newLineIndex+1)<<"||"<<baseBuffer.mid(newLineIndex+1,baseBuffer.length()-newLineIndex-1);
+        baseMonitor->insertPlainText(baseBuffer.mid(0,newLineIndex+1));
+        baseBuffer = baseBuffer.mid(newLineIndex+1,baseBuffer.length()-newLineIndex-1);
     }
     baseMonitor->ensureCursorVisible();
 }
@@ -869,7 +871,7 @@ void MainWindow::readLog()
 
 void MainWindow::clearMonitor()
 {
-    baseMonitor->clear();
+//    baseMonitor->clear();
     baseFilter_label->setText("Filter Duration:");
     batteryIndicator->setValue(0);
     battery_lbl->setText(batteryIndicator->text());
@@ -1112,13 +1114,13 @@ void MainWindow::showDebug(){
         ratSelect->setEnabled(false);
         rigSelect->clearSelection();
         ratSelect->clearSelection();
-        connect_btn->setText("Start Session (Debug Mode)");
+        connect_btn->setText("Connect to Base Station (Debug Mode)");
         toggleDebug->setText("Exit Debug Mode");
     }
     else{
         rigSelect->setEnabled(true);
         ratSelect->setEnabled(true);
-        connect_btn->setText("Start Session");
+        connect_btn->setText("Connect to Base Station");
         toggleDebug->setText("Enter Debug Mode");
     }
 }
