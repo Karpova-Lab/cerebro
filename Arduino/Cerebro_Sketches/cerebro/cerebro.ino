@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 73;
+const byte version = 74;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -127,6 +127,7 @@ void loop() {
       }
     }
     else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data 
+      msgCount++;
       waveform = *(WaveformData*)radio.DATA;  //update waveform
       EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory
       delay(1000);

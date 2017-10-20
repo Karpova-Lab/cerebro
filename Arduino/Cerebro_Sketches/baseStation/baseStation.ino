@@ -25,7 +25,7 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>
 
-const byte version = 31;
+const byte version = 32;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -212,6 +212,7 @@ void printDiodeStats(){
 }
 
 void updateWaveform(){
+  Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print('W');Serial1.print("\n");
   waveform.startDelay = valsFromParse[0];
   waveform.onTime = valsFromParse[1];
   waveform.offTime = valsFromParse[2];
@@ -222,9 +223,9 @@ void updateWaveform(){
 }
 
 void triggerCommandReceived(){
-  msgCount++;
   unsigned long tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger>spamFilter){
+    msgCount++;    
     radioMessage.variable = 'T';    
     radioMessage.value = msgCount;
     Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print((char)radioMessage.variable);Serial1.print("\n");
@@ -232,6 +233,7 @@ void triggerCommandReceived(){
     triggerClock = millis();
   }
   else{
+    msgCount++;        
     radioMessage.variable = 'C';    
     radioMessage.value = msgCount;
     Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print((char)radioMessage.variable);Serial1.print(",");Serial1.print(tSinceTrigger);Serial1.print("\n");
@@ -241,9 +243,9 @@ void triggerCommandReceived(){
 }
 
 void stopCommandReceived(){
-  msgCount++;  
   unsigned long tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger<spamFilter){
+    msgCount++;      
     radioMessage.variable = 'A';    
     radioMessage.value = msgCount;
     Serial1.print(millis()-startTime);Serial1.print(",");Serial1.print(msgCount);Serial1.print(",");Serial1.print((char)radioMessage.variable);Serial1.print(",");Serial1.print(tSinceTrigger);Serial1.print("\n");

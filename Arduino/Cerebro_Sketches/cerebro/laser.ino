@@ -66,7 +66,7 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
 }
 
 void triggerBoth(){
-  int countdownMS = Watchdog.enable(64);
+  int countdownMS = Watchdog.enable(500);
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
@@ -106,6 +106,7 @@ void triggerBoth(){
             checkForMiss();
             break;
           case 'C':
+            // Watchdog.reset();            
             onClock=trainClock=millis();   
             checkForMiss(); 
             break;
