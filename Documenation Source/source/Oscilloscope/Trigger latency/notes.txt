@@ -1,0 +1,2 @@
+Sending an ACK causes variation with latency ( about 15ms or 30 ms)
+No ACK make the latency a stable 15ms

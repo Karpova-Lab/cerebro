@@ -1,0 +1,511 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Xavier &mdash; Cerebro 2.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Cerebro 2.0.0 documentation" href="../index.html"/>
+        <link rel="next" title="Additional Resources" href="../Notes/notes.html"/>
+        <link rel="prev" title="Base Station" href="../Hardware/base station.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Cerebro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/cerebro.html">Cerebro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/implant.html">Head Implant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/base station.html">Base Station</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Xavier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#system-requirements">System Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-instructions">Download Instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#settings">Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#edit-default-save-directory">Edit Default Save Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-session-setup-lists">Edit Session Setup Lists</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adding-items">Adding Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#removing-items">Removing Items</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#labeling-com-ports">Labeling COM Ports</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adding-labels">Adding Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#editing-labels">Editing Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#removing-labels">Removing Labels</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#waveform-parameters">Waveform Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#checking-current-parameters">Checking Current Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-parameters">Changing Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implant-construction-tools">Implant Construction Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#diode-characterization">Diode Characterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implant-characterization">Implant Characterization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#send-power-values-to-cerebro">Send Power Values to Cerebro</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-an-experiment">Running an Experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-a-new-session">Starting a New Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ending-a-session-and-saving-data">Ending a Session and Saving Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Notes/notes.html">Additional Resources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cerebro</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Xavier</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Software/Xavier.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="xavier">
+<h1>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="../_images/Xavier.png"><img alt="../_images/Xavier.png" class="align-center" src="../_images/Xavier.png" style="width: 783.2px; height: 688.0px;" /></a>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="system-requirements">
+<h3>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>Windows XP or newer</li>
+<li>Python 3.5 with numpy, pandas, and matplotlib libraries</li>
+</ul>
+</div></blockquote>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Download <a class="reference external" href="http://continuum.io/downloads">Anaconda Python 3.5 Distribution</a> , which has all of the required libraries included</p>
+</div>
+</div>
+<div class="section" id="download-instructions">
+<span id="setup-default"></span><h3>Download Instructions<a class="headerlink" href="#download-instructions" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Download and unzip <a class="reference download internal" href="../_downloads/Deployment.zip" download=""><code class="xref download docutils literal"><span class="pre">Xavier</span> <span class="pre">Deployment</span> <span class="pre">Folder</span></code></a></li>
+<li>Open up Xavier.exe</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/Xavier_open.png"><img alt="../_images/Xavier_open.png" src="../_images/Xavier_open.png" style="width: 487.5px; height: 371.25px;" /></a>
+</div>
+<ol class="arabic simple" start="3">
+<li>Setup a <a class="reference internal" href="#edit-default-directory"><span class="std std-ref">default directory</span></a> that data will be saved to</li>
+</ol>
+</div>
+</div>
+<div class="section" id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
+<p>Access Xavier Settings by navigating to <strong>File-&gt;Settings..</strong> or by pressing <code class="kbd docutils literal"><span class="pre">Ctrl</span></code> + <code class="kbd docutils literal"><span class="pre">,</span></code></p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/settings_dialog.png"><img alt="../_images/settings_dialog.png" src="../_images/settings_dialog.png" style="width: 307.0px; height: 133.0px;" /></a>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Settings cannot be changed in the middle of a session</p>
+</div>
+<div class="section" id="edit-default-save-directory">
+<span id="edit-default-directory"></span><h3>Edit Default Save Directory<a class="headerlink" href="#edit-default-save-directory" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Directory</span></code> to setup a new save location.</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/change_directory.png"><img alt="../_images/change_directory.png" src="../_images/change_directory.png" style="width: 463.0px; height: 133.0px;" /></a>
+</div>
+<ol class="arabic simple" start="2">
+<li>Navigate to an existing folder or create a new folder for future data.</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/new_folder.png"><img alt="../_images/new_folder.png" src="../_images/new_folder.png" style="width: 576.0px; height: 360.0px;" /></a>
+</div>
+<ol class="arabic simple" start="3">
+<li>Finally, click <strong>Select Folder</strong>. The “Current Directory” will reflect updated save path</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/rename_and_select.png"><img alt="../_images/rename_and_select.png" src="../_images/rename_and_select.png" style="width: 576.0px; height: 360.0px;" /></a>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/directory_changed.png"><img alt="../_images/directory_changed.png" src="../_images/directory_changed.png" style="width: 567.0px; height: 163.0px;" /></a>
+</div>
+</div>
+<div class="section" id="edit-session-setup-lists">
+<span id="add-items"></span><h3>Edit Session Setup Lists<a class="headerlink" href="#edit-session-setup-lists" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="adding-items">
+<h4>Adding Items<a class="headerlink" href="#adding-items" title="Permalink to this headline">¶</a></h4>
+<p>Type new items into the textboxes and click <code class="docutils literal"><span class="pre">Add</span> <span class="pre">Item</span></code> (or press <code class="kbd docutils literal"><span class="pre">Enter</span></code>)</p>
+<a class="reference internal image-reference" href="../_images/additem.gif"><img alt="../_images/additem.gif" class="align-center" src="../_images/additem.gif" style="width: 462.0px; height: 526.0px;" /></a>
+</div>
+<div class="section" id="removing-items">
+<h4>Removing Items<a class="headerlink" href="#removing-items" title="Permalink to this headline">¶</a></h4>
+<p>Select the item from list you want to remove and click <code class="docutils literal"><span class="pre">Remove</span> <span class="pre">Selected</span></code></p>
+<a class="reference internal image-reference" href="../_images/removeitem.gif"><img alt="../_images/removeitem.gif" class="align-center" src="../_images/removeitem.gif" style="width: 462.0px; height: 524.0px;" /></a>
+</div>
+</div>
+<div class="section" id="labeling-com-ports">
+<span id="label-ports"></span><h3>Labeling COM Ports<a class="headerlink" href="#labeling-com-ports" title="Permalink to this headline">¶</a></h3>
+<p>When multiple usb devices are connected to the computer, it can be hard to keep track of which COM Port belongs to which device. To minimize confusion when connecting
+to serial ports, Xavier allows you to label COM Ports.</p>
+<a class="reference internal image-reference" href="../_images/port_labeling.png"><img alt="../_images/port_labeling.png" class="align-center" src="../_images/port_labeling.png" style="width: 6075.0px; height: 938.0px;" /></a>
+<div class="section" id="adding-labels">
+<h4>Adding Labels<a class="headerlink" href="#adding-labels" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>From the dropdown box, select the COM Port you want to add a label to</li>
+<li>Type the new label into the textbox and click <code class="docutils literal"><span class="pre">Add/Edit</span> <span class="pre">Label</span></code> (or press <code class="kbd docutils literal"><span class="pre">Enter</span></code>)</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/addlabel.gif"><img alt="../_images/addlabel.gif" class="align-center" src="../_images/addlabel.gif" style="width: 460.0px; height: 524.0px;" /></a>
+</div>
+<div class="section" id="editing-labels">
+<h4>Editing Labels<a class="headerlink" href="#editing-labels" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>Double-click the labeled COM Port from the list that you want to edit. A label editing dialog will appear.</li>
+<li>Type the new label into the textbox and click <code class="docutils literal"><span class="pre">Change</span> <span class="pre">Label</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/editlabel.gif"><img alt="../_images/editlabel.gif" class="align-center" src="../_images/editlabel.gif" style="width: 460.0px; height: 614.0px;" /></a>
+</div>
+<div class="section" id="removing-labels">
+<h4>Removing Labels<a class="headerlink" href="#removing-labels" title="Permalink to this headline">¶</a></h4>
+<p>Select the labeled COM Port from the list that you want to remove and click <code class="docutils literal"><span class="pre">Remove</span> <span class="pre">Selected</span></code></p>
+<a class="reference internal image-reference" href="../_images/removelabel.gif"><img alt="../_images/removelabel.gif" class="align-center" src="../_images/removelabel.gif" style="width: 462.0px; height: 524.0px;" /></a>
+</div>
+</div>
+</div>
+<div class="section" id="waveform-parameters">
+<span id="id1"></span><h2>Waveform Parameters<a class="headerlink" href="#waveform-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Five waveform parameters (Start Delay, On Time, Off Time, Train Duration, Ramp Down) can be wirelessly changed throughout the session.
+The user can make changes using either a <strong>Single Shot</strong> mode with an optional ramp down or <strong>Pulse Train</strong> mode. Non-applicable parameters are automatically set to zero depending on
+options selected. Once the parameters are sent to and received by Cerebro, they are saved to non-volatile memory and are therefore retained between sessions.</p>
+<a class="reference internal image-reference" href="../_images/parameter_diagram.png"><img alt="../_images/parameter_diagram.png" class="align-center" src="../_images/parameter_diagram.png" style="width: 5055.0px; height: 4856.0px;" /></a>
+<div class="section" id="checking-current-parameters">
+<span id="pulse-change-header"></span><h3>Checking Current Parameters<a class="headerlink" href="#checking-current-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Select the appropriate Downloader Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_downloader.png"><img alt="../_images/connect_downloader.png" class="align-center" src="../_images/connect_downloader.png" style="width: 308.0px; height: 208.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>With Cerebro turned off, plug the <span class="xref std std-ref">cord</span> into Cerebro’s micro usb port</li>
+<li>Turn on Cerebro.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_plug.jpg"><img alt="../_images/connect_plug.jpg" class="align-center" src="../_images/connect_plug.jpg" style="width: 469.20000000000005px; height: 250.0px;" /></a>
+<ol class="arabic simple" start="4">
+<li>A dialog box with all of Cerebro’s parameters will appear. Additionally, the “Cerebro’s Parameters” section will automatically be updated to match the parameters currently on Cerebro.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/parameters_popup.png"><img alt="../_images/parameters_popup.png" class="align-center" src="../_images/parameters_popup.png" style="width: 319.0px; height: 332.20000000000005px;" /></a>
+</div>
+<div class="section" id="changing-parameters">
+<h3>Changing Parameters<a class="headerlink" href="#changing-parameters" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>In the “Cerebro’s Waveform Parameters” section, select desired pulse options and modify the parameters</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/parameter_change.png"><img alt="../_images/parameter_change.png" class="align-center" src="../_images/parameter_change.png" style="width: 658.8000000000001px; height: 260.8px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">New</span> <span class="pre">Waveform</span> <span class="pre">Parameters</span></code>.</li>
+<li>A confirmation dialog will appear.</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/send_confirm.png"><img alt="../_images/send_confirm.png" src="../_images/send_confirm.png" style="width: 506.0px; height: 264.0px;" /></a>
+</div>
+<ol class="arabic simple" start="4">
+<li>Once confirmed, the settings will be sent and the last sent parameters will be displayed at the bottom</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/last_sent.png"><img alt="../_images/last_sent.png" src="../_images/last_sent.png" style="width: 400.95000000000005px; height: 355.05px;" /></a>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The IR Remote can be used as an alternative to <span class="xref std std-ref">send new parameters</span>. Additionally, it is capable of <span class="xref std std-ref">checking the current parameters</span>  saved to Cerebro’s memory.</p>
+</div>
+</div>
+</div>
+<div class="section" id="implant-construction-tools">
+<h2>Implant Construction Tools<a class="headerlink" href="#implant-construction-tools" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="diode-characterization">
+<h3>Diode Characterization<a class="headerlink" href="#diode-characterization" title="Permalink to this headline">¶</a></h3>
+<p><span class="xref std std-ref">Intructions here</span></p>
+</div>
+<div class="section" id="implant-characterization">
+<h3>Implant Characterization<a class="headerlink" href="#implant-characterization" title="Permalink to this headline">¶</a></h3>
+<p><span class="xref std std-ref">Intructions here</span></p>
+</div>
+<div class="section" id="send-power-values-to-cerebro">
+<span id="send-power"></span><h3>Send Power Values to Cerebro<a class="headerlink" href="#send-power-values-to-cerebro" title="Permalink to this headline">¶</a></h3>
+<p>Each implant has different response curves to power levels provided by Cerebro.
+To output a desired light level, Cerebro must know how much current to provide.
+To implement a fade, Cerebro must know multiple current levels to step through such that  the implant’s light output linearly decreases from a desired light output down to 0 mW.
+We therefore send Cerebro a vector of values that correspond to our desired light output with a linear fade to 0 mW.</p>
+<ol class="arabic simple">
+<li>Select “Debug Mode” and start a new session.</li>
+<li>In the “Implant Construction Tools” section click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">Power</span> <span class="pre">Values</span> <span class="pre">to</span> <span class="pre">Cerebro</span></code></li>
+<li>Assuming you’ve previously <span class="xref std std-ref">characterized an implant</span>, click <code class="docutils literal"><span class="pre">Create</span> <span class="pre">fade</span> <span class="pre">vector</span> <span class="pre">from</span> <span class="pre">power</span> <span class="pre">meter</span> <span class="pre">file</span></code></li>
+<li>Input a target power into the text box and then click <code class="docutils literal"><span class="pre">Select</span> <span class="pre">Power</span> <span class="pre">Meter</span> <span class="pre">File</span></code></li>
+<li>After choosing a file, a implant characterization graph will appear, a summary file will be saved to the same directory as the selected power meter file.</li>
+<li>The fade vector is automatically copied from the summary file into the fade vector input.</li>
+<li>Fill in the the information for Cerebro # and implant # then click <code class="docutils literal"><span class="pre">Send</span> <span class="pre">Values</span></code></li>
+<li>Confirm you want to send new power levels to Cerbro and the values will be sent.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="running-an-experiment">
+<h2>Running an Experiment<a class="headerlink" href="#running-an-experiment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="starting-a-new-session">
+<span id="start-session"></span><h3>Starting a New Session<a class="headerlink" href="#starting-a-new-session" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Fill out experimental setup information.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/rat_info.png"><img alt="../_images/rat_info.png" class="align-center" src="../_images/rat_info.png" style="width: 564.0px; height: 136.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Select a Base Station Serial Port.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/com_port.png"><img alt="../_images/com_port.png" class="align-center" src="../_images/com_port.png" style="width: 565.0px; height: 136.0px;" /></a>
+<ol class="arabic simple" start="3">
+<li>Click <code class="docutils literal"><span class="pre">Start</span> <span class="pre">Session</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/start_session.png"><img alt="../_images/start_session.png" class="align-center" src="../_images/start_session.png" style="width: 564.0px; height: 135.0px;" /></a>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The dropdown menus can be <a class="reference internal" href="#add-items"><span class="std std-ref">edited</span></a> and COM Ports that appear in the dropdown list can be <a class="reference internal" href="#label-ports"><span class="std std-ref">labeled</span></a></p>
+</div>
+</div>
+<div class="section" id="ending-a-session-and-saving-data">
+<span id="upload-header"></span><h3>Ending a Session and Saving Data<a class="headerlink" href="#ending-a-session-and-saving-data" title="Permalink to this headline">¶</a></h3>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<ol class="last arabic simple">
+<li>Before opening the rig and removing the rat, click the <code class="docutils literal"><span class="pre">End</span> <span class="pre">Session</span></code> button. “Save Sent” will be printed to the Base Station Monitor.</li>
+</ol>
+</div>
+<a class="reference internal image-reference" href="../_images/end_session.png"><img alt="../_images/end_session.png" class="align-center" src="../_images/end_session.png" style="width: 277.0px; height: 389.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Turn off Cerebro and disconnect it from the rat’s head implant</li>
+<li>Make sure the <span class="xref std std-ref">cord</span> is plugged into the computer</li>
+<li>Select the appropriate Serial Port and click <code class="docutils literal"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Downloader</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/connect_downloader1.png"><img alt="../_images/connect_downloader1.png" class="align-center" src="../_images/connect_downloader1.png" style="width: 308.0px; height: 208.0px;" /></a>
+<ol class="arabic simple" start="5">
+<li>Plug the <span class="xref std std-ref">cord</span> into Cerebro’s micro usb port</li>
+<li>Press and hold the download button</li>
+<li>While still holding down the download button, switch Cerebro on. The event log will be printed to the Download Monitor.
+You may release the download button once events have begun being printed to the Cerebro Monitor.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" class="align-center" src="../_images/upload.png" style="width: 443.20000000000005px; height: 309.40000000000003px;" /></a>
+<ol class="arabic simple" start="8">
+<li>Click <code class="docutils literal"><span class="pre">Save</span> <span class="pre">Session</span></code> button.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/save_session.png"><img alt="../_images/save_session.png" class="align-center" src="../_images/save_session.png" style="width: 294.0px; height: 562.0px;" /></a>
+<ol class="arabic simple" start="9">
+<li>After saving, a dialog will appear with a summary of the session</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/summary.png"><img alt="../_images/summary.png" class="align-center" src="../_images/summary.png" style="width: 497.0px; height: 224.0px;" /></a>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Notes/notes.html" class="btn btn-neutral float-right" title="Additional Resources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../Hardware/base station.html" class="btn btn-neutral" title="Base Station" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015-2017, Andy Lustig.
+      Last updated on Oct 20, 2017.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
