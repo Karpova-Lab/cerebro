@@ -20,6 +20,9 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
 .. Warning::
   This documentation is very much a work in progress. Please understand that there will porbably be typos and missing
 
+.. Note::
+  This documentation is for Version 2 of the system. For Version 1 documentation, go `here <http://cerebro.readthedocs.io/en/1.0/>`_ 
+
 .. toctree::
   :maxdepth: 1
   :hidden:
