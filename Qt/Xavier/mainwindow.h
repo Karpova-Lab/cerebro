@@ -67,6 +67,7 @@ private:
     bool                    repeatOn;
     int                     titleLeftPower, titleRightPower;
     QString                 ratNumber;
+    QString                 xavierVersion;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;

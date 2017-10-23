@@ -64,7 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        QString aboutString = "\t2.0.1\nUpdated:\t10/20/2017";
+        xavierVersion = "2.0.2";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/23/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -147,7 +148,7 @@ MainWindow::MainWindow(QWidget *parent)
         cerStatusLayout->addWidget(batteryIndicator,1,1,1,8);
             battery_lbl = new QLabel(batteryIndicator->text());
         cerStatusLayout->addWidget(battery_lbl,1,0,1,1,Qt::AlignRight);
-            getInfo_btn = new QPushButton("Get Battery Level");
+            getInfo_btn = new QPushButton("Check Wireless Connection / Update Battery Status");
         cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setEnabled(false);
@@ -674,7 +675,7 @@ void MainWindow::connectBasePort()
             serial->setParity(QSerialPort::NoParity);
             serial->setStopBits(QSerialPort::OneStop);
             serial->setFlowControl(QSerialPort::NoFlowControl);
-            qDebug()<<serial->open(QIODevice::ReadWrite);
+            qDebug()<<"opening serial"<<serial->open(QIODevice::ReadWrite);
             qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
 //            connect_btn->setStyleSheet("background-color: grey; color:black");
@@ -758,7 +759,7 @@ void MainWindow::sendTime()
 //    baseMonitor->clear();
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-        QString startup =  QString("\nStart Time, %1").arg(startTime);
+        QString startup =  QString("\n~~~~~~~~~New Session~~~~~~~~~\nXavier Version,%1\nStart Time, %2").arg(xavierVersion,startTime);
         baseMonitor->textCursor().insertText(startup);
         checkForBase();
         connect_btn->setEnabled(true);
@@ -778,7 +779,7 @@ void MainWindow::readSerial()
 
     if (dataStart!=-1 && dataEnd!=-1){
         QString dataString = baseBuffer.mid(dataStart+1,dataEnd-dataStart-1);
-//        baseBuffer.remove(dataStart,dataEnd+1-dataStart);
+        baseBuffer.remove(dataStart,dataEnd+1-dataStart);
         qDebug()<<"buffer "<<baseBuffer;
         QStringList onboardParams = dataString.split("~");
         qDebug()<<"data = "<<onboardParams;
@@ -790,7 +791,7 @@ void MainWindow::readSerial()
             Rset_lbl->setText("Rset\n"+onboardParams[3]);rightDiode_spn->setValue(onboardParams[3].toInt());
             if (!debugOn){
                 if ((onboardParams[2].toInt() != titleLeftPower) || (onboardParams[3].toInt() != titleRightPower)){
-                    qDebug()<<"There's a mismatch";
+                    baseMonitor->textCursor().insertText("\nDiode parameter mismatch. Sending new diode values to Cerebro");                    
                     matchLeftPower();
                     QTimer::singleShot(500, this, SLOT(matchRightPower()));
                 }
@@ -1068,6 +1069,7 @@ void MainWindow::getBatteryStatus(){
 }
 
 void MainWindow::checkForBase(){
+    baseMonitor->textCursor().insertText("\nConnecting with Base Station...");
     QString msg = "?\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";

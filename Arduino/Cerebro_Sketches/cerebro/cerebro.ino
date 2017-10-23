@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 74;
+const byte version = 75;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -62,7 +62,7 @@ LaserDiode right(&DDRD,&PORTD,2,A2);
 Radio radio(7,1);
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
-byte batteryUpdateFrequency = 20;
+byte batteryUpdateFrequency = 15;
 
 //---------function prototypes---------//
 int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
@@ -82,22 +82,28 @@ void setup() {
   EEPROM.get(WAVEFORM_ADDRESS,waveform);
 
   // Indicator LED
-  pinMode(indicatorLED,OUTPUT);
+  pinMode(indicatorLED,OUTPUT); 
   digitalWrite(indicatorLED,HIGH);
-  delay(1000);
+  delay(50);
   digitalWrite(indicatorLED,LOW);
-  delay(1000);  
+  delay(50);  
   digitalWrite(indicatorLED,HIGH);
-  delay(1000);
+  delay(50);
   digitalWrite(indicatorLED,LOW);  
 
   //*** Battery Monitor ***//
   setupBQ27441();
   
   radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
-  char readyMessage[22] = "\nCerebro Connected!\n";
-  byte buffLen=strlen(readyMessage);
-  radio.send(BASESTATION, readyMessage, buffLen);  
+
+  radioMessage.variable = 'Y'; 
+  radioMessage.value = millis();  
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
+    Serial.print("Connected to Base Station");
+  }
+  else{
+    Serial.println("Failed to Connect to Base Station");
+  }  
   sendInfo();
 }
 
@@ -111,8 +117,6 @@ void loop() {
         case 'B':
           reportBattery();break;
         case 'I':    
-          printMissed();
-          delay(100);
           msgCount = 0;
           missedCount = 0;       
           sendInfo();break;
@@ -204,7 +208,7 @@ void sendInfo(){
   currentInfo.lSetPoint = left.setPoint;
   currentInfo.rSetPoint = right.setPoint;
   currentInfo.battery = lipo.soc();
-  if (radio.sendWithRetry(1, (const void*)(&currentInfo), sizeof(currentInfo))){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&currentInfo), sizeof(currentInfo))){
     Serial.println("data sent successfully");
   }
   else{
