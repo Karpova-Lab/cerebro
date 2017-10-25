@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 76;
+const byte version = 77;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -281,9 +281,8 @@ void feedbackReadings(){
 
 void reportBattery(){
   // Read battery stats from the BQ27441-G1A
+  Serial.println("getting soc");  
   battery.soc = lipo.soc();
-  battery.volts = lipo.voltage();
-  battery.capacity = lipo.capacity(REMAIN);
   if (radio.sendWithRetry(BASESTATION, (const void*)(&battery), sizeof(battery))){
     Serial.println("battery info sent successfully");
   }

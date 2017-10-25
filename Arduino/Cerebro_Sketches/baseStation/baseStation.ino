@@ -25,7 +25,7 @@ SOFTWARE.
 #include <Radio.h>
 #include <SPI.h>
 
-const byte version = 33;
+const byte version = 34;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -69,25 +69,12 @@ void loop() {
   if (Serial1.available()){
     char msg = Serial1.read();
     if (msg=='W'){  //Send waveform data
-      char msgData[30] = "";
-      Serial1.readBytesUntil('\n',msgData,30);
-      parseData(msgData);
+      parseData();
       updateWaveform();
     }
     else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){ //parse data then send radio message with integer
-      char msgData[30] = "";
-      Serial1.readBytesUntil('\n',msgData,30);
-      parseData(msgData);    
-      radioMessage.variable = msg;
-      radioMessage.value = valsFromParse[0];
-      triggerClock = millis();      
-      Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(radioMessage.value);Serial1.print("...");
-      if (radio.sendWithRetry(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage))){
-        Serial1.print("data received");newline();    
-      }
-      else{
-        Serial1.print("data send fail");newline();
-      }
+      parseData();  
+      sendMsgAndVal(msg,valsFromParse[0]);
     }
     else if (msg=='T'){ //Send radio message with msg count
       triggerCommandReceived();
@@ -96,26 +83,10 @@ void loop() {
       stopCommandReceived();
     }
     else if(msg=='?'){
-      startTime = millis();
-      msgCount = 0;
-      Serial1.print("Connected!");
-      Serial1.print("\nBase Version,");Serial1.print(version);newline();
-      Serial1.print(currentTime());comma();Serial1.print("Connecting with Cerebro...");
-      msg = 'I';
-      if (radio.sendWithRetry(CEREBRO, &msg, 1, 2)){ 
-        Serial1.print("Connected!");
-      }
-      else{      
-        Serial1.print("failed to connect\n\n");
-      }
+      newSession();
     }
-    else if (msg!='\n'){ // "I" for info 
-      if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
-      }
-      else{
-        Serial1.print("Tried Sending ''");Serial1.print(msg);
-        Serial1.print("'', ACK not received");newline();
-      }
+    else if (msg!='\n'){ // 
+      relayMsg(msg);  
     }
   }
 
@@ -162,9 +133,11 @@ void loop() {
   }
 }
 
-void parseData(char* dataMessage){
+void parseData(){
+  char msgData[30] = "";
+  Serial1.readBytesUntil('\n',msgData,30);
   char* msgPointer;
-  msgPointer = strtok(dataMessage,",");
+  msgPointer = strtok(msgData,",");
   char i = 0;
   while (msgPointer!=NULL){
     valsFromParse[i] = atol(msgPointer);   
@@ -172,6 +145,43 @@ void parseData(char* dataMessage){
     i++;
   }
 }
+
+void sendMsgAndVal(char msg,unsigned int val){
+  radioMessage.variable = msg;
+  radioMessage.value = val;
+  triggerClock = millis();      
+  Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(radioMessage.value);Serial1.print("...");
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage))){
+    Serial1.print("data received");newline();    
+  }
+  else{
+    Serial1.print("data send fail");newline();
+  }
+}
+
+void newSession(){
+  startTime = millis();
+  msgCount = 0;
+  Serial1.print("Connected!");
+  Serial1.print("\nBase Version,");Serial1.print(version);newline();
+  Serial1.print(currentTime());comma();Serial1.print("Connecting with Cerebro...");
+  char msg = 'I';
+  if (radio.sendWithRetry(CEREBRO, &msg, 1, 2)){ 
+    Serial1.print("Connected!");
+  }
+  else{      
+    Serial1.print("failed to connect\n\n");
+  }
+}
+
+void relayMsg(char msg){
+  if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
+  }
+  else{
+    Serial1.print("Tried Sending ''");Serial1.print(msg);
+    Serial1.print("'', ACK not received");newline();
+  }
+}    
 
 void printInfo(){
   //update filter
@@ -217,13 +227,13 @@ void printDiodeStats(){
 }
 
 void updateWaveform(){
-  Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print('W');newline();
   waveform.startDelay = valsFromParse[0];
   waveform.onTime = valsFromParse[1];
   waveform.offTime = valsFromParse[2];
   waveform.trainDur = valsFromParse[3];
   waveform.rampDur = valsFromParse[4];
-  msgCount++;   
+  msgCount++;
+  Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print('W');newline();  
   radio.send(CEREBRO, (const void*)(&waveform), sizeof(waveform));
 }
 
