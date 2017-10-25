@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 75;
+const byte version = 76;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -53,7 +53,6 @@ Battery battery;
 Feedback diodeStats;
 
 int meterVal = 0;
-int powerMeter = A3;
 const byte indicatorLED = A5; //32u4 pin 41
 
 LaserDiode left(&DDRB,&PORTB,0,A4);
@@ -65,7 +64,7 @@ unsigned int missedCount = 0;
 byte batteryUpdateFrequency = 15;
 
 //---------function prototypes---------//
-int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
+void triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
 void setup() {
   SPI.begin();
@@ -75,7 +74,6 @@ void setup() {
   left.off();
   right.off();
   
-
   Serial.begin(115200);  
 
   // Initialize waveform
@@ -92,10 +90,21 @@ void setup() {
   digitalWrite(indicatorLED,LOW);  
 
   //*** Battery Monitor ***//
-  setupBQ27441();
-  
-  radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
+  if (!lipo.begin()){
+	// If communication fails, print an error message and loop forever.
+    Serial.println("Error: Unable to communicate with BQ27441.");
+    while(1){ //blink error
+      digitalWrite(indicatorLED,HIGH);
+      delay(1000);
+      digitalWrite(indicatorLED,LOW);
+      delay(1000);
+    }
+  }
+  Serial.println("Connected to BQ27441!");
+  lipo.setCapacity(400);
 
+  //*** Radio ***//  
+  radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
   radioMessage.variable = 'Y'; 
   radioMessage.value = millis();  
   if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
@@ -270,30 +279,6 @@ void feedbackReadings(){
   Serial.println(analogRead(right.analogPin));
 }
 
-void calibrate(){
-  int tryPower  = 1005;
-  while ( meterVal <96){
-    tryPower++;
-    meterVal =  triggerEvent(tryPower,&left,true);
-    Serial.print("Try: ");
-    Serial.print(tryPower);
-    Serial.print(", Result: ");
-    Serial.println(meterVal);
-    delay(2000);
-  }
-  Serial.println("Done!");
-  Serial.print(tryPower);
-}
-
-void pauseUntilCommand(){
-  while(!Serial.available()){
-    //wait
-  }
-  while(Serial.available()){
-    Serial.read();
-  }
-}
-
 void reportBattery(){
   // Read battery stats from the BQ27441-G1A
   battery.soc = lipo.soc();
@@ -304,27 +289,6 @@ void reportBattery(){
   }
   else{
     Serial.println("battery info send fail");
-  }
-}
-
-void setupBQ27441(void)
-{
-  if (!lipo.begin()) // begin() will return true if communication is successful
-  {
-	// If communication fails, print an error message and loop forever.
-    Serial.println("Error: Unable to communicate with BQ27441.");
-    blinkError();
-  }
-  Serial.println("Connected to BQ27441!");
-  lipo.setCapacity(400);
-}
-
-void blinkError(){
-  while(1){
-    digitalWrite(indicatorLED,HIGH);
-    delay(1000);
-    digitalWrite(indicatorLED,LOW);
-    delay(1000);
   }
 }
 
@@ -339,7 +303,7 @@ void printBattery(){
 
 void printMissed(){
   reportBattery();
-  delay(500);
+  delay(200);
   unsigned int missed;
   Serial.print("missed,");Serial.println(missedCount);
   radioMessage.variable = 'M'; 

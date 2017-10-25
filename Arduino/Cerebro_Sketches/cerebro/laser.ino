@@ -1,9 +1,8 @@
-int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedback){
+void triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedback){
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
-  int _meterValue;
   if (waveform.startDelay>0){
     while ((millis()-delayClock)<waveform.startDelay){
       //wait. be ready to stop if interrupted.
@@ -62,11 +61,10 @@ int triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedbac
       laserEnabled = thediode->off();
     }
   }
-  return _meterValue;
 }
 
 void triggerBoth(){
-  int countdownMS = Watchdog.enable(500);
+  int countdownMS = Watchdog.enable(125);
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
