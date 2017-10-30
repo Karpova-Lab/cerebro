@@ -22,10 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#include <Radio.h>
+//Documentation for this project can be found at https://karpova-lab.github.io/cerebro/
+
+#include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 34;
+const byte version = 35;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -68,7 +70,7 @@ void loop() {
   ///////////Receive Message From Xavier//////////////////
   if (Serial1.available()){
     char msg = Serial1.read();
-    if (msg=='W'){  //Send waveform data
+    if (msg=='W'){  //parse data then send new waveform
       parseData();
       updateWaveform();
     }
@@ -76,7 +78,7 @@ void loop() {
       parseData();  
       sendMsgAndVal(msg,valsFromParse[0]);
     }
-    else if (msg=='T'){ //Send radio message with msg count
+    else if (msg=='T'){ 
       triggerCommandReceived();
     }
     else if (msg=='A'){ 
@@ -85,7 +87,7 @@ void loop() {
     else if(msg=='?'){
       newSession();
     }
-    else if (msg!='\n'){ // 
+    else if (msg!='\n'){ 
       relayMsg(msg);  
     }
   }
@@ -233,7 +235,12 @@ void updateWaveform(){
   waveform.trainDur = valsFromParse[3];
   waveform.rampDur = valsFromParse[4];
   msgCount++;
-  Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print('W');newline();  
+  Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print('W');comma();
+  Serial1.print(waveform.startDelay);comma();
+  Serial1.print(waveform.onTime);comma();
+  Serial1.print(waveform.offTime);comma();
+  Serial1.print(waveform.trainDur);comma();
+  Serial1.print(waveform.rampDur);newline();  
   radio.send(CEREBRO, (const void*)(&waveform), sizeof(waveform));
 }
 

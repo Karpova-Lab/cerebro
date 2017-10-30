@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 77;
+const byte version = 78;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -34,10 +34,10 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 */
 #include <avr/pgmspace.h>
 #include <EEPROM.h>
-#include <SparkFunBQ27441.h>  //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
 #include <LaserDiode.h>
-#include <Radio.h>
-#include <Adafruit_SleepyDog.h>
+#include <SparkFunBQ27441.h>      //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
+#include <Radio.h>                //https://github.com/LowPowerLab/RFM69
+#include <Adafruit_SleepyDog.h>   //https://github.com/adafruit/Adafruit_SleepyDog
 
 
 #define SERIAL_NUMBER_ADDRESS 0
@@ -58,13 +58,10 @@ const byte indicatorLED = A5; //32u4 pin 41
 LaserDiode left(&DDRB,&PORTB,0,A4);
 LaserDiode right(&DDRD,&PORTD,2,A2);
 
-Radio radio(7,1);
+Radio radio(7,1); //slave select pin, interrupt pin
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
 byte batteryUpdateFrequency = 15;
-
-//---------function prototypes---------//
-void triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
 
 void setup() {
   SPI.begin();
@@ -102,6 +99,10 @@ void setup() {
   }
   Serial.println("Connected to BQ27441!");
   lipo.setCapacity(400);
+  while(lipo.soc()==0){
+    delay(1);
+    //wait;
+  }
 
   //*** Radio ***//  
   radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
@@ -156,22 +157,25 @@ void loop() {
           break;
         case 'S': // Receiving a new Cerebro S/N
           EEPROM.update(SERIAL_NUMBER_ADDRESS, radioMessage.value);
+          sendInfo();          
           break;
         case 'L': // Receiving a new left setpoint
           left.setPoint = radioMessage.value;                   //update setpoint 
           EEPROM.put(LEFT_SETPOINT_ADDRESS,left.setPoint);     //save new setpoint to memory     
+          sendInfo();
           break;
         case 'R': // Receiving a new right setpoint
           right.setPoint = radioMessage.value;                  //update setpoint 
           EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
+          sendInfo();          
           break;
         case 'l': // Receiving a new left setpoint
           Serial.print("\nTriggering Left @ ");Serial.println(radioMessage.value);
-          triggerEvent(radioMessage.value,&left,true);
+          triggerOne(radioMessage.value,&left);
           break;
         case 'r': // Receiving a new right setpoint
           Serial.print("\nTriggering Right @");Serial.println(radioMessage.value);        
-          triggerEvent(radioMessage.value,&right,true);
+          triggerOne(radioMessage.value,&right);
           break;
       }
     }
@@ -203,10 +207,10 @@ void loop() {
       integerVal = integerVal + msg[i] * powers[msgIndex-1-i];
     }
     if (isLeft){
-      triggerEvent(integerVal,&left,true);
+      triggerOne(integerVal,&left);
     }
     else if (isRight){
-      triggerEvent(integerVal,&right,true);
+      triggerOne(integerVal,&right);
     }
   }
 }
@@ -254,11 +258,11 @@ void checkForMiss(){
 }
 
 void combinedTest(){
-  triggerEvent(left.setPoint,&left,true);
+  triggerOne(left.setPoint,&left);
   delay(1000);
   triggerBoth();
   delay(1000);
-  triggerEvent(right.setPoint,&right,true);
+  triggerOne(right.setPoint,&right);
   delay(5000);  
   Serial.println();
 }
@@ -266,11 +270,11 @@ void combinedTest(){
 void isolationTest(){
   Serial.print("Before left: ");    
   feedbackReadings();
-  triggerEvent(left.setPoint,&left,true);
+  triggerOne(left.setPoint,&left);
   delay(1000);  
   Serial.print("Before right: ");  
   feedbackReadings();  
-  triggerEvent(right.setPoint,&right,true);
+  triggerOne(right.setPoint,&right);
 }
 
 void feedbackReadings(){ 

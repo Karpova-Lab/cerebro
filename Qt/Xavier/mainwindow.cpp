@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "2.0.2";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/23/2017";
+        xavierVersion = "2.0.3";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/30/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -266,19 +266,19 @@ MainWindow::MainWindow(QWidget *parent)
             rightDiode_spn = new QSpinBox();
             rightDiode_spn->setRange(0,1023);
             rightDiode_spn->setAlignment(Qt::AlignCenter);
-        charLayout->addWidget(rightDiode_spn,0,1,1,1);
-            leftTest_btn = new QPushButton("Test Left");
-        charLayout->addWidget(leftTest_btn,1,0,1,1);
-            rightTest_btn = new QPushButton("Test Right");
-        charLayout->addWidget(rightTest_btn,1,1,1,1);
+        charLayout->addWidget(rightDiode_spn,0,2,1,1);
+            leftTest_btn = new QPushButton("Test");
+        charLayout->addWidget(leftTest_btn,0,1,1,1);
+            rightTest_btn = new QPushButton("Test");
+        charLayout->addWidget(rightTest_btn,0,3,1,1);
             leftSet_btn = new QPushButton("Set Left");
-        charLayout->addWidget(leftSet_btn,2,0,1,1);
+        charLayout->addWidget(leftSet_btn,1,0,1,2);
             rightSet_btn = new QPushButton("Set Right");
-        charLayout->addWidget(rightSet_btn,2,1,1,1);
+        charLayout->addWidget(rightSet_btn,1,2,1,2);
 //            isolationTest_btn = new QPushButton("Isolation Test");
 //        charLayout->addWidget(isolationTest_btn,3,0,1,1);
             combinedTest_btn = new QPushButton("Combined Test");
-        charLayout->addWidget(combinedTest_btn,3,0,1,2);
+        charLayout->addWidget(combinedTest_btn,2,0,1,4);
 //            initialize_btn = new QPushButton("Send Power Values to Cerebro");
 //        charLayout->addWidget(initialize_btn,4,0,1,2);
     charBox->setLayout(charLayout);
@@ -826,7 +826,6 @@ void MainWindow::readSerial()
         else if (onboardParams.length()==1){ //received battery update
             batteryIndicator->setValue(onboardParams[0].toInt());
             battery_lbl->setText(batteryIndicator->text());
-
         }
     }
     int newLineIndex = baseBuffer.lastIndexOf("\n");

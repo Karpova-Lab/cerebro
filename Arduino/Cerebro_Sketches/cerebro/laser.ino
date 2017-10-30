@@ -1,4 +1,4 @@
-void triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedback){
+void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
@@ -30,13 +30,8 @@ void triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedba
     }
     //else if onClock hasn't expired, turn on/keep on the laser
     else if ((millis()-onClock)<waveform.onTime){
-      if(!useFeedback){
-        thediode->sendDAC(desiredPower);
-      }
-      else{
-        thediode->sendDAC(thediode->DAClevel);              //Laser on
-        thediode->feedback(desiredPower);      //increase or decrease DAClevel to reach desired lightPower
-      }
+      thediode->sendDAC(thediode->DAClevel);              //Laser on
+      thediode->feedback(desiredPower);      //increase or decrease DAClevel to reach desired lightPower
       offClock = millis();
     }
     //else if offClock hasn't expired, turn off/keep off light
@@ -53,10 +48,8 @@ void triggerEvent(unsigned int desiredPower,LaserDiode* thediode, bool useFeedba
     //else the end of the waveform has been reached. turn off the light.
     else{
       reportLaserStats();      
-      if (useFeedback){
-        if (waveform.rampDur>0){
-          thediode->fade(waveform.rampDur);
-        }
+      if (waveform.rampDur>0){
+        thediode->fade(waveform.rampDur);
       }
       laserEnabled = thediode->off();
     }
@@ -104,7 +97,6 @@ void triggerBoth(){
             checkForMiss();
             break;
           case 'C':
-            // Watchdog.reset();            
             onClock=trainClock=millis();   
             checkForMiss(); 
             break;
@@ -162,13 +154,12 @@ void triggerBoth(){
 }
 
 void reportLaserStats(){
-  // Read battery stats from the BQ27441-G1A
   diodeStats.leftFBK = analogRead(left.analogPin);
   diodeStats.rightFBK = analogRead(right.analogPin);
   diodeStats.leftDAC = left.DAClevel;
   diodeStats.rightDAC = right.DAClevel;
   
-  if (radio.sendWithRetry(1, (const void*)(&diodeStats), sizeof(diodeStats))){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodeStats), sizeof(diodeStats))){
     Serial.println("laser stats sent");
   }
   else{
