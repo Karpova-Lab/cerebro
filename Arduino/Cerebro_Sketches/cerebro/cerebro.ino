@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 78;
+const byte version = 79;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -162,12 +162,10 @@ void loop() {
         case 'L': // Receiving a new left setpoint
           left.setPoint = radioMessage.value;                   //update setpoint 
           EEPROM.put(LEFT_SETPOINT_ADDRESS,left.setPoint);     //save new setpoint to memory     
-          sendInfo();
           break;
         case 'R': // Receiving a new right setpoint
           right.setPoint = radioMessage.value;                  //update setpoint 
           EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
-          sendInfo();          
           break;
         case 'l': // Receiving a new left setpoint
           Serial.print("\nTriggering Left @ ");Serial.println(radioMessage.value);
