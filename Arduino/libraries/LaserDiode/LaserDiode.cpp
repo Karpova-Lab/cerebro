@@ -10,21 +10,24 @@ LaserDiode::LaserDiode(volatile uint8_t *slaveDirReg,volatile uint8_t *_slaveOut
 }
 
 bool LaserDiode::off(){
+  cli();
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(64);                        //Power down command (page 13, table 1 of LTC2630-12 datasheet)
   SPI.transfer(0);                  //shift high byte
   SPI.transfer(0);            //shift low byte
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
+  SPI.endTransaction();   
+  sei();
   if (DAClevel==4095){
     DACisMaxed = true;
   }
   DAClevel = 0;
-  SPI.endTransaction();   
   return false;
 }
 
 void LaserDiode::sendDAC(unsigned int value) {
+  cli();
   SPI.beginTransaction(SPISettings(50000000, MSBFIRST, SPI_MODE0));
   *slaveOutputReg &= ~(1<<slaveSelectPin); //latch low  
   SPI.transfer(48);                        //Write to and Update (Power up) DAC Register command (page 13, table 1 of LTC2630-12 datasheet)
@@ -32,6 +35,7 @@ void LaserDiode::sendDAC(unsigned int value) {
   SPI.transfer(value<<4 & 255);            //shift low byte
   *slaveOutputReg |= (1<<slaveSelectPin);  //latch high
   SPI.endTransaction();
+  sei();
 }
 
 void LaserDiode::feedback(int setPoint){

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 74;
+const byte version = 78;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -34,10 +34,10 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 */
 #include <avr/pgmspace.h>
 #include <EEPROM.h>
-#include <SparkFunBQ27441.h>  //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
 #include <LaserDiode.h>
-#include <Radio.h>
-#include <Adafruit_SleepyDog.h>
+#include <SparkFunBQ27441.h>      //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
+#include <Radio.h>                //https://github.com/LowPowerLab/RFM69
+#include <Adafruit_SleepyDog.h>   //https://github.com/adafruit/Adafruit_SleepyDog
 
 
 #define SERIAL_NUMBER_ADDRESS 0
@@ -53,19 +53,15 @@ Battery battery;
 Feedback diodeStats;
 
 int meterVal = 0;
-int powerMeter = A3;
 const byte indicatorLED = A5; //32u4 pin 41
 
 LaserDiode left(&DDRB,&PORTB,0,A4);
 LaserDiode right(&DDRD,&PORTD,2,A2);
 
-Radio radio(7,1);
+Radio radio(7,1); //slave select pin, interrupt pin
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
-byte batteryUpdateFrequency = 20;
-
-//---------function prototypes---------//
-int triggerEvent(unsigned int desiredPower, LaserDiode* thediode, bool useFeedback=true );
+byte batteryUpdateFrequency = 15;
 
 void setup() {
   SPI.begin();
@@ -75,29 +71,49 @@ void setup() {
   left.off();
   right.off();
   
-
   Serial.begin(115200);  
 
   // Initialize waveform
   EEPROM.get(WAVEFORM_ADDRESS,waveform);
 
   // Indicator LED
-  pinMode(indicatorLED,OUTPUT);
+  pinMode(indicatorLED,OUTPUT); 
   digitalWrite(indicatorLED,HIGH);
-  delay(1000);
+  delay(50);
   digitalWrite(indicatorLED,LOW);
-  delay(1000);  
+  delay(50);  
   digitalWrite(indicatorLED,HIGH);
-  delay(1000);
+  delay(50);
   digitalWrite(indicatorLED,LOW);  
 
   //*** Battery Monitor ***//
-  setupBQ27441();
-  
+  if (!lipo.begin()){
+	// If communication fails, print an error message and loop forever.
+    Serial.println("Error: Unable to communicate with BQ27441.");
+    while(1){ //blink error
+      digitalWrite(indicatorLED,HIGH);
+      delay(1000);
+      digitalWrite(indicatorLED,LOW);
+      delay(1000);
+    }
+  }
+  Serial.println("Connected to BQ27441!");
+  lipo.setCapacity(400);
+  while(lipo.soc()==0){
+    delay(1);
+    //wait;
+  }
+
+  //*** Radio ***//  
   radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
-  char readyMessage[22] = "\nCerebro Connected!\n";
-  byte buffLen=strlen(readyMessage);
-  radio.send(BASESTATION, readyMessage, buffLen);  
+  radioMessage.variable = 'Y'; 
+  radioMessage.value = millis();  
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage),3,250)){
+    Serial.print("Connected to Base Station");
+  }
+  else{
+    Serial.println("Failed to Connect to Base Station");
+  }  
   sendInfo();
 }
 
@@ -111,8 +127,6 @@ void loop() {
         case 'B':
           reportBattery();break;
         case 'I':    
-          printMissed();
-          delay(100);
           msgCount = 0;
           missedCount = 0;       
           sendInfo();break;
@@ -143,22 +157,25 @@ void loop() {
           break;
         case 'S': // Receiving a new Cerebro S/N
           EEPROM.update(SERIAL_NUMBER_ADDRESS, radioMessage.value);
+          sendInfo();          
           break;
         case 'L': // Receiving a new left setpoint
           left.setPoint = radioMessage.value;                   //update setpoint 
           EEPROM.put(LEFT_SETPOINT_ADDRESS,left.setPoint);     //save new setpoint to memory     
+          sendInfo();
           break;
         case 'R': // Receiving a new right setpoint
           right.setPoint = radioMessage.value;                  //update setpoint 
           EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
+          sendInfo();          
           break;
         case 'l': // Receiving a new left setpoint
           Serial.print("\nTriggering Left @ ");Serial.println(radioMessage.value);
-          triggerEvent(radioMessage.value,&left,true);
+          triggerOne(radioMessage.value,&left);
           break;
         case 'r': // Receiving a new right setpoint
           Serial.print("\nTriggering Right @");Serial.println(radioMessage.value);        
-          triggerEvent(radioMessage.value,&right,true);
+          triggerOne(radioMessage.value,&right);
           break;
       }
     }
@@ -190,10 +207,10 @@ void loop() {
       integerVal = integerVal + msg[i] * powers[msgIndex-1-i];
     }
     if (isLeft){
-      triggerEvent(integerVal,&left,true);
+      triggerOne(integerVal,&left);
     }
     else if (isRight){
-      triggerEvent(integerVal,&right,true);
+      triggerOne(integerVal,&right);
     }
   }
 }
@@ -204,7 +221,7 @@ void sendInfo(){
   currentInfo.lSetPoint = left.setPoint;
   currentInfo.rSetPoint = right.setPoint;
   currentInfo.battery = lipo.soc();
-  if (radio.sendWithRetry(1, (const void*)(&currentInfo), sizeof(currentInfo))){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&currentInfo), sizeof(currentInfo))){
     Serial.println("data sent successfully");
   }
   else{
@@ -241,11 +258,11 @@ void checkForMiss(){
 }
 
 void combinedTest(){
-  triggerEvent(left.setPoint,&left,true);
+  triggerOne(left.setPoint,&left);
   delay(1000);
   triggerBoth();
   delay(1000);
-  triggerEvent(right.setPoint,&right,true);
+  triggerOne(right.setPoint,&right);
   delay(5000);  
   Serial.println();
 }
@@ -253,11 +270,11 @@ void combinedTest(){
 void isolationTest(){
   Serial.print("Before left: ");    
   feedbackReadings();
-  triggerEvent(left.setPoint,&left,true);
+  triggerOne(left.setPoint,&left);
   delay(1000);  
   Serial.print("Before right: ");  
   feedbackReadings();  
-  triggerEvent(right.setPoint,&right,true);
+  triggerOne(right.setPoint,&right);
 }
 
 void feedbackReadings(){ 
@@ -266,61 +283,15 @@ void feedbackReadings(){
   Serial.println(analogRead(right.analogPin));
 }
 
-void calibrate(){
-  int tryPower  = 1005;
-  while ( meterVal <96){
-    tryPower++;
-    meterVal =  triggerEvent(tryPower,&left,true);
-    Serial.print("Try: ");
-    Serial.print(tryPower);
-    Serial.print(", Result: ");
-    Serial.println(meterVal);
-    delay(2000);
-  }
-  Serial.println("Done!");
-  Serial.print(tryPower);
-}
-
-void pauseUntilCommand(){
-  while(!Serial.available()){
-    //wait
-  }
-  while(Serial.available()){
-    Serial.read();
-  }
-}
-
 void reportBattery(){
   // Read battery stats from the BQ27441-G1A
+  Serial.println("getting soc");  
   battery.soc = lipo.soc();
-  battery.volts = lipo.voltage();
-  battery.capacity = lipo.capacity(REMAIN);
   if (radio.sendWithRetry(BASESTATION, (const void*)(&battery), sizeof(battery))){
     Serial.println("battery info sent successfully");
   }
   else{
     Serial.println("battery info send fail");
-  }
-}
-
-void setupBQ27441(void)
-{
-  if (!lipo.begin()) // begin() will return true if communication is successful
-  {
-	// If communication fails, print an error message and loop forever.
-    Serial.println("Error: Unable to communicate with BQ27441.");
-    blinkError();
-  }
-  Serial.println("Connected to BQ27441!");
-  lipo.setCapacity(400);
-}
-
-void blinkError(){
-  while(1){
-    digitalWrite(indicatorLED,HIGH);
-    delay(1000);
-    digitalWrite(indicatorLED,LOW);
-    delay(1000);
   }
 }
 
@@ -335,7 +306,7 @@ void printBattery(){
 
 void printMissed(){
   reportBattery();
-  delay(500);
+  delay(200);
   unsigned int missed;
   Serial.print("missed,");Serial.println(missedCount);
   radioMessage.variable = 'M'; 
