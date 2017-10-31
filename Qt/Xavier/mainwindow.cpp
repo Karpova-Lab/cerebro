@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "2.0.3";
+        xavierVersion = "2.0.4";
         QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/30/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
@@ -151,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
             getInfo_btn = new QPushButton("Check Wireless Connection / Update Battery Status");
         cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
+    cerStatusBox->setStyleSheet("");
     cerStatusBox->setEnabled(false);
 
     //Base station monitor
@@ -697,6 +698,7 @@ void MainWindow::connectBasePort()
             errorThrown = false;
         }
         else{ //disconnect from serial port
+            cerStatusBox->setStyleSheet("");
             QString time = "\r" + serialPortList->currentText() + " Disconnected - " + QDate::currentDate().toString() + " " + QTime::currentTime().toString()+ "\r---------------------------------------------------------\r";
             baseMonitor->textCursor().insertText(time);
             serial->close();
@@ -785,6 +787,7 @@ void MainWindow::readSerial()
         qDebug()<<"data = "<<onboardParams;
         qDebug()<<"length "<<onboardParams.length();
         if (onboardParams.length()==10){//received cerebro info
+            cerStatusBox->setStyleSheet("");
             serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
             cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
             Lset_lbl->setText("Lset\n"+onboardParams[2]);leftDiode_spn->setValue(onboardParams[2].toInt());
@@ -824,8 +827,14 @@ void MainWindow::readSerial()
             battery_lbl->setText(batteryIndicator->text());
         }
         else if (onboardParams.length()==1){ //received battery update
-            batteryIndicator->setValue(onboardParams[0].toInt());
-            battery_lbl->setText(batteryIndicator->text());
+            if (onboardParams[0] == 'X'){
+                cerStatusBox->setStyleSheet("color:#ed0b0b");
+            }
+            else{
+                cerStatusBox->setStyleSheet("");
+                batteryIndicator->setValue(onboardParams[0].toInt());
+                battery_lbl->setText(batteryIndicator->text());
+            }
         }
     }
     int newLineIndex = baseBuffer.lastIndexOf("\n");
@@ -875,8 +884,8 @@ void MainWindow::clearMonitor()
     baseFilter_label->setText("Filter Duration:");
     batteryIndicator->setValue(0);
     battery_lbl->setText(batteryIndicator->text());
-    serialNumber_lbl->setText("Serial#\n");
-    cerFirmware_lbl->setText("Firmware#\n");
+    serialNumber_lbl->setText("Serial #\n");
+    cerFirmware_lbl->setText("Firmware\n");
     Lset_lbl->setText("Lset\n");
     Rset_lbl->setText("Rset\n");
     cerDelay_lbl->setText("Delay\n");
@@ -947,7 +956,6 @@ void MainWindow::sendTrigger()
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
-
 
 void MainWindow::trainChecked()
 {
@@ -1065,6 +1073,7 @@ void MainWindow::getBatteryStatus(){
     QString msg = "B\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
+    cerStatusBox->setStyleSheet("color:#ed0b0b");                            
 }
 
 void MainWindow::checkForBase(){

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 79;
+const byte version = 80;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -79,12 +79,6 @@ void setup() {
   // Indicator LED
   pinMode(indicatorLED,OUTPUT); 
   digitalWrite(indicatorLED,HIGH);
-  delay(50);
-  digitalWrite(indicatorLED,LOW);
-  delay(50);  
-  digitalWrite(indicatorLED,HIGH);
-  delay(50);
-  digitalWrite(indicatorLED,LOW);  
 
   //*** Battery Monitor ***//
   if (!lipo.begin()){
@@ -115,6 +109,7 @@ void setup() {
     Serial.println("Failed to Connect to Base Station");
   }  
   sendInfo();
+  digitalWrite(indicatorLED,LOW);  
 }
 
 void loop() {
@@ -140,7 +135,8 @@ void loop() {
           Serial.println("Command not recognized");break;
       }
     }
-    else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data 
+    else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data
+      sendACK();
       msgCount++;
       waveform = *(WaveformData*)radio.DATA;  //update waveform
       EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory

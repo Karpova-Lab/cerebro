@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 35;
+const byte version = 36;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -157,7 +157,7 @@ void sendMsgAndVal(char msg,unsigned int val){
     Serial1.print("data received");newline();    
   }
   else{
-    Serial1.print("data send fail");newline();
+    Serial1.print("*X&data send fail");newline();
   }
 }
 
@@ -172,7 +172,7 @@ void newSession(){
     Serial1.print("Connected!");
   }
   else{      
-    Serial1.print("failed to connect\n\n");
+    Serial1.print("*X&failed to connect\n\n");
   }
 }
 
@@ -180,8 +180,10 @@ void relayMsg(char msg){
   if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
   }
   else{
+    Serial1.print("*X&");
     Serial1.print("Tried Sending ''");Serial1.print(msg);
     Serial1.print("'', ACK not received");newline();
+
   }
 }    
 
@@ -241,7 +243,12 @@ void updateWaveform(){
   Serial1.print(waveform.offTime);comma();
   Serial1.print(waveform.trainDur);comma();
   Serial1.print(waveform.rampDur);newline();  
-  radio.send(CEREBRO, (const void*)(&waveform), sizeof(waveform));
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&waveform), sizeof(waveform))){
+    //
+  }
+  else{
+    Serial1.print("*X&Waveform Update Failed\n");
+  }
 }
 
 void triggerCommandReceived(){
