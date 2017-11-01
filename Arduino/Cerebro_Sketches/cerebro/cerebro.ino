@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 80;
+const byte version = 81;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -49,7 +49,6 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 WaveformData waveform;
 IntegerPayload radioMessage;
 Status currentInfo;
-Battery battery;
 Feedback diodeStats;
 
 int meterVal = 0;
@@ -62,6 +61,7 @@ Radio radio(7,1); //slave select pin, interrupt pin
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
 byte batteryUpdateFrequency = 15;
+bool reportBatteryFlag = false;
 
 void setup() {
   SPI.begin();
@@ -243,6 +243,9 @@ void sendACK(){
 
 void checkForMiss(){
   msgCount++;
+  if (msgCount%batteryUpdateFrequency==0){
+    reportBatteryFlag = true;
+  }
   if (msgCount!=radioMessage.value){
     for (msgCount; msgCount<radioMessage.value; msgCount++){
       EEPROM.put(MISSING_ARRAY_ADDRESS + 2*missedCount,msgCount);
@@ -278,24 +281,14 @@ void feedbackReadings(){
 }
 
 void reportBattery(){
-  // Read battery stats from the BQ27441-G1A
-  Serial.println("getting soc");  
-  battery.soc = lipo.soc();
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&battery), sizeof(battery))){
-    Serial.println("battery info sent successfully");
+  radioMessage.variable = 'B'; 
+  radioMessage.value = lipo.soc();;
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage))){
+    //
   }
   else{
     Serial.println("battery info send fail");
   }
-}
-
-void printBattery(){
-  // Now print out those values:
-  String toPrint = String(battery.soc) + "% | ";
-  toPrint += String(battery.volts) + " mV | ";
-  toPrint += String(battery.capacity) + " mAh remaining ";
-
-  Serial.println(toPrint);
 }
 
 void printMissed(){

@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 36;
+const byte version = 37;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -37,7 +37,6 @@ Radio radio(8,7); //slave select pin, interrupt pin
 WaveformData waveform;
 IntegerPayload radioMessage;
 Status currentInfo;
-Battery battery;
 Feedback diodeStats;
 unsigned long valsFromParse[5];
 unsigned int msgCount = 0;
@@ -100,19 +99,7 @@ void loop() {
       }
       currentInfo = *(Status*)radio.DATA;  //update waveform
       printInfo();      
-    }
-    else if (radio.DATALEN == sizeof(battery)){ //received a battery data 
-      if (radio.ACKRequested()){
-        radio.sendACK();
-      }
-      battery = *(Battery*)radio.DATA;  
-      Serial1.print("*");
-      Serial1.print(battery.soc);
-      Serial1.print("&");   
-      Serial1.print(currentTime());
-      Serial1.print(",B,");Serial1.print(battery.soc);Serial1.print(",Connection Good!\n");   
-
-    }    
+    }  
     else if (radio.DATALEN == sizeof(diodeStats)){ //diode stats data
       if (radio.ACKRequested()){
         radio.sendACK();
@@ -125,7 +112,15 @@ void loop() {
         radio.sendACK();
       }
       radioMessage = *(IntegerPayload*)radio.DATA;  
-      if (radioMessage.variable == 'M' || radioMessage.variable =='m'){
+      if(radioMessage.variable == 'B'){
+        currentInfo.battery = radioMessage.value;
+        Serial1.print("*");
+        Serial1.print(currentInfo.battery);
+        Serial1.print("&");   
+        Serial1.print(currentTime());
+        Serial1.print(",B,");Serial1.print(currentInfo.battery);Serial1.print(",Connection Good!\n");   
+      }
+      else if (radioMessage.variable == 'M' || radioMessage.variable =='m'){
         Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
       }
       else if (radioMessage.variable == 'Y'){
