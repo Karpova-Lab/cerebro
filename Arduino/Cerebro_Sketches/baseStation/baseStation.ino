@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 38;
+const byte version = 39;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -122,7 +122,7 @@ void loop() {
         Serial1.print(",,B,");Serial1.print(currentInfo.battery);Serial1.print(",Connection Good!\n");   
       }
       else if (radioMessage.variable == 'M' || radioMessage.variable =='m'){
-        comma();Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
+        comma();comma();Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
       }
       else if (radioMessage.variable == 'Y'){
         Serial1.print("Cerebro turned on and connected,");Serial1.print(radioMessage.value);//print time it took to startup and send connection message. 
@@ -225,10 +225,10 @@ void printDiodeStats(){
   Serial1.print(diodeStats.rightFBK);Serial1.print("(");
   Serial1.print(diodeStats.rightDAC);Serial1.print(")");newline();
   if (diodeStats.leftDAC>3000){
-    Serial1.print("Warning: DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
+    Serial1.print("Warning: Left DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
   }
   if (diodeStats.rightDAC>3000){
-    Serial1.print("Warning: DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
+    Serial1.print("Warning: Right DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
   }
 }
 

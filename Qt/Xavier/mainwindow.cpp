@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "2.0.4";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/30/2017";
+        xavierVersion = "2.0.5";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/2/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -1007,7 +1007,7 @@ void MainWindow::saveFile()
         if (!ratNumber.isEmpty()){
             //save the base station log
             saveName1 = QFileDialog::getSaveFileName(this,
-                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + startTime +"_baseLog",tr("(*.csv)") );
+                tr("Save Base Station Log"), saveDirectoryPath + "/" + ratNumber + "/" + ratNumber+ "_" + startTime +"_baseLog",tr("(*.csv)") );
             qDebug()<<saveName1;
             if (!saveName1.isEmpty()){
                 QFile file(saveName1);
