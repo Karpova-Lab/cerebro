@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 37;
+const byte version = 38;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -52,6 +52,7 @@ void setup() {
   pinMode(triggerPin,INPUT);
   pinMode(stopPin,INPUT);
   startTime = millis();  
+  newSession();
 }
 
 void loop() {
@@ -107,7 +108,7 @@ void loop() {
       diodeStats = *(Feedback*)radio.DATA;  
       printDiodeStats();    
     }
-    else if (radio.DATALEN == sizeof(radioMessage)){ // receiving message 'M' or 'm' or 'Y'
+    else if (radio.DATALEN == sizeof(radioMessage)){ // receiving message 'B' or M' or 'm' or 'Y'
       if (radio.ACKRequested()){
         radio.sendACK();
       }
@@ -118,10 +119,10 @@ void loop() {
         Serial1.print(currentInfo.battery);
         Serial1.print("&");   
         Serial1.print(currentTime());
-        Serial1.print(",B,");Serial1.print(currentInfo.battery);Serial1.print(",Connection Good!\n");   
+        Serial1.print(",,B,");Serial1.print(currentInfo.battery);Serial1.print(",Connection Good!\n");   
       }
       else if (radioMessage.variable == 'M' || radioMessage.variable =='m'){
-        Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
+        comma();Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
       }
       else if (radioMessage.variable == 'Y'){
         Serial1.print("Cerebro turned on and connected,");Serial1.print(radioMessage.value);//print time it took to startup and send connection message. 
@@ -176,7 +177,7 @@ void relayMsg(char msg){
   }
   else{
     Serial1.print("*X&");
-    Serial1.print("Tried Sending ''");Serial1.print(msg);
+    Serial1.print(currentTime());comma();Serial1.print("Tried Sending ''");Serial1.print(msg);
     Serial1.print("'', ACK not received");newline();
 
   }
@@ -191,16 +192,16 @@ void printInfo(){
     spamFilter = currentInfo.waveform.startDelay + currentInfo.waveform.onTime;
   }
   
-  Serial1.print("\nSerial Number, ");Serial1.print(currentInfo.serialNumber);newline();
-  Serial1.print("Cerebro Version, ");Serial1.print(currentInfo.firmware);newline();
-  Serial1.print("Left Set Point, ");Serial1.print(currentInfo.lSetPoint);newline();
-  Serial1.print("Right Set Point, ");Serial1.print(currentInfo.rSetPoint); newline();  
-  Serial1.print("Start Delay, "); Serial1.print(currentInfo.waveform.startDelay);newline();    
-  Serial1.print("On Time, "); Serial1.print(currentInfo.waveform.onTime);newline();
-  Serial1.print("Off Time, "); Serial1.print(currentInfo.waveform.offTime);newline();
-  Serial1.print("Train Duration, "); Serial1.print(currentInfo.waveform.trainDur);newline();
-  Serial1.print("Ramp Duration, "); Serial1.print(currentInfo.waveform.rampDur);newline();
-  Serial1.print("Battery Level, "); Serial1.print(currentInfo.battery);newline();newline();  
+  Serial1.print("\nSerial Number,");Serial1.print(currentInfo.serialNumber);newline();
+  Serial1.print("Cerebro Version,");Serial1.print(currentInfo.firmware);newline();
+  Serial1.print("Left Set Point,");Serial1.print(currentInfo.lSetPoint);newline();
+  Serial1.print("Right Set Point,");Serial1.print(currentInfo.rSetPoint); newline();  
+  Serial1.print("Start Delay,"); Serial1.print(currentInfo.waveform.startDelay);newline();    
+  Serial1.print("On Time,"); Serial1.print(currentInfo.waveform.onTime);newline();
+  Serial1.print("Off Time,"); Serial1.print(currentInfo.waveform.offTime);newline();
+  Serial1.print("Train Duration,"); Serial1.print(currentInfo.waveform.trainDur);newline();
+  Serial1.print("Ramp Duration,"); Serial1.print(currentInfo.waveform.rampDur);newline();
+  Serial1.print("Battery Level,"); Serial1.print(currentInfo.battery);newline();newline();  
 
   Serial1.print("*");Serial1.print(currentInfo.serialNumber);
   Serial1.print("~");Serial1.print(currentInfo.firmware); 
@@ -216,13 +217,19 @@ void printInfo(){
 
 void printDiodeStats(){
   Serial1.print(currentTime());comma();
-  Serial1.print("F,");
-  Serial1.print(currentInfo.lSetPoint);comma();
-  Serial1.print(diodeStats.leftFBK);comma();
-  Serial1.print(diodeStats.leftDAC);comma();
-  Serial1.print(currentInfo.rSetPoint);comma();                 
-  Serial1.print(diodeStats.rightFBK);comma();
-  Serial1.print(diodeStats.rightDAC);newline();
+  Serial1.print(",F,");
+  Serial1.print(currentInfo.lSetPoint);Serial1.print("=");
+  Serial1.print(diodeStats.leftFBK);Serial1.print("(");
+  Serial1.print(diodeStats.leftDAC);Serial1.print(") ");
+  Serial1.print(currentInfo.rSetPoint);Serial1.print("=");               
+  Serial1.print(diodeStats.rightFBK);Serial1.print("(");
+  Serial1.print(diodeStats.rightDAC);Serial1.print(")");newline();
+  if (diodeStats.leftDAC>3000){
+    Serial1.print("Warning: DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
+  }
+  if (diodeStats.rightDAC>3000){
+    Serial1.print("Warning: DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
+  }
 }
 
 void updateWaveform(){
@@ -284,6 +291,10 @@ unsigned long currentTime(){
 
 void comma(){
   Serial1.print(",");
+}
+
+void pipe(){
+  Serial1.print("|");
 }
 
 void newline(){

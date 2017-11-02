@@ -130,7 +130,10 @@ void reportLaserStats(){
 
 bool turnoff(){
   Watchdog.disable();
-  reportLaserStats();           
+  diodeStats.leftFBK = analogRead(left.analogPin);
+  diodeStats.rightFBK = analogRead(right.analogPin);
+  diodeStats.leftDAC = left.DAClevel;
+  diodeStats.rightDAC = right.DAClevel;
   if (waveform.rampDur>0){
     unsigned long fadeClock;
     for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
@@ -146,15 +149,17 @@ bool turnoff(){
   }
   left.off(); 
   right.off();
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodeStats), sizeof(diodeStats))){
+    Serial.println("laser stats sent");
+  }
+  else{
+    Serial.println("laser stats send fail");
+  }
   Serial.println(msgCount%batteryUpdateFrequency);
-  if (reportBatteryFlag){
+  if (reportBatteryFlag || lipo.capacity(REMAIN)<15){
     reportBattery();
     reportBatteryFlag = false;
-  }
-  if (lipo.capacity(REMAIN)<15){
-    reportBattery();
   }
   //send alert if feedbacks aren't what were expected
   return false;
 }
-

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 81;
+const byte version = 82;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -90,7 +90,7 @@ void setup() {
       digitalWrite(indicatorLED,LOW);
       delay(1000);
     }
-  }
+  }  
   Serial.println("Connected to BQ27441!");
   lipo.setCapacity(400);
   while(lipo.soc()==0){
@@ -282,7 +282,7 @@ void feedbackReadings(){
 
 void reportBattery(){
   radioMessage.variable = 'B'; 
-  radioMessage.value = lipo.soc();;
+  radioMessage.value = lipo.soc();
   if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage))){
     //
   }
