@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 39;
+const byte version = 40;
 
 const int LED = 13;
 const int triggerPin = 5;
@@ -217,7 +217,8 @@ void printInfo(){
 
 void printDiodeStats(){
   Serial1.print(currentTime());comma();
-  Serial1.print(",F,");
+  Serial1.print(diodeStats.msgCount);comma();
+  Serial1.print("F,");
   Serial1.print(currentInfo.lSetPoint);Serial1.print("=");
   Serial1.print(diodeStats.leftFBK);Serial1.print("(");
   Serial1.print(diodeStats.leftDAC);Serial1.print(") ");

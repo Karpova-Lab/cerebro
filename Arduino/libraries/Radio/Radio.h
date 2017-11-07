@@ -43,6 +43,7 @@ typedef struct {
 } Status;
 
 typedef struct {
+  unsigned int msgCount;
   unsigned int leftFBK;
   unsigned int rightFBK;
   unsigned int leftDAC;

@@ -77,12 +77,12 @@ void triggerBoth(){
         radioMessage = *(IntegerPayload*)radio.DATA;
         switch (radioMessage.variable){
           case 'A':
+            checkForMiss();        
             laserEnabled =  turnoff();
-            checkForMiss();
             break;
           case 'C':
-            onClock=trainClock=millis();   
             checkForMiss(); 
+            onClock=trainClock=millis();   
             break;
         }
       }
@@ -115,6 +115,7 @@ void triggerBoth(){
 }
 
 void reportLaserStats(){
+  diodeStats.msgCount = msgCount;
   diodeStats.leftFBK = analogRead(left.analogPin);
   diodeStats.rightFBK = analogRead(right.analogPin);
   diodeStats.leftDAC = left.DAClevel;
@@ -130,6 +131,7 @@ void reportLaserStats(){
 
 bool turnoff(){
   Watchdog.disable();
+  diodeStats.msgCount = msgCount;
   diodeStats.leftFBK = analogRead(left.analogPin);
   diodeStats.rightFBK = analogRead(right.analogPin);
   diodeStats.leftDAC = left.DAClevel;
@@ -155,7 +157,6 @@ bool turnoff(){
   else{
     Serial.println("laser stats send fail");
   }
-  Serial.println(msgCount%batteryUpdateFrequency);
   if (reportBatteryFlag || lipo.capacity(REMAIN)<15){
     reportBattery();
     reportBatteryFlag = false;

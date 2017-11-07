@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 82;
+const byte version = 83;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -60,7 +60,8 @@ LaserDiode right(&DDRD,&PORTD,2,A2);
 Radio radio(7,1); //slave select pin, interrupt pin
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
-byte batteryUpdateFrequency = 15;
+unsigned int trigCount = 0;
+byte batteryUpdateFrequency = 10;
 bool reportBatteryFlag = false;
 
 void setup() {
@@ -148,6 +149,7 @@ void loop() {
       radioMessage = *(IntegerPayload*)radio.DATA;
       switch (radioMessage.variable){
         case 'T':
+          trigCount++;
           checkForMiss();      
           triggerBoth();
           break;
@@ -243,7 +245,7 @@ void sendACK(){
 
 void checkForMiss(){
   msgCount++;
-  if (msgCount%batteryUpdateFrequency==0){
+  if (trigCount%batteryUpdateFrequency==0){
     reportBatteryFlag = true;
   }
   if (msgCount!=radioMessage.value){
