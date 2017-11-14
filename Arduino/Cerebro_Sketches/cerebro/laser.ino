@@ -77,28 +77,12 @@ void triggerBoth(){
         radioMessage = *(IntegerPayload*)radio.DATA;
         switch (radioMessage.variable){
           case 'A':
-            Watchdog.disable();  
-            reportLaserStats();            
-            if (waveform.rampDur>0){
-              unsigned long fadeClock;
-              for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
-                fadeClock = millis();
-                left.feedback(left.setPoint*i/100);
-                left.sendDAC(left.DAClevel);
-                right.feedback(right.setPoint*i/100);
-                right.sendDAC(right.DAClevel);
-                while((millis()-fadeClock)<(waveform.rampDur/100)){
-                  //wait
-                }
-              }
-            }
-            left.off();
-            laserEnabled = right.off();
-            checkForMiss();
+            checkForMiss();        
+            laserEnabled =  turnoff();
             break;
           case 'C':
-            onClock=trainClock=millis();   
             checkForMiss(); 
+            onClock=trainClock=millis();   
             break;
         }
       }
@@ -125,35 +109,13 @@ void triggerBoth(){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
-      Watchdog.disable();
-      reportLaserStats();           
-      if (waveform.rampDur>0){
-        unsigned long fadeClock;
-        for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
-          fadeClock = millis();
-          left.feedback(left.setPoint*i/100);
-          left.sendDAC(left.DAClevel);
-          right.feedback(right.setPoint*i/100);
-          right.sendDAC(right.DAClevel);
-          while((millis()-fadeClock)<(waveform.rampDur/100)){
-            //wait
-          }
-        }
-      }
-      left.off(); 
-      laserEnabled = right.off();
-      if (msgCount%batteryUpdateFrequency==0){
-        reportBattery();
-      }
-      if (lipo.capacity(REMAIN)<15){
-        reportBattery();
-      }
-      //send alert if feedbacks aren't what were expected
+      laserEnabled =  turnoff();      
     }
   }
 }
 
 void reportLaserStats(){
+  diodeStats.msgCount = msgCount;
   diodeStats.leftFBK = analogRead(left.analogPin);
   diodeStats.rightFBK = analogRead(right.analogPin);
   diodeStats.leftDAC = left.DAClevel;
@@ -165,4 +127,40 @@ void reportLaserStats(){
   else{
     Serial.println("laser stats send fail");
   }
+}
+
+bool turnoff(){
+  Watchdog.disable();
+  diodeStats.msgCount = msgCount;
+  diodeStats.leftFBK = analogRead(left.analogPin);
+  diodeStats.rightFBK = analogRead(right.analogPin);
+  diodeStats.leftDAC = left.DAClevel;
+  diodeStats.rightDAC = right.DAClevel;
+  if (waveform.rampDur>0){
+    unsigned long fadeClock;
+    for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
+      fadeClock = millis();
+      left.feedback(left.setPoint*i/100);
+      left.sendDAC(left.DAClevel);
+      right.feedback(right.setPoint*i/100);
+      right.sendDAC(right.DAClevel);
+      while((millis()-fadeClock)<(waveform.rampDur/100)){
+        //wait
+      }
+    }
+  }
+  left.off(); 
+  right.off();
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodeStats), sizeof(diodeStats))){
+    Serial.println("laser stats sent");
+  }
+  else{
+    Serial.println("laser stats send fail");
+  }
+  if (reportBatteryFlag || lipo.capacity(REMAIN)<15){
+    reportBattery();
+    reportBatteryFlag = false;
+  }
+  //send alert if feedbacks aren't what were expected
+  return false;
 }

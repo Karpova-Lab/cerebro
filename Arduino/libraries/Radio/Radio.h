@@ -43,12 +43,7 @@ typedef struct {
 } Status;
 
 typedef struct {
-  unsigned int soc;
-  unsigned int volts;
-  unsigned int capacity;
-} Battery;
-
-typedef struct {
+  unsigned int msgCount;
   unsigned int leftFBK;
   unsigned int rightFBK;
   unsigned int leftDAC;

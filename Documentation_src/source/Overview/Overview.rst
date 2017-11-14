@@ -6,50 +6,48 @@ System Overview
 
 Features
 --------
-Open Source = Flexible
-  All code and CAD is available so you can make changes and improvements to anything you want!
+Open Source
+  * **Flexible** - All code and CAD is available so you can make changes and improvements to anything you want!
+  * **Low Cost** - Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
 
-Low Latency
-  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.
-
-Wirelessly Adjustable Waveforms
-  Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
+Wireless Radio
+  * **Low Latency** -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.
+  * **2-Way Communication** - 
+  * **Range** - {x}+ range. Doesn't need line of sight
+  * **Wirelessly Adjustable Waveforms** - Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
 Laser Diodes
-  Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
-  Bilateral implants have been capable of up to 15 mW per fiber-coupled laser diode or 450 mW/mm\ :sup:`2` (tested with two 520 nm laser diodes coupled to 200 |mgr|\m diameter fibers and powered by two 105 mAh lipo batteries).
-.. Keep in mind the limiting factor of the tested implant wasn't the laser diodes, but rather the peak current supply of the batteries.
+  * **High Power** - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
+  * **Independent Bilateral control** -  Each laser diode has its own control circuitry an can be independtly calibrated and controlled.
 
-Low Material Cost
-  Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
-
-.. csv-table::
-  :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
-  :widths: 1,1,1
-
-  Cerebro,30 , 2
-  Head Implant (bilateral),190,4
-  Base Station,25,0
-  Xavier, FREE, 0
-  ,
-  **Total**,**$145**,**6 hours**
 
   .. csv-table::
-  :header: "Parameter", "Test Condition", "Value", "Unit"
-  :widths: 3,3,3,3
+    :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
+    :widths: 1,1,1
 
-  Weight,,13.2, g
-  Dimensions, Receiver, 0.68 x 0.74 x 0.062 , in
-            , Implant, 1.05 x 0.40 x 0.75, in
-  :download:`Battery Life <photos/battery new.html>`, "520nm, 8mW 3s pulse, 6 pulses/min ", 4.25 (1700), "hours (pulses)"
-  Recharge time, ,1 ,hour
-  Light Wavelength, ":download:`PLT5 520<Datasheets/PL520_B1.pdf>` (Green)", "520","nm"
-  :download:`Trigger Latency <photos/Signal_Breakdown.png>`, , 3.5 |pm|\  0.1, ms
-  Rise Time, , 10 , ms
-  Fiber Diameter, , 200,|mgr|\m
-  Light Output (per fiber) ,520 nm diode coupled to 200 |mgr|\m fiber, 0 to 15 |pm|\  0.5, mW
-  Input Voltage, , 3.5 to 4.2, V
-  Idle Current, ,"11","mA"
+    Cerebro,30 , 2
+    Head Implant (bilateral),190,4
+    Base Station,25,0
+    Xavier, FREE, 0
+    ,
+    **Total**,**$145**,**6 hours**
+
+    .. csv-table::
+    :header: "Parameter", "Test Condition", "Value", "Unit"
+    :widths: 3,3,3,3
+
+    Weight,,13.2, g
+    Dimensions, Receiver, 0.68 x 0.74 x 0.062 , in
+              , Implant, 1.05 x 0.40 x 0.75, in
+    :download:`Battery Life <photos/battery new.html>`, "520nm, 8mW 3s pulse, 6 pulses/min ", 4.25 (1700), "hours (pulses)"
+    Recharge time, ,1 ,hour
+    Light Wavelength, ":download:`PLT5 520<Datasheets/PL520_B1.pdf>` (Green)", "520","nm"
+    :download:`Trigger Latency <photos/Signal_Breakdown.png>`, , 3.5 |pm|\  0.1, ms
+    Rise Time, , 10 , ms
+    Fiber Diameter, , 200,|mgr|\m
+    Light Output (per fiber) ,520 nm diode coupled to 200 |mgr|\m fiber, 0 to 15 |pm|\  0.5, mW
+    Input Voltage, , 3.5 to 4.2, V
+    Idle Current, ,"11","mA"
 
 Commercial Alternatives
 -----------------------

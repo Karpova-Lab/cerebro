@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 79;
+const byte version = 83;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -49,7 +49,6 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 WaveformData waveform;
 IntegerPayload radioMessage;
 Status currentInfo;
-Battery battery;
 Feedback diodeStats;
 
 int meterVal = 0;
@@ -61,7 +60,9 @@ LaserDiode right(&DDRD,&PORTD,2,A2);
 Radio radio(7,1); //slave select pin, interrupt pin
 unsigned int msgCount = 0;
 unsigned int missedCount = 0;
-byte batteryUpdateFrequency = 15;
+unsigned int trigCount = 0;
+byte batteryUpdateFrequency = 10;
+bool reportBatteryFlag = false;
 
 void setup() {
   SPI.begin();
@@ -79,12 +80,6 @@ void setup() {
   // Indicator LED
   pinMode(indicatorLED,OUTPUT); 
   digitalWrite(indicatorLED,HIGH);
-  delay(50);
-  digitalWrite(indicatorLED,LOW);
-  delay(50);  
-  digitalWrite(indicatorLED,HIGH);
-  delay(50);
-  digitalWrite(indicatorLED,LOW);  
 
   //*** Battery Monitor ***//
   if (!lipo.begin()){
@@ -96,7 +91,7 @@ void setup() {
       digitalWrite(indicatorLED,LOW);
       delay(1000);
     }
-  }
+  }  
   Serial.println("Connected to BQ27441!");
   lipo.setCapacity(400);
   while(lipo.soc()==0){
@@ -115,6 +110,7 @@ void setup() {
     Serial.println("Failed to Connect to Base Station");
   }  
   sendInfo();
+  digitalWrite(indicatorLED,LOW);  
 }
 
 void loop() {
@@ -140,7 +136,8 @@ void loop() {
           Serial.println("Command not recognized");break;
       }
     }
-    else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data 
+    else if (radio.DATALEN == sizeof(waveform)){ //received a waveform data
+      sendACK();
       msgCount++;
       waveform = *(WaveformData*)radio.DATA;  //update waveform
       EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory
@@ -152,6 +149,7 @@ void loop() {
       radioMessage = *(IntegerPayload*)radio.DATA;
       switch (radioMessage.variable){
         case 'T':
+          trigCount++;
           checkForMiss();      
           triggerBoth();
           break;
@@ -247,6 +245,9 @@ void sendACK(){
 
 void checkForMiss(){
   msgCount++;
+  if (trigCount%batteryUpdateFrequency==0){
+    reportBatteryFlag = true;
+  }
   if (msgCount!=radioMessage.value){
     for (msgCount; msgCount<radioMessage.value; msgCount++){
       EEPROM.put(MISSING_ARRAY_ADDRESS + 2*missedCount,msgCount);
@@ -282,24 +283,14 @@ void feedbackReadings(){
 }
 
 void reportBattery(){
-  // Read battery stats from the BQ27441-G1A
-  Serial.println("getting soc");  
-  battery.soc = lipo.soc();
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&battery), sizeof(battery))){
-    Serial.println("battery info sent successfully");
+  radioMessage.variable = 'B'; 
+  radioMessage.value = lipo.soc();
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&radioMessage), sizeof(radioMessage))){
+    //
   }
   else{
     Serial.println("battery info send fail");
   }
-}
-
-void printBattery(){
-  // Now print out those values:
-  String toPrint = String(battery.soc) + "% | ";
-  toPrint += String(battery.volts) + " mV | ";
-  toPrint += String(battery.capacity) + " mAh remaining ";
-
-  Serial.println(toPrint);
 }
 
 void printMissed(){
