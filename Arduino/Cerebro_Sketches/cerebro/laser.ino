@@ -57,20 +57,20 @@ void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
 }
 
 void triggerBoth(){
-  int countdownMS = Watchdog.enable(125);
+  // int countdownMS = Watchdog.enable(125);
   unsigned long onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
   if (waveform.startDelay>0){
     while ((millis()-delayClock)<waveform.startDelay){
-      Watchdog.reset();      
+      // Watchdog.reset();      
       //wait. be ready to stop if interrupted.
     }
   }
   onClock=trainClock=millis();
   while(laserEnabled){
-    Watchdog.reset();    
+    // Watchdog.reset();    
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (radio.receiveDone()){
       if (radio.DATALEN == sizeof(radioMessage)){
@@ -130,7 +130,7 @@ void reportLaserStats(){
 }
 
 bool turnoff(){
-  Watchdog.disable();
+  // Watchdog.disable();
   diodeStats.msgCount = msgCount;
   diodeStats.leftFBK = analogRead(left.analogPin);
   diodeStats.rightFBK = analogRead(right.analogPin);

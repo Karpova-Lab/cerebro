@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 83;
+const byte version = 84;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -37,8 +37,8 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #include <LaserDiode.h>
 #include <SparkFunBQ27441.h>      //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
 #include <Radio.h>                //https://github.com/LowPowerLab/RFM69
-#include <Adafruit_SleepyDog.h>   //https://github.com/adafruit/Adafruit_SleepyDog
-
+// #include <Adafruit_SleepyDog.h>   //https://github.com/adafruit/Adafruit_SleepyDog
+#include <LowPower.h>             //https://github.com/LowPowerLab/LowPower
 
 #define SERIAL_NUMBER_ADDRESS 0
 #define WAVEFORM_ADDRESS 1
@@ -52,7 +52,8 @@ Status currentInfo;
 Feedback diodeStats;
 
 int meterVal = 0;
-const byte indicatorLED = A5; //32u4 pin 41
+
+const byte indicatorLED = A0; //32u4 pin 36
 
 LaserDiode left(&DDRB,&PORTB,0,A4);
 LaserDiode right(&DDRD,&PORTD,2,A2);
@@ -179,36 +180,8 @@ void loop() {
       Serial.println("Unexpected Data size received");
     }
   }
+  LowPower.idle(SLEEP_FOREVER,ADC_OFF,TIMER4_OFF,TIMER3_OFF,TIMER1_OFF,TIMER0_ON,SPI_ON,USART1_OFF,TWI_OFF,USB_OFF);
 
-  if (Serial.available()){
-    bool isLeft = false;
-    bool isRight = false;
-    char whichDiode = Serial.read();
-    if (whichDiode=='l'){
-      isLeft = true;
-      Serial.println("left");
-    }
-    else if (whichDiode == 'r'){
-      isRight = true;
-    }
-    char msg[20] = {};
-    byte msgIndex = 0;
-    while(Serial.available()){ 
-      msg[msgIndex] = Serial.read()-48;
-      msgIndex++;      
-    }
-    unsigned long powers[4] = {1, 10, 100, 1000};
-    unsigned int integerVal = 0;
-    for (int i = 0; i < msgIndex; i++) {
-      integerVal = integerVal + msg[i] * powers[msgIndex-1-i];
-    }
-    if (isLeft){
-      triggerOne(integerVal,&left);
-    }
-    else if (isRight){
-      triggerOne(integerVal,&right);
-    }
-  }
 }
 void sendInfo(){
   currentInfo.serialNumber = EEPROM.read(SERIAL_NUMBER_ADDRESS);
