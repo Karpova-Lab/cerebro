@@ -27,22 +27,22 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const byte version = 40;
+const uint8_t version = 41;
 
-const int LED = 13;
-const int triggerPin = 5;
-const int stopPin = 6;
+const int16_t LED = 13;
+const int16_t triggerPin = 5;
+const int16_t stopPin = 6;
 
 Radio radio(8,7); //slave select pin, interrupt pin
 WaveformData waveform;
 IntegerPayload radioMessage;
 Status currentInfo;
 Feedback diodeStats;
-unsigned long valsFromParse[5];
-unsigned int msgCount = 0;
-unsigned long startTime = 0;
-unsigned long spamFilter = 0;
-unsigned long triggerClock = 0;
+uint32_t  valsFromParse[5];
+uint32_t  startTime = 0;
+uint32_t  spamFilter = 0;
+uint32_t  triggerClock = 0;
+uint16_t msgCount = 0;
 
 void setup() {
   Serial1.begin(57600);
@@ -255,7 +255,7 @@ void updateWaveform(){
 }
 
 void triggerCommandReceived(){
-  unsigned long tSinceTrigger = millis() - triggerClock;
+  uint32_t  tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger>spamFilter){
     msgCount++;    
     radioMessage.variable = 'T';    
@@ -275,7 +275,7 @@ void triggerCommandReceived(){
 }
 
 void stopCommandReceived(){
-  unsigned long tSinceTrigger = millis() - triggerClock;
+  uint32_t  tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger<spamFilter){
     msgCount++;      
     radioMessage.variable = 'A';    
@@ -286,7 +286,7 @@ void stopCommandReceived(){
   }
 }
 
-unsigned long currentTime(){
+uint32_t  currentTime(){
   return millis()-startTime;
 }
 

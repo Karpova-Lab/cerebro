@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const byte version = 84;
+const uint8_t version = 85;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -51,18 +51,18 @@ IntegerPayload radioMessage;
 Status currentInfo;
 Feedback diodeStats;
 
-int meterVal = 0;
+uint16_t meterVal = 0;
 
-const byte indicatorLED = A0; //32u4 pin 36
+const uint8_t indicatorLED = A0; //32u4 pin 36
 
 LaserDiode left(&DDRB,&PORTB,0,A4);
 LaserDiode right(&DDRD,&PORTD,2,A2);
 
 Radio radio(7,1); //slave select pin, interrupt pin
-unsigned int msgCount = 0;
-unsigned int missedCount = 0;
-unsigned int trigCount = 0;
-byte batteryUpdateFrequency = 10;
+uint16_t msgCount = 0;
+uint16_t missedCount = 0;
+uint16_t trigCount = 0;
+uint8_t batteryUpdateFrequency = 10;
 bool reportBatteryFlag = false;
 
 void setup() {
@@ -269,7 +269,7 @@ void reportBattery(){
 void printMissed(){
   reportBattery();
   delay(200);
-  unsigned int missed;
+  uint16_t missed;
   Serial.print("missed,");Serial.println(missedCount);
   radioMessage.variable = 'M'; 
   radioMessage.value = missedCount;

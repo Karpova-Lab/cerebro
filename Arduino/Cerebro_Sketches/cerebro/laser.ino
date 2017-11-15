@@ -1,5 +1,5 @@
 void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
-  unsigned long onClock,offClock,trainClock,delayClock;
+  uint32_t onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
@@ -58,7 +58,7 @@ void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
 
 void triggerBoth(){
   // int countdownMS = Watchdog.enable(125);
-  unsigned long onClock,offClock,trainClock,delayClock;
+  uint32_t onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
@@ -137,7 +137,7 @@ bool turnoff(){
   diodeStats.leftDAC = left.DAClevel;
   diodeStats.rightDAC = right.DAClevel;
   if (waveform.rampDur>0){
-    unsigned long fadeClock;
+    uint32_t fadeClock;
     for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
       fadeClock = millis();
       left.feedback(left.setPoint*i/100);
