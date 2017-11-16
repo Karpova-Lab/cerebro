@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t version = 41;
+const uint8_t version = 42;
 
 const int16_t LED = 13;
 const int16_t triggerPin = 5;
@@ -58,12 +58,16 @@ void setup() {
 void loop() {
   ////////////Receive Message From Bcontrol
   if (digitalRead(triggerPin)) {
-    while(digitalRead(triggerPin)){} //wait until signal goes low
+    while(digitalRead(triggerPin)){
+      //wait until signal goes low
+    } 
     stopCommandReceived();
   }
   //if we read a high signal on pin 6, send a stop command to cerebro
   if (digitalRead(stopPin)) {
-    while(digitalRead(stopPin)){}       //wait until signal goes low
+    while(digitalRead(stopPin)){
+      //wait until signal goes low
+    }       
     triggerCommandReceived();
   }
 
@@ -94,39 +98,38 @@ void loop() {
 
   ///////////Receive Message From Cerebro///////
   if (radio.receiveDone()){
-    if (radio.DATALEN == sizeof(currentInfo)){ //received a waveform data 
-      if (radio.ACKRequested()){
-        radio.sendACK();
-      }
-      currentInfo = *(Status*)radio.DATA;  //update waveform
-      printInfo();      
-    }  
-    else if (radio.DATALEN == sizeof(diodeStats)){ //diode stats data
-      if (radio.ACKRequested()){
-        radio.sendACK();
-      }
-      diodeStats = *(Feedback*)radio.DATA;  
-      printDiodeStats();    
-    }
-    else if (radio.DATALEN == sizeof(radioMessage)){ // receiving message 'B' or M' or 'm' or 'Y'
-      if (radio.ACKRequested()){
-        radio.sendACK();
-      }
-      radioMessage = *(IntegerPayload*)radio.DATA;  
-      if(radioMessage.variable == 'B'){
-        currentInfo.battery = radioMessage.value;
-        Serial1.print("*");
-        Serial1.print(currentInfo.battery);
-        Serial1.print("&");   
-        Serial1.print(currentTime());
-        Serial1.print(",,B,");Serial1.print(currentInfo.battery);Serial1.print(",Connection Good!\n");   
-      }
-      else if (radioMessage.variable == 'M' || radioMessage.variable =='m'){
-        comma();comma();Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
-      }
-      else if (radioMessage.variable == 'Y'){
-        Serial1.print("Cerebro turned on and connected,");Serial1.print(radioMessage.value);//print time it took to startup and send connection message. 
-      }
+    switch (radio.DATALEN) {
+      case sizeof(currentInfo):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        currentInfo = *(Status*)radio.DATA;  //update waveform
+        printInfo();
+        break;
+      case sizeof(diodeStats):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        diodeStats = *(Feedback*)radio.DATA;  
+        printDiodeStats();   
+        break;
+      case  sizeof(radioMessage):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        radioMessage = *(IntegerPayload*)radio.DATA;  
+        if(radioMessage.variable == 'B'){
+          int batteryStatus = radioMessage.value;
+          Serial1.print("*");Serial1.print(batteryStatus);Serial1.print("&");   
+          Serial1.print(currentTime());Serial1.print(",,B,");Serial1.print(batteryStatus);Serial1.print(",Connection Good!\n");   
+        }
+        else if (radioMessage.variable == 'M' || radioMessage.variable =='m'){
+          Serial1.print(",,");Serial1.print((char)radioMessage.variable);comma();Serial1.print(radioMessage.value);newline();      
+        }
+        else if (radioMessage.variable == 'Y'){
+          Serial1.print("Cerebro turned on and connected,");Serial1.print(radioMessage.value);//print time it took to startup and send connection message. 
+        }
+        break;        
     }
   }
 }
@@ -179,7 +182,6 @@ void relayMsg(char msg){
     Serial1.print("*X&");
     Serial1.print(currentTime());comma();Serial1.print("Tried Sending ''");Serial1.print(msg);
     Serial1.print("'', ACK not received");newline();
-
   }
 }    
 
@@ -292,10 +294,6 @@ uint32_t  currentTime(){
 
 void comma(){
   Serial1.print(",");
-}
-
-void pipe(){
-  Serial1.print("|");
 }
 
 void newline(){
