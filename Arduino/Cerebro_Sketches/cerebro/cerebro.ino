@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t version = 85;
+const uint8_t version = 86;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -32,7 +32,6 @@ const uint8_t version = 85;
 
 Documentation for this project can be found at https://karpova-lab.github.io/cerebro/
 */
-#include <avr/pgmspace.h>
 #include <EEPROM.h>
 #include <LaserDiode.h>
 #include <SparkFunBQ27441.h>      //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
@@ -55,8 +54,8 @@ uint16_t meterVal = 0;
 
 const uint8_t indicatorLED = A0; //32u4 pin 36
 
-LaserDiode left(&DDRB,&PORTB,0,A4);
-LaserDiode right(&DDRD,&PORTD,2,A2);
+LaserDiode right(&DDRB,&PORTB,0,A4);
+LaserDiode left(&DDRD,&PORTD,2,A2);
 
 Radio radio(7,1); //slave select pin, interrupt pin
 uint16_t msgCount = 0;
@@ -189,7 +188,6 @@ void sendInfo(){
   currentInfo.waveform = waveform;
   currentInfo.lSetPoint = left.setPoint;
   currentInfo.rSetPoint = right.setPoint;
-  currentInfo.battery = lipo.soc();
   if (radio.sendWithRetry(BASESTATION, (const void*)(&currentInfo), sizeof(currentInfo))){
     Serial.println("data sent successfully");
   }

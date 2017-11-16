@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "2.0.5";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/2/2017";
+        xavierVersion = "2.0.6";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11//2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -761,7 +761,11 @@ void MainWindow::sendTime()
 //    baseMonitor->clear();
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
-        QString startup =  QString("\n~~~~~~~~~New Session~~~~~~~~~\nXavier Version,%1\nStart Time, %2").arg(xavierVersion,startTime);
+        QString startup =  QString("\n~~~~~~~~~New Session~~~~~~~~~\n"
+                                   "Xavier Version,%1"
+                                   "\nRig,%2"
+                                   "\nRat,%3"
+                                   "\nStart Time,%4").arg(xavierVersion,rigSelect->currentItem()->text(),ratNumber,startTime);
         baseMonitor->textCursor().insertText(startup);
         checkForBase();
         connect_btn->setEnabled(true);
@@ -786,7 +790,7 @@ void MainWindow::readSerial()
         QStringList onboardParams = dataString.split("~");
         qDebug()<<"data = "<<onboardParams;
         qDebug()<<"length "<<onboardParams.length();
-        if (onboardParams.length()==10){//received cerebro info
+        if (onboardParams.length()==9){//received cerebro info
             cerStatusBox->setStyleSheet("");
             serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
             cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
@@ -823,8 +827,6 @@ void MainWindow::readSerial()
             }
             fadeChecked();
             updateFilter();
-            batteryIndicator->setValue(onboardParams[9].toInt());
-            battery_lbl->setText(batteryIndicator->text());
         }
         else if (onboardParams.length()==1){ //received battery update
             if (onboardParams[0] == 'X'){

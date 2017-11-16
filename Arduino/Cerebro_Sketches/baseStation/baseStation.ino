@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t version = 42;
+const uint8_t version = 43;
 
 const int16_t LED = 13;
 const int16_t triggerPin = 5;
@@ -203,7 +203,6 @@ void printInfo(){
   Serial1.print("Off Time,"); Serial1.print(currentInfo.waveform.offTime);newline();
   Serial1.print("Train Duration,"); Serial1.print(currentInfo.waveform.trainDur);newline();
   Serial1.print("Ramp Duration,"); Serial1.print(currentInfo.waveform.rampDur);newline();
-  Serial1.print("Battery Level,"); Serial1.print(currentInfo.battery);newline();newline();  
 
   Serial1.print("*");Serial1.print(currentInfo.serialNumber);
   Serial1.print("~");Serial1.print(currentInfo.firmware); 
@@ -213,8 +212,8 @@ void printInfo(){
   Serial1.print("~"); Serial1.print(currentInfo.waveform.onTime);     
   Serial1.print("~"); Serial1.print(currentInfo.waveform.offTime);      
   Serial1.print("~"); Serial1.print(currentInfo.waveform.trainDur);
-  Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur); 
-  Serial1.print("~");Serial1.print(currentInfo.battery);Serial1.print("&\n");  
+  Serial1.print("~"); Serial1.print(currentInfo.waveform.rampDur);Serial1.print("&\n"); 
+  relayMsg('B');
 }
 
 void printDiodeStats(){
@@ -270,7 +269,7 @@ void triggerCommandReceived(){
     msgCount++;        
     radioMessage.variable = 'C';    
     radioMessage.value = msgCount;
-    Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print((char)radioMessage.variable);comma();Serial1.print(tSinceTrigger);newline();
+    Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print((char)radioMessage.variable);newline();
     radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
     triggerClock = millis();    
   }
@@ -282,9 +281,12 @@ void stopCommandReceived(){
     msgCount++;      
     radioMessage.variable = 'A';    
     radioMessage.value = msgCount;
-    Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print((char)radioMessage.variable);comma();Serial1.print(tSinceTrigger);newline();
+    Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print((char)radioMessage.variable);newline();
     radio.send(CEREBRO, (const void*)(&radioMessage), sizeof(radioMessage));
     triggerClock = -spamFilter; //prevents back to back stop signals from being sent
+  }
+  else{
+    Serial1.print(currentTime());comma();Serial1.print(msgCount);comma();Serial1.print("D,Disregard stop from Bcontrol");newline();    
   }
 }
 

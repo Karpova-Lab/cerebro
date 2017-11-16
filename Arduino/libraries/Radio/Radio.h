@@ -39,7 +39,6 @@ typedef struct {
   WaveformData waveform;
   unsigned int lSetPoint;
   unsigned int rSetPoint;
-  byte battery;
 } Status;
 
 typedef struct {
@@ -50,7 +49,7 @@ typedef struct {
   unsigned int rightDAC;
 } Feedback;
 
-class Radio: public RFM69_ATC {
+class Radio: public RFM69_ATC{
 public:
   Radio(uint8_t slaveSelectPin, uint8_t interruptPin):
   RFM69_ATC(slaveSelectPin, interruptPin,true, digitalPinToInterrupt(interruptPin)){
