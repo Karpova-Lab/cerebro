@@ -147,6 +147,12 @@ private:
     QLabel*                 connectLU_label,*download_title;
     QPlainTextEdit*         downloadMonitor;
 
+    //Session Start
+    QDialog*                sessionStartDialog;
+    QGridLayout*            sessionStartLayout;
+    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*cerebroSettingsMatch_lbl;
+    QPlainTextEdit*         sessionStartMonitor;
+    QPushButton*            startSession_btn;
     QGridLayout*            mainLayout;
 
 private slots:

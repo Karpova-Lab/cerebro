@@ -13,9 +13,9 @@ void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
     //check if another command (abort or continuation) has been sent since the trigger was activated
     // reset clock on continuation. or abort waveform.
     if (radio.receiveDone()){
-      if (radio.DATALEN == sizeof(radioMessage)){
-        radioMessage = *(IntegerPayload*)radio.DATA;
-        switch (radioMessage.variable){
+      if (radio.DATALEN == sizeof(integerMessage)){
+        integerMessage = *(IntegerPayload*)radio.DATA;
+        switch (integerMessage.variable){
           case 'A':
             reportLaserStats();          
             laserEnabled = thediode->off();          
@@ -73,9 +73,9 @@ void triggerBoth(){
     // Watchdog.reset();    
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (radio.receiveDone()){
-      if (radio.DATALEN == sizeof(radioMessage)){
-        radioMessage = *(IntegerPayload*)radio.DATA;
-        switch (radioMessage.variable){
+      if (radio.DATALEN == sizeof(integerMessage)){
+        integerMessage = *(IntegerPayload*)radio.DATA;
+        switch (integerMessage.variable){
           case 'A':
             checkForMiss();        
             laserEnabled =  turnoff();

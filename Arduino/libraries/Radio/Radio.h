@@ -20,33 +20,39 @@
 //dial their power down to only the required level (ATC_RSSI)
 #define ATC_RSSI      -80
 
-typedef struct {
-  unsigned int  startDelay;
-  unsigned int  onTime;
-  unsigned int  offTime;
-  unsigned long trainDur;
-  unsigned int  rampDur;
+typedef struct { // 14 bytes
+  uint16_t msgCount;   
+  uint16_t startDelay;
+  uint16_t onTime;
+  uint16_t offTime;
+  uint32_t trainDur;
+  uint16_t rampDur;
 } WaveformData;
 
-typedef struct {
-  unsigned char variable;
-  unsigned int value;
+typedef struct { // 6 bytes
+  uint16_t msgCount;   
+  uint16_t lSetPoint;
+  uint16_t rSetPoint;
+} DiodePowers;
+
+typedef struct { // 5 bytes
+  uint16_t msgCount;    
+  uint8_t variable;
+  uint16_t value;
 } IntegerPayload;
 
-typedef struct {
-  byte  serialNumber;
-  byte  firmware;
-  WaveformData waveform;
-  unsigned int lSetPoint;
-  unsigned int rSetPoint;
-} Status;
+typedef struct { // 4 bytes
+  uint16_t msgCount;  
+  byte serialNumber;
+  byte firmware;
+} Info;
 
-typedef struct {
-  unsigned int msgCount;
-  unsigned int leftFBK;
-  unsigned int rightFBK;
-  unsigned int leftDAC;
-  unsigned int rightDAC;
+typedef struct { // 10 bytes
+  uint16_t msgCount;
+  uint16_t leftFBK;
+  uint16_t rightFBK;
+  uint16_t leftDAC;
+  uint16_t rightDAC;
 } Feedback;
 
 class Radio: public RFM69_ATC{
@@ -55,6 +61,6 @@ public:
   RFM69_ATC(slaveSelectPin, interruptPin,true, digitalPinToInterrupt(interruptPin)){
   }
 
-  void radioSetup(uint8_t nodeID,bool autoPowe);
+  void radioSetup(uint8_t nodeID,bool autoPower);
 };
 #endif

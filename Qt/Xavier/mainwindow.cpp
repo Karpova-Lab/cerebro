@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "2.0.6";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11//2017";
+        xavierVersion = "3.0.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/20/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -164,6 +164,9 @@ MainWindow::MainWindow(QWidget *parent)
         serialMonitorLayout->addWidget(baseFilter_label,0,0);
             baseMonitor = new QPlainTextEdit();
             baseMonitor->setMinimumWidth(300);
+            #ifdef __APPLE__
+                baseMonitor->setMinimumWidth(325);
+            #endif
             baseMonitor->setMinimumHeight(380);
         serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
             saveMonitor_btn = new QPushButton();
@@ -393,6 +396,27 @@ MainWindow::MainWindow(QWidget *parent)
         connectionLayout2->addWidget(downloadMonitor,4,0,1,3);
         connectionLayout2->setRowStretch(4,1);
     downloaderDialog->setLayout(connectionLayout2);
+
+    //Session Start Dialog
+    sessionStartDialog = new QDialog();
+        sessionStartLayout = new QGridLayout();
+            baseConnected_lbl = new QLabel("Base Station Connected \u2718");
+        sessionStartLayout->addWidget(baseConnected_lbl,0,0);
+            cerebroConnected_lbl = new QLabel("Cerebro Wireless Connection \u2714");
+        sessionStartLayout->addWidget(cerebroConnected_lbl,1,0);
+            cerebroSettingsMatch_lbl = new QLabel("Implant Settings Confirmed \u2714");
+        sessionStartLayout->addWidget(cerebroSettingsMatch_lbl,2,0);
+            startSession_btn = new QPushButton("Start Session");
+            startSession_btn->setEnabled(false);
+        sessionStartLayout->addWidget(startSession_btn,3,0);
+        QFont codefont("Arial Unicode MS");
+        baseConnected_lbl->setFont(codefont);
+        cerebroConnected_lbl->setFont(codefont);
+        cerebroSettingsMatch_lbl->setFont(codefont);
+        baseConnected_lbl->setStyleSheet("color:red");
+        cerebroConnected_lbl->setStyleSheet("color:red");
+        cerebroSettingsMatch_lbl->setStyleSheet("color:red");
+    sessionStartDialog->setLayout(sessionStartLayout);
 
 
     //Add Elements to Main Layout
@@ -632,6 +656,7 @@ void MainWindow::fillDownloaderPorts()
 
 void MainWindow::connectBasePort()
 {
+//    sessionStartDialog->exec();
     if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select rig
         QMessageBox alert;
         alert.setText("Please select a Rig # to continue");
@@ -786,28 +811,31 @@ void MainWindow::readSerial()
     if (dataStart!=-1 && dataEnd!=-1){
         QString dataString = baseBuffer.mid(dataStart+1,dataEnd-dataStart-1);
         baseBuffer.remove(dataStart,dataEnd+1-dataStart);
-        qDebug()<<"buffer "<<baseBuffer;
-        QStringList onboardParams = dataString.split("~");
-        qDebug()<<"data = "<<onboardParams;
-        qDebug()<<"length "<<onboardParams.length();
-        if (onboardParams.length()==9){//received cerebro info
-            cerStatusBox->setStyleSheet("");
-            serialNumber_lbl->setText("Serial #\n"+onboardParams[0]);
-            cerFirmware_lbl->setText("Firmware\n"+onboardParams[1]);
-            Lset_lbl->setText("Lset\n"+onboardParams[2]);leftDiode_spn->setValue(onboardParams[2].toInt());
-            Rset_lbl->setText("Rset\n"+onboardParams[3]);rightDiode_spn->setValue(onboardParams[3].toInt());
+        qDebug()<<"data removed, new buffer: "<<baseBuffer;
+        QStringList dataFromBaseMsg = dataString.split("~");
+        qDebug()<<"data = "<<dataFromBaseMsg;
+        qDebug()<<"length "<<dataFromBaseMsg.length();
+        cerStatusBox->setStyleSheet("");
+        if (dataFromBaseMsg[0] == "Cerebro Info"){
+            cerFirmware_lbl->setText("Firmware\n"+dataFromBaseMsg[1]);
+            serialNumber_lbl->setText("Serial #\n"+dataFromBaseMsg[2]);
+        }
+        else if (dataFromBaseMsg[0] == "Diode Powers"){
+            Lset_lbl->setText("Lset\n"+dataFromBaseMsg[1]);leftDiode_spn->setValue(dataFromBaseMsg[1].toInt());
+            Rset_lbl->setText("Rset\n"+dataFromBaseMsg[2]);rightDiode_spn->setValue(dataFromBaseMsg[2].toInt());
             if (!debugOn){
-                if ((onboardParams[2].toInt() != titleLeftPower) || (onboardParams[3].toInt() != titleRightPower)){
-                    baseMonitor->textCursor().insertText("\nDiode parameter mismatch. Sending new diode values to Cerebro");                    
+                if ((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower)){
+                    baseMonitor->textCursor().insertText("\nDiode parameter mismatch. Sending new diode values to Cerebro\n");
                     matchLeftPower();
                     QTimer::singleShot(500, this, SLOT(matchRightPower()));
                 }
             }
-
-            cerDelay_lbl->setText("Delay\n"+onboardParams[4]); startDelay_spn->setValue(onboardParams[4].toInt());
-            cerOn_lbl->setText("On\n"+onboardParams[5]); onTime_spn->setValue(onboardParams[5].toInt());
-            cerOff_lbl->setText("Off\n"+onboardParams[6]); offTime_spn->setValue(onboardParams[6].toInt());
-            cerTrain_lbl->setText("Train\n"+onboardParams[7]); int trainDurationData = onboardParams[7].toInt();
+        }
+        else if (dataFromBaseMsg[0] == "Waveform"){
+            cerDelay_lbl->setText("Delay\n"+dataFromBaseMsg[1]); startDelay_spn->setValue(dataFromBaseMsg[1].toInt());
+            cerOn_lbl->setText("On\n"+dataFromBaseMsg[2]); onTime_spn->setValue(dataFromBaseMsg[2].toInt());
+            cerOff_lbl->setText("Off\n"+dataFromBaseMsg[3]); offTime_spn->setValue(dataFromBaseMsg[3].toInt());
+            cerTrain_lbl->setText("Train\n"+dataFromBaseMsg[4]); int trainDurationData = dataFromBaseMsg[4].toInt();
             if(trainDurationData){
                 pulseTrain->setChecked(true);
                 trainChecked();
@@ -817,10 +845,10 @@ void MainWindow::readSerial()
                 trainChecked();
             }
             trainDuration_spn->setValue(trainDurationData);
-            cerRamp_lbl->setText("Ramp\n"+ onboardParams[8]);
-            if (onboardParams[8].toInt()){
+            cerRamp_lbl->setText("Ramp\n"+ dataFromBaseMsg[5]);
+            if (dataFromBaseMsg[5].toInt()){
                 fade_checkbox->setChecked(true);
-                fade_spn->setValue(onboardParams[8].toInt());
+                fade_spn->setValue(dataFromBaseMsg[5].toInt());
             }
             else{
                 fade_checkbox->setChecked(false);
@@ -828,13 +856,13 @@ void MainWindow::readSerial()
             fadeChecked();
             updateFilter();
         }
-        else if (onboardParams.length()==1){ //received battery update
-            if (onboardParams[0] == 'X'){
+        else if (dataFromBaseMsg.length()==1){ //received battery update
+            if (dataFromBaseMsg[0] == 'X'){
                 cerStatusBox->setStyleSheet("color:#ed0b0b");
             }
             else{
                 cerStatusBox->setStyleSheet("");
-                batteryIndicator->setValue(onboardParams[0].toInt());
+                batteryIndicator->setValue(dataFromBaseMsg[0].toInt());
                 battery_lbl->setText(batteryIndicator->text());
             }
         }
@@ -861,7 +889,7 @@ void MainWindow::readLog()
             if(andIndex>0){
                 downloadMonitor->insertPlainText(buffer.mid(0,andIndex-1));
             }
-            QStringList onboardParams = buffer.mid(andIndex+1,starIndex).split('~');
+            QStringList dataFromBaseMsg = buffer.mid(andIndex+1,starIndex).split('~');
 
 //            if(baseConnected){
 //                QMessageBox filterMsg;
@@ -877,7 +905,6 @@ void MainWindow::readLog()
     }
     downloadMonitor->moveCursor(QTextCursor::End);
     downloadMonitor->ensureCursorVisible();
-
 }
 
 void MainWindow::clearMonitor()
@@ -1079,8 +1106,7 @@ void MainWindow::getBatteryStatus(){
 }
 
 void MainWindow::checkForBase(){
-    baseMonitor->textCursor().insertText("\nConnecting with Base Station...");
-    QString msg = "?\n";
+    QString msg = "N\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<"sent";
 }
