@@ -51,7 +51,6 @@ private:
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
     bool                    baseConnected,downloadConnected;
-    bool                    receivedBaseInfo;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -68,6 +67,7 @@ private:
     int                     titleLeftPower, titleRightPower;
     QString                 ratNumber;
     QString                 xavierVersion;
+    bool                    sessionHasBegun;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
@@ -150,9 +150,9 @@ private:
     //Session Start
     QDialog*                sessionStartDialog;
     QGridLayout*            sessionStartLayout;
-    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*cerebroSettingsMatch_lbl;
+    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*implantSettingsMatch_lbl;
     QPlainTextEdit*         sessionStartMonitor;
-    QPushButton*            startSession_btn;
+    QPushButton*            startSession_btn,*retry_btn;
     QGridLayout*            mainLayout;
 
 private slots:
@@ -174,6 +174,7 @@ private slots:
     void sendTime();
     void matchLeftPower();
     void matchRightPower();
+    void startSession();
 
 
     //Monitors

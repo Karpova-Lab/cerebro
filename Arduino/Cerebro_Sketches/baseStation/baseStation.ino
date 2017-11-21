@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 44;
+const uint8_t VERSION = 45;
 
 const int16_t LED = 13;
 const int16_t TRIGGER_PIN = 5;
@@ -143,11 +143,7 @@ void loop() {
         }
         integerMessage = *(IntegerPayload*)radio.DATA;  
         if(integerMessage.variable == 'B'){
-          uint8_t batteryStatus = integerMessage.value;
-          Serial1.print("*");Serial1.print(batteryStatus);Serial1.print("&");   
-          Serial1.print(currentTime());comma();
-          Serial1.print("[");Serial1.print(integerMessage.msgCount);Serial1.print(']');
-          Serial1.print(",Battery,");Serial1.print(batteryStatus);newline(); 
+          printBattery(integerMessage.value);
         }
         else if (integerMessage.variable == 'M'){
           Serial1.print("Total Missed,");Serial1.print(integerMessage.value);newline();       
@@ -192,7 +188,7 @@ void sendMsgAndVal(char msg,unsigned int val){
 void newSession(){
   startTime = millis();
   msgCount = 0;
-  Serial1.print("\nBase Version,");Serial1.print(VERSION);newline();
+  Serial1.print("\n*BaseOn&Base Version,");Serial1.print(VERSION);newline();
   char msg = 'N';
   if (radio.sendWithRetry(CEREBRO, &msg, 1, 3)){ 
     // Serial1.print("Connected!");
@@ -222,11 +218,19 @@ void printCerebroInfo(){
 
 void printDiodePowers(){
   Serial1.print(currentTime());comma();
-    Serial1.print("[");Serial1.print(diodePwrs.msgCount);Serial1.print("]");
+  Serial1.print("[");Serial1.print(diodePwrs.msgCount);Serial1.print("]");
   Serial1.print("*Diode Powers~");
   Serial1.print(diodePwrs.lSetPoint);tilda();Serial1.print(diodePwrs.rSetPoint); 
   Serial1.print("&");
-  Serial1.print(",Diode Powers,");Serial1.print(diodePwrs.lSetPoint);Serial1.print("-");Serial1.print(diodePwrs.rSetPoint);newline();   
+  Serial1.print(",Diode Powers,");Serial1.print(diodePwrs.lSetPoint);dash();Serial1.print(diodePwrs.rSetPoint);newline();   
+}
+
+void printBattery(uint8_t batteryStatus){
+  Serial1.print(currentTime());comma(); 
+  Serial1.print("*Battery~");
+  Serial1.print(batteryStatus);
+  Serial1.print("&");
+  Serial1.print(",Battery,");Serial1.print(batteryStatus);newline(); 
 }
 
 void printWaveform(WaveformData wave, bool response){
@@ -244,11 +248,11 @@ void printWaveform(WaveformData wave, bool response){
     else{
       Serial1.print(msgCount);
     }
-  Serial1.print(",Waveform");comma();
-  Serial1.print(wave.startDelay);comma();
-  Serial1.print(wave.onTime);comma();
-  Serial1.print(wave.offTime);comma();
-  Serial1.print(wave.trainDur);comma();
+  Serial1.print(",Waveform,");
+  Serial1.print(wave.startDelay);dash();
+  Serial1.print(wave.onTime);dash();
+  Serial1.print(wave.offTime);dash();
+  Serial1.print(wave.trainDur);dash();
   Serial1.print(wave.rampDur);newline();
 }
 
@@ -256,11 +260,11 @@ void printDiodeStats(){
   Serial1.print(currentTime());
   Serial1.print(",[");Serial1.print(diodeStats.msgCount);Serial1.print("],");
   Serial1.print("Feedback,");
-  Serial1.print(diodePwrs.lSetPoint);Serial1.print("-");
-  Serial1.print(diodeStats.leftFBK);Serial1.print("-");
-  Serial1.print(diodeStats.leftDAC);Serial1.print("-");
-  Serial1.print(diodePwrs.rSetPoint);Serial1.print("-");               
-  Serial1.print(diodeStats.rightFBK);Serial1.print("-");
+  Serial1.print(diodePwrs.lSetPoint);dash();
+  Serial1.print(diodeStats.leftFBK);dash();
+  Serial1.print(diodeStats.leftDAC);dash();
+  Serial1.print(diodePwrs.rSetPoint);dash();               
+  Serial1.print(diodeStats.rightFBK);dash();
   Serial1.print(diodeStats.rightDAC);newline();
   if (diodeStats.leftDAC>3000){
     Serial1.print("Warning: Left DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
@@ -316,9 +320,9 @@ void stopCommandReceived(){
     radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
     triggerClock = -spamFilter; //prevents back to back stop signals from being sent
   }
-  else{
-    Serial1.print(currentTime());comma();comma();Serial1.print("Ignore Bcontrol,");Serial1.print(spamFilter);newline();    
-  }
+  // else{
+  //   Serial1.print(currentTime());comma();comma();Serial1.print("Ignore Bcontrol,");Serial1.print(spamFilter);newline();    
+  // }
 }
 
 uint32_t  currentTime(){
@@ -331,6 +335,10 @@ void comma(){
 
 void tilda(){
   Serial1.print("~");
+}
+
+void dash(){
+  Serial1.print("-");
 }
 
 void newline(){

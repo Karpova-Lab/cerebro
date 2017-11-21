@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 87;
+const uint8_t VERSION = 88;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -41,9 +41,9 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 
 #define SERIAL_NUMBER_ADDRESS 0
 #define WAVEFORM_ADDRESS 1
-#define LEFT_SETPOINT_ADDRESS 13
-#define RIGHT_SETPOINT_ADDRESS 15
-#define MISSING_ARRAY_ADDRESS 17
+#define LEFT_SETPOINT_ADDRESS 15
+#define RIGHT_SETPOINT_ADDRESS 17
+#define MISSING_ARRAY_ADDRESS 19
 
 WaveformData waveform;
 DiodePowers diodePwrs;
