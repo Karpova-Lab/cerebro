@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 45;
+const uint8_t VERSION = 46;
 
 const int16_t LED = 13;
 const int16_t TRIGGER_PIN = 5;
@@ -143,7 +143,7 @@ void loop() {
         }
         integerMessage = *(IntegerPayload*)radio.DATA;  
         if(integerMessage.variable == 'B'){
-          printBattery(integerMessage.value);
+          printBattery(integerMessage.msgCount,integerMessage.value);
         }
         else if (integerMessage.variable == 'M'){
           Serial1.print("Total Missed,");Serial1.print(integerMessage.value);newline();       
@@ -225,8 +225,9 @@ void printDiodePowers(){
   Serial1.print(",Diode Powers,");Serial1.print(diodePwrs.lSetPoint);dash();Serial1.print(diodePwrs.rSetPoint);newline();   
 }
 
-void printBattery(uint8_t batteryStatus){
-  Serial1.print(currentTime());comma(); 
+void printBattery(uint8_t batteryMsgCount, uint8_t batteryStatus){
+  Serial1.print(currentTime());comma();
+  Serial1.print("[");Serial1.print(batteryMsgCount);Serial1.print("]");  
   Serial1.print("*Battery~");
   Serial1.print(batteryStatus);
   Serial1.print("&");
