@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.1.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/21/2017";
+        xavierVersion = "3.1.1";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/28/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -271,14 +271,12 @@ MainWindow::MainWindow(QWidget *parent)
             rightDiode_spn->setRange(0,1023);
             rightDiode_spn->setAlignment(Qt::AlignCenter);
         charLayout->addWidget(rightDiode_spn,0,2,1,1);
-            leftTest_btn = new QPushButton("Test");
+            leftTest_btn = new QPushButton("Test\nLeft");
         charLayout->addWidget(leftTest_btn,0,1,1,1);
-            rightTest_btn = new QPushButton("Test");
+            rightTest_btn = new QPushButton("Test\nRight");
         charLayout->addWidget(rightTest_btn,0,3,1,1);
-            leftSet_btn = new QPushButton("Set Left");
-        charLayout->addWidget(leftSet_btn,1,0,1,2);
-            rightSet_btn = new QPushButton("Set Right");
-        charLayout->addWidget(rightSet_btn,1,2,1,2);
+            setDiode_btn = new QPushButton("Set Power");
+        charLayout->addWidget(setDiode_btn,1,0,1,4);
 //            isolationTest_btn = new QPushButton("Isolation Test");
 //        charLayout->addWidget(isolationTest_btn,3,0,1,1);
             combinedTest_btn = new QPushButton("Combined Test");
@@ -425,6 +423,7 @@ MainWindow::MainWindow(QWidget *parent)
         implantSettingsMatch_lbl->setStyleSheet("color:red");
     sessionStartDialog->setLayout(sessionStartLayout);
     sessionStartDialog->setWindowTitle("Startup Sequence");
+    sessionStartDialog->setWindowFlags(sessionStartDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
 
     //Add Elements to Main Layout
     mainLayout = new QGridLayout();
@@ -532,9 +531,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(leftTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
-    connect(leftSet_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
     connect(rightTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
-    connect(rightSet_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(setDiode_btn,SIGNAL(clicked()),this,SLOT(setDiodePower()));
     connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
     connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
@@ -816,7 +814,6 @@ void MainWindow::connectDownloadPort()
 
 void MainWindow::sendTime()
 {
-//    baseMonitor->clear();
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
         QString startup =  QString("\n~~~~~~~~~New Session~~~~~~~~~\n"
@@ -869,11 +866,7 @@ void MainWindow::readSerial()
             Rset_lbl->setText("Rset\n"+dataFromBaseMsg[2]);rightDiode_spn->setValue(dataFromBaseMsg[2].toInt());
             if (!debugOn){
                 if ((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower)){
-//                    implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
-//                    implantSettingsMatch_lbl->setStyleSheet("color:red");
-                    baseMonitor->textCursor().insertText("\nDiode parameter mismatch. Sending new diode values to Cerebro\n");
-                    matchLeftPower();
-                    QTimer::singleShot(500, this, SLOT(matchRightPower()));
+                    QTimer::singleShot(500, this, SLOT(matchPowers()));
                 }
                 else{
                     implantSettingsMatch_lbl->setText("Implant Settings Match \u2714");
@@ -1428,18 +1421,16 @@ void MainWindow::getCalVals(QString calibrateDataPath ){
     createFadeDialog->close();
 }
 
-void MainWindow::matchLeftPower(){
-    QString msg = "L," + QString::number(titleLeftPower) +"\n";
+void MainWindow::matchPowers(){
+    sessionStartMonitor->textCursor().insertText("\nDiode parameter mismatch. Sending new diode values to Cerebro\n");
+    QString msg = "D";
+    QString leftPowerValue = QString::number(titleLeftPower);
+    QString rightPowerValue = QString::number(titleRightPower);
+    msg = msg + "," + leftPowerValue + "," + rightPowerValue + "\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }
 
-void MainWindow::matchRightPower(){
-    QString msg = "R," + QString::number(titleRightPower) +"\n";
-    serial->write(msg.toLocal8Bit());
-    qDebug()<<msg<<" Sent";
-//    clearMonitor();
-}
 void MainWindow::sendToDiode()
 {
     QString msg = "";
@@ -1448,19 +1439,22 @@ void MainWindow::sendToDiode()
         msg = "l";
         value =  QString::number(leftDiode_spn->value());
     }
-    else if (sender()==leftSet_btn){
-        msg = "L";
-        value =  QString::number(leftDiode_spn->value());
-    }
     else if (sender()==rightTest_btn){
         msg = "r";
         value =  QString::number(rightDiode_spn->value());
     }
-    else if (sender()==rightSet_btn){
-        msg = "R";
-        value =  QString::number(rightDiode_spn->value());
-    }
     msg = msg + "," + value+"\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::setDiodePower()
+{
+    QString msg = "D";
+    QString leftPowerValue = QString::number(leftDiode_spn->value());
+    qDebug()<<leftPowerValue<<" Sent";
+    QString rightPowerValue = QString::number(rightDiode_spn->value());
+    msg = msg + "," + leftPowerValue + "," + rightPowerValue + "\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 }

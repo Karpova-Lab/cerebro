@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 88;
+const uint8_t VERSION = 89;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -118,7 +118,6 @@ void loop() {
   //check for any received packets
   if (radio.receiveDone()){
     uint8_t dlay = 5;   
-    // Serial.print("data length = ");Serial.println(radio.DATALEN);    
     if (radio.DATALEN==1){ //received a command or a request for data
       sendACK();
       switch (radio.DATA[0]){
@@ -151,6 +150,16 @@ void loop() {
       EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory
       reportWaveform();
     }
+    else if (radio.DATALEN == sizeof(diodePwrs)){ //received a waveform data
+      sendACK();
+      msgCount++;
+      diodePwrs = *(DiodePowers*)radio.DATA;
+      left.setPoint = diodePwrs.lSetPoint;
+      right.setPoint = diodePwrs.rSetPoint;
+      EEPROM.put(LEFT_SETPOINT_ADDRESS,left.setPoint);
+      EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);
+      reportPower();
+    }
     else if (radio.DATALEN == sizeof(integerMessage)){ //received a variable update
       sendACK();
       integerMessage = *(IntegerPayload*)radio.DATA;
@@ -162,17 +171,7 @@ void loop() {
           break;
         case 'S': // Receiving a new Cerebro S/N
           EEPROM.update(SERIAL_NUMBER_ADDRESS, integerMessage.value);
-          reportVersion();          
-          break;
-        case 'L': // Receiving a new left setpoint
-          left.setPoint = integerMessage.value;                   //update setpoint 
-          EEPROM.put(LEFT_SETPOINT_ADDRESS,left.setPoint);     //save new setpoint to memory     
-          reportPower();
-          break;
-        case 'R': // Receiving a new right setpoint
-          right.setPoint = integerMessage.value;                  //update setpoint 
-          EEPROM.put(RIGHT_SETPOINT_ADDRESS,right.setPoint);    //save new setpoint to memory
-          reportPower();
+          reportVersion();
           break;
         case 'l': // Receiving a new left setpoint
           Serial.print("\nTriggering Left @ ");Serial.println(integerMessage.value);

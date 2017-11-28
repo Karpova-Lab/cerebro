@@ -115,7 +115,7 @@ private:
     QGroupBox*              charBox;
     QGridLayout*            charLayout;
     QSpinBox*               leftDiode_spn,*rightDiode_spn;
-    QPushButton*            leftTest_btn,*leftSet_btn,*rightTest_btn,*rightSet_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
+    QPushButton*            leftTest_btn,*rightTest_btn,*setDiode_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
 
     //Calibration Dialogs
     QDialog*                sendFadeDialog,*createFadeDialog;
@@ -172,10 +172,8 @@ private slots:
     void connectBasePort();
     void connectDownloadPort();
     void sendTime();
-    void matchLeftPower();
-    void matchRightPower();
+    void matchPowers();
     void startSession();
-
 
     //Monitors
     void errorMsg();
@@ -207,6 +205,7 @@ private slots:
     void getCalVals(QString calibrateDataPath);
     void useDropped(const QMimeData *mimeData);
     void sendToDiode();
+    void setDiodePower();
     void testCombined();
     void sendCalVector();
     void sendCalGroups();
