@@ -72,14 +72,14 @@ void setup() {
   EEPROM.get(RIGHT_SETPOINT_ADDRESS,right.setPoint);
   left.off();
   right.off();
-  
-  Serial.begin(115200);  
+
+  Serial.begin(115200);
 
   // Initialize waveform
   EEPROM.get(WAVEFORM_ADDRESS,waveform);
 
   // Indicator LED
-  pinMode(indicatorLED,OUTPUT); 
+  pinMode(indicatorLED,OUTPUT);
   digitalWrite(indicatorLED,HIGH);
 
   //*** Battery Monitor ***//
@@ -92,7 +92,7 @@ void setup() {
       digitalWrite(indicatorLED,LOW);
       delay(1000);
     }
-  }  
+  }
   Serial.println("Connected to BQ27441!");
   lipo.setCapacity(400);
   while(lipo.soc()==0){
@@ -100,32 +100,32 @@ void setup() {
     //wait;
   }
 
-  //*** Radio ***//  
+  //*** Radio ***//
   radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
-  integerMessage.variable = 'Y'; 
-  integerMessage.value = millis();  
+  integerMessage.variable = 'Y';
+  integerMessage.value = millis();
   if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),3,250)){
     Serial.print("Connected to Base Station");
   }
   else{
     Serial.println("Failed to Connect to Base Station");
-  }  
+  }
   reportVersion();
-  digitalWrite(indicatorLED,LOW);  
+  digitalWrite(indicatorLED,LOW);
 }
 
 void loop() {
   //check for any received packets
   if (radio.receiveDone()){
-    uint8_t dlay = 5;   
+    uint8_t dlay = 5;
     if (radio.DATALEN==1){ //received a command or a request for data
       sendACK();
       switch (radio.DATA[0]){
         case 'B':
           reportBattery();break;
-        case 'N':    
+        case 'N':
           msgCount = 0;
-          missedCount = 0;       
+          missedCount = 0;
           reportVersion();
           delay(dlay);
           reportPower();
@@ -166,7 +166,7 @@ void loop() {
       switch (integerMessage.variable){
         case 'T':
           trigCount++;
-          checkForMiss();      
+          checkForMiss();
           triggerBoth();
           break;
         case 'S': // Receiving a new Cerebro S/N
@@ -178,7 +178,7 @@ void loop() {
           triggerOne(integerMessage.value,&left);
           break;
         case 'r': // Receiving a new right setpoint
-          Serial.print("\nTriggering Right @");Serial.println(integerMessage.value);        
+          Serial.print("\nTriggering Right @");Serial.println(integerMessage.value);
           triggerOne(integerMessage.value,&right);
           break;
       }
@@ -193,14 +193,14 @@ void loop() {
 
 void printInfo(){
   // Serial.print("\nSerial Number: ");Serial.println(currentInfo.serialNumber);
-  // Serial.print("Firmware Version: ");Serial.println(currentInfo.firmware); 
+  // Serial.print("Firmware Version: ");Serial.println(currentInfo.firmware);
   // Serial.print("Left set Point: ");Serial.println(currentInfo.lSetPoint);
-  // Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);   
-  // Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);       
-  // Serial.print("On Time: "); Serial.println(currentInfo.waveform.onTime);     
-  // Serial.print("Off Time: "); Serial.println(currentInfo.waveform.offTime);      
+  // Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);
+  // Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);
+  // Serial.print("On Time: "); Serial.println(currentInfo.waveform.onTime);
+  // Serial.print("Off Time: "); Serial.println(currentInfo.waveform.offTime);
   // Serial.print("Train Duration: "); Serial.println(currentInfo.waveform.trainDur);
-  // Serial.print("Ramp Duration: "); Serial.println(currentInfo.waveform.rampDur);  
+  // Serial.print("Ramp Duration: "); Serial.println(currentInfo.waveform.rampDur);
 }
 
 void sendACK(){
@@ -228,28 +228,28 @@ void combinedTest(){
   triggerBoth();
   delay(1000);
   triggerOne(right.setPoint,&right);
-  delay(5000);  
+  delay(5000);
   Serial.println();
 }
 
 void isolationTest(){
-  Serial.print("Before left: ");    
+  Serial.print("Before left: ");
   feedbackReadings();
   triggerOne(left.setPoint,&left);
-  delay(1000);  
-  Serial.print("Before right: ");  
-  feedbackReadings();  
+  delay(1000);
+  Serial.print("Before right: ");
+  feedbackReadings();
   triggerOne(right.setPoint,&right);
 }
 
-void feedbackReadings(){ 
+void feedbackReadings(){
   Serial.print(analogRead(left.analogPin));
   Serial.print(", ");
   Serial.println(analogRead(right.analogPin));
 }
 
 void reportBattery(){
-  integerMessage.variable = 'B'; 
+  integerMessage.variable = 'B';
   integerMessage.value = lipo.soc();
   integerMessage.msgCount = msgCount;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage))){
@@ -265,14 +265,14 @@ void printMissed(){
   delay(200);
   uint16_t missed;
   Serial.print("missed,");Serial.println(missedCount);
-  integerMessage.variable = 'M'; 
+  integerMessage.variable = 'M';
   integerMessage.value = missedCount;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),3,250)){
     Serial.print("Sent");Serial.println(missedCount);
   }
   else{
     Serial.println("Sending again");
-  }  
+  }
   integerMessage.variable = 'm';
   for (int i = 0; i <missedCount; i++ ){
     EEPROM.get(MISSING_ARRAY_ADDRESS+2*i,missed);
@@ -282,7 +282,7 @@ void printMissed(){
     }
     else{
       Serial.println("Sending again");
-    }    
+    }
   }
   Serial.println("done");
 }
@@ -302,7 +302,7 @@ void reportVersion(){
 void reportPower(){
   diodePwrs.lSetPoint = left.setPoint;
   diodePwrs.rSetPoint = right.setPoint;
-  diodePwrs.msgCount = msgCount;  
+  diodePwrs.msgCount = msgCount;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&diodePwrs), sizeof(diodePwrs),4)){
     Serial.println("Diode Powers sent successfully");
   }
@@ -312,7 +312,7 @@ void reportPower(){
 }
 
 void reportWaveform(){
-  waveform.msgCount = msgCount;  
+  waveform.msgCount = msgCount;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&waveform), sizeof(waveform),4)){
     Serial.println("Waveform sent successfully");
   }
