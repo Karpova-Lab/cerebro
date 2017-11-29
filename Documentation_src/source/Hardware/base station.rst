@@ -1,12 +1,10 @@
 ======================
 Base Station Resources
 ======================
-.. include:: isogrk1.txt
-.. include:: mmlalias.txt
 
-.. image:: ../Overview/base_station.jpg
-  :align: center
-  :scale: 15 %
+.. .. image:: ../Overview/base_station.jpg
+..   :align: center
+..   :scale: 15 %
 
 
 Bill of Materials

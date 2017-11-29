@@ -5,10 +5,9 @@ Head Implant Resources
 .. include:: Characters/mmlalias.txt
 .. include:: Characters/isopub.txt
 
-.. figure:: photos/implant_cad.png
-  :align: center
-  :scale: 100%
-
+.. .. figure:: photos/implant_cad.png
+..   :align: center
+..   :scale: 100%
 
 .. _implantTools:
 
@@ -31,20 +30,20 @@ Bill of Materials
 +=====+==============================+================================================================+========================================================================================================================+
 | 1   | Implant PCB                  |  :download:`Implant 5.3<Datasheets/implant_5.3.pdf>`           | `OSH Park <https://oshpark.com/shared_projects/k8Ikpli6>`_                                                             | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| 2   | Laser Diode                  |  :download:`PLT5 520_B1_2_3<Datasheets/green_laser_diode.pdf>` | `World Star Tech <http://www.worldstartech.com/products/laser-diodes/green-laser-diode-osram/>`_                       | 
+| 1   | Laser Diode                  |  :download:`PLT5 520_B1_2_3<Datasheets/green_laser_diode.pdf>` | `World Star Tech <http://www.worldstartech.com/products/laser-diodes/green-laser-diode-osram/>`_                       | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| 1   | Fiber                        |  :download:`F-MBB<Datasheets/>`                                | `Newport <https://www.newport.com/p/F-MBB>`_                                                                           | 
+| 1   | Fiber                        | F-MBB                                                          | `Newport <https://www.newport.com/p/F-MBB>`_                                                                           | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 | 1   | UV curing adhesive           |  :download:`NOA 68<Datasheets/uv_adhesive.pdf>`                | `Norland Products <https://www.norlandproducts2.com/adhesives/adproductsdetail_header_removed.asp?Prdid=68>`_          | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| 2   | Ferrule                      |  :download:`MM-FER2007C<Datasheets/ferrule.pdf>`               | `Precision Fiber Products <https://precisionfiberproducts.com/pfp-lc-1-25mm-od-multimode-ceramic-zirconia-ferrules/>`_ | 
+| 1   | Ferrule                      |  :download:`MM-FER2007C<Datasheets/ferrule.pdf>`               | `Precision Fiber Products <https://precisionfiberproducts.com/pfp-lc-1-25mm-od-multimode-ceramic-zirconia-ferrules/>`_ | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 | 1   | Epoxy                        |  :download:`T120023C<Datasheets/epoxy.pdf>`                    | `Fiber Instrument Sales <http://www.fiberinstrumentsales.com/fis-room-cure-epoxy-2-grams.html>`_                       | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| 1   | Micro USB vertical socket    |  :download:`1051330011<Datasheets/usb_socket_vertical.pdf>`    | `Digi-Key <https://www.digikey.com/products/en?keywords=WM10134CT-ND>`_                                                | 
-+-----+------------------------------+                                                                +                                                                                                                        +
+| 2   | Micro USB vertical socket    |  :download:`1051330011<Datasheets/usb_socket_vertical.pdf>`    | `Digi-Key <https://www.digikey.com/products/en?keywords=WM10134CT-ND>`_                                                | 
++-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 | 2   | 0603 10 k\ |mgr|\F Capacitor |                                                                |                                                                                                                        | 
-+-----+------------------------------+                                                                +                                                                                                                        +
++-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 | 2   | 0603 20 k\ |mgr|\F Capacitor |                                                                |                                                                                                                        | 
 +-----+------------------------------+----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 

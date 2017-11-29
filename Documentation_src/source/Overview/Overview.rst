@@ -12,8 +12,8 @@ Open Source
 
 Wireless Radio
   * **Low Latency** -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.
-  * **2-Way Communication** - 
-  * **Range** - {x}+ range. Doesn't need line of sight
+  * **2-Way Communication** - Can send messages to start or interrupt light stimulation. Can receive acknowledgment messages that commands were received, as well as battery status updates.
+  * **Range** - {x}+ range. Doesn't need line of sight.
   * **Wirelessly Adjustable Waveforms** - Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
 Laser Diodes
@@ -63,14 +63,14 @@ Here are some commercial products that also provide wireless optogenetics:
 | `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_
 |
 
-System Compoents
-================
+System Components
+=================
 
 Cerebro
 -------
-.. image:: cerebro.jpg
-  :align: center
-  :scale: 20 %
+.. .. image:: cerebro.jpg
+..   :align: center
+..   :scale: 20 %
 
 Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
@@ -80,9 +80,9 @@ intensity and waveform of the emitted light can be adjusted wirelessly during an
 
 Head Implant
 ------------
-.. image:: implant.jpg
-  :align: center
-  :scale: 20 %
+.. .. image:: implant.jpg
+..   :align: center
+..   :scale: 20 %
 
 The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes are accompanied by a phototranistor that is used as feedback
 to maintain a constant light output. The laser diodes can be independently controlled and can output arbitrary waveforms with millisecond resolution.
@@ -93,9 +93,9 @@ to maintain a constant light output. The laser diodes can be independently contr
 
 Base Station
 ------------
-.. image:: base_station.jpg
-  :align: center
-  :scale: 15 %
+.. .. image:: base_station.jpg
+..   :align: center
+..   :scale: 15 %
 
 The Base Station is responsible for communicate wirelessly with Cerebro via radio.
 It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication via :ref:`Xavier <xavier>`.
@@ -105,15 +105,11 @@ a stop signal to be emitted.
 
 :doc:`More info... <../Hardware/base station>`
 
-
-.. _utility shield:
-
-
 Xavier
 ------
-.. image:: xavier_demo.png
-    :align: center
-    :scale: 80 %
+.. .. image:: xavier_demo.png
+..     :align: center
+..     :scale: 80 %
 
 Xavier is a GUI for sending and logging Base Station commands. 
 Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.
