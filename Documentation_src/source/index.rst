@@ -2,8 +2,6 @@
 Cerebro Wireless Optogenetics System
 ====================================
 
-.. include:: isogrk1.txt
-
 Welcome! This is the hardware and software documentation of a system used for wireless `optogenetic <https://en.wikipedia.org/wiki/Optogenetics>`_ stimulation.
 As an `open-source <http://www.oshwa.org/definition/>`_ project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.

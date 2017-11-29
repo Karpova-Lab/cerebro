@@ -94,7 +94,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">System Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#features">Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commercial-alternatives">Commercial Alternatives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#system-compoents">System Compoents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-components">System Components</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cerebro">Cerebro</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#head-implant">Head Implant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#base-station">Base Station</a></li>
@@ -183,8 +183,8 @@
 <dt>Wireless Radio</dt>
 <dd><ul class="first last simple">
 <li><strong>Low Latency</strong> -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.</li>
-<li><strong>2-Way Communication</strong> -</li>
-<li><strong>Range</strong> - {x}+ range. Doesn’t need line of sight</li>
+<li><strong>2-Way Communication</strong> - Can send messages to start or interrupt light stimulation. Can receive acknowledgment messages that commands were received, as well as battery status updates.</li>
+<li><strong>Range</strong> - {x}+ range. Doesn’t need line of sight.</li>
 <li><strong>Wirelessly Adjustable Waveforms</strong> - Cerebro can be produce <a class="reference internal" href="../Software/xavier.html#waveform-parameters"><span class="std std-ref">customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</li>
 </ul>
 </dd>
@@ -207,11 +207,10 @@
 <div class="line"><br /></div>
 </div>
 </div>
-<div class="section" id="system-compoents">
-<h2>System Compoents<a class="headerlink" href="#system-compoents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="system-components">
+<h2>System Components<a class="headerlink" href="#system-components" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cerebro">
 <h3>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h3>
-<a class="reference internal image-reference" href="Overview/cerebro.jpg"><img alt="Overview/cerebro.jpg" class="align-center" src="Overview/cerebro.jpg" /></a>
 <p>Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span class="std std-ref">Base Station</span></a> and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
 intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="../Software/xavier.html#pulse-change-header"><span class="std std-ref">How to change Pulse Parameters</span></a>).</p>
@@ -219,14 +218,12 @@ intensity and waveform of the emitted light can be adjusted wirelessly during an
 </div>
 <div class="section" id="head-implant">
 <h3>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h3>
-<a class="reference internal image-reference" href="Overview/implant.jpg"><img alt="Overview/implant.jpg" class="align-center" src="Overview/implant.jpg" /></a>
 <p>The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes are accompanied by a phototranistor that is used as feedback
 to maintain a constant light output. The laser diodes can be independently controlled and can output arbitrary waveforms with millisecond resolution.</p>
 <p><a class="reference internal" href="../Hardware/implant.html"><span class="doc">More info…</span></a></p>
 </div>
 <div class="section" id="base-station">
 <span id="id1"></span><h3>Base Station<a class="headerlink" href="#base-station" title="Permalink to this headline">¶</a></h3>
-<a class="reference internal image-reference" href="Overview/base_station.jpg"><img alt="Overview/base_station.jpg" class="align-center" src="Overview/base_station.jpg" /></a>
 <p>The Base Station is responsible for communicate wirelessly with Cerebro via radio.
 It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication via <span class="xref std std-ref">Xavier</span>.
 Base Station can also be controlled directly by <a class="reference external" href="https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels">TTL</a> signals going into
@@ -235,8 +232,7 @@ a stop signal to be emitted.</p>
 <p><a class="reference internal" href="../Hardware/base station.html"><span class="doc">More info…</span></a></p>
 </div>
 <div class="section" id="xavier">
-<span id="utility-shield"></span><h3>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h3>
-<a class="reference internal image-reference" href="Overview/xavier_demo.png"><img alt="Overview/xavier_demo.png" class="align-center" src="Overview/xavier_demo.png" /></a>
+<h3>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h3>
 <p>Xavier is a GUI for sending and logging Base Station commands.
 Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.</p>
 <p><span class="xref std std-doc">More info…</span></p>
