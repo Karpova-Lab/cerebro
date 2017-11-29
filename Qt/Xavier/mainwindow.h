@@ -51,7 +51,6 @@ private:
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
     bool                    baseConnected,downloadConnected;
-    bool                    receivedBaseInfo;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -68,6 +67,7 @@ private:
     int                     titleLeftPower, titleRightPower;
     QString                 ratNumber;
     QString                 xavierVersion;
+    bool                    sessionHasBegun;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
@@ -115,7 +115,7 @@ private:
     QGroupBox*              charBox;
     QGridLayout*            charLayout;
     QSpinBox*               leftDiode_spn,*rightDiode_spn;
-    QPushButton*            leftTest_btn,*leftSet_btn,*rightTest_btn,*rightSet_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
+    QPushButton*            leftTest_btn,*rightTest_btn,*setDiode_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
 
     //Calibration Dialogs
     QDialog*                sendFadeDialog,*createFadeDialog;
@@ -147,6 +147,12 @@ private:
     QLabel*                 connectLU_label,*download_title;
     QPlainTextEdit*         downloadMonitor;
 
+    //Session Start
+    QDialog*                sessionStartDialog;
+    QGridLayout*            sessionStartLayout;
+    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*implantSettingsMatch_lbl;
+    QPlainTextEdit*         sessionStartMonitor;
+    QPushButton*            startSession_btn,*retry_btn;
     QGridLayout*            mainLayout;
 
 private slots:
@@ -166,9 +172,8 @@ private slots:
     void connectBasePort();
     void connectDownloadPort();
     void sendTime();
-    void matchLeftPower();
-    void matchRightPower();
-
+    void matchPowers();
+    void startSession();
 
     //Monitors
     void errorMsg();
@@ -200,6 +205,7 @@ private slots:
     void getCalVals(QString calibrateDataPath);
     void useDropped(const QMimeData *mimeData);
     void sendToDiode();
+    void setDiodePower();
     void testCombined();
     void sendCalVector();
     void sendCalGroups();

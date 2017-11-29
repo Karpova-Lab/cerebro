@@ -1,5 +1,5 @@
 void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
-  unsigned long onClock,offClock,trainClock,delayClock;
+  uint32_t onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
@@ -9,21 +9,21 @@ void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
     }
   }
   onClock=trainClock=millis();
-  while(laserEnabled){   
+  while(laserEnabled){
     //check if another command (abort or continuation) has been sent since the trigger was activated
     // reset clock on continuation. or abort waveform.
     if (radio.receiveDone()){
-      if (radio.DATALEN == sizeof(radioMessage)){
-        radioMessage = *(IntegerPayload*)radio.DATA;
-        switch (radioMessage.variable){
+      if (radio.DATALEN == sizeof(integerMessage)){
+        integerMessage = *(IntegerPayload*)radio.DATA;
+        switch (integerMessage.variable){
           case 'A':
-            reportLaserStats();          
-            laserEnabled = thediode->off();          
+            reportLaserStats();
+            laserEnabled = thediode->off();
             sendACK();
             break;
           case 'C':
-            onClock=trainClock=millis();   
-            sendACK(); 
+            onClock=trainClock=millis();
+            sendACK();
             break;
         }
       }
@@ -47,7 +47,7 @@ void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
-      reportLaserStats();      
+      reportLaserStats();
       if (waveform.rampDur>0){
         thediode->fade(waveform.rampDur);
       }
@@ -57,32 +57,32 @@ void triggerOne(unsigned int desiredPower,LaserDiode* thediode){
 }
 
 void triggerBoth(){
-  int countdownMS = Watchdog.enable(125);
-  unsigned long onClock,offClock,trainClock,delayClock;
+  // int countdownMS = Watchdog.enable(125);
+  uint32_t onClock,offClock,trainClock,delayClock;
   bool laserEnabled = true; //set flag for entering waveform loop
   bool newPulse = true;      //
   delayClock=millis();              //reset clocks
   if (waveform.startDelay>0){
     while ((millis()-delayClock)<waveform.startDelay){
-      Watchdog.reset();      
+      // Watchdog.reset();
       //wait. be ready to stop if interrupted.
     }
   }
   onClock=trainClock=millis();
   while(laserEnabled){
-    Watchdog.reset();    
+    // Watchdog.reset();
     //check if another command (abort or continuation) has been sent since the trigger was activated
     if (radio.receiveDone()){
-      if (radio.DATALEN == sizeof(radioMessage)){
-        radioMessage = *(IntegerPayload*)radio.DATA;
-        switch (radioMessage.variable){
+      if (radio.DATALEN == sizeof(integerMessage)){
+        integerMessage = *(IntegerPayload*)radio.DATA;
+        switch (integerMessage.variable){
           case 'A':
-            checkForMiss();        
+            checkForMiss();
             laserEnabled =  turnoff();
             break;
           case 'C':
-            checkForMiss(); 
-            onClock=trainClock=millis();   
+            checkForMiss();
+            onClock=trainClock=millis();
             break;
         }
       }
@@ -109,7 +109,7 @@ void triggerBoth(){
     }
     //else the end of the waveform has been reached. turn off the light.
     else{
-      laserEnabled =  turnoff();      
+      laserEnabled =  turnoff();
     }
   }
 }
@@ -120,7 +120,7 @@ void reportLaserStats(){
   diodeStats.rightFBK = analogRead(right.analogPin);
   diodeStats.leftDAC = left.DAClevel;
   diodeStats.rightDAC = right.DAClevel;
-  
+
   if (radio.sendWithRetry(BASESTATION, (const void*)(&diodeStats), sizeof(diodeStats))){
     Serial.println("laser stats sent");
   }
@@ -130,14 +130,14 @@ void reportLaserStats(){
 }
 
 bool turnoff(){
-  Watchdog.disable();
+  // Watchdog.disable();
   diodeStats.msgCount = msgCount;
   diodeStats.leftFBK = analogRead(left.analogPin);
   diodeStats.rightFBK = analogRead(right.analogPin);
   diodeStats.leftDAC = left.DAClevel;
   diodeStats.rightDAC = right.DAClevel;
   if (waveform.rampDur>0){
-    unsigned long fadeClock;
+    uint32_t fadeClock;
     for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
       fadeClock = millis();
       left.feedback(left.setPoint*i/100);
@@ -149,7 +149,7 @@ bool turnoff(){
       }
     }
   }
-  left.off(); 
+  left.off();
   right.off();
   if (radio.sendWithRetry(BASESTATION, (const void*)(&diodeStats), sizeof(diodeStats))){
     Serial.println("laser stats sent");
