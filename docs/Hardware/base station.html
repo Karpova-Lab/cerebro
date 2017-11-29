@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Base Station &mdash; Cerebro 2.0.0 documentation</title>
+  <title>Base Station Resources &mdash; Cerebro 2.0.1 documentation</title>
   
 
   
@@ -35,9 +35,8 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 2.0.0 documentation" href="../index.html"/>
-        <link rel="next" title="Xavier" href="../Software/Xavier.html"/>
-        <link rel="prev" title="Head Implant" href="implant.html"/> 
+    <link rel="top" title="Cerebro 2.0.1 documentation" href="../index.html"/>
+        <link rel="prev" title="Head Implant Resources" href="implant.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +65,7 @@
             
             
               <div class="version">
-                2.0.0
+                2.0.1
               </div>
             
           
@@ -92,17 +91,15 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Base Station</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant Resources</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Base Station Resources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#u4-driver">32U4 Driver</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Notes/notes.html">Additional Resources</a></li>
 </ul>
 
             
@@ -147,7 +144,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Base Station</li>
+      <li>Base Station Resources</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -166,11 +163,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="base-station">
-<h1>Base Station<a class="headerlink" href="#base-station" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="base-station-resources">
+<h1>Base Station Resources<a class="headerlink" href="#base-station-resources" title="Permalink to this headline">¶</a></h1>
 <a class="reference internal image-reference" href="Hardware/../Overview/base_station.jpg"><img alt="Hardware/../Overview/base_station.jpg" class="align-center" src="Hardware/../Overview/base_station.jpg" /></a>
 <div class="section" id="bill-of-materials">
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="3%" />
+<col width="14%" />
+<col width="38%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Qty</th>
+<th class="head">Description</th>
+<th class="head">Datasheet</th>
+<th class="head">Order Link</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Base Station PCB</td>
+<td><a class="reference download internal" href="../_downloads/base_station_2.1.pdf" download=""><code class="xref download docutils literal"><span class="pre">Base</span> <span class="pre">Station</span> <span class="pre">2.1</span></code></a></td>
+<td><a class="reference external" href="https://oshpark.com/shared_projects/1H29l6K0">OSH Park</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Feather 32u4 RFM69HCW</td>
+<td><a class="reference download internal" href="../_downloads/feather_radio.pdf" download=""><code class="xref download docutils literal"><span class="pre">3076</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=1528-1663-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>USB to Serial Converter</td>
+<td><a class="reference download internal" href="../_downloads/usb_to_serial_converter.pdf" download=""><code class="xref download docutils literal"><span class="pre">CY7C65213-28PVXI</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09CY7C65213-28PVXI-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Voltage Level Translator</td>
+<td><a class="reference download internal" href="../_downloads/voltage_translator.pdf" download=""><code class="xref download docutils literal"><span class="pre">TXB0104PWR</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=296-21929-1-nd">Digi-Key</a></td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="u4-driver">
 <h3>32U4 Driver<a class="headerlink" href="#u4-driver" title="Permalink to this headline">¶</a></h3>
 <p>Download Feather Driver: <a class="reference external" href="https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/using-with-arduino-ide">https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/using-with-arduino-ide</a></p>
@@ -188,10 +222,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../Software/Xavier.html" class="btn btn-neutral float-right" title="Xavier" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="implant.html" class="btn btn-neutral" title="Head Implant" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="implant.html" class="btn btn-neutral" title="Head Implant Resources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -201,7 +233,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Oct 20, 2017.
+      Last updated on Nov 29, 2017.
 
     </p>
   </div>
@@ -223,7 +255,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'2.0.0',
+            VERSION:'2.0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
