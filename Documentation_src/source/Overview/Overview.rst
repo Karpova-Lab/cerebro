@@ -5,7 +5,7 @@ System Overview
 .. include:: mmlalias.txt
 
 Features
---------
+========
 Open Source
   * **Flexible** - All code and CAD is available so you can make changes and improvements to anything you want!
   * **Low Cost** - Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
@@ -18,39 +18,43 @@ Wireless Radio
 
 Laser Diodes
   * **High Power** - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
-  * **Independent Bilateral control** -  Each laser diode has its own control circuitry an can be independtly calibrated and controlled.
+  * **Independent Bilateral Control** -  Each laser diode has its own control circuitry an can be independtly calibrated and controlled.
 
 
-  .. csv-table::
-    :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
-    :widths: 1,1,1
-
-    Cerebro,30 , 2
-    Head Implant (bilateral),190,4
-    Base Station,25,0
-    Xavier, FREE, 0
-    ,
-    **Total**,**$145**,**6 hours**
-
-    .. csv-table::
-    :header: "Parameter", "Test Condition", "Value", "Unit"
-    :widths: 3,3,3,3
-
-    Weight,,13.2, g
-    Dimensions, Receiver, 0.68 x 0.74 x 0.062 , in
-              , Implant, 1.05 x 0.40 x 0.75, in
-    :download:`Battery Life <photos/battery new.html>`, "520nm, 8mW 3s pulse, 6 pulses/min ", 4.25 (1700), "hours (pulses)"
-    Recharge time, ,1 ,hour
-    Light Wavelength, ":download:`PLT5 520<Datasheets/PL520_B1.pdf>` (Green)", "520","nm"
-    :download:`Trigger Latency <photos/Signal_Breakdown.png>`, , 3.5 |pm|\  0.1, ms
-    Rise Time, , 10 , ms
-    Fiber Diameter, , 200,|mgr|\m
-    Light Output (per fiber) ,520 nm diode coupled to 200 |mgr|\m fiber, 0 to 15 |pm|\  0.5, mW
-    Input Voltage, , 3.5 to 4.2, V
-    Idle Current, ,"11","mA"
+.. **Cost**
+.. 
+.. .. csv-table::
+..   :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
+..   :widths: 1,1,1
+.. 
+..   Cerebro,30 , 2
+..   Head Implant (bilateral),190,4
+..   Base Station,25,0
+..   Xavier, FREE, 0
+..   ,
+..   **Total**,**$145**,**6 hours**
+.. 
+.. **Technical Specifications**
+.. 
+.. .. csv-table::
+..   :header: "Parameter", "Test Condition", "Value", "Unit"
+..   :widths: 3,3,3,3
+.. 
+..   Weight,,13.2, g
+..   Dimensions, Receiver, 0.68 x 0.74 x 0.062 , in
+..             , Implant, 1.05 x 0.40 x 0.75, in
+..   :download:`Battery Life <photos/battery new.html>`, "520nm, 8mW 3s pulse, 6 pulses/min ", 4.25 (1700), "hours (pulses)"
+..   Recharge time, ,1 ,hour
+..   Light Wavelength, ":download:`PLT5 520<Datasheets/PL520_B1.pdf>` (Green)", "520","nm"
+..   :download:`Trigger Latency <photos/Signal_Breakdown.png>`, , 3.5 |pm|\  0.1, ms
+..   Rise Time, , 10 , ms
+..   Fiber Diameter, , 200,|mgr|\m
+..   Light Output (per fiber) ,520 nm diode coupled to 200 |mgr|\m fiber, 0 to 15 |pm|\  0.5, mW
+..   Input Voltage, , 3.5 to 4.2, V
+..   Idle Current, ,"11","mA"
 
 Commercial Alternatives
------------------------
+=======================
 Here are some commercial products that also provide wireless optogenetics:
 
 | `Eicom Teleopto <https://eicomusa.com/teleopto/>`_
@@ -59,14 +63,8 @@ Here are some commercial products that also provide wireless optogenetics:
 | `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_
 |
 
-.. .. csv-table::
-..   :header: "Product", "Cost ($)", "Features"
-..   :widths: 1,1,1
-..
-..   `Eicom Teleopto <https://eicomusa.com/teleopto/>`_ , "4,500", "Very similar to Cerebro. Uses battery and IR triggering."
-..   `Kendall Research Systems <http://www.kendallresearchsys.com/>`_ , "20,000", "Uses wireless power. Includes 3-axis accelerometer"
-..   `Neurolux <http://www.neurolux.org/>`_,
-..   `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_,
+System Compoents
+================
 
 Cerebro
 -------

@@ -31,8 +31,7 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
   Hardware/cerebro.rst
   Hardware/implant.rst
   Hardware/base station.rst
-  Software/Xavier.rst
-  Notes/notes.rst
+
 
 
 The MIT License (MIT)

@@ -2,7 +2,7 @@ import pandas as pd
 from sys import argv
 import pyperclip
 
-script,xlsFile,numCols = argv
+script,xlsFile,sheet,numCols = argv
 
 def getColWidths(table):
     colMax = []
@@ -44,7 +44,7 @@ def printContents(table,colWidths,isHeader=False,**kwds):
     return contentString,blankCols
 
 
-table = pd.read_excel(xlsFile,parse_cols=int(numCols)).fillna("").astype(str) #read in table from excel file
+table = pd.read_excel(xlsFile,use_cols=int(numCols),sheet_name=sheet).fillna("").astype(str) #read in table from excel file
 widths = getColWidths(table) # get the maximum content width of each column
 
 #print header
