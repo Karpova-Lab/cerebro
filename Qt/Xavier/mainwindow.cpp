@@ -64,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.1.1";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/28/2017";
+        xavierVersion = "3.2.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/30/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -163,7 +163,7 @@ MainWindow::MainWindow(QWidget *parent)
             baseFilter_label = new QLabel("Filter Duration:");
         serialMonitorLayout->addWidget(baseFilter_label,0,0);
             baseMonitor = new QPlainTextEdit();
-            baseMonitor->setMinimumWidth(300);
+//            baseMonitor->setMinimumWidth(300);
             #ifdef __APPLE__
                 baseMonitor->setMinimumWidth(325);
             #endif
@@ -174,6 +174,7 @@ MainWindow::MainWindow(QWidget *parent)
             saveMonitor_btn->setMinimumHeight(40);
             saveMonitor_btn->setEnabled(true);
         serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,6);
+    baseBox->setMinimumWidth(300);
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
@@ -256,7 +257,7 @@ MainWindow::MainWindow(QWidget *parent)
             last_settings->setText("No parameters sent yet");
         adjustmentLayout->addWidget(last_settings,10,0,1,2,Qt::AlignTop);
     adjustBox->setLayout(adjustmentLayout);
-    adjustBox->setMinimumWidth(235);
+    adjustBox->setMinimumWidth(300);
     adjustBox->setEnabled(false);
     adjustBox->setPalette(Qt::gray);
 
@@ -267,15 +268,15 @@ MainWindow::MainWindow(QWidget *parent)
             leftDiode_spn->setRange(0,1023);
             leftDiode_spn->setAlignment(Qt::AlignCenter);
         charLayout->addWidget(leftDiode_spn,0,0,1,1);
+            leftTest_btn = new QPushButton("Test\nLeft Diode");
+        charLayout->addWidget(leftTest_btn,0,1,1,1);
             rightDiode_spn = new QSpinBox();
             rightDiode_spn->setRange(0,1023);
             rightDiode_spn->setAlignment(Qt::AlignCenter);
         charLayout->addWidget(rightDiode_spn,0,2,1,1);
-            leftTest_btn = new QPushButton("Test\nLeft");
-        charLayout->addWidget(leftTest_btn,0,1,1,1);
-            rightTest_btn = new QPushButton("Test\nRight");
+            rightTest_btn = new QPushButton("Test\nRight Diode");
         charLayout->addWidget(rightTest_btn,0,3,1,1);
-            setDiode_btn = new QPushButton("Set Power");
+            setDiode_btn = new QPushButton("Set Both Laser Diode Powers");
         charLayout->addWidget(setDiode_btn,1,0,1,4);
 //            isolationTest_btn = new QPushButton("Isolation Test");
 //        charLayout->addWidget(isolationTest_btn,3,0,1,1);
@@ -531,7 +532,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
     connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
     connect(leftTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(leftDiode_spn,SIGNAL(editingFinished()),this,SLOT(sendToDiode()));
     connect(rightTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
+    connect(rightDiode_spn,SIGNAL(editingFinished()),this,SLOT(sendToDiode()));
     connect(setDiode_btn,SIGNAL(clicked()),this,SLOT(setDiodePower()));
     connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
@@ -1207,12 +1210,16 @@ void MainWindow::showDebug(){
         ratSelect->clearSelection();
         connect_btn->setText("Connect to Base Station (Debug Mode)");
         toggleDebug->setText("Exit Debug Mode");
+        bugBox->setVisible(true);
+        charBox->setVisible(true);
     }
     else{
         rigSelect->setEnabled(true);
         ratSelect->setEnabled(true);
         connect_btn->setText("Connect to Base Station");
         toggleDebug->setText("Enter Debug Mode");
+        bugBox->setVisible(false);
+        charBox->setVisible(false);
     }
 }
 
@@ -1435,11 +1442,11 @@ void MainWindow::sendToDiode()
 {
     QString msg = "";
     QString value = "";
-    if (sender()==leftTest_btn){
+    if (sender()==leftTest_btn || (sender()==leftDiode_spn && leftDiode_spn->hasFocus())){
         msg = "l";
         value =  QString::number(leftDiode_spn->value());
     }
-    else if (sender()==rightTest_btn){
+    else if (sender()==rightTest_btn || (sender()==rightDiode_spn && rightDiode_spn->hasFocus())){
         msg = "r";
         value =  QString::number(rightDiode_spn->value());
     }

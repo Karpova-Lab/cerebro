@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 47;
+const uint8_t VERSION = 48;
 
 const int16_t LED = 13;
 const int16_t TRIGGER_PIN = 5;
@@ -214,7 +214,7 @@ void relayMsg(char msg){
 }
 
 void printCerebroInfo(){
-  int theVals[2] = {cerebroInfo.firmware, cerebroInfo.serialNumber};
+  uint32_t theVals[2] = {cerebroInfo.firmware, cerebroInfo.serialNumber};
   sendDataToXavier("Cerebro Info",theVals,2);
   Serial1.print("Cerebro Version,");Serial1.print(cerebroInfo.firmware);newline();
   Serial1.print("Serial Number,");Serial1.print(cerebroInfo.serialNumber);newline();
@@ -228,7 +228,7 @@ void printDiodePowers(DiodePowers printPower,  bool response){
   else{
     Serial1.print(msgCount);
   }
-  int theVals[2] = {printPower.lSetPoint, printPower.rSetPoint};
+  uint32_t theVals[2] = {printPower.lSetPoint, printPower.rSetPoint};
   sendDataToXavier("Diode Powers",theVals,2);
   printToBaseMonitor("Diode Powers",theVals,2);
 }
@@ -236,14 +236,14 @@ void printDiodePowers(DiodePowers printPower,  bool response){
 void printBattery(uint8_t batteryMsgCount, uint8_t batteryStatus){
   printTime();
   Serial1.print("[");Serial1.print(batteryMsgCount);Serial1.print("]");
-  int theVals[1] = {batteryStatus};
+  uint32_t theVals[1] = {batteryStatus};
   sendDataToXavier("Battery",theVals,1);
   printToBaseMonitor("Battery",theVals,1);
 }
 
 void printWaveform(WaveformData wave, bool response){
   printTime();
-  int theVals[5] = {wave.startDelay, wave.onTime, wave.offTime, wave.trainDur, wave.rampDur};
+  uint32_t theVals[5] = {wave.startDelay, wave.onTime, wave.offTime, wave.trainDur, wave.rampDur};
   sendDataToXavier("Waveform",theVals,5);
   if(response){
     Serial1.print("[");Serial1.print(wave.msgCount);Serial1.print(']');
@@ -257,7 +257,7 @@ void printWaveform(WaveformData wave, bool response){
 void printDiodeStats(){
   printTime();
   Serial1.print("[");Serial1.print(diodeStats.msgCount);Serial1.print("]");
-  int theVals[6] = {currentDiodePowers.lSetPoint, diodeStats.leftFBK, diodeStats.leftDAC, currentDiodePowers.rSetPoint, diodeStats.rightFBK, diodeStats.rightDAC};
+  uint32_t theVals[6] = {currentDiodePowers.lSetPoint, diodeStats.leftFBK, diodeStats.leftDAC, currentDiodePowers.rSetPoint, diodeStats.rightFBK, diodeStats.rightDAC};
   printToBaseMonitor("Feedback",theVals,6);
   if (diodeStats.leftDAC>3000){
     Serial1.print("Warning: Left DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
@@ -331,7 +331,7 @@ void stopCommandReceived(){
   // }
 }
 
-void sendDataToXavier(char* parameterName, int theValues[], uint8_t numValues){
+void sendDataToXavier(char* parameterName, uint32_t theValues[], uint8_t numValues){
   Serial1.print("*");Serial1.print(parameterName);tilda();
   Serial1.print(theValues[0]);
   for (uint8_t i  = 1; i < numValues; i++){
@@ -341,7 +341,7 @@ void sendDataToXavier(char* parameterName, int theValues[], uint8_t numValues){
   Serial1.print("&");
 }
 
-void printToBaseMonitor(char* parameterName, int theValues[], uint8_t numValues){
+void printToBaseMonitor(char* parameterName, uint32_t theValues[], uint8_t numValues){
   Serial1.print(",");Serial1.print(parameterName);comma();
   Serial1.print(theValues[0]);
   for (uint8_t i  = 1; i < numValues; i++){
