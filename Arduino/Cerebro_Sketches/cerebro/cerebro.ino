@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 89;
+const uint8_t VERSION = 90;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -45,6 +45,8 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #define RIGHT_SETPOINT_ADDRESS 17
 #define MISSING_ARRAY_ADDRESS 19
 
+#define CEREBRO51
+
 WaveformData waveform;
 DiodePowers diodePwrs;
 IntegerPayload integerMessage;
@@ -53,10 +55,15 @@ Feedback diodeStats;
 
 uint16_t meterVal = 0;
 
-const uint8_t indicatorLED = A0; //32u4 pin 36
-
-LaserDiode right(&DDRB,&PORTB,0,A4);
-LaserDiode left(&DDRD,&PORTD,2,A2);
+#ifdef CEREBRO51
+  const uint8_t indicatorLED = A5; //32u4 pin 36
+  LaserDiode left(&DDRB,&PORTB,0,A4);
+  LaserDiode right(&DDRD,&PORTD,2,A2);
+#else
+  const uint8_t indicatorLED = A0; //32u4 pin 36
+  LaserDiode right(&DDRB,&PORTB,0,A4);
+  LaserDiode left(&DDRD,&PORTD,2,A2);
+#endif
 
 Radio radio(7,1); //slave select pin, interrupt pin
 uint16_t msgCount = 0;
