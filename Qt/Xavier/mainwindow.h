@@ -108,12 +108,12 @@ private:
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*power_lbl;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*fade_label,*power_lbl;
     QRadioButton*           singleShot,*pulseTrain;
     QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn,*power_spn;
     QPushButton*            newPower_btn,*sendSettings_btn;
     QGridLayout*            adjustmentLayout;
-    QCheckBox*              fade_checkbox;
+    QCheckBox*              fade_checkbox,*startDelay_checkbox;
 
     //Characterization Commands
     QGroupBox*              charBox;
@@ -179,6 +179,7 @@ private slots:
     void trainChecked();
     void trainDur();
     void fadeChecked();
+    void startDelayChecked();
     void set();
 
     //Characterization

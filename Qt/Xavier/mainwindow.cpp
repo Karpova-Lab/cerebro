@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.2.1";
+        xavierVersion = "3.3.0";
         QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/1/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
@@ -192,14 +192,14 @@ MainWindow::MainWindow(QWidget *parent)
         adjustmentLayout->addWidget(singleShot,2,0,Qt::AlignRight);
             pulseTrain = new QRadioButton("Pulse Train");
         adjustmentLayout->addWidget(pulseTrain,2,1);
-        startDelay_lbl = new QLabel("Start Delay");
-            startDelay_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        adjustmentLayout->addWidget(startDelay_lbl,3,0);
+            startDelay_checkbox = new QCheckBox("Start Delay");
+        adjustmentLayout->addWidget(startDelay_checkbox,3,0,Qt::AlignRight);
             startDelay_spn = new QSpinBox();
             startDelay_spn->setRange(0,65535);
             startDelay_spn->setSingleStep(50);
             startDelay_spn->setSuffix(" ms");
             startDelay_spn->setAlignment(Qt::AlignCenter);
+            startDelay_spn->setVisible(false);
         adjustmentLayout->addWidget(startDelay_spn,3,1);
             onTime_lbl = new QLabel("On Time");
             onTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -443,6 +443,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Cerebro Parameters
     connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
     connect(offTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
+    connect(startDelay_checkbox,SIGNAL(clicked()),this,SLOT(startDelayChecked()));
     connect(fade_checkbox,SIGNAL(clicked()),this,SLOT(fadeChecked()));
     connect(sendSettings_btn,SIGNAL(clicked()),this,SLOT(set()));
     connect(singleShot,SIGNAL(clicked()),this,SLOT(trainChecked()));
@@ -798,6 +799,13 @@ void MainWindow::readSerial()
         }
         else if (dataFromBaseMsg[0] == "Waveform"){
             cerDelay_lbl->setText("Delay\n"+dataFromBaseMsg[1]); startDelay_spn->setValue(dataFromBaseMsg[1].toInt());
+            if (dataFromBaseMsg[1].toInt()){
+                startDelay_checkbox->setChecked(true);
+                startDelay_spn->setValue(dataFromBaseMsg[1].toInt());
+            }
+            else{
+                startDelay_checkbox->setChecked(false);
+            }
             cerOn_lbl->setText("On\n"+dataFromBaseMsg[2]); onTime_spn->setValue(dataFromBaseMsg[2].toInt());
             cerOff_lbl->setText("Off\n"+dataFromBaseMsg[3]); offTime_spn->setValue(dataFromBaseMsg[3].toInt());
             cerTrain_lbl->setText("Train\n"+dataFromBaseMsg[4]); int trainDurationData = dataFromBaseMsg[4].toInt();
@@ -818,6 +826,7 @@ void MainWindow::readSerial()
             else{
                 fade_checkbox->setChecked(false);
             }
+            startDelayChecked();
             fadeChecked();
             updateFilter();
         }
@@ -891,11 +900,14 @@ void MainWindow::clearMonitor2()
 
 void MainWindow::set()
 {
-    QString startDelay = QString::number(startDelay_spn->value());
+    QString startDelay = "0";
     QString onTime = QString::number(onTime_spn->value());
     QString offTime = "0";
     QString trainDur = "0";
     QString fadeTime = "0";
+    if(startDelay_checkbox->isChecked()){
+        startDelay = QString::number(startDelay_spn->value());
+    }
     if(pulseTrain->isChecked()){
         offTime = QString::number(offTime_spn->value());
         trainDur = QString::number(trainDuration_spn->value());
@@ -1116,6 +1128,10 @@ void MainWindow::showDebug(){
 
 void MainWindow::fadeChecked(){
     fade_spn->setVisible(fade_checkbox->isChecked());
+}
+
+void MainWindow::startDelayChecked(){
+    startDelay_spn->setVisible(startDelay_checkbox->isChecked());
 }
 
 void MainWindow::openDocs(){
