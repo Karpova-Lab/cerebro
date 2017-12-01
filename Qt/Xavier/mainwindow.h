@@ -30,10 +30,6 @@ SOFTWARE.
 #include <QSerialPortInfo>
 #include <qtimer.h>
 #include <settingsDialog.h>
-#include "dropbutton.h"
-
-
-class DropButton;
 
 class MainWindow : public QMainWindow
 {
@@ -102,9 +98,17 @@ private:
     QPushButton*            saveMonitor_btn;
     QString                 baseBuffer;
 
+    //Cerebro Monitor
+    QDialog*                downloaderDialog;
+    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn;
+    QGridLayout*            connectionLayout2;
+    QComboBox*              serialPortList2;
+    QLabel*                 connectLU_label,*download_title;
+    QPlainTextEdit*         downloadMonitor;
+
     //Waveform Adjustment
     QGroupBox*              adjustBox;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*power_lbl,*last_settings;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*power_lbl;
     QRadioButton*           singleShot,*pulseTrain;
     QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn,*power_spn;
     QPushButton*            newPower_btn,*sendSettings_btn;
@@ -117,19 +121,6 @@ private:
     QSpinBox*               leftDiode_spn,*rightDiode_spn;
     QPushButton*            leftTest_btn,*rightTest_btn,*setDiode_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
 
-    //Calibration Dialogs
-    QDialog*                sendFadeDialog,*createFadeDialog;
-    QGroupBox*              chooseBox;
-    QPushButton*            createVecBtn,*sendCal_btn;
-    QGridLayout*            sendFadeLayout,*createVecLayout;
-    QPlainTextEdit*         codeTextBox;
-    QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl,*orLabel;
-    QLineEdit*              cerebroNum_edit,*ldNum_edit;
-    QCheckBox*              showGraph;
-    QLineEdit*              wantedLevel;
-    DropButton*             selectFile_btn;
-    bool                    isFirstTime;
-
     //Triggering & Debugging
     QGroupBox*              bugBox;
     QGridLayout*            triggerLayout;
@@ -138,14 +129,6 @@ private:
     QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*macro_btn;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
-
-    //Download Monitor
-    QDialog*                downloaderDialog;
-    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn;
-    QGridLayout*            connectionLayout2;
-    QComboBox*              serialPortList2;
-    QLabel*                 connectLU_label,*download_title;
-    QPlainTextEdit*         downloadMonitor;
 
     //Session Start
     QDialog*                sessionStartDialog;
@@ -170,7 +153,7 @@ private slots:
     void fillBasestationPorts();
     void fillDownloaderPorts();
     void connectBasePort();
-    void connectDownloadPort();
+    void connectCerebroPort();
     void sendTime();
     void matchPowers();
     void startSession();
@@ -196,22 +179,12 @@ private slots:
     void trainChecked();
     void trainDur();
     void fadeChecked();
-    void sendNewPower();
     void set();
-    void powerSending();
 
-    //Calibration
-    void chooseFile();
-    void getCalVals(QString calibrateDataPath);
-    void useDropped(const QMimeData *mimeData);
+    //Characterization
     void sendToDiode();
     void setDiodePower();
     void testCombined();
-    void sendCalVector();
-    void sendCalGroups();
-    void sendHardwareVals();
-
-    //    void getJSON();
 };
 
 

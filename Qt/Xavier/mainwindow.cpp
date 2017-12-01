@@ -45,10 +45,6 @@ MainWindow::MainWindow(QWidget *parent)
         gotoApplocation = new QAction(this);
         gotoApplocation->setText("App install directory");
     goMenu->addAction(gotoApplocation);
-//    toolMenu = menuBar()->addMenu("Analyze");
-//        graphResults = new QAction(this);
-//        graphResults->setText("Create graph from session logs");
-//    toolMenu->addAction(graphResults);
     helpMenu = menuBar()->addMenu("Help");
         gotoDocs = new QAction(this);
         gotoDocs->setText("User Guide");
@@ -64,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.2.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/30/2017";
+        xavierVersion = "3.2.1";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/1/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -163,10 +159,6 @@ MainWindow::MainWindow(QWidget *parent)
             baseFilter_label = new QLabel("Filter Duration:");
         serialMonitorLayout->addWidget(baseFilter_label,0,0);
             baseMonitor = new QPlainTextEdit();
-//            baseMonitor->setMinimumWidth(300);
-            #ifdef __APPLE__
-                baseMonitor->setMinimumWidth(325);
-            #endif
             baseMonitor->setMinimumHeight(380);
         serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
             saveMonitor_btn = new QPushButton();
@@ -175,6 +167,9 @@ MainWindow::MainWindow(QWidget *parent)
             saveMonitor_btn->setEnabled(true);
         serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,6);
     baseBox->setMinimumWidth(300);
+    #ifdef __APPLE__
+        baseMonitor->setMinimumWidth(325);
+    #endif
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
 
@@ -253,9 +248,6 @@ MainWindow::MainWindow(QWidget *parent)
             sendSettings_btn = new QPushButton("Send New Waveform Parameters");
             sendSettings_btn->setAutoDefault(true);
         adjustmentLayout->addWidget(sendSettings_btn,9,0,1,2);
-            last_settings = new QLabel();
-            last_settings->setText("No parameters sent yet");
-        adjustmentLayout->addWidget(last_settings,10,0,1,2,Qt::AlignTop);
     adjustBox->setLayout(adjustmentLayout);
     adjustBox->setMinimumWidth(300);
     adjustBox->setEnabled(false);
@@ -278,72 +270,11 @@ MainWindow::MainWindow(QWidget *parent)
         charLayout->addWidget(rightTest_btn,0,3,1,1);
             setDiode_btn = new QPushButton("Set Both Laser Diode Powers");
         charLayout->addWidget(setDiode_btn,1,0,1,4);
-//            isolationTest_btn = new QPushButton("Isolation Test");
-//        charLayout->addWidget(isolationTest_btn,3,0,1,1);
             combinedTest_btn = new QPushButton("Combined Test");
         charLayout->addWidget(combinedTest_btn,2,0,1,4);
-//            initialize_btn = new QPushButton("Send Power Values to Cerebro");
-//        charLayout->addWidget(initialize_btn,4,0,1,2);
     charBox->setLayout(charLayout);
     charBox->setEnabled(false);
     charBox->setPalette(Qt::gray);
-
-    //Characterization Dialogs
-    createFadeDialog = new QDialog();
-        createVecLayout = new QGridLayout();
-            slideLabel = new QLabel("Target Power (mW):");
-        createVecLayout->addWidget(slideLabel,0,1,Qt::AlignRight);
-            wantedLevel = new QLineEdit();
-            wantedLevel->setMaximumWidth(50);
-        createVecLayout->addWidget(wantedLevel,0,2);
-            showGraph = new QCheckBox("Show Graphs");
-            showGraph->setChecked(true);
-        createVecLayout->addWidget(showGraph,1,0,1,4,Qt::AlignCenter);
-            selectFile_btn = new DropButton(QString("Select Power Meter File"));//("Select Power Meter\ndata file");
-            selectFile_btn->setCheckable(true);
-            selectFile_btn->setAcceptDrops(true);
-            selectFile_btn->setCheckable(false);
-        createVecLayout->addWidget(selectFile_btn,2,0,1,4,Qt::AlignCenter);
-    createFadeDialog->setWindowTitle("Create fade vector from file");
-    createFadeDialog->setWindowFlags(createFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
-    createFadeDialog->setMinimumWidth(300);
-    createFadeDialog->setMaximumWidth(300);
-    createFadeDialog->setLayout(createVecLayout);
-
-    sendFadeDialog = new QDialog();
-        sendFadeLayout = new QGridLayout();
-            createVecBtn = new QPushButton("Create fade vector from power meter file");
-        sendFadeLayout->addWidget(createVecBtn,0,0,1,6);
-            orLabel = new QLabel("or");
-        sendFadeLayout->addWidget(orLabel,1,0,1,6,Qt::AlignCenter);
-            codeTextBox = new QPlainTextEdit();
-            codeTextBox->setMinimumHeight(350);
-            codeTextBox->setPlaceholderText("Paste Fade Vector here");
-    //        QFont codefont;
-    //        codefont.setPointSize(5);
-    //        codeTextBox->setFont(codefont);
-        sendFadeLayout->addWidget(codeTextBox,2,0,1,6);
-            cerebroNum_lbl = new QLabel("Cerebro #");
-            cerebroNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        sendFadeLayout->addWidget(cerebroNum_lbl,3,0);
-            cerebroNum_edit = new QLineEdit;
-            cerebroNum_edit->setFixedWidth(40);
-        sendFadeLayout->addWidget(cerebroNum_edit,3,1);
-            ldNum_lbl = new QLabel("Implant #");
-            ldNum_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        sendFadeLayout->addWidget(ldNum_lbl,4,0);
-            ldNum_edit = new QLineEdit;
-            ldNum_edit->setFixedWidth(40);
-        sendFadeLayout->addWidget(ldNum_edit,4,1);
-            sendCal_btn = new QPushButton("Send Values");
-            sendCal_btn->setMinimumHeight(40);
-        sendFadeLayout->addWidget(sendCal_btn,3,2,2,4);
-    sendFadeDialog->setWindowTitle("Power Value Sender");
-    sendFadeDialog->setWindowFlags(sendFadeDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
-    sendFadeDialog->setMaximumWidth(0);
-    sendFadeDialog->setMaximumHeight(0);
-    sendFadeDialog->setModal(false);
-    sendFadeDialog->setLayout(sendFadeLayout);
 
     //Triggering & debugging
     bugBox = new QGroupBox("Debug");
@@ -483,7 +414,6 @@ MainWindow::MainWindow(QWidget *parent)
     //menu functions
     connect(openDir,SIGNAL(triggered()),this,SLOT(gotoDir()));
     connect(gotoApplocation,SIGNAL(triggered()),this,SLOT(gotoAppLocation()));
-//    connect(graphResults,SIGNAL(triggered(bool)),this,SLOT(getGraphs()));
     connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
     connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
     connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
@@ -500,7 +430,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillBasestationPorts()));
     connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillDownloaderPorts()));
     connect(connect_btn,SIGNAL(clicked()),this,SLOT(connectBasePort()));
-    connect(connect2_btn,SIGNAL(clicked()),this,SLOT(connectDownloadPort()));
+    connect(connect2_btn,SIGNAL(clicked()),this,SLOT(connectCerebroPort()));
 
     //Monitors
     connect(serial,SIGNAL(readyRead()),this,SLOT(readSerial()));
@@ -517,20 +447,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sendSettings_btn,SIGNAL(clicked()),this,SLOT(set()));
     connect(singleShot,SIGNAL(clicked()),this,SLOT(trainChecked()));
     connect(pulseTrain,SIGNAL(clicked()),this,SLOT(trainChecked()));
-    connect(newPower_btn,SIGNAL(clicked(bool)),this,SLOT(sendNewPower()));
 
-    //Debug Commands
-    connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
-    connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
-    connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
-    connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
-    connect(trigger_btn,SIGNAL(clicked()),this,SLOT(sendTrigger()));
-
-//    connect(timer, SIGNAL(timeout()), this, SLOT(sendTrigger()));
-
-    //Calibration
-    connect(selectFile_btn,SIGNAL(clicked()),this,SLOT(chooseFile()));
-    connect(selectFile_btn, SIGNAL(dropped(const QMimeData*)),this, SLOT(useDropped(const QMimeData*)));
+    //Characteriztion
     connect(leftTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
     connect(leftDiode_spn,SIGNAL(editingFinished()),this,SLOT(sendToDiode()));
     connect(rightTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
@@ -538,9 +456,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(setDiode_btn,SIGNAL(clicked()),this,SLOT(setDiodePower()));
     connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
-    connect(sendCal_btn,SIGNAL(clicked()),this,SLOT(sendCalVector()));
-//    connect(initialize_btn,SIGNAL(clicked(bool)),sendFadeDialog,SLOT(show()));
-    connect(createVecBtn,SIGNAL(clicked(bool)),createFadeDialog,SLOT(exec()));
+
+    //Debug Commands
+    connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
+    connect(macroText,SIGNAL(returnPressed()),this,SLOT(macro()));
+    connect(abort_btn,SIGNAL(clicked()),this,SLOT(abort()));
+    connect(getInfo_btn,SIGNAL(clicked(bool)),this,SLOT(getBatteryStatus()));
+    connect(trigger_btn,SIGNAL(clicked()),this,SLOT(sendTrigger()));
 }
 
 
@@ -612,7 +534,7 @@ void MainWindow::applySettings()
     debugOn = false;
     showDebug();
     if (downloadConnected){
-        connectDownloadPort(); //disconnect download port after settings change
+        connectCerebroPort(); //disconnect download port after settings change
     }
 }
 
@@ -705,7 +627,6 @@ void MainWindow::connectBasePort()
         adjustBox->setEnabled(!baseConnected);
         charBox->setEnabled(!baseConnected && debugOn);
         bugBox->setEnabled(!baseConnected && debugOn);
-//        baseSettingsBox->setEnabled(!baseConnected);
         baseBox->setEnabled(!baseConnected);
         cerStatusBox->setEnabled(!baseConnected);
         if(!baseConnected){ //connect to serial port
@@ -724,7 +645,6 @@ void MainWindow::connectBasePort()
             qDebug()<<"opening serial"<<serial->open(QIODevice::ReadWrite);
             qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
-//            connect_btn->setStyleSheet("background-color: grey; color:black");
             if(!debugOn){
                 QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
                 qDebug()<<"rat info "<<ratInfo;
@@ -737,7 +657,6 @@ void MainWindow::connectBasePort()
                 setWindowTitle("Debug Mode");
             }
             clearBase_btn->setEnabled(false);
-//            connect_btn->setEnabled(false);
             baseConnected = true;
             errorThrown = false;
             sessionStartMonitor->clear();
@@ -773,7 +692,7 @@ void MainWindow::connectBasePort()
     connect_btn->setChecked(baseConnected);
 }
 
-void MainWindow::connectDownloadPort()
+void MainWindow::connectCerebroPort()
 {
     QString tempPortName = serialPortList2->currentText();
     if (tempPortName.isEmpty() & !downloadConnected &!debugOn){
@@ -940,17 +859,6 @@ void MainWindow::readLog()
                 downloadMonitor->insertPlainText(buffer.mid(0,andIndex-1));
             }
             QStringList dataFromBaseMsg = buffer.mid(andIndex+1,starIndex).split('~');
-
-//            if(baseConnected){
-//                QMessageBox filterMsg;
-//                filterMsg.setWindowTitle("Update Base Station Command Filter");
-//                filterMsg.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
-//                filterMsg.setDefaultButton(QMessageBox::No);
-//                filterMsg.setText("Would you like to update the Base Station Command Filter to match the parameters on this Cerebro?");
-//                if(filterMsg.exec()==QMessageBox::Yes){
-//                    updateFilter();
-//                }
-//            }
         }
     }
     downloadMonitor->moveCursor(QTextCursor::End);
@@ -1007,26 +915,9 @@ void MainWindow::set()
         }
     }
     QString msg = "W,"+ startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime+"\n";
+    serial->write(msg.toLocal8Bit());
     qDebug()<<"message sent"<<msg;
-    QMessageBox confirmUpdate;
-        confirmUpdate.setWindowTitle("Confirm Parameter Change");
-        confirmUpdate.setIcon(QMessageBox::Question);
-        confirmUpdate.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
-        confirmUpdate.setDefaultButton(QMessageBox::Cancel);
-        confirmUpdate.setEscapeButton(QMessageBox::Cancel);
-        confirmUpdate.setText("<b>Are you sure you want to send the following new parameters to Cerebro?</b>");
-        confirmUpdate.setInformativeText(
-                    "Start Delay:\t"+ startDelay+
-                    onTimeString + onTime +
-                    offTimeString + offTime +
-                    " ms\nTrain Duration:\t" + trainDur +
-                    " ms\nFade Time:\t" + fadeTime + " ms");
-//                    "\n\nThe command filter will be automatically updated to " + QString::number(baseFilter_spn->value()) + " ms");
-//    if (confirmUpdate.exec() == QMessageBox::Yes){
-        serial->write(msg.toLocal8Bit());
-        last_settings->setText("Last Parameters Sent:\n" + startDelay  + ", " + onTime + ", " + offTime + ", " + trainDur + ", " + fadeTime );
-//        QTimer::singleShot(500, this, SLOT(updateFilter()));
-//    }
+
 }
 
 void MainWindow::sendTrigger()
@@ -1231,9 +1122,6 @@ void MainWindow::openDocs(){
 //    opens online documentation
     QUrl site = QUrl::fromEncoded( "https://karpova-lab.github.io/cerebro/Software/Xavier.html");
     QDesktopServices::openUrl(site);
-//    //opens local html file
-//    QProcess *process = new QProcess(this);
-//    process->start("explorer.exe", QStringList() << QDir::toNativeSeparators(qApp->applicationDirPath()+"/local docs/Software/Xavier.html"));
 }
 
 
@@ -1270,9 +1158,6 @@ void MainWindow::getGraphs()
             QString printedString = process->readAll();
             //Display summary in a popup message
             QMessageBox alert;
-//            QFont codefont;
-//            codefont.setPointSize(6);
-//            alert.setFont(codefont);
             if (!errorString.isEmpty()){
                 alert.setWindowTitle("Python Error");
                 alert.setText(errorString);
@@ -1293,139 +1178,6 @@ void MainWindow::setDebug()
         debugOn = !debugOn;
         showDebug();
     }
-}
-
-
-
-
-void MainWindow::sendCalVector(){
-    bool cerNumisInt,ldNumisInt;
-    int cerNum = cerebroNum_edit->text().toInt(&cerNumisInt);
-    int ldNum = ldNum_edit->text().toInt(&ldNumisInt);
-    qDebug()<<!cerNumisInt<<!ldNumisInt<<(cerNum<0)<<(ldNum<0);
-    if  (!cerNumisInt || !ldNumisInt || cerNum<0 || ldNum<0){
-        QMessageBox calError;
-        calError.setWindowTitle("Error");
-        calError.setIcon(QMessageBox::Warning);
-        calError.setStandardButtons(QMessageBox::Ok);
-        calError.setText("Please fill in Cerebro# and LD# with postive integers");
-        calError.exec();
-    }
-    else{
-        QMessageBox confirmUpdate;
-        confirmUpdate.setWindowTitle("Confirm Update");
-        confirmUpdate.setIcon(QMessageBox::Question);
-        confirmUpdate.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
-        confirmUpdate.setDefaultButton(QMessageBox::Cancel);
-        confirmUpdate.setEscapeButton(QMessageBox::Cancel);
-        confirmUpdate.setText("Are you sure you want to update Cerebro #" + cerebroNum_edit->text() + "'s power level and corresponding fade vector?");
-        if (confirmUpdate.exec() == QMessageBox::Yes){
-            sendCal_btn->setEnabled(false);
-            QString msg = "X";
-            serial->write(msg.toLocal8Bit());
-            QTimer::singleShot(500, this, SLOT(sendCalGroups()));
-        }
-    }
-}
-
-void MainWindow::sendCalGroups(){
-    QString calibrationString = codeTextBox->toPlainText();
-    QStringList calibrationGroups = calibrationString.split("\n",QString::SkipEmptyParts);
-    if(calibrationGroups.size()>0){
-        serial->write(calibrationGroups.takeFirst().toLocal8Bit());
-        codeTextBox->clear();
-        for (int i = 0; i<calibrationGroups.size(); i++){
-            codeTextBox->insertPlainText(calibrationGroups[i]+"\n");
-        }
-        QTimer::singleShot(475, this, SLOT(sendCalGroups()));
-    }
-    else{
-        isFirstTime = true;
-        QTimer::singleShot(1000,this,SLOT(sendHardwareVals()));
-
-    }
-}
-
-void MainWindow::sendHardwareVals(){
-    if (isFirstTime){
-        QString msg = "H";
-        serial->write(msg.toLocal8Bit());
-        QTimer::singleShot(500, this, SLOT(sendHardwareVals()));
-        isFirstTime = false;
-    }
-    else{
-        QString msg = cerebroNum_edit->text()+"," + ldNum_edit->text() + ",0,0,0";
-        qDebug()<<msg<<"sent";
-        serial->write(msg.toLocal8Bit());
-        cerebroNum_edit->clear();
-        ldNum_edit->clear();
-        sendCal_btn->setEnabled(true);
-    }
-}
-
-void MainWindow::sendNewPower(){
-    isFirstTime = true;
-    QTimer::singleShot(1000,this,SLOT(powerSending()));
-}
-
-void MainWindow::powerSending(){
-    if (isFirstTime){
-        QString msg = "P";
-        serial->write(msg.toLocal8Bit());
-        QTimer::singleShot(500, this, SLOT(powerSending()));
-        isFirstTime = false;
-    }
-    else{
-        QString msg = power_spn->text() + ",0,0,0,0";
-        qDebug()<<msg<<"sent";
-        serial->write(msg.toLocal8Bit());
-    }
-}
-
-/*``````````````````````Calibration functions`````````````````````*/
-
-
-void MainWindow::chooseFile(){
-//    fileLabel->setText("");
-    codeTextBox->clear();
-    QString pathFromDialog = QFileDialog::getOpenFileName(this,tr("Select Power Meter Data"),QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),tr("(*.txt)"));
-    if(!pathFromDialog.isEmpty()){
-        // Run python script to summarize data from base station and cerebro logs
-        getCalVals(pathFromDialog);
-    }
-    else{
-        selectFile_btn->clearFocus();
-    }
-}
-
-
-void MainWindow::useDropped(const QMimeData *mimeData)
-{
-//    fileLabel->setText("");
-    codeTextBox->clear();
-    QString dataPath =  mimeData->text().simplified();
-    dataPath.remove("file:///");
-    getCalVals(dataPath);
-}
-
-void MainWindow::getCalVals(QString calibrateDataPath ){
-    QProcess *process = new QProcess(this);
-    QStringList pythonArgs;
-    pythonArgs<<qApp->applicationDirPath()+"/python scripts/getCalibrationVec.py"<<"\""+calibrateDataPath+"\""<<wantedLevel->text()<<QString::number(showGraph->isChecked()); //pass the calibration data into python script
-    process->start("python",pythonArgs);
-    process->waitForFinished(-1);
-    QString errorString = process->readAllStandardError();
-    QString resultString = process->readAll();
-    codeTextBox->insertPlainText(resultString);
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(resultString);
-    QMessageBox alert;
-    if (!errorString.isEmpty()){
-        alert.setWindowTitle("Error Message from Python");
-        alert.setText(errorString);
-        alert.exec();
-    }
-    createFadeDialog->close();
 }
 
 void MainWindow::matchPowers(){
@@ -1484,16 +1236,3 @@ void MainWindow::startSession(){
     sessionHasBegun=true;
     clearMonitor();
 }
-
-//void MainWindow::getJSON(){
-//    QString val;
-//    QFile file;
-//    file.setFileName(qApp->applicationDirPath()+"/test.json");
-//    file.open(QIODevice::ReadOnly | QIODevice::Text);
-//    val = file.readAll();
-//    file.close();
-//    QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
-//    QJsonObject topLevel = doc.object();
-//    QJsonValue rigVallArray = topLevel.value(QString("rigVals"));
-//    qDebug() <<rigVallArray.toArray()[0].toString()<< rigVallArray.toArray()[1].toString();
-//}
