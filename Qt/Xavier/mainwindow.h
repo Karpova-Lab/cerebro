@@ -119,7 +119,7 @@ private:
     QGroupBox*              charBox;
     QGridLayout*            charLayout;
     QSpinBox*               leftDiode_spn,*rightDiode_spn;
-    QPushButton*            leftTest_btn,*rightTest_btn,*setDiode_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*initialize_btn;
+    QPushButton*            leftTest_btn,*rightTest_btn,*setDiode_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*shortTest_btn,*longTest_btn;
 
     //Triggering & Debugging
     QGroupBox*              bugBox;
@@ -186,6 +186,8 @@ private slots:
     void sendToDiode();
     void setDiodePower();
     void testCombined();
+    void testLong();
+    void testShort();
 };
 
 

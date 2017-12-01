@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 48;
+const uint8_t VERSION = 49;
 
 const int16_t LED = 13;
 const int16_t TRIGGER_PIN = 5;
@@ -47,6 +47,7 @@ uint32_t  startTime = 0;
 uint32_t  spamFilter = 0;
 uint32_t  triggerClock = 0;
 uint16_t  msgCount = 0;
+bool      ingnoreFilter = false;
 
 void setup() {
   Serial1.begin(57600);
@@ -180,7 +181,6 @@ void parseData(){
 void sendMsgAndVal(char msg,unsigned int val){
   integerMessage.variable = msg;
   integerMessage.value = val;
-  triggerClock = millis();
   Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(integerMessage.value);Serial1.print("...");
   if (radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage))){
     Serial1.print("data received");newline();
@@ -277,6 +277,8 @@ void sendWaveformUpdate(){
   printWaveform(newWaveform,false);
   if (radio.sendWithRetry(CEREBRO, (const void*)(&newWaveform), sizeof(newWaveform))){
     currentWaveform = newWaveform;
+    ingnoreFilter = true;
+    
   }
   else{
     Serial1.print("*X&Waveform Update Failed\n");
@@ -298,7 +300,7 @@ void sendDiodePowerUpdate(){
 
 void triggerCommandReceived(){
   uint32_t  tSinceTrigger = millis() - triggerClock;
-  if (tSinceTrigger>spamFilter){
+  if (tSinceTrigger>spamFilter || ingnoreFilter){
     msgCount++;
     integerMessage.variable = 'T';
     integerMessage.value = msgCount;
@@ -314,6 +316,7 @@ void triggerCommandReceived(){
     radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
     triggerClock = millis();
   }
+  ingnoreFilter = false;
 }
 
 void stopCommandReceived(){
@@ -326,9 +329,6 @@ void stopCommandReceived(){
     radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
     triggerClock = -spamFilter; //prevents back to back stop signals from being sent
   }
-  // else{
-  //   printTime();comma();Serial1.print("Ignore Bcontrol,");Serial1.print(spamFilter);newline();
-  // }
 }
 
 void sendDataToXavier(char* parameterName, uint32_t theValues[], uint8_t numValues){

@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.3.0";
+        xavierVersion = "3.4.0";
         QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/1/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
@@ -272,6 +272,10 @@ MainWindow::MainWindow(QWidget *parent)
         charLayout->addWidget(setDiode_btn,1,0,1,4);
             combinedTest_btn = new QPushButton("Combined Test");
         charLayout->addWidget(combinedTest_btn,2,0,1,4);
+            shortTest_btn = new QPushButton("1s Pulse Waveform");
+        charLayout->addWidget(shortTest_btn,3,0,1,2);
+            longTest_btn = new QPushButton("3min Train Waveform");
+        charLayout->addWidget(longTest_btn,3,2,1,2);
     charBox->setLayout(charLayout);
     charBox->setEnabled(false);
     charBox->setPalette(Qt::gray);
@@ -455,8 +459,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(rightTest_btn,SIGNAL(clicked()),this,SLOT(sendToDiode()));
     connect(rightDiode_spn,SIGNAL(editingFinished()),this,SLOT(sendToDiode()));
     connect(setDiode_btn,SIGNAL(clicked()),this,SLOT(setDiodePower()));
-    connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(startDiode_btn,SIGNAL(clicked()),downloaderDialog,SLOT(show()));
+    connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
+    connect(longTest_btn,SIGNAL(clicked(bool)),this,SLOT(testLong()));
+    connect(shortTest_btn,SIGNAL(clicked(bool)),this,SLOT(testShort()));
+
+
 
     //Debug Commands
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));
@@ -1239,6 +1247,28 @@ void MainWindow::testCombined()
     QString msg = "c\n";
     serial->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::testShort()
+{
+    singleShot->setChecked(true);
+    startDelay_checkbox->setChecked(false);
+    onTime_spn->setValue(1000);
+    offTime_spn->setValue(0);
+    trainDuration_spn->setValue(0);
+    fade_checkbox->setChecked(false);
+    set();
+}
+
+void MainWindow::testLong()
+{
+    pulseTrain->setChecked(true);
+    startDelay_checkbox->setChecked(false);
+    onTime_spn->setValue(1000);
+    offTime_spn->setValue(3000);
+    trainDuration_spn->setValue(180000);
+    fade_checkbox->setChecked(false);
+    set();
 }
 
 void MainWindow::startSession(){
