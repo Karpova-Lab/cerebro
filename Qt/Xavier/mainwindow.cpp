@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.4.0";
+        xavierVersion = "3.5.0";
         QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/1/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
@@ -68,9 +68,11 @@ MainWindow::MainWindow(QWidget *parent)
     //Experimental setup
     equipmentBox = new QGroupBox("Session Setup");
         equipmentLayout = new QGridLayout();
-            rig_lbl = new QLabel("Rig #");
+            rig_lbl = new QPushButton("Rig #");
+            rig_lbl->setFlat(true);
         equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
-            rat_lbl = new QLabel("Rat-implant: (LSet/RSet)");
+            rat_lbl = new QPushButton("Rat-implant: (LSet/RSet)");
+            rat_lbl->setFlat(true);
         equipmentLayout->addWidget(rat_lbl,0,2,1,2,Qt::AlignCenter);
             rigSelect = new QListWidget();
         equipmentLayout->addWidget(rigSelect,1,1,4,1,Qt::AlignTop);
@@ -80,6 +82,11 @@ MainWindow::MainWindow(QWidget *parent)
             connectBS_label = new QLabel("Base Station Serial Port");
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
             refresh_btn = new QPushButton("Rescan");
+//            QPixmap gearIcon(":icons/refresh.svg");
+//            QPixmap gearIcon(QCoreApplication::applicationDirPath()+"/icons/refresh.svg");
+//            QIcon ButtonIcon(gearIcon);
+//            refresh_btn->setIcon(ButtonIcon);
+//            refresh_btn->setIconSize(QSize(10,10));
         equipmentLayout->addWidget(refresh_btn,1,5);
             serialPortList = new QComboBox();
             serialPortList->setMinimumWidth(150);
@@ -424,12 +431,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(debugCheckbox,SIGNAL(clicked(bool)),this,SLOT(setDebug()));
     connect(gotoSettings,SIGNAL(triggered()),settingsDlog,SLOT(openSettings()));
 
-    //
+    //Startup Sequence
     connect(startSession_btn,SIGNAL(clicked()),this,SLOT(startSession()));
     connect(sessionStartDialog,SIGNAL(rejected()),this,SLOT(connectBasePort()));
     connect(retry_btn,SIGNAL(clicked(bool)),this,SLOT(checkForBase()));
 
     //Port Connections
+    connect(rig_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
+    connect(rat_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
     connect(settingsDlog,SIGNAL(dialogClosed()),this,SLOT(applySettings()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillBasestationPorts()));
     connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillDownloaderPorts()));
@@ -463,8 +472,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(combinedTest_btn,SIGNAL(clicked(bool)),this,SLOT(testCombined()));
     connect(longTest_btn,SIGNAL(clicked(bool)),this,SLOT(testLong()));
     connect(shortTest_btn,SIGNAL(clicked(bool)),this,SLOT(testShort()));
-
-
 
     //Debug Commands
     connect(macro_btn,SIGNAL(clicked()),this,SLOT(macro()));

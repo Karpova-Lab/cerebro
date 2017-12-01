@@ -45,7 +45,9 @@ int main(int argc, char *argv[])
 
 //    w.resize(940,finalH);
     w.show();
-    w.setFixedSize(w.size());
+    #ifndef __APPLE__
 
+    w.setFixedSize(w.size());
+    #endif
     return a.exec();
 }
