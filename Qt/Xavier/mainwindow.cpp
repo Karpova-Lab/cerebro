@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.5.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/1/2017";
+        xavierVersion = "3.5.1";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/7/2017";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -160,22 +160,22 @@ MainWindow::MainWindow(QWidget *parent)
     //Base station monitor
     baseBox = new QGroupBox("Base Station Monitor");
         serialMonitorLayout = new QGridLayout();
-        clearBase_btn = new QPushButton();
-            clearBase_btn->setText("Restart Session");
-        serialMonitorLayout->addWidget(clearBase_btn,0,4,1,2,Qt::AlignRight);
             baseFilter_label = new QLabel("Filter Duration:");
         serialMonitorLayout->addWidget(baseFilter_label,0,0);
+        clearBase_btn = new QPushButton();
+            clearBase_btn->setText("Restart Session");
+        serialMonitorLayout->addWidget(clearBase_btn,0,1,Qt::AlignRight);
             baseMonitor = new QPlainTextEdit();
             baseMonitor->setMinimumHeight(380);
-        serialMonitorLayout->addWidget(baseMonitor,1,0,1,6);
+        serialMonitorLayout->addWidget(baseMonitor,1,0,1,2);
             saveMonitor_btn = new QPushButton();
             saveMonitor_btn->setText("Save Session");
             saveMonitor_btn->setMinimumHeight(40);
             saveMonitor_btn->setEnabled(true);
-        serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,6);
+        serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,2);
     baseBox->setMinimumWidth(300);
     #ifdef __APPLE__
-        baseMonitor->setMinimumWidth(325);
+        baseBox->setMinimumWidth(350);
     #endif
     baseBox->setLayout(serialMonitorLayout);
     baseBox->setEnabled(false);
