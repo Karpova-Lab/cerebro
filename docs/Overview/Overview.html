@@ -106,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/cerebro.html">Cerebro Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/implant.html">Head Implant Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/base station.html">Base Station Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
 </ul>
 
             
@@ -177,21 +178,23 @@
 <dt>Open Source</dt>
 <dd><ul class="first last simple">
 <li><strong>Flexible</strong> - All code and CAD is available so you can make changes and improvements to anything you want!</li>
-<li><strong>Low Cost</strong> - Hardware BOMs are provided, with a total estimated cost of $300. The software is free.</li>
+<li><strong>Low Cost</strong> - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.</li>
 </ul>
 </dd>
+</dl>
+<dl class="docutils">
 <dt>Wireless Radio</dt>
 <dd><ul class="first last simple">
 <li><strong>Low Latency</strong> -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.</li>
-<li><strong>2-Way Communication</strong> - Can send messages to start or interrupt light stimulation. Can receive acknowledgment messages that commands were received, as well as battery status updates.</li>
+<li><strong>2-Way Communication</strong> - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.</li>
 <li><strong>Range</strong> - {x}+ range. Doesn’t need line of sight.</li>
-<li><strong>Wirelessly Adjustable Waveforms</strong> - Cerebro can be produce <a class="reference internal" href="../Software/xavier.html#waveform-parameters"><span class="std std-ref">customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</li>
+<li><strong>Wirelessly Adjustable Waveforms</strong> - Cerebro can be produce <a class="reference internal" href="../Software/Xavier.html#waveform-parameters"><span class="std std-ref">customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</li>
 </ul>
 </dd>
 <dt>Laser Diodes</dt>
 <dd><ul class="first last simple">
 <li><strong>High Power</strong> - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.</li>
-<li><strong>Independent Bilateral Control</strong> -  Each laser diode has its own control circuitry an can be independtly calibrated and controlled.</li>
+<li><strong>Independent Bilateral Control</strong> -  Each laser diode has its own control circuitry.</li>
 </ul>
 </dd>
 </dl>
@@ -211,9 +214,10 @@
 <h2>System Components<a class="headerlink" href="#system-components" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cerebro">
 <h3>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="../_images/cerebro.jpg"><img alt="../_images/cerebro.jpg" class="align-center" src="../_images/cerebro.jpg" style="width: 537.6px; height: 355.6px;" /></a>
 <p>Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span class="std std-ref">Base Station</span></a> and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
-intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="../Software/xavier.html#pulse-change-header"><span class="std std-ref">How to change Pulse Parameters</span></a>).</p>
+intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<span class="xref std std-ref">How to change Pulse Parameters</span>).</p>
 <p><a class="reference internal" href="../Hardware/cerebro.html"><span class="doc">More info…</span></a></p>
 </div>
 <div class="section" id="head-implant">
@@ -224,6 +228,7 @@ to maintain a constant light output. The laser diodes can be independently contr
 </div>
 <div class="section" id="base-station">
 <span id="id1"></span><h3>Base Station<a class="headerlink" href="#base-station" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="../_images/base.jpg"><img alt="../_images/base.jpg" class="align-center" src="../_images/base.jpg" style="width: 1034.0px; height: 619.5px;" /></a>
 <p>The Base Station is responsible for communicate wirelessly with Cerebro via radio.
 It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication via <span class="xref std std-ref">Xavier</span>.
 Base Station can also be controlled directly by <a class="reference external" href="https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels">TTL</a> signals going into
@@ -235,7 +240,7 @@ a stop signal to be emitted.</p>
 <h3>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h3>
 <p>Xavier is a GUI for sending and logging Base Station commands.
 Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.</p>
-<p><span class="xref std std-doc">More info…</span></p>
+<p><a class="reference internal" href="../Software/Xavier.html"><span class="doc">More info…</span></a></p>
 </div>
 </div>
 </div>
@@ -263,7 +268,7 @@ Xavier provides an easy interface for sending parameter changes and can also be 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Nov 29, 2017.
+      Last updated on Dec 08, 2017.
 
     </p>
   </div>

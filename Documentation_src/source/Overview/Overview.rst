@@ -8,32 +8,28 @@ Features
 ========
 Open Source
   * **Flexible** - All code and CAD is available so you can make changes and improvements to anything you want!
-  * **Low Cost** - Hardware BOMs are provided, with a total estimated cost of $300. The software is free.
+  * **Low Cost** - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.
+..
+..    .. csv-table::
+..      :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
+..      :widths: 1,1,1
+..    
+..      Cerebro,40 , 2
+..      Head Implant (bilateral),120,4
+..      Base Station,40,.5
+..      Xavier, FREE, 0
+..      **Total**,**$145**,**6.5 hours**
 
 Wireless Radio
   * **Low Latency** -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.
-  * **2-Way Communication** - Can send messages to start or interrupt light stimulation. Can receive acknowledgment messages that commands were received, as well as battery status updates.
+  * **2-Way Communication** - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.
   * **Range** - {x}+ range. Doesn't need line of sight.
   * **Wirelessly Adjustable Waveforms** - Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
 Laser Diodes
   * **High Power** - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
-  * **Independent Bilateral Control** -  Each laser diode has its own control circuitry an can be independtly calibrated and controlled.
+  * **Independent Bilateral Control** -  Each laser diode has its own control circuitry. 
 
-
-.. **Cost**
-.. 
-.. .. csv-table::
-..   :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
-..   :widths: 1,1,1
-.. 
-..   Cerebro,30 , 2
-..   Head Implant (bilateral),190,4
-..   Base Station,25,0
-..   Xavier, FREE, 0
-..   ,
-..   **Total**,**$145**,**6 hours**
-.. 
 .. **Technical Specifications**
 .. 
 .. .. csv-table::
@@ -51,7 +47,7 @@ Laser Diodes
 ..   Fiber Diameter, , 200,|mgr|\m
 ..   Light Output (per fiber) ,520 nm diode coupled to 200 |mgr|\m fiber, 0 to 15 |pm|\  0.5, mW
 ..   Input Voltage, , 3.5 to 4.2, V
-..   Idle Current, ,"11","mA"
+..   Idle Current, ,"28","mA"
 
 Commercial Alternatives
 =======================
@@ -68,9 +64,9 @@ System Components
 
 Cerebro
 -------
-.. .. image:: cerebro.jpg
-..   :align: center
-..   :scale: 20 %
+.. image:: cerebro.jpg
+  :align: center
+  :scale: 20 %
 
 Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
@@ -93,9 +89,9 @@ to maintain a constant light output. The laser diodes can be independently contr
 
 Base Station
 ------------
-.. .. image:: base_station.jpg
-..   :align: center
-..   :scale: 15 %
+.. image:: base.jpg
+  :align: center
+  :scale: 50 %
 
 The Base Station is responsible for communicate wirelessly with Cerebro via radio.
 It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication via :ref:`Xavier <xavier>`.
