@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 49;
+const uint8_t VERSION = 50;
 
 const int16_t LED = 13;
 const int16_t TRIGGER_PIN = 5;
@@ -264,6 +264,15 @@ void printDiodeStats(){
   }
   if (diodeStats.rightDAC>3000){
     Serial1.print("Warning: Right DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
+  }
+  int32_t leftDiff = (int32_t)currentDiodePowers.lSetPoint-(int32_t)diodeStats.leftFBK;
+  int32_t rightDiff = (int32_t)currentDiodePowers.rSetPoint-(int32_t)diodeStats.rightFBK;
+  uint8_t diffThresh = 20;
+  if (abs(leftDiff)>diffThresh){
+    Serial1.print("Warning: Large difference (");Serial1.print(leftDiff);Serial1.print(") between left diode's set point and feedback\n");   
+  }
+  if (abs(rightDiff)>diffThresh){
+    Serial1.print("Warning: Large difference (");Serial1.print(rightDiff);Serial1.print(") between right diode's set point and feedback\n");  
   }
 }
 
