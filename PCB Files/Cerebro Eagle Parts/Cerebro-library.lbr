@@ -215,9 +215,9 @@
 </package>
 <package name="CSTCE_V">
 <description>Source: http://search.murata.co.jp/Ceramy/CatalogshowpageAction.do?sDirnm=A07X&amp;sFilnm=81G07006&amp;sType=2&amp;sLang=en&amp;sNHinnm=CSTCR6M00G53Z-R0&amp;sCapt=Standard_Land_Pattern_Dimensions</description>
-<smd name="1" x="-0.95" y="0" dx="0.3" dy="2.794" layer="1"/>
-<smd name="2" x="0" y="0" dx="0.3" dy="2.794" layer="1"/>
-<smd name="3" x="0.95" y="0" dx="0.3" dy="2.794" layer="1"/>
+<smd name="1" x="-1.2" y="0" dx="0.4" dy="2.794" layer="1"/>
+<smd name="2" x="0" y="0" dx="0.4" dy="2.794" layer="1"/>
+<smd name="3" x="1.2" y="0" dx="0.4" dy="2.794" layer="1"/>
 <text x="0" y="1.651" size="0.6096" layer="27" font="vector" align="bottom-center">&gt;NAME</text>
 <wire x1="-1.6" y1="0.65" x2="1.6" y2="0.65" width="0.127" layer="21"/>
 <wire x1="1.6" y1="0.65" x2="1.6" y2="-0.65" width="0.127" layer="21"/>
@@ -1461,6 +1461,14 @@ Pasted was reduced by 40% width on the center ground pad, and some amount on the
 <wire x1="4" y1="-8" x2="4" y2="-6" width="0.3048" layer="20"/>
 <wire x1="4" y1="-6" x2="-4" y2="-6" width="0.3048" layer="20"/>
 <wire x1="-4" y1="-6" x2="-4" y2="-10.16" width="0.3048" layer="20"/>
+</package>
+<package name="MICRO-CLASP">
+<wire x1="-4" y1="-2.05" x2="4" y2="-2.05" width="0.127" layer="21"/>
+<wire x1="4" y1="-2.05" x2="4" y2="9.2" width="0.127" layer="21"/>
+<wire x1="4" y1="9.2" x2="-4" y2="9.2" width="0.127" layer="21"/>
+<wire x1="-4" y1="9.2" x2="-4" y2="-2.05" width="0.127" layer="21"/>
+<smd name="GND" x="-1" y="-0.7" dx="2.5" dy="1" layer="1" roundness="100" rot="R90"/>
+<smd name="POS" x="1" y="-0.7" dx="2.5" dy="1" layer="1" roundness="100" rot="R90"/>
 </package>
 </packages>
 <symbols>
@@ -2862,6 +2870,15 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <technology name=""/>
 </technologies>
 </device>
+<device name="" package="MICRO-CLASP">
+<connects>
+<connect gate="G$1" pin="1" pad="POS"/>
+<connect gate="G$1" pin="2" pad="GND"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
 </devices>
 </deviceset>
 <deviceset name="CONN_02" prefix="J" uservalue="yes">
@@ -3385,6 +3402,17 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <attribute name="PROD_ID" value="CONN-13694" constant="no"/>
 <attribute name="VALUE" value="" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="MICRO-CLASP">
+<gates>
+</gates>
+<devices>
+<device name="">
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
