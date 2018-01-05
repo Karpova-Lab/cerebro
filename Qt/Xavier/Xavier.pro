@@ -19,6 +19,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     settingsDialog.h
 
-RESOURCES +=
+RESOURCES += \
+    myfiles.qrc
 
 DISTFILES +=

@@ -27,11 +27,11 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 49;
+const uint8_t VERSION = 51;
 
-const int16_t LED = 13;
-const int16_t TRIGGER_PIN = 5;
-const int16_t STOP_PIN = 6;
+const uint8_t LED = 13;
+const uint8_t TRIGGER_PIN = 5;
+const uint8_t STOP_PIN = 6;
 
 Radio radio(8,7); //slave select pin, interrupt pin
 WaveformData newWaveform;
@@ -47,7 +47,7 @@ uint32_t  startTime = 0;
 uint32_t  spamFilter = 0;
 uint32_t  triggerClock = 0;
 uint16_t  msgCount = 0;
-bool      ingnoreFilter = false;
+bool      ignoreFilter = false;
 
 void setup() {
   Serial1.begin(57600);
@@ -100,6 +100,11 @@ void loop() {
     }
     else if(msg=='N'){
       newSession();
+    }
+    else if(msg=='?'){
+      Serial1.print("Network ID: ");
+      Serial1.println(NETWORKID);
+      Serial1.print("Base Version,");Serial1.print(VERSION);newline();
     }
     else if (msg!='\n'){
       relayMsg(msg);
@@ -233,7 +238,7 @@ void printDiodePowers(DiodePowers printPower,  bool response){
   printToBaseMonitor("Diode Powers",theVals,2);
 }
 
-void printBattery(uint8_t batteryMsgCount, uint8_t batteryStatus){
+void printBattery(uint16_t batteryMsgCount, uint8_t batteryStatus){
   printTime();
   Serial1.print("[");Serial1.print(batteryMsgCount);Serial1.print("]");
   uint32_t theVals[1] = {batteryStatus};
@@ -265,6 +270,15 @@ void printDiodeStats(){
   if (diodeStats.rightDAC>3000){
     Serial1.print("Warning: Right DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
   }
+  int32_t leftDiff = (int32_t)currentDiodePowers.lSetPoint-(int32_t)diodeStats.leftFBK;
+  int32_t rightDiff = (int32_t)currentDiodePowers.rSetPoint-(int32_t)diodeStats.rightFBK;
+  uint8_t diffThresh = 20;
+  if (abs(leftDiff)>diffThresh){
+    Serial1.print("Warning: Large difference (");Serial1.print(leftDiff);Serial1.print(") between left diode's set point and feedback\n");   
+  }
+  if (abs(rightDiff)>diffThresh){
+    Serial1.print("Warning: Large difference (");Serial1.print(rightDiff);Serial1.print(") between right diode's set point and feedback\n");  
+  }
 }
 
 void sendWaveformUpdate(){
@@ -277,8 +291,7 @@ void sendWaveformUpdate(){
   printWaveform(newWaveform,false);
   if (radio.sendWithRetry(CEREBRO, (const void*)(&newWaveform), sizeof(newWaveform))){
     currentWaveform = newWaveform;
-    ingnoreFilter = true;
-    
+    ignoreFilter = true;    
   }
   else{
     Serial1.print("*X&Waveform Update Failed\n");
@@ -300,7 +313,7 @@ void sendDiodePowerUpdate(){
 
 void triggerCommandReceived(){
   uint32_t  tSinceTrigger = millis() - triggerClock;
-  if (tSinceTrigger>spamFilter || ingnoreFilter){
+  if (tSinceTrigger>spamFilter || ignoreFilter){
     msgCount++;
     integerMessage.variable = 'T';
     integerMessage.value = msgCount;
@@ -316,7 +329,7 @@ void triggerCommandReceived(){
     radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
     triggerClock = millis();
   }
-  ingnoreFilter = false;
+  ignoreFilter = false;
 }
 
 void stopCommandReceived(){
