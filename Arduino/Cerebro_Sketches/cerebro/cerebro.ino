@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 90;
+const uint8_t VERSION = 91;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -45,8 +45,6 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #define RIGHT_SETPOINT_ADDRESS 17
 #define MISSING_ARRAY_ADDRESS 19
 
-#define CEREBRO51
-
 WaveformData waveform;
 DiodePowers diodePwrs;
 IntegerPayload integerMessage;
@@ -55,15 +53,9 @@ Feedback diodeStats;
 
 uint16_t meterVal = 0;
 
-#ifdef CEREBRO51
-  const uint8_t indicatorLED = A5; //32u4 pin 36
-  LaserDiode left(&DDRB,&PORTB,0,A4);
-  LaserDiode right(&DDRD,&PORTD,2,A2);
-#else
-  const uint8_t indicatorLED = A0; //32u4 pin 36
-  LaserDiode right(&DDRB,&PORTB,0,A4);
-  LaserDiode left(&DDRD,&PORTD,2,A2);
-#endif
+const uint8_t indicatorLED = A0; //32u4 pin 36
+LaserDiode right(&DDRB,&PORTB,0,A4);
+LaserDiode left(&DDRD,&PORTD,2,A2);
 
 Radio radio(7,1); //slave select pin, interrupt pin
 uint16_t msgCount = 0;
@@ -117,6 +109,8 @@ void setup() {
   else{
     Serial.println("Failed to Connect to Base Station");
   }
+  Serial.print("Network ID: ");
+  Serial.println(NETWORKID);
   reportVersion();
   digitalWrite(indicatorLED,LOW);
 }
@@ -196,18 +190,6 @@ void loop() {
   }
   LowPower.idle(SLEEP_FOREVER,ADC_OFF,TIMER4_OFF,TIMER3_OFF,TIMER1_OFF,TIMER0_ON,SPI_ON,USART1_OFF,TWI_OFF,USB_OFF);
 
-}
-
-void printInfo(){
-  // Serial.print("\nSerial Number: ");Serial.println(currentInfo.serialNumber);
-  // Serial.print("Firmware Version: ");Serial.println(currentInfo.firmware);
-  // Serial.print("Left set Point: ");Serial.println(currentInfo.lSetPoint);
-  // Serial.print("Right set Point: ");Serial.println(currentInfo.rSetPoint);
-  // Serial.print("Start Delay: "); Serial.println(currentInfo.waveform.startDelay);
-  // Serial.print("On Time: "); Serial.println(currentInfo.waveform.onTime);
-  // Serial.print("Off Time: "); Serial.println(currentInfo.waveform.offTime);
-  // Serial.print("Train Duration: "); Serial.println(currentInfo.waveform.trainDur);
-  // Serial.print("Ramp Duration: "); Serial.println(currentInfo.waveform.rampDur);
 }
 
 void sendACK(){
