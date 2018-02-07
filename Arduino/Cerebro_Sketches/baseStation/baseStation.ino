@@ -27,7 +27,7 @@ SOFTWARE.
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
 
-const uint8_t VERSION = 51;
+const uint8_t VERSION = 52;
 
 const uint8_t LED = 13;
 const uint8_t TRIGGER_PIN = 5;
@@ -48,6 +48,7 @@ uint32_t  spamFilter = 0;
 uint32_t  triggerClock = 0;
 uint16_t  msgCount = 0;
 bool      ignoreFilter = false;
+bool      warningsOn = true;
 
 void setup() {
   Serial1.begin(57600);
@@ -135,9 +136,11 @@ void loop() {
         currentWaveform = *(WaveformData*)radio.DATA;
         if (currentWaveform.trainDur>0){
           spamFilter = currentWaveform.startDelay + currentWaveform.trainDur;
+          warningsOn = false;
         }
         else{
           spamFilter = currentWaveform.startDelay + currentWaveform.onTime;
+          warningsOn = true;
         }
         printWaveform(currentWaveform,true);
         break;
@@ -264,19 +267,19 @@ void printDiodeStats(){
   Serial1.print("[");Serial1.print(diodeStats.msgCount);Serial1.print("]");
   uint32_t theVals[6] = {currentDiodePowers.lSetPoint, diodeStats.leftFBK, diodeStats.leftDAC, currentDiodePowers.rSetPoint, diodeStats.rightFBK, diodeStats.rightDAC};
   printToBaseMonitor("Feedback",theVals,6);
-  if (diodeStats.leftDAC>3000){
+  if (diodeStats.leftDAC>3000 && warningsOn){
     Serial1.print("Warning: Left DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
   }
-  if (diodeStats.rightDAC>3000){
+  if (diodeStats.rightDAC>3000 && warningsOn){
     Serial1.print("Warning: Right DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
   }
   int32_t leftDiff = (int32_t)currentDiodePowers.lSetPoint-(int32_t)diodeStats.leftFBK;
   int32_t rightDiff = (int32_t)currentDiodePowers.rSetPoint-(int32_t)diodeStats.rightFBK;
   uint8_t diffThresh = 20;
-  if (abs(leftDiff)>diffThresh){
+  if ((abs(leftDiff)>diffThresh) && warningsOn){
     Serial1.print("Warning: Large difference (");Serial1.print(leftDiff);Serial1.print(") between left diode's set point and feedback\n");   
   }
-  if (abs(rightDiff)>diffThresh){
+  if ((abs(rightDiff)>diffThresh) && warningsOn){
     Serial1.print("Warning: Large difference (");Serial1.print(rightDiff);Serial1.print(") between right diode's set point and feedback\n");  
   }
 }
