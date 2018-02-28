@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     int myWindowW = 896;
-    int myWindowH = 650;
+    int myWindowH = 700;
 //    int finalH;
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
 //    qDebug()<<screenGeometry.height()<<myWindowH;
@@ -45,7 +45,8 @@ int main(int argc, char *argv[])
 
 //    w.resize(940,finalH);
     w.show();
+    #ifndef __APPLE__
     w.setFixedSize(w.size());
-
+    #endif
     return a.exec();
 }

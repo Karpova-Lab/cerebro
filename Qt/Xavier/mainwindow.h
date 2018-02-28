@@ -73,11 +73,10 @@ private:
     //Experimental Setup
     QGroupBox*              equipmentBox;
     QGridLayout*            equipmentLayout;
-    QLabel*                 rig_lbl,*rat_lbl;
     QListWidget*            rigSelect,*ratSelect;
     QComboBox*              serialPortList;
     QLabel*                 connectBS_label;
-    QPushButton*            refresh_btn,*connect_btn;
+    QPushButton*            refresh_btn,*connect_btn,*rig_lbl,*rat_lbl;
     QCheckBox*              debugCheckbox;
     QStringList             aliasStringList,rigList,ratList;
 
