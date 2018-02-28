@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
@@ -1469,6 +1469,9 @@ Pasted was reduced by 40% width on the center ground pad, and some amount on the
 <wire x1="-4" y1="9.2" x2="-4" y2="-2.05" width="0.127" layer="21"/>
 <smd name="GND" x="-1" y="-0.7" dx="2.5" dy="1" layer="1" roundness="100" rot="R90"/>
 <smd name="POS" x="1" y="-0.7" dx="2.5" dy="1" layer="1" roundness="100" rot="R90"/>
+</package>
+<package name="POGO">
+<pad name="P$1" x="0" y="0" drill="1"/>
 </package>
 </packages>
 <symbols>
@@ -3411,6 +3414,21 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 </gates>
 <devices>
 <device name="">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="POGO">
+<gates>
+<gate name="G$1" symbol="CONN_01" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="POGO">
+<connects>
+<connect gate="G$1" pin="1" pad="P$1"/>
+</connects>
 <technologies>
 <technology name=""/>
 </technologies>
