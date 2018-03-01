@@ -671,7 +671,7 @@ void MainWindow::connectBasePort()
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
             //open serial connection
-            qDebug()<<tempPortName;
+            qDebug()<<"Attemtping to connect to base station through port "<<tempPortName;
             serial->setPortName(tempPortName);
             serial->setBaudRate(57600);
             serial->setDataBits(QSerialPort::Data8);
@@ -685,11 +685,13 @@ void MainWindow::connectBasePort()
                 QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
                 qDebug()<<"rat info "<<ratInfo;
                 ratNumber = ratInfo[0];
+                rigNumber = rigSelect->currentItem()->text();
                 titleLeftPower = ratInfo[2].toInt();
                 titleRightPower = ratInfo[3].toInt();
-                setWindowTitle("Rig " + rigSelect->currentItem()->text() + " Rat " + ratInfo[0] );}
+                setWindowTitle("Rig " + rigNumber + " Rat " + ratInfo[0] );}
             else{
                 ratNumber = "9999";
+                rigNumber = "7.3";
                 setWindowTitle("Debug Mode");
             }
             clearBase_btn->setEnabled(false);
@@ -754,13 +756,16 @@ void MainWindow::connectCerebroPort()
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
             //open serial connection
+            qDebug()<<"attempting to connect to "<<tempPortName;
             serial2->setPortName(tempPortName);
             serial2->setBaudRate(QSerialPort::Baud115200);
             serial2->setDataBits(QSerialPort::Data8);
             serial2->setParity(QSerialPort::NoParity);
             serial2->setStopBits(QSerialPort::OneStop);
             serial2->setFlowControl(QSerialPort::NoFlowControl);
-            serial2->open(QIODevice::ReadWrite);
+//            serial2->open(QIODevice::ReadWrite);
+            qDebug()<<"opening serial"<<serial2->open(QIODevice::ReadWrite);
+            qDebug()<<serial2->errorString();
             connect2_btn->setText("Disconnect");
             downloadConnected = true;
         }
@@ -776,13 +781,14 @@ void MainWindow::connectCerebroPort()
 
 void MainWindow::sendTime()
 {
+    qDebug()<<"Sending Time";
     if (serial->isOpen()){
         startTime = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm");
         QString startup =  QString("\n~~~~~~~~~New Session~~~~~~~~~\n"
                                    "Xavier Version,%1"
                                    "\nRig,%2"
                                    "\nRat,%3"
-                                   "\nStart Time,%4").arg(xavierVersion,rigSelect->currentItem()->text(),ratNumber,startTime);
+                                   "\nStart Time,%4").arg(xavierVersion,rigNumber,ratNumber,startTime);
         baseMonitor->textCursor().insertText(startup);
         checkForBase();
         connect_btn->setEnabled(true);
@@ -803,15 +809,15 @@ void MainWindow::readSerial()
     }
     int dataStart = baseBuffer.indexOf("*");
     int dataEnd = baseBuffer.indexOf("&");
-    qDebug()<<"buffer,datastart,dataend"<<baseBuffer<<dataStart<<dataEnd;
+//    qDebug()<<"buffer,datastart,dataend"<<baseBuffer<<dataStart<<dataEnd;
 
     if (dataStart!=-1 && dataEnd!=-1){
         QString dataString = baseBuffer.mid(dataStart+1,dataEnd-dataStart-1);
         baseBuffer.remove(dataStart,dataEnd+1-dataStart);
-        qDebug()<<"data removed, new buffer: "<<baseBuffer;
+//        qDebug()<<"data removed, new buffer: "<<baseBuffer;
         QStringList dataFromBaseMsg = dataString.split("~");
         qDebug()<<"data = "<<dataFromBaseMsg;
-        qDebug()<<"length "<<dataFromBaseMsg.length();
+//        qDebug()<<"length "<<dataFromBaseMsg.length();
         cerStatusBox->setStyleSheet("");
         if (dataFromBaseMsg[0] == "Cerebro Info"){
             cerebroConnected_lbl->setText("Cerebro Wireless Connection \u2714");
@@ -873,7 +879,7 @@ void MainWindow::readSerial()
             updateFilter();
         }
         else if (dataFromBaseMsg[0] == "Battery"){
-            qDebug()<<dataFromBaseMsg[1];
+//            qDebug()<<dataFromBaseMsg[1];
             cerStatusBox->setStyleSheet("");
             batteryIndicator->setValue(dataFromBaseMsg[1].toInt());
             battery_lbl->setText(batteryIndicator->text());
@@ -884,7 +890,7 @@ void MainWindow::readSerial()
     }
     int newLineIndex = baseBuffer.lastIndexOf("\n");
     if (newLineIndex>-1 ){ //if we come the end of the line reaches the buffer, print the buffer to the monitor
-        qDebug()<<"newline Index"<<newLineIndex<<baseBuffer.mid(0,newLineIndex+1)<<"||"<<baseBuffer.mid(newLineIndex+1,baseBuffer.length()-newLineIndex-1);
+//        qDebug()<<"newline Index"<<newLineIndex<<baseBuffer.mid(0,newLineIndex+1)<<"||"<<baseBuffer.mid(newLineIndex+1,baseBuffer.length()-newLineIndex-1);
         if(sessionHasBegun){
             baseMonitor->insertPlainText(baseBuffer.mid(0,newLineIndex+1));
         }
@@ -918,6 +924,7 @@ void MainWindow::readLog()
 
 void MainWindow::clearMonitor()
 {
+    qDebug()<<"clearing monitor";
     baseMonitor->clear();
     baseFilter_label->setText("Filter Duration:");
     baseChannel_lbl->setText("Channel:");

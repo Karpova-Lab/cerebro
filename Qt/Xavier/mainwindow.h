@@ -61,7 +61,7 @@ private:
     QString                 saveName1;
     bool                    repeatOn;
     int                     titleLeftPower, titleRightPower;
-    QString                 ratNumber;
+    QString                 ratNumber,rigNumber;
     QString                 xavierVersion;
     bool                    sessionHasBegun;
 
