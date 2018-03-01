@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.5.1";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/7/2017";
+        xavierVersion = "3.6.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/1/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -160,19 +160,21 @@ MainWindow::MainWindow(QWidget *parent)
     //Base station monitor
     baseBox = new QGroupBox("Base Station Monitor");
         serialMonitorLayout = new QGridLayout();
+            baseChannel_lbl = new QLabel("Channel:");
+        serialMonitorLayout->addWidget(baseChannel_lbl,0,0);
             baseFilter_label = new QLabel("Filter Duration:");
-        serialMonitorLayout->addWidget(baseFilter_label,0,0);
+        serialMonitorLayout->addWidget(baseFilter_label,1,0);
         clearBase_btn = new QPushButton();
             clearBase_btn->setText("Restart Session");
-        serialMonitorLayout->addWidget(clearBase_btn,0,1,Qt::AlignRight);
+        serialMonitorLayout->addWidget(clearBase_btn,0,1,2,1,Qt::AlignRight);
             baseMonitor = new QPlainTextEdit();
             baseMonitor->setMinimumHeight(380);
-        serialMonitorLayout->addWidget(baseMonitor,1,0,1,2);
+        serialMonitorLayout->addWidget(baseMonitor,2,0,1,2);
             saveMonitor_btn = new QPushButton();
             saveMonitor_btn->setText("Save Session");
             saveMonitor_btn->setMinimumHeight(40);
             saveMonitor_btn->setEnabled(true);
-        serialMonitorLayout->addWidget(saveMonitor_btn,2,0,1,2);
+        serialMonitorLayout->addWidget(saveMonitor_btn,3,0,1,2);
     baseBox->setMinimumWidth(300);
     #ifdef __APPLE__
         baseBox->setMinimumWidth(350);
@@ -311,7 +313,7 @@ MainWindow::MainWindow(QWidget *parent)
     bugBox->setEnabled(false);
     bugBox->setPalette(Qt::gray);
 
-    //Download Monitor
+    //Cerebro Monitor
     downloaderDialog = new QDialog();
         connectionLayout2 = new QGridLayout();
             connectLU_label = new QLabel("Cerebro Serial Port");
@@ -335,6 +337,22 @@ MainWindow::MainWindow(QWidget *parent)
             downloadMonitor->setMinimumHeight(400);
             downloadMonitor->setEnabled(false);
         connectionLayout2->addWidget(downloadMonitor,4,0,1,3);
+            queryCerebro_btn = new QPushButton("Get Cerebro Info");
+            queryCerebro_btn->setEnabled(false);
+        connectionLayout2->addWidget(queryCerebro_btn,5,0,1,3);
+            channelLabel = new QLabel("New Channel");
+            channelLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            channelLabel->setEnabled(false);
+        connectionLayout2->addWidget(channelLabel,6,0);
+            channelSpinBox = new QSpinBox();
+            channelSpinBox->setRange(0,255);
+            channelSpinBox->setSingleStep(1);
+            channelSpinBox->setAlignment(Qt::AlignCenter);
+            channelSpinBox->setEnabled(false);
+        connectionLayout2->addWidget(channelSpinBox,6,1);
+            channelSendButton = new QPushButton("Update Channel");
+            channelSendButton->setEnabled(false);
+        connectionLayout2->addWidget(channelSendButton,6,2);
         connectionLayout2->setRowStretch(4,1);
     downloaderDialog->setLayout(connectionLayout2);
 
@@ -452,6 +470,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clearBase_btn,SIGNAL(clicked()),this,SLOT(checkForBase()));
     connect(clearDownload_btn,SIGNAL(clicked()),this,SLOT(clearMonitor2()));
     connect(saveMonitor_btn,SIGNAL(clicked()),this,SLOT(saveFile()));
+    connect(queryCerebro_btn,SIGNAL(clicked()),this,SLOT(getCerebroInfoOverSerial()));
+    connect(channelSendButton,SIGNAL(clicked()),this,SLOT(updateChannel()));
+    connect(channelSpinBox,SIGNAL(editingFinished()),this,SLOT(updateChannel()));
+
 
     //Cerebro Parameters
     connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
@@ -592,10 +614,8 @@ void MainWindow::fillDownloaderPorts()
         if (!info.isBusy()){
             if(info.description()==usbDescription){
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
-                    if (!aliasStringList.filter(info.portName())[0].contains("Base",Qt::CaseInsensitive)){
-                        list << aliasStringList.filter(info.portName())[0];
-                        serialPortList2->addItem(list.first(), list);
-                    }
+                    list << aliasStringList.filter(info.portName())[0];
+                    serialPortList2->addItem(list.first(), list);
                 }
                 else{
                     list << info.portName();
@@ -725,6 +745,10 @@ void MainWindow::connectCerebroPort()
         downloadMonitor->setEnabled(!downloadConnected);
         download_title->setEnabled(!downloadConnected);
         clearDownload_btn->setEnabled(!downloadConnected);
+        channelLabel->setEnabled(!downloadConnected);
+        channelSendButton->setEnabled(!downloadConnected);
+        channelSpinBox->setEnabled(!downloadConnected);
+        queryCerebro_btn->setEnabled(!downloadConnected);
         if(!downloadConnected){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
@@ -798,6 +822,9 @@ void MainWindow::readSerial()
         else if (dataFromBaseMsg[0] == "BaseOn"){
             baseConnected_lbl->setText("Base Station Connection \u2714");
             baseConnected_lbl->setStyleSheet("color:green");
+        }
+        else if (dataFromBaseMsg[0] == "Base Channel"){
+            baseChannel_lbl->setText("Channel: "+ QString::number(dataFromBaseMsg[1].toInt()));
         }
         else if (dataFromBaseMsg[0] == "Diode Powers"){
             Lset_lbl->setText("Lset\n"+dataFromBaseMsg[1]);leftDiode_spn->setValue(dataFromBaseMsg[1].toInt());
@@ -893,6 +920,7 @@ void MainWindow::clearMonitor()
 {
     baseMonitor->clear();
     baseFilter_label->setText("Filter Duration:");
+    baseChannel_lbl->setText("Channel:");
     batteryIndicator->setValue(0);
     battery_lbl->setText(batteryIndicator->text());
     serialNumber_lbl->setText("Serial #\n");
@@ -1273,7 +1301,7 @@ void MainWindow::testLong()
     startDelay_checkbox->setChecked(false);
     onTime_spn->setValue(1000);
     offTime_spn->setValue(3000);
-    trainDuration_spn->setValue(180000);
+    trainDuration_spn->setValue(360000);
     fade_checkbox->setChecked(false);
     set();
 }
@@ -1288,4 +1316,17 @@ void MainWindow::startSession(){
     implantSettingsMatch_lbl->setStyleSheet("color:red");
     sessionHasBegun=true;
     clearMonitor();
+}
+
+void MainWindow::updateChannel(){
+    QString msg = "K,";
+    QString newChannel = QString::number(channelSpinBox->value());
+    msg = msg + newChannel + "\n";
+    serial2->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+}
+
+void MainWindow::getCerebroInfoOverSerial(){
+    QString msg = "?\n";
+    serial2->write(msg.toLocal8Bit());
 }

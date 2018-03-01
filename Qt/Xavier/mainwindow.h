@@ -90,7 +90,7 @@ private:
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 baseFilter_label;
+    QLabel*                 baseFilter_label,*baseChannel_lbl;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
@@ -99,11 +99,12 @@ private:
 
     //Cerebro Monitor
     QDialog*                downloaderDialog;
-    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn;
+    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn,*channelSendButton,*queryCerebro_btn;
     QGridLayout*            connectionLayout2;
     QComboBox*              serialPortList2;
-    QLabel*                 connectLU_label,*download_title;
+    QLabel*                 connectLU_label,*download_title,*channelLabel;
     QPlainTextEdit*         downloadMonitor;
+    QSpinBox*               channelSpinBox;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
@@ -165,6 +166,8 @@ private slots:
     void readLog();
     void updateFilter();
     void saveFile();
+    void getCerebroInfoOverSerial();
+    void updateChannel();
 
     //Debug Commands
     void sendTrigger();
