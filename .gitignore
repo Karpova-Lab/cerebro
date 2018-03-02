@@ -31,3 +31,7 @@ Qt/build-Xavier-Desktop_Qt_5_9_1_MinGW_32bit-Release
 Qt/build-Xavier-Desktop_Qt_5_9_1_clang_64bit-Release
 Doc_src/source/Hardware/Datasheets
 Documentation_src/build
+moc_predefs.h
+qrc_myfiles.cpp
+qrc_myfiles.o
+.vscode
