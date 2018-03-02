@@ -7,9 +7,9 @@
   <input
     id="battSlider"
     type="range"
-    min="0"
+    min="1"
     max="3"
-    value = "2"
+    value = "1"
     onchange = "showResult()"
     oninput="changeVal(this)">
     <span
@@ -40,7 +40,7 @@
       min="0"
       max="500"
       step = "5"
-      value = "105"
+      value = "400"
       onchange = "showResult()"
       oninput="changeVal(this)"
     >
@@ -54,9 +54,9 @@
       id="peakSlider"
       type="range"
       min="0"
-      max="400"
+      max="600"
       step = "10"
-      value = "370"
+      value = "300"
       onchange = "showResult()"
       oninput="changeVal(this)"
     >
@@ -69,8 +69,8 @@
       id="idleSlider"
       type="range"
       min="0"
-      max="15"
-      value = "11"
+      max="40"
+      value = "28"
       onchange = "showResult()"
       oninput="changeVal(this)"
     >
@@ -78,13 +78,13 @@
     <span> mA</span>
   </form>
 
-  <form> Pulse length
+  <form> Pulse Length
     <input
       id="pulseSlider"
       type="range"
       min="0"
-      max="5"
-      step = ".1"
+      max="10"
+      step = "1"
       value = "3"
       onchange = "showResult()"
       oninput="changeVal(this)"
@@ -93,14 +93,14 @@
     <span> seconds</span>
   </form>
 
-  <form> Gap length
+  <form> Avg. time between pulses
     <input
       id="gapSlider"
       type="range"
       min="0"
       max="60"
-      step = ".5"
-      value = "6"
+      step = "1"
+      value = "7"
       onchange = "showResult()"
       oninput="changeVal(this)"
     ><span id="gapSliderLabel"></span>
@@ -153,6 +153,7 @@
 
     document.getElementById("result").innerHTML = "If triggered (on average) once every <b>" + eventLength + "</b> seconds, the battery can emit <b><u>" + maxPulses + "</u> pulses</b> over <b><u>" + battTime.toFixed(2) + "</u> hours</b>" ;
   }
+
 
   </script>
   </center>

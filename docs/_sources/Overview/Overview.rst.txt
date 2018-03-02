@@ -9,7 +9,6 @@ Features
 Open Source
   * **Flexible** - All code and CAD is available so you can make changes and improvements to anything you want!
   * **Low Cost** - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.
-
 ..
 ..    .. csv-table::
 ..      :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
