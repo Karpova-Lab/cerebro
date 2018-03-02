@@ -46,7 +46,7 @@ private:
 
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
-    bool                    baseConnected,downloadConnected;
+    bool                    baseConnected,cerebroConnected;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -103,7 +103,7 @@ private:
     QGridLayout*            connectionLayout2;
     QComboBox*              serialPortList2;
     QLabel*                 connectLU_label,*download_title,*channelLabel;
-    QPlainTextEdit*         downloadMonitor;
+    QPlainTextEdit*         cerebroMonitor;
     QSpinBox*               channelSpinBox;
 
     //Waveform Adjustment
@@ -151,7 +151,7 @@ private slots:
     //Connect to ports
     void applySettings();
     void fillBasestationPorts();
-    void fillDownloaderPorts();
+    void fillCerebroPorts();
     void connectBasePort();
     void connectCerebroPort();
     void sendTime();
@@ -162,8 +162,8 @@ private slots:
     void errorMsg();
     void clearMonitor();
     void clearMonitor2();
-    void readSerial();
-    void readLog();
+    void readFromBase();
+    void readFromCerebro();
     void updateFilter();
     void saveFile();
     void getCerebroInfoOverSerial();

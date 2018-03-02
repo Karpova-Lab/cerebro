@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
         xavierVersion = "3.6.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/1/2018";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/2/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -332,11 +332,11 @@ MainWindow::MainWindow(QWidget *parent)
             clearDownload_btn = new QPushButton("Clear Monitor");
             clearDownload_btn->setEnabled(false);
         connectionLayout2->addWidget(clearDownload_btn,3,2,Qt::AlignRight);
-            downloadMonitor = new QPlainTextEdit();
-            downloadMonitor->setMinimumWidth(275);
-            downloadMonitor->setMinimumHeight(400);
-            downloadMonitor->setEnabled(false);
-        connectionLayout2->addWidget(downloadMonitor,4,0,1,3);
+            cerebroMonitor = new QPlainTextEdit();
+            cerebroMonitor->setMinimumWidth(275);
+            cerebroMonitor->setMinimumHeight(400);
+            cerebroMonitor->setEnabled(false);
+        connectionLayout2->addWidget(cerebroMonitor,4,0,1,3);
             queryCerebro_btn = new QPushButton("Get Cerebro Info");
             queryCerebro_btn->setEnabled(false);
         connectionLayout2->addWidget(queryCerebro_btn,5,0,1,3);
@@ -355,6 +355,9 @@ MainWindow::MainWindow(QWidget *parent)
         connectionLayout2->addWidget(channelSendButton,6,2);
         connectionLayout2->setRowStretch(4,1);
     downloaderDialog->setLayout(connectionLayout2);
+    downloaderDialog->setWindowTitle("Cerebro Monitor");
+    downloaderDialog->setWindowFlags(downloaderDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
+
 
     //Session Start Dialog
     sessionStartDialog = new QDialog();
@@ -407,13 +410,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 #ifdef _WIN32   //--------Windows USB parse settings------------
     usbTag = "COM";
-    usbDescription = "Adafruit Feather 32u4 (800C:00)";
+//    usbDescription = "Adafruit Feather 32u4 (800C:00)";
 #elif __APPLE__ //---------Mac USB parse settings---------------
     usbTag  = "cu.usbmodem";
-    usbDescription = "Feather 32u4";
+//    usbDescription = "Feather 32u4";
 #elif __linux__ //---------Linux USB parse settings-------------
     usbTag  = "ttyUSB";
-    usbDescription = "Feather 32u4";
+//    usbDescription = "Feather 32u4";
 #endif
 
     //program setup
@@ -421,7 +424,7 @@ MainWindow::MainWindow(QWidget *parent)
     serial2 = new QSerialPort(this);
     startingUp = true;
     baseConnected = false;
-    downloadConnected = false;
+    cerebroConnected = false;
     inTestloop = false;
     testCount = 0;
     timer = new QTimer(this);
@@ -459,13 +462,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(rat_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
     connect(settingsDlog,SIGNAL(dialogClosed()),this,SLOT(applySettings()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillBasestationPorts()));
-    connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillDownloaderPorts()));
+    connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillCerebroPorts()));
     connect(connect_btn,SIGNAL(clicked()),this,SLOT(connectBasePort()));
     connect(connect2_btn,SIGNAL(clicked()),this,SLOT(connectCerebroPort()));
 
     //Monitors
-    connect(serial,SIGNAL(readyRead()),this,SLOT(readSerial()));
-    connect(serial2,SIGNAL(readyRead()),this,SLOT(readLog()));
+    connect(serial,SIGNAL(readyRead()),this,SLOT(readFromBase()));
+    connect(serial2,SIGNAL(readyRead()),this,SLOT(readFromCerebro()));
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)),this,SLOT(errorMsg()));
     connect(clearBase_btn,SIGNAL(clicked()),this,SLOT(checkForBase()));
     connect(clearDownload_btn,SIGNAL(clicked()),this,SLOT(clearMonitor2()));
@@ -567,11 +570,11 @@ void MainWindow::applySettings()
         aliasStringList = settings.value("portList").toStringList();
     settings.endGroup();
     fillBasestationPorts();
-    fillDownloaderPorts();
+    fillCerebroPorts();
 
     debugOn = false;
     showDebug();
-    if (downloadConnected){
+    if (cerebroConnected){
         connectCerebroPort(); //disconnect download port after settings change
     }
 }
@@ -605,22 +608,28 @@ void MainWindow::fillBasestationPorts()
     refresh_btn->setDown(0);
 }
 
-void MainWindow::fillDownloaderPorts()
+void MainWindow::fillCerebroPorts()
 {
     refresh2_btn->setDown(1);
     serialPortList2->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
+        qDebug()<<"Available Ports";
         if (!info.isBusy()){
-            if(info.description()==usbDescription){
-                if (!aliasStringList.filter(info.portName()).isEmpty()){
-                    list << aliasStringList.filter(info.portName())[0];
-                    serialPortList2->addItem(list.first(), list);
-                }
-                else{
-                    list << info.portName();
-                    serialPortList2->addItem(list.first(), list);
-                }
+            qDebug()<<"description"<<info.description();
+            qDebug()<<"manufacturer"<<info.manufacturer();
+            qDebug()<<info.portName();
+            qDebug()<<info.productIdentifier();
+            qDebug()<<info.serialNumber();
+            if (!aliasStringList.filter(info.portName()).isEmpty()){
+                qDebug()<<aliasStringList.filter(info.portName())[0]<<"added";
+                list << aliasStringList.filter(info.portName())[0];
+                serialPortList2->addItem(list.first(), list);
+            }
+            else{
+                qDebug()<<info.portName()<<"added";
+                list << info.portName();
+                serialPortList2->addItem(list.first(), list);
             }
         }
     }
@@ -692,7 +701,7 @@ void MainWindow::connectBasePort()
             else{
                 ratNumber = "9999";
                 rigNumber = "7.3";
-                setWindowTitle("Debug Mode");
+                setWindowTitle("Xavier (Debug)");
             }
             clearBase_btn->setEnabled(false);
             baseConnected = true;
@@ -733,7 +742,7 @@ void MainWindow::connectBasePort()
 void MainWindow::connectCerebroPort()
 {
     QString tempPortName = serialPortList2->currentText();
-    if (tempPortName.isEmpty() & !downloadConnected &!debugOn){
+    if (tempPortName.isEmpty() & !cerebroConnected &!debugOn){
         QMessageBox noSerial;
         noSerial.setText("Make sure a Downloader Cord is connected \nand click ''Rescan''' to see available Serial Ports.");
         noSerial.setIcon(QMessageBox::Warning);
@@ -741,17 +750,17 @@ void MainWindow::connectCerebroPort()
         noSerial.exec();
     }
     else{
-        connectLU_label->setEnabled(downloadConnected);
-        serialPortList2->setEnabled(downloadConnected);
-        refresh2_btn->setEnabled(downloadConnected);
-        downloadMonitor->setEnabled(!downloadConnected);
-        download_title->setEnabled(!downloadConnected);
-        clearDownload_btn->setEnabled(!downloadConnected);
-        channelLabel->setEnabled(!downloadConnected);
-        channelSendButton->setEnabled(!downloadConnected);
-        channelSpinBox->setEnabled(!downloadConnected);
-        queryCerebro_btn->setEnabled(!downloadConnected);
-        if(!downloadConnected){//if it's not connected, we'll connect it
+        connectLU_label->setEnabled(cerebroConnected);
+        serialPortList2->setEnabled(cerebroConnected);
+        refresh2_btn->setEnabled(cerebroConnected);
+        cerebroMonitor->setEnabled(!cerebroConnected);
+        download_title->setEnabled(!cerebroConnected);
+        clearDownload_btn->setEnabled(!cerebroConnected);
+        channelLabel->setEnabled(!cerebroConnected);
+        channelSendButton->setEnabled(!cerebroConnected);
+        channelSpinBox->setEnabled(!cerebroConnected);
+        queryCerebro_btn->setEnabled(!cerebroConnected);
+        if(!cerebroConnected){//if it's not connected, we'll connect it
             //isolate the COMXX part of the port name
             tempPortName.remove(0,tempPortName.indexOf("("+usbTag)+1);
             tempPortName.remove(QChar (')'));
@@ -763,20 +772,23 @@ void MainWindow::connectCerebroPort()
             serial2->setParity(QSerialPort::NoParity);
             serial2->setStopBits(QSerialPort::OneStop);
             serial2->setFlowControl(QSerialPort::NoFlowControl);
-//            serial2->open(QIODevice::ReadWrite);
-            qDebug()<<"opening serial"<<serial2->open(QIODevice::ReadWrite);
+            serial2->open(QIODevice::ReadWrite);
             qDebug()<<serial2->errorString();
+            serial2->setDataTerminalReady(true);
+            bool dtrHigh = serial2->isDataTerminalReady();
+            qDebug()<<"DTR high?"<<dtrHigh; // DTR needs to be high! https://electronics.stackexchange.com/questions/128839/how-to-get-32u4-arduino-to-ignore-dtr-for-usb-serial
             connect2_btn->setText("Disconnect");
-            downloadConnected = true;
+            cerebroConnected = true;
+            getCerebroInfoOverSerial();
         }
         else{// if it is connected, we'll disconnect
             serial2->close();
-            connect2_btn->setText("Connect To Downloader");
-            downloadConnected = false;
-            fillDownloaderPorts();
+            connect2_btn->setText("Connect To Cerebro");
+            cerebroConnected = false;
+            fillCerebroPorts();
         }
     }
-    connect2_btn->setChecked(downloadConnected);
+    connect2_btn->setChecked(cerebroConnected);
 }
 
 void MainWindow::sendTime()
@@ -796,7 +808,7 @@ void MainWindow::sendTime()
     }
 }
 
-void MainWindow::readSerial()
+void MainWindow::readFromBase()
 {
     if(sessionHasBegun){
         baseMonitor->moveCursor(QTextCursor::End);
@@ -901,25 +913,11 @@ void MainWindow::readSerial()
     }
     baseMonitor->ensureCursorVisible();
 }
-void MainWindow::readLog()
+void MainWindow::readFromCerebro()
 {
-    downloadMonitor->moveCursor(QTextCursor::End);
-    downloadMonitor->insertPlainText(serial2->readAll());
-    downloadMonitor->moveCursor(QTextCursor::Start);
-    if(downloadMonitor->find("*")){
-        QString buffer = downloadMonitor->toPlainText();
-        if (buffer.count('~')==9){
-            int andIndex = buffer.indexOf("&");
-            int starIndex = buffer.indexOf("*");
-            downloadMonitor->clear();
-            if(andIndex>0){
-                downloadMonitor->insertPlainText(buffer.mid(0,andIndex-1));
-            }
-            QStringList dataFromBaseMsg = buffer.mid(andIndex+1,starIndex).split('~');
-        }
-    }
-    downloadMonitor->moveCursor(QTextCursor::End);
-    downloadMonitor->ensureCursorVisible();
+    cerebroMonitor->moveCursor(QTextCursor::End);
+    cerebroMonitor->insertPlainText(serial2->readAll());
+    cerebroMonitor->ensureCursorVisible();
 }
 
 void MainWindow::clearMonitor()
@@ -944,7 +942,7 @@ void MainWindow::clearMonitor()
 
 void MainWindow::clearMonitor2()
 {
-    downloadMonitor->clear();
+    cerebroMonitor->clear();
 }
 
 
@@ -1336,4 +1334,6 @@ void MainWindow::updateChannel(){
 void MainWindow::getCerebroInfoOverSerial(){
     QString msg = "?\n";
     serial2->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+
 }
