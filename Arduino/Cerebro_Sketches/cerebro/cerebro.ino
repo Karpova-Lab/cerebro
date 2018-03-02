@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 91;
+const uint8_t VERSION = 92;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -38,12 +38,14 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #include <Radio.h>                //https://github.com/LowPowerLab/RFM69
 // #include <Adafruit_SleepyDog.h>   //https://github.com/adafruit/Adafruit_SleepyDog
 #include <LowPower.h>             //https://github.com/LowPowerLab/LowPower
+#include <avr/wdt.h>
 
 #define SERIAL_NUMBER_ADDRESS 0
-#define WAVEFORM_ADDRESS 1
-#define LEFT_SETPOINT_ADDRESS 15
-#define RIGHT_SETPOINT_ADDRESS 17
-#define MISSING_ARRAY_ADDRESS 19
+#define CHANNEL_ADDRESS 1
+#define WAVEFORM_ADDRESS 2
+#define LEFT_SETPOINT_ADDRESS 16
+#define RIGHT_SETPOINT_ADDRESS 18
+#define MISSING_ARRAY_ADDRESS 20
 
 WaveformData waveform;
 DiodePowers diodePwrs;
@@ -57,6 +59,7 @@ const uint8_t indicatorLED = A0; //32u4 pin 36
 LaserDiode right(&DDRB,&PORTB,0,A4);
 LaserDiode left(&DDRD,&PORTD,2,A2);
 
+uint8_t channel;
 Radio radio(7,1); //slave select pin, interrupt pin
 uint16_t msgCount = 0;
 uint16_t missedCount = 0;
@@ -87,9 +90,9 @@ void setup() {
     Serial.println("Error: Unable to communicate with BQ27441.");
     while(1){ //blink error
       digitalWrite(indicatorLED,HIGH);
-      delay(1000);
+      delay(200);
       digitalWrite(indicatorLED,LOW);
-      delay(1000);
+      delay(200);
     }
   }
   Serial.println("Connected to BQ27441!");
@@ -100,22 +103,41 @@ void setup() {
   }
 
   //*** Radio ***//
-  radio.radioSetup(CEREBRO,true); //nodeID, autopower on;
+  EEPROM.get(CHANNEL_ADDRESS,channel);
+  radio.radioSetup(CEREBRO,true,channel); //nodeID, autopower on;
   integerMessage.variable = 'Y';
   integerMessage.value = millis();
   if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),3,250)){
-    Serial.print("Connected to Base Station");
+    Serial.println("Connected to Base Station");
   }
   else{
     Serial.println("Failed to Connect to Base Station");
   }
-  Serial.print("Network ID: ");
-  Serial.println(NETWORKID);
+  printChannel();
   reportVersion();
   digitalWrite(indicatorLED,LOW);
 }
 
 void loop() {
+  //
+  if (Serial.available()){
+    char msg = Serial.read();
+    if (msg=='K'){
+      Serial.print("New Channel:");
+      uint8_t newNetworkID = parseData();
+      Serial.println(newNetworkID);
+      EEPROM.update(CHANNEL_ADDRESS, newNetworkID);
+      Serial.println("Restarting...");
+      wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
+      while(1){}              // do nothing and wait for the reset
+    }
+    else if(msg=='?'){
+      printChannel();
+      Serial.print("Version: ");
+      Serial.println(VERSION);
+
+    }
+  }
   //check for any received packets
   if (radio.receiveDone()){
     uint8_t dlay = 5;
@@ -188,7 +210,7 @@ void loop() {
       Serial.println("Unexpected Data size received");
     }
   }
-  LowPower.idle(SLEEP_FOREVER,ADC_OFF,TIMER4_OFF,TIMER3_OFF,TIMER1_OFF,TIMER0_ON,SPI_ON,USART1_OFF,TWI_OFF,USB_OFF);
+  // LowPower.idle(SLEEP_FOREVER,ADC_OFF,TIMER4_OFF,TIMER3_OFF,TIMER1_OFF,TIMER0_ON,SPI_ON,USART1_OFF,TWI_OFF,USB_OFF);
 
 }
 
@@ -197,7 +219,7 @@ void sendACK(){
     radio.sendACK();
   }
 }
-
+ 
 void checkForMiss(){
   msgCount++;
   if (trigCount%batteryUpdateFrequency==0){
@@ -308,4 +330,16 @@ void reportWaveform(){
   else{
     Serial.println("Error sending Waveform");
   }
+}
+
+void printChannel(){
+  Serial.print("Channel: ");
+  Serial.println(channel);
+}
+uint8_t parseData(){
+  char msgData[5];
+  Serial.readBytesUntil('\n',msgData,5);
+  char* msgPointer;
+  msgPointer = strtok(msgData,",");
+  return atoi(msgPointer);
 }

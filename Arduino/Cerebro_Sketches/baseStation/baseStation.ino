@@ -26,12 +26,18 @@ SOFTWARE.
 
 #include <Radio.h>  //https://github.com/LowPowerLab/RFM69
 #include <SPI.h>
+#include <EEPROM.h>
+#include <avr/wdt.h>
 
-const uint8_t VERSION = 51;
+#define CHANNEL_ADDRESS 0
+
+const uint8_t VERSION = 53;
 
 const uint8_t LED = 13;
 const uint8_t TRIGGER_PIN = 5;
 const uint8_t STOP_PIN = 6;
+
+uint8_t netID;
 
 Radio radio(8,7); //slave select pin, interrupt pin
 WaveformData newWaveform;
@@ -48,12 +54,15 @@ uint32_t  spamFilter = 0;
 uint32_t  triggerClock = 0;
 uint16_t  msgCount = 0;
 bool      ignoreFilter = false;
+bool      warningsOn = true;
 
 void setup() {
   Serial1.begin(57600);
   delay(10);
   pinMode(LED, OUTPUT);
-  radio.radioSetup(1,false); //nodeID, autopower on;
+
+  EEPROM.get(CHANNEL_ADDRESS,netID);
+  radio.radioSetup(1,false,netID); //nodeID, autopower on;
   pinMode(TRIGGER_PIN,INPUT);
   pinMode(STOP_PIN,INPUT);
   startTime = millis();
@@ -101,9 +110,19 @@ void loop() {
     else if(msg=='N'){
       newSession();
     }
+    else if (msg=='K'){
+      parseData();
+      uint8_t newNetworkID = valsFromParse[0];
+      Serial1.print("New ID:");
+      Serial1.println(newNetworkID);
+      EEPROM.update(CHANNEL_ADDRESS, newNetworkID);
+      Serial1.println("Restarting...");
+      wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
+      while(1){}              // do nothing and wait for the reset
+    }
     else if(msg=='?'){
       Serial1.print("Network ID: ");
-      Serial1.println(NETWORKID);
+      Serial1.println(netID);
       Serial1.print("Base Version,");Serial1.print(VERSION);newline();
     }
     else if (msg!='\n'){
@@ -135,9 +154,11 @@ void loop() {
         currentWaveform = *(WaveformData*)radio.DATA;
         if (currentWaveform.trainDur>0){
           spamFilter = currentWaveform.startDelay + currentWaveform.trainDur;
+          warningsOn = false;
         }
         else{
           spamFilter = currentWaveform.startDelay + currentWaveform.onTime;
+          warningsOn = true;
         }
         printWaveform(currentWaveform,true);
         break;
@@ -199,6 +220,10 @@ void newSession(){
   startTime = millis();
   msgCount = 0;
   Serial1.print("\n*BaseOn&Base Version,");Serial1.print(VERSION);newline();
+  uint32_t theVals[1] = {netID};
+  sendDataToXavier("Base Channel",theVals,1);
+  Serial1.print("Base Channel,");Serial1.print(netID);newline();
+
   char msg = 'N';
   if (radio.sendWithRetry(CEREBRO, &msg, 1, 3)){
     // Serial1.print("Connected!");
@@ -264,19 +289,19 @@ void printDiodeStats(){
   Serial1.print("[");Serial1.print(diodeStats.msgCount);Serial1.print("]");
   uint32_t theVals[6] = {currentDiodePowers.lSetPoint, diodeStats.leftFBK, diodeStats.leftDAC, currentDiodePowers.rSetPoint, diodeStats.rightFBK, diodeStats.rightDAC};
   printToBaseMonitor("Feedback",theVals,6);
-  if (diodeStats.leftDAC>3000){
+  if (diodeStats.leftDAC>3000 && warningsOn){
     Serial1.print("Warning: Left DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
   }
-  if (diodeStats.rightDAC>3000){
+  if (diodeStats.rightDAC>3000 && warningsOn){
     Serial1.print("Warning: Right DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
   }
   int32_t leftDiff = (int32_t)currentDiodePowers.lSetPoint-(int32_t)diodeStats.leftFBK;
   int32_t rightDiff = (int32_t)currentDiodePowers.rSetPoint-(int32_t)diodeStats.rightFBK;
   uint8_t diffThresh = 20;
-  if (abs(leftDiff)>diffThresh){
+  if ((abs(leftDiff)>diffThresh) && warningsOn){
     Serial1.print("Warning: Large difference (");Serial1.print(leftDiff);Serial1.print(") between left diode's set point and feedback\n");   
   }
-  if (abs(rightDiff)>diffThresh){
+  if ((abs(rightDiff)>diffThresh) && warningsOn){
     Serial1.print("Warning: Large difference (");Serial1.print(rightDiff);Serial1.print(") between right diode's set point and feedback\n");  
   }
 }

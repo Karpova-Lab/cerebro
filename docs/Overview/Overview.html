@@ -63,13 +63,6 @@
           </a>
 
           
-            
-            
-              <div class="version">
-                2.0.1
-              </div>
-            
-          
 
           
 <div role="search">
@@ -165,6 +158,15 @@
   </ul>
 
   
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="../Hardware/cerebro.html" class="btn btn-neutral float-right" title="Cerebro Resources" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Cerebro Wireless Optogenetics System" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -217,7 +219,7 @@
 <a class="reference internal image-reference" href="../_images/cerebro.jpg"><img alt="../_images/cerebro.jpg" class="align-center" src="../_images/cerebro.jpg" style="width: 537.6px; height: 355.6px;" /></a>
 <p>Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span class="std std-ref">Base Station</span></a> and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
-intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<span class="xref std std-ref">How to change Pulse Parameters</span>).</p>
+intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="../Software/Xavier.html#waveform-parameters"><span class="std std-ref">Edit Waveform Parameters</span></a>).</p>
 <p><a class="reference internal" href="../Hardware/cerebro.html"><span class="doc">More info…</span></a></p>
 </div>
 <div class="section" id="head-implant">
@@ -229,8 +231,8 @@ to maintain a constant light output. The laser diodes can be independently contr
 <div class="section" id="base-station">
 <span id="id1"></span><h3>Base Station<a class="headerlink" href="#base-station" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="../_images/base.jpg"><img alt="../_images/base.jpg" class="align-center" src="../_images/base.jpg" style="width: 1034.0px; height: 619.5px;" /></a>
-<p>The Base Station is responsible for communicate wirelessly with Cerebro via radio.
-It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication via <span class="xref std std-ref">Xavier</span>.
+<p>The Base Station is responsible for communicating wirelessly with Cerebro via radio.
+It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication with Xavier.
 Base Station can also be controlled directly by <a class="reference external" href="https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels">TTL</a> signals going into
 its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger signal to be emitted, and a high TTL signal on pin2 causes
 a stop signal to be emitted.</p>
@@ -268,7 +270,7 @@ Xavier provides an easy interface for sending parameter changes and can also be 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2017, Andy Lustig.
-      Last updated on Dec 08, 2017.
+      Last updated on Feb 28, 2018.
 
     </p>
   </div>

@@ -9,6 +9,7 @@ Features
 Open Source
   * **Flexible** - All code and CAD is available so you can make changes and improvements to anything you want!
   * **Low Cost** - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.
+
 ..
 ..    .. csv-table::
 ..      :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
@@ -70,7 +71,7 @@ Cerebro
 
 Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
-intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (:ref:`How to change Pulse Parameters <pulse change header>`).
+intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (:ref:`Edit Waveform Parameters <waveform parameters>`).
 
 :doc:`More info... <../Hardware/cerebro>`
 
@@ -93,8 +94,8 @@ Base Station
   :align: center
   :scale: 50 %
 
-The Base Station is responsible for communicate wirelessly with Cerebro via radio.
-It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication via :ref:`Xavier <xavier>`.
+The Base Station is responsible for communicating wirelessly with Cerebro via radio.
+It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication with Xavier.
 Base Station can also be controlled directly by `TTL <https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels>`_ signals going into
 its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger signal to be emitted, and a high TTL signal on pin2 causes
 a stop signal to be emitted.

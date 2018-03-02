@@ -1,8 +1,8 @@
 #include "Radio.h"
 
-void Radio::radioSetup(uint8_t nodeID, bool autoPower){
+void Radio::radioSetup(uint8_t nodeID, bool autoPower, uint8_t channel){
   //*** Radio ***//
-  initialize(FREQUENCY,nodeID,NETWORKID);
+  initialize(FREQUENCY,nodeID,channel);
   if (autoPower){
     enableAutoPower(ATC_RSSI);  
   }

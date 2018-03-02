@@ -46,7 +46,7 @@ private:
 
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
-    bool                    baseConnected,downloadConnected;
+    bool                    baseConnected,cerebroConnected;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -61,7 +61,7 @@ private:
     QString                 saveName1;
     bool                    repeatOn;
     int                     titleLeftPower, titleRightPower;
-    QString                 ratNumber;
+    QString                 ratNumber,rigNumber;
     QString                 xavierVersion;
     bool                    sessionHasBegun;
 
@@ -90,7 +90,7 @@ private:
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 baseFilter_label;
+    QLabel*                 baseFilter_label,*baseChannel_lbl;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
@@ -99,11 +99,12 @@ private:
 
     //Cerebro Monitor
     QDialog*                downloaderDialog;
-    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn;
+    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn,*channelSendButton,*queryCerebro_btn;
     QGridLayout*            connectionLayout2;
     QComboBox*              serialPortList2;
-    QLabel*                 connectLU_label,*download_title;
-    QPlainTextEdit*         downloadMonitor;
+    QLabel*                 connectLU_label,*download_title,*channelLabel;
+    QPlainTextEdit*         cerebroMonitor;
+    QSpinBox*               channelSpinBox;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
@@ -150,7 +151,7 @@ private slots:
     //Connect to ports
     void applySettings();
     void fillBasestationPorts();
-    void fillDownloaderPorts();
+    void fillCerebroPorts();
     void connectBasePort();
     void connectCerebroPort();
     void sendTime();
@@ -161,10 +162,12 @@ private slots:
     void errorMsg();
     void clearMonitor();
     void clearMonitor2();
-    void readSerial();
-    void readLog();
+    void readFromBase();
+    void readFromCerebro();
     void updateFilter();
     void saveFile();
+    void getCerebroInfoOverSerial();
+    void updateChannel();
 
     //Debug Commands
     void sendTrigger();

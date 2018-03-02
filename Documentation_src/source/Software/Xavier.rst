@@ -190,7 +190,7 @@ parameters are automatically set to zero depending on the options selected.
     :align: center
     :scale: 100%
 
-2. If you' like to modify the parameters, select desired pulse options and modify the parameters in the "Waveform Parameters" section.sc
+2. If you would like to modify the parameters, select desired pulse options and modify the parameters in the "Waveform Parameters" section
 
 .. image:: photos/Edit_waveform/parameter_change.png
   :align: center

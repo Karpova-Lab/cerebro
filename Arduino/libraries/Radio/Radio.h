@@ -6,7 +6,6 @@
 #include <RFM69_ATC.h>     //get it here: https://www.github.com/lowpowerlab/rfm69
 
 //*********************************************************************************************
-#define NETWORKID     100  //the same on all nodes that talk to each other (range up to 255)
 #define BASESTATION   1
 #define CEREBRO       2
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
@@ -61,6 +60,6 @@ public:
   RFM69_ATC(slaveSelectPin, interruptPin,true, digitalPinToInterrupt(interruptPin)){
   }
 
-  void radioSetup(uint8_t nodeID,bool autoPower);
+  void radioSetup(uint8_t nodeID,bool autoPower, uint8_t networkID);
 };
 #endif
