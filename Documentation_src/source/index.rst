@@ -19,7 +19,13 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
   This documentation is very much a work in progress. Please understand that there will porbably be typos and missing
 
 .. Note::
-  This documentation is for Version 2 of the system. For Version 1 documentation, go `here <http://cerebro.readthedocs.io/en/1.0/>`_ 
+  This documentation is for Version 2 of the system.
+
+  .. raw:: html
+
+    <div style="text-align:center; margin-bottom:24px">
+      <a href="http://cerebro.readthedocs.io/en/1.0/" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">Click Here for Version 1 Documentation</a>
+    </div>
 
 .. toctree::
   :maxdepth: 1
@@ -35,7 +41,7 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2017 Andy Lustig
+Copyright (c) 2015-2018 Andy Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

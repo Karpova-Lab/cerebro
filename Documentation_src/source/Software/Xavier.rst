@@ -161,7 +161,7 @@ Session Setup
 
 
 
-4. A startup sequence dialog box will appear. Xavier will try to establish a connections with Base Station and Cerebro. Once connected, Xavier will make sure that the laser diode power settings on Cerebro match laser diode powers for the rat/implant that was selected in step 1. If there are red X's, make sure the correct Serial Port was selecte, make sure Cerebro has been turned on, and then click ``Retry``
+4. A startup sequence dialog box will appear. Xavier will try to establish a connections with Base Station and Cerebro. Once connected, Xavier will make sure that the laser diode power settings on Cerebro match laser diode powers for the rat/implant that was selected in step 1. If there are red X's, make sure the correct Serial Port was selected, make sure Cerebro has been turned on, and then click ``Retry``
 
 .. image:: photos/Start_session/startup_seq_error.png
     :align: center
@@ -190,7 +190,7 @@ parameters are automatically set to zero depending on the options selected.
     :align: center
     :scale: 100%
 
-2. If you would like to modify the parameters, select desired pulse options and modify the parameters in the "Waveform Parameters" section
+2. If you would like to modify the parameters, select "Single Shot" or "Pulse Train", then modify the parameters in the "Waveform Parameters" section
 
 .. image:: photos/Edit_waveform/parameter_change.png
   :align: center
