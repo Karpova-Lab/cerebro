@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.6.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/2/2018";
+        xavierVersion = "3.6.1";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/13/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 

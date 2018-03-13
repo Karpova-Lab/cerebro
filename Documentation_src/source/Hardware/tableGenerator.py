@@ -2,21 +2,7 @@ import pandas as pd
 from sys import argv
 import pyperclip
 
-script = argv
-
-xlsFile = 'tables.xlsx'
-sheets = ['cerebro','implant','base']
-first  = True
-choice = 0
-while choice<1 or choice>3: 
-    if first:
-        print("\nChoose a Table to Generate\n1: Cerebro\n2: Implant\n3: Base Station")
-    else:
-        print("\"{}\" is not an option".format(choice))
-    choice = int(input(""))
-    first = False
-
-sheet = sheets[choice-1]
+script,xlsFile,sheet,numCols = argv
 
 def getColWidths(table):
     colMax = []
@@ -58,7 +44,7 @@ def printContents(table,colWidths,isHeader=False,**kwds):
     return contentString,blankCols
 
 
-table = pd.read_excel(xlsFile,usecols=4,sheet_name=sheet).fillna("").astype(str) #read in table from excel file
+table = pd.read_excel(xlsFile,usecols=int(numCols),sheet_name=sheet).fillna("").astype(str) #read in table from excel file
 widths = getColWidths(table) # get the maximum content width of each column
 
 #print header
@@ -74,5 +60,4 @@ outputString += printDivider(widths) #final divider
 
 #copy string to clipboard
 pyperclip.copy(outputString)
-print()
-print(sheet,"table copied to clipboard!")
+print ("Table copied to clipboard!")

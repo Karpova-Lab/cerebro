@@ -47,7 +47,7 @@ settingsDialog::settingsDialog(QWidget *parent)
             rmv1_btn->setFocusPolicy(Qt::NoFocus);
         sessionListsLayout->addWidget(rmv1_btn,3,0,1,2);
         //2nd listbox//
-            ratLabel = new QLabel("Rat ID");
+            ratLabel = new QLabel("Rat-implant: (LSet/RSet)");
         sessionListsLayout->addWidget(ratLabel,0,2,1,2,Qt::AlignCenter);
             ratVals = new QListWidget();
         sessionListsLayout->addWidget(ratVals,2,2,1,2);
