@@ -11,6 +11,9 @@ public:
   bool DACisMaxed;
   int16_t DAClevel;
   int16_t setPoint;
+  uint16_t lastAnalogReading;
+  int16_t lastDAClevel;
+
 
   LaserDiode(volatile uint8_t *slaveDirReg, volatile uint8_t *_slaveOutputReg, uint8_t _slavePin, uint8_t _analogPin);
   bool off();

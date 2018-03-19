@@ -116,11 +116,10 @@ void triggerBoth(){
 
 void reportLaserStats(){
   diodeStats.msgCount = msgCount;
-  diodeStats.leftFBK = analogRead(left.analogPin);
-  diodeStats.rightFBK = analogRead(right.analogPin);
-  diodeStats.leftDAC = left.DAClevel;
-  diodeStats.rightDAC = right.DAClevel;
-
+  diodeStats.leftFBK = left.lastAnalogReading;
+  diodeStats.rightFBK = right.lastAnalogReading;
+  diodeStats.leftDAC = left.lastDAClevel;
+  diodeStats.rightDAC = right.lastDAClevel;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&diodeStats), sizeof(diodeStats))){
     Serial.println("laser stats sent");
   }
@@ -132,10 +131,10 @@ void reportLaserStats(){
 bool turnoff(){
   // Watchdog.disable();
   diodeStats.msgCount = msgCount;
-  diodeStats.leftFBK = analogRead(left.analogPin);
-  diodeStats.rightFBK = analogRead(right.analogPin);
-  diodeStats.leftDAC = left.DAClevel;
-  diodeStats.rightDAC = right.DAClevel;
+  diodeStats.leftFBK = left.lastAnalogReading;
+  diodeStats.rightFBK = right.lastAnalogReading;
+  diodeStats.leftDAC = left.lastDAClevel;
+  diodeStats.rightDAC = right.lastDAClevel;
   if (waveform.rampDur>0){
     uint32_t fadeClock;
     for (int i = 99; i>-1;i--) {  //fade values are stored in addresses 16-216 (100 values,2 bytes each)
