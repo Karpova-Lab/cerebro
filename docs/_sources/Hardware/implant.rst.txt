@@ -5,9 +5,9 @@ Head Implant Resources
 .. include:: Characters/mmlalias.txt
 .. include:: Characters/isopub.txt
 
-.. .. figure:: photos/implant_cad.png
-..   :align: center
-..   :scale: 100%
+.. figure:: photos/implant_cad.png
+  :align: center
+  :scale: 100%
 
 .. _implantTools:
 
@@ -56,15 +56,15 @@ Assembly Instructions
 Prepare Fiber
 -------------
 #. Strip fiber and cut to length
-#. Cut off end of fiber to make a clean tip
-#. Cut to length ~16mm
+#. Using a fiber cleaver, cut off the end of fiber to make a clean tip
+#. Continue cutting the fiber in ~16mm pieces
 
 Couple Fiber to Laser Diode
 ---------------------------
 #. Insert laser diode into connector
 #. Place connector in alignment jig
 #. Place fiber in alignment jig
-#. Turn on power meter
+#. Turn on the power meter
 #. Open up the `Thorlabs' Power Meter Software <https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x>`_ and adjust the following settings:
 
   - Range: 12mW
@@ -77,20 +77,39 @@ Couple Fiber to Laser Diode
 6. Click ``Start Log``
 #. Set the power meter to 8.0 volts with a current limit of 300 mA
 #. Provide power to the laser diode by pressing the "on/off" button
-#. While watching the power graph update, use the knobs to adjust the x,y,and z alignment of the fiber with respect to the laser diode.
-#. Apply Norland Optical Adhesive 68 to the fiber/laserdiode junction.
+#. While watching the power graph update, use the knobs to adjust the x, y, and z alignment of the fiber with respect to the laser diode.
+#. When you are happy with the alignment, apply Norland Optical Adhesive 68 to the fiber/laserdiode junction.
 #. Cure the adhesive using UV light
+
+Fiber Guide Construction
+------------------------
+A fiber guide is needed to ensure that the fibers are at a precise distance apart, and are parallel. The distance will depend on what area of the brain is being targeted. Below are files for 1.5 mm and 2.74 mm gap between fibers.
+
+- :download:`Fiber guide_1,5mm gap.dxf<../../../Lasercut/Fiber guide/Fiber guide_1,5mm gap.dxf>` 
+- :download:`Fiber guide_1,5mm gap.ai<../../../Lasercut/Fiber guide/Fiber guide_1,5mm gap.ai>` 
+- :download:`Fiber guide_2,74mm gap.ai<../../../Lasercut/Fiber guide/Fiber guide_2,74mm gap.ai>` 
+
+The laser cutter speed and power settings may need to be tweaked to get a good fit for the the ceramic ferrules.
+
+#. Insert the ceramic ferrules into the acrylic fiber guide. The flat side of the ferrules should be flush with the face of the acrylic.
+
+.. image:: photos/fiber\ guide/fiber\ guide.png
+  :align: center
+  :scale: 20 %
+
 
 Combine PCB, Laser Diodes, and Fiber Guide
 ------------------------------------------
-#. Insert the ceramic ferrules into the acrylic fiber guide. The flat side of the ferrules should be flush with the face of the acrylic.
-#. Solder 1 leg of each Laser diode to the PCB
-#. Bend the laser diodes toward eachother so the tips of the fiber slightly intersect
-#. Cut ~1cm of heat shrink tubing and slide it onto one of the laser diodes
-#. Slide the fiber guide onto the two fibers
+#. Solder the vertical microusb connector onto the PCB
+#. Solder 1 leg of each laser diode onto the PCB
+#. Bend the laser diodes toward eachother so the tips of the fiber slightly intersect near their tips
+#. Solder the remaining legs of the laser diodes
+#. Cut ~10mm of heat shrink tubing and slide it onto one of the laser diodes
 #. Apply heat to the heat shrink tubing
-#. Suround the fibers and laser diodes epoxy
-#. Surround epoxy with large heat shrink tubing
+#. Slide the fiber guide onto the two fibers. Adjust the 
+#. Surround the fibers and laser diodes with epoxy
+#. Place heatshrink tubing around the clear epoxy section of the implant
+#. Place and solder the remaining resistors onto the PCB
 
 Implant Characterization
 ========================
