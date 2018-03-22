@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2017 Andy S. Lustig
+Copyright (c) 2015-2018 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.6.1";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/13/2018";
+        xavierVersion = "3.7.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/22/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -566,7 +566,7 @@ void MainWindow::applySettings()
 
 
     //Populate COM port Dropdowns
-    settings.beginGroup("sessionLists");
+    settings.beginGroup("usbPorts");
         aliasStringList = settings.value("portList").toStringList();
     settings.endGroup();
     fillBasestationPorts();
@@ -586,11 +586,11 @@ void MainWindow::fillBasestationPorts()
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         if (!info.isBusy()){
-            qDebug()<<info.description();
-            qDebug()<<"manufacturer"<<info.manufacturer();
-            qDebug()<<info.portName();
-            qDebug()<<info.productIdentifier();
-            qDebug()<<info.serialNumber();
+//            qDebug()<<info.description();
+//            qDebug()<<"manufacturer"<<info.manufacturer();
+//            qDebug()<<info.portName();
+//            qDebug()<<info.productIdentifier();
+//            qDebug()<<info.serialNumber();
             if(info.manufacturer().contains("Cypress")){
                 if (!aliasStringList.filter(info.portName()).isEmpty()){
                     if (!aliasStringList.filter(info.portName())[0].contains("Downloader",Qt::CaseInsensitive)){
@@ -614,20 +614,20 @@ void MainWindow::fillCerebroPorts()
     serialPortList2->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
-        qDebug()<<"Available Ports";
+//        qDebug()<<"Available Ports";
         if (!info.isBusy()){
-            qDebug()<<"description"<<info.description();
-            qDebug()<<"manufacturer"<<info.manufacturer();
-            qDebug()<<info.portName();
-            qDebug()<<info.productIdentifier();
-            qDebug()<<info.serialNumber();
+//            qDebug()<<"description"<<info.description();
+//            qDebug()<<"manufacturer"<<info.manufacturer();
+//            qDebug()<<info.portName();
+//            qDebug()<<info.productIdentifier();
+//            qDebug()<<info.serialNumber();
             if (!aliasStringList.filter(info.portName()).isEmpty()){
                 qDebug()<<aliasStringList.filter(info.portName())[0]<<"added";
                 list << aliasStringList.filter(info.portName())[0];
                 serialPortList2->addItem(list.first(), list);
             }
             else{
-                qDebug()<<info.portName()<<"added";
+//                qDebug()<<info.portName()<<"added";
                 list << info.portName();
                 serialPortList2->addItem(list.first(), list);
             }

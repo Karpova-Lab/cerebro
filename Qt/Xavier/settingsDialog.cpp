@@ -1,3 +1,27 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MIT License
+
+Copyright (c) 2015-2018 Andy S. Lustig
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #include <QtWidgets>
 
 #include "settingsDialog.h"
@@ -61,47 +85,6 @@ settingsDialog::settingsDialog(QWidget *parent)
         sessionListsLayout->addWidget(rmv2_btn,3,2,1,2);
     sessionListsBox->setLayout(sessionListsLayout);
 
-    //alias assignment box
-    portEditBox = new QGroupBox("Edit COM Port Labels");
-        portEditLayout = new QGridLayout();
-            currentPorts = new QLabel("Port");
-        portEditLayout->addWidget(currentPorts,0,0,Qt::AlignCenter);
-            newDescription = new QLabel("New Label");
-        portEditLayout->addWidget(newDescription,0,1,Qt::AlignCenter);
-            portDropdown = new QComboBox();
-        portEditLayout->addWidget(portDropdown,1,0);
-            newAlias = new QLineEdit();
-        portEditLayout->addWidget(newAlias,1,1);
-            addAlias_btn= new QPushButton("Add Label");
-            addAlias_btn->setFocusPolicy(Qt::NoFocus);
-        portEditLayout->addWidget(addAlias_btn,1,2);
-            portnameLabel = new QLabel("\nCOM Port Labels");
-        portEditLayout->addWidget(portnameLabel,2,0,2,3,Qt::AlignCenter);
-            aliasWidget = new QListWidget();
-            aliasWidget->setMinimumHeight(100);
-        portEditLayout->addWidget(aliasWidget,4,0,1,3);
-            rmvAlias_btn= new QPushButton("Remove Selected Label");
-            rmvAlias_btn->setFocusPolicy(Qt::NoFocus);
-        portEditLayout->addWidget(rmvAlias_btn,5,0,1,3);
-    portEditBox->setLayout(portEditLayout);
-
-    editLabelDialog = new QDialog();
-        editLayout = new QGridLayout();
-            newLabel = new QLabel("New Label:");
-        editLayout->addWidget(newLabel,0,0,Qt::AlignRight);
-            editText = new QLineEdit();
-        editLayout->addWidget(editText,0,1);
-            buttonBox = new QGroupBox();
-            buttonLayout = new QGridLayout();
-                changeLabel_btn = new QPushButton("Change Label");
-            buttonLayout->addWidget(changeLabel_btn,0,0);
-                cancelChange_btn = new QPushButton("Cancel");
-            buttonLayout->addWidget(cancelChange_btn,0,1);
-            buttonBox->setLayout(buttonLayout);
-        editLayout->addWidget(buttonBox,2,0,1,2);
-    editLabelDialog->setLayout(editLayout);
-    editLabelDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
-
     featuresBox = new QGroupBox("Other Settings");
         featuresLayout = new QGridLayout();
             pythonCheckbox = new QCheckBox("Enable Python Scripts");
@@ -121,7 +104,9 @@ settingsDialog::settingsDialog(QWidget *parent)
     settingsLayout = new QGridLayout();
     settingsLayout->addWidget(directoryBox);
     settingsLayout->addWidget(sessionListsBox);
-    settingsLayout->addWidget(portEditBox);
+//    settingsLayout->addWidget(portEditBox);
+        usbLabelDlog = new usbLabelDialog();
+    settingsLayout->addWidget(usbLabelDlog);
 //    settingsLayout->addWidget(featuresBox);
     settingsLayout->addWidget(okButton);
 
@@ -139,12 +124,6 @@ settingsDialog::settingsDialog(QWidget *parent)
     connect(rmv2_btn,SIGNAL(clicked()),this,SLOT(removeItem()));
     connect(this,SIGNAL(rejected()),this,SLOT(saveChanges()));
     connect(changeDir_btn,SIGNAL(clicked()),this,SLOT(setPath()));
-    connect(addAlias_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
-    connect(newAlias,SIGNAL(returnPressed()),this,SLOT(addAlias()));
-    connect(rmvAlias_btn,SIGNAL(clicked()),this,SLOT(removeAlias()));
-    connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
-    connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
-    connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
     connect(okButton,SIGNAL(clicked()),this,SLOT(close()));
     connect(pythonCheckbox,SIGNAL(clicked(bool)),histogramCheckbox,SLOT(setEnabled(bool)));
 
@@ -160,7 +139,6 @@ void settingsDialog::saveChanges(){
     settings.beginGroup("sessionLists");
         settings.setValue("rigList",rigList);
         settings.setValue("ratList",ratList);
-        settings.setValue("portList",aliasStringList);
     settings.endGroup();
 
     settings.beginGroup("Features");
@@ -168,6 +146,8 @@ void settingsDialog::saveChanges(){
         settings.setValue("showHistogram",histogramCheckbox->isChecked());
         settings.setValue("mcubeEnabled",mcubeCheckbox->isChecked());
     settings.endGroup();
+
+    usbLabelDlog->saveChanges();
 
     emit dialogClosed();
 }
@@ -215,6 +195,8 @@ void settingsDialog::addListItem()
 
 void settingsDialog::openSettings()
 {
+    usbLabelDlog->open_USB_Label_dialog();
+
     //---Edit Session Setup Lists--//
     //get the Qstringlists from memory
     QSettings settings("Bobcat Engineering","CCS");
@@ -234,26 +216,6 @@ void settingsDialog::openSettings()
     rigVals->clearSelection();
     ratVals->clearSelection();
 
-    //--Edit COM Port Labels--//
-    //populate the combobox
-    portDropdown->clear();
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
-        QStringList list;
-//        if(info.description()==usbDescription){
-            list << info.portName();
-            portDropdown->addItem(list.first(), list);
-//        }
-    }
-    //GetaAlias stringlist from memory
-    settings.beginGroup("sessionLists");
-        aliasStringList = settings.value("portList").toStringList();
-    settings.endGroup();
-    // populate the listwidgets in the settings dialog with the items in the lists we got from memory
-    aliasWidget->clear();
-    for (int i = 0;i< aliasStringList.count(); i++){
-        aliasWidget->addItem(aliasStringList.value(i));
-    }
-
     //--Other Settings--//
     settings.beginGroup("Features");
         pythonEnabled = settings.value("pythonEnabled").toBool();
@@ -265,78 +227,9 @@ void settingsDialog::openSettings()
     histogramCheckbox->setChecked(showHistogram);
     mcubeCheckbox->setChecked(mcubeEnabled);
 
-    qDebug()<<"about to show";
     this->exec();
-    qDebug()<<"postion"<<this->pos();
 }
 
-void settingsDialog::addAlias()
-{
-    bool continueAdd = true;
-    QString tempCOM;
-    QString labelText;
-    bool fromChangeLabel;
-    if (sender()==changeLabel_btn){
-        tempCOM = editLabelDialog->windowTitle();
-        tempCOM = tempCOM.mid(tempCOM.indexOf(" "+usbTag)+1,tempCOM.indexOf(" label")-tempCOM.indexOf(" "+ usbTag)-1);
-        labelText = editText->text();
-        fromChangeLabel = true;
-    }
-    else{
-        tempCOM = portDropdown->currentText();
-        labelText = newAlias->text();
-        fromChangeLabel = false;
-    }
-    if (!labelText.isEmpty()){ //if there's something in the textedit box...
-        QStringList filter = aliasStringList.filter(tempCOM);
-        if (!filter.isEmpty()){  //alias already exists
-            QMessageBox aliasExists;
-            QPushButton *connectButton = aliasExists.addButton(tr("Overwrite Label"), QMessageBox::YesRole);
-            aliasExists.addButton(QMessageBox::Cancel);
-            aliasExists.setText("A label for " + tempCOM + " already exists");
-            aliasExists.setInformativeText("Would you like to overwrite it?");
-            if (!fromChangeLabel){  //don't show popup if we got to addAlias from the changeLabel button
-                aliasExists.exec();
-            }
-            if ((aliasExists.clickedButton() == connectButton) | fromChangeLabel) { //yes we want to overwrite it
-                delete aliasWidget->item(aliasStringList.indexOf(filter[0]));
-                aliasStringList.removeOne(filter[0]);
-                editLabelDialog->close();
-            }
-            else{
-                continueAdd = false;
-            }
-        }
-        if (continueAdd){
-            aliasStringList.append(labelText + " (" + tempCOM +")" );
-            aliasStringList.sort();
-            aliasWidget->addItem(labelText + " (" + tempCOM +")");
-            aliasWidget->sortItems();
-            newAlias->clear();
-        }
-       }
-    else{
-    }
-}
-
-void settingsDialog::removeAlias()
-{
-    if(aliasWidget->selectedItems().size()!=0){
-        aliasStringList.removeOne(aliasWidget->currentItem()->text());
-        delete aliasWidget->currentItem();
-    }
-}
-
-void settingsDialog::editLabel(){
-    //isolate the COMXX part of the port name
-    QString COMbeingEdited = aliasWidget->currentItem()->text();
-    editText->setText(COMbeingEdited.left(COMbeingEdited.indexOf(" (")));
-    COMbeingEdited.remove(0,COMbeingEdited.indexOf("("+usbTag)+1);
-    COMbeingEdited.remove(QChar (')'));
-    editText->setFocus();
-    editLabelDialog->setWindowTitle("Edit "+ COMbeingEdited + " label");
-    editLabelDialog->exec();
-}
 
 void settingsDialog::setPath(){
     QString savePath = QFileDialog::getExistingDirectory(this,tr("Set Default Directory"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation));

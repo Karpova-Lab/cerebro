@@ -1,3 +1,27 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MIT License
+
+Copyright (c) 2015-2018 Andy S. Lustig
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
@@ -6,6 +30,7 @@
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
+#include <portAlias.h>
 
 
 class settingsDialog : public QDialog
@@ -31,28 +56,15 @@ public:
     QLineEdit*              newItem1,*newItem2;
     QPushButton*            rmv1_btn,*rmv2_btn;
 
-    QGroupBox*              portEditBox;
-    QGridLayout*            portEditLayout;
-    QLabel*                 portnameLabel, *aliasLabel,*currentPorts, *newDescription;
-    QListWidget*            aliasWidget;
-    QStringList             aliasStringList;
-    QComboBox*              portDropdown;
-    QPushButton*            addAlias_btn,*rmvAlias_btn;
-    QLineEdit*              newAlias;
-
-    QDialog*                editLabelDialog;
-    QGroupBox*              buttonBox;
-    QGridLayout*            editLayout,*buttonLayout;
-    QLineEdit*              editText;
-    QLabel*                 newLabel;
-    QPushButton*            changeLabel_btn,*cancelChange_btn;
-
     QGroupBox*              featuresBox;
     QGridLayout*            featuresLayout;
     QCheckBox*              pythonCheckbox,*mcubeCheckbox,*histogramCheckbox;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
     QStringList             rigList,ratList;
     QPushButton*            okButton;
+
+    usbLabelDialog*         usbLabelDlog;
+
 
 
 private:
@@ -64,9 +76,6 @@ public slots:
     void removeItem();
     void addListItem();
     void openSettings();
-    void addAlias();
-    void removeAlias();
-    void editLabel();
     void saveChanges();
 
 signals:

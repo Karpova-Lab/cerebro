@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settingsDialog.cpp
+    settingsDialog.cpp \
+    portAlias.cpp
 
 HEADERS  += mainwindow.h \
-    settingsDialog.h
+    settingsDialog.h \
+    portAlias.h
 
 RESOURCES += \
     myfiles.qrc
