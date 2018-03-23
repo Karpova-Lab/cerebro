@@ -91,7 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#assembly-instructions">Assembly Instructions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prepare-fiber">Prepare Fiber</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#couple-fiber-to-laser-diode">Couple Fiber to Laser Diode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#align-fiber">Align Fiber</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fiber-guide-construction">Fiber Guide Construction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#combine-pcb-laser-diodes-and-fiber-guide">Combine PCB, Laser Diodes, and Fiber Guide</a></li>
 </ul>
@@ -191,6 +191,7 @@
 <li><a class="reference external" href="http://www.fiberinstrumentsales.com/fis-lynx-precision-cleaver-with-fiber-basket.html">Fiber cleaver</a></li>
 <li><a class="reference external" href="http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M">3-axis fiber launch system</a></li>
 <li><a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=PM121D">Power meter</a> and <a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=S121C">photodiode sensor</a></li>
+<li><a class="reference external" href="https://www.amazon.com/KORAD-KD3005D-Precision-Adjustable-Regulated/dp/B00FPU6G4E/ref=sr_1_2?s=hi&amp;ie=UTF8&amp;qid=1521832325&amp;sr=1-2&amp;keywords=korad+power+supply&amp;dpID=41CeDR0WTPL&amp;preST=_SY300_QL70_&amp;dpSrc=srch">Adjustable DC Power Supply</a></li>
 <li><a class="reference external" href="https://www.amazon.com/TaoTronics-TT-FL001-Flashlight-Blacklight-Ultraviolet/dp/B00RV8PREI/ref=sr_1_1?ie=UTF8&amp;qid=1484071557&amp;sr=8-1&amp;keywords=B00RV8PREI">Ultraviolet light</a></li>
 </ul>
 </div></blockquote>
@@ -270,37 +271,58 @@
 <div class="section" id="prepare-fiber">
 <h3>Prepare Fiber<a class="headerlink" href="#prepare-fiber" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Strip fiber and cut to length</li>
+<li>Tape down the fiber</li>
+<li>Use a fiber stripper to remove the outer blue jacket from the fiber</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/strip_fiber.png"><img alt="../_images/strip_fiber.png" src="../_images/strip_fiber.png" style="width: 1143.0px; height: 1000.0px;" /></a>
+</div>
+<ol class="arabic simple" start="3">
 <li>Using a fiber cleaver, cut off the end of fiber to make a clean tip</li>
-<li>Continue cutting the fiber in ~16mm pieces</li>
+<li>Continue cutting the fiber into ~16mm pieces</li>
 </ol>
 </div>
-<div class="section" id="couple-fiber-to-laser-diode">
-<h3>Couple Fiber to Laser Diode<a class="headerlink" href="#couple-fiber-to-laser-diode" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="align-fiber">
+<h3>Align Fiber<a class="headerlink" href="#align-fiber" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li>Insert laser diode into connector</li>
 <li>Place connector in alignment jig</li>
 <li>Place fiber in alignment jig</li>
-<li>Turn on the power meter</li>
-<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs’ Power Meter Software</a> and adjust the following settings:</li>
+<li>Turn on the power meter and connect to computer over usb</li>
+<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs’ Power Meter Software</a></li>
+<li>Establish the USB connection with Power meter by selecting the device and clicking “OK”</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/establish_usb.png"><img alt="../_images/establish_usb.png" src="../_images/establish_usb.png" style="width: 336.0px; height: 219.0px;" /></a>
+</div>
+<ol class="arabic simple" start="7">
+<li>Adjust the following settings:</li>
 </ol>
 <blockquote>
 <div><ul class="simple">
 <li>Range: 12mW</li>
 <li>Wave: 520nm</li>
 <li>Log Configuration<ul>
-<li>No of Samples: 11,000</li>
+<li>No of Samples: 20,000</li>
 <li>Interval Time: 0.1</li>
 </ul>
 </li>
 </ul>
 </div></blockquote>
-<ol class="arabic simple" start="6">
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/settings_combined.png"><img alt="../_images/settings_combined.png" src="../_images/settings_combined.png" style="width: 499.0px; height: 248.0px;" /></a>
+</div>
+<ol class="arabic simple" start="8">
 <li>Click <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Log</span></code></li>
-<li>Set the power meter to 8.0 volts with a current limit of 300 mA</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/start_log.png"><img alt="../_images/start_log.png" src="../_images/start_log.png" style="width: 452.0px; height: 103.0px;" /></a>
+</div>
+<ol class="arabic simple" start="9">
+<li>Set the power supply to 8.0 volts with a current limit of 300 mA</li>
 <li>Provide power to the laser diode by pressing the “on/off” button</li>
-<li>While watching the power graph update, use the knobs to adjust the x, y, and z alignment of the fiber with respect to the laser diode.</li>
-<li>When you are happy with the alignment, apply Norland Optical Adhesive 68 to the fiber/laserdiode junction.</li>
+<li>While watching the power graph update, use the <a class="reference external" href="http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M">3-axis fiber launch system</a> to adjust the x, y, and z alignment of the fiber with respect to the laser diode.</li>
+<li>When you are happy with the alignment, apply UV curing adhesive to the fiber/laserdiode junction.</li>
 <li>Cure the adhesive using UV light</li>
 </ol>
 </div>
@@ -316,7 +338,7 @@
 <ol class="arabic simple">
 <li>Insert the ceramic ferrules into the acrylic fiber guide. The flat side of the ferrules should be flush with the face of the acrylic.</li>
 </ol>
-<a class="reference internal image-reference" href="../_images/fiber guide.png"><img alt="../_images/fiber guide.png" class="align-center" src="../_images/fiber guide.png" style="width: 552.0px; height: 204.8px;" /></a>
+<a class="reference internal image-reference" href="../_images/fiber_guide.png"><img alt="../_images/fiber_guide.png" class="align-center" src="../_images/fiber_guide.png" style="width: 552.0px; height: 204.8px;" /></a>
 </div>
 <div class="section" id="combine-pcb-laser-diodes-and-fiber-guide">
 <h3>Combine PCB, Laser Diodes, and Fiber Guide<a class="headerlink" href="#combine-pcb-laser-diodes-and-fiber-guide" title="Permalink to this headline">¶</a></h3>

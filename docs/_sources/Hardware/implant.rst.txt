@@ -15,12 +15,13 @@ Required Tools
 ==============
   * Ruler
   * Soldering iron
-  * Tweezers
+  * Tweezers   
   * `Fiber gripper <https://www.thorlabschina.cn/thorproduct.cfm?partnumber=BFG1>`_ 
   * `Fiber stripper <https://www.thorlabs.com/thorProduct.cfm?partNumber=T12S21>`_
   * `Fiber cleaver <http://www.fiberinstrumentsales.com/fis-lynx-precision-cleaver-with-fiber-basket.html>`_
   * `3-axis fiber launch system <http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M>`_
   * `Power meter <https://www.thorlabs.com/thorproduct.cfm?partnumber=PM121D>`_ and `photodiode sensor <https://www.thorlabs.com/thorproduct.cfm?partnumber=S121C>`_
+  * `Adjustable DC Power Supply <https://www.amazon.com/KORAD-KD3005D-Precision-Adjustable-Regulated/dp/B00FPU6G4E/ref=sr_1_2?s=hi&ie=UTF8&qid=1521832325&sr=1-2&keywords=korad+power+supply&dpID=41CeDR0WTPL&preST=_SY300_QL70_&dpSrc=srch>`_ 
   * `Ultraviolet light <https://www.amazon.com/TaoTronics-TT-FL001-Flashlight-Blacklight-Ultraviolet/dp/B00RV8PREI/ref=sr_1_1?ie=UTF8&qid=1484071557&sr=8-1&keywords=B00RV8PREI>`_
 
 
@@ -55,30 +56,52 @@ Assembly Instructions
 =====================
 Prepare Fiber
 -------------
-#. Strip fiber and cut to length
-#. Using a fiber cleaver, cut off the end of fiber to make a clean tip
-#. Continue cutting the fiber in ~16mm pieces
+#. Tape down the fiber
+#. Use a fiber stripper to remove the outer blue jacket from the fiber
 
-Couple Fiber to Laser Diode
----------------------------
+.. figure:: photos/Implant_construction/make_fiber/strip_fiber.png
+  :align: center
+  :scale: 100%
+
+3. Using a fiber cleaver, cut off the end of fiber to make a clean tip
+#. Continue cutting the fiber into ~16mm pieces
+
+Align Fiber
+-----------
 #. Insert laser diode into connector
 #. Place connector in alignment jig
 #. Place fiber in alignment jig
-#. Turn on the power meter
-#. Open up the `Thorlabs' Power Meter Software <https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x>`_ and adjust the following settings:
+#. Turn on the power meter and connect to computer over usb
+#. Open up the `Thorlabs' Power Meter Software <https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x>`_ 
+#. Establish the USB connection with Power meter by selecting the device and clicking "OK"
+
+.. figure:: photos/Implant_construction/align_fiber/establish_usb.png
+  :align: center
+  :scale: 100%
+
+7. Adjust the following settings:
 
   - Range: 12mW
   - Wave: 520nm
   - Log Configuration
 
-    - No of Samples: 11,000
+    - No of Samples: 20,000
     - Interval Time: 0.1
 
-6. Click ``Start Log``
-#. Set the power meter to 8.0 volts with a current limit of 300 mA
+.. figure:: photos/Implant_construction/align_fiber/settings_combined.png
+  :align: center
+  :scale: 100%
+
+8. Click ``Start Log``
+
+.. figure:: photos/Implant_construction/align_fiber/start_log.png
+  :align: center
+  :scale: 100%
+
+9. Set the power supply to 8.0 volts with a current limit of 300 mA
 #. Provide power to the laser diode by pressing the "on/off" button
-#. While watching the power graph update, use the knobs to adjust the x, y, and z alignment of the fiber with respect to the laser diode.
-#. When you are happy with the alignment, apply Norland Optical Adhesive 68 to the fiber/laserdiode junction.
+#. While watching the power graph update, use the `3-axis fiber launch system <http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M>`_ to adjust the x, y, and z alignment of the fiber with respect to the laser diode.
+#. When you are happy with the alignment, apply UV curing adhesive to the fiber/laserdiode junction.
 #. Cure the adhesive using UV light
 
 Fiber Guide Construction
@@ -93,7 +116,7 @@ The laser cutter speed and power settings may need to be tweaked to get a good f
 
 #. Insert the ceramic ferrules into the acrylic fiber guide. The flat side of the ferrules should be flush with the face of the acrylic.
 
-.. image:: photos/fiber\ guide/fiber\ guide.png
+.. image:: photos/Implant_construction/make_guide/fiber_guide.png
   :align: center
   :scale: 20 %
 
