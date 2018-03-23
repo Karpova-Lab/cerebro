@@ -9,7 +9,6 @@ Features
 Open Source
   * **Flexible** - All code and CAD is available so you can make changes and improvements to anything you want!
   * **Low Cost** - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.
-..
 ..    .. csv-table::
 ..      :header: "Subsystem", "Material Cost ($)", "Assembly Time (hours)"
 ..      :widths: 1,1,1
@@ -100,6 +99,14 @@ its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger signa
 a stop signal to be emitted.
 
 :doc:`More info... <../Hardware/base station>`
+
+
+Charging Dock
+-------------
+
+The Charging dock has the battery connectors as Cerebro and can charge up to 6 Cerebro batteries at once.
+
+:doc:`More info... <../Hardware/charging dock>`
 
 Xavier
 ------
