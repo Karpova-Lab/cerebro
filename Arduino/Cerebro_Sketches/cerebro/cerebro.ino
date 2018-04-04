@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 93;
+const uint8_t VERSION = 94;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -160,8 +160,6 @@ void loop() {
           isolationTest();break;
         case 'c':
           combinedTest();break;
-        case 'M':
-          printMissed();break;
         default:
           Serial.println("Command not recognized");break;
       }
@@ -203,6 +201,10 @@ void loop() {
         case 'r': // Receiving a new right setpoint
           Serial.print("\nTriggering Right @");Serial.println(integerMessage.value);
           triggerOne(integerMessage.value,&right);
+          break;
+        case 'M':
+          checkForMiss();
+          printMissed();
           break;
       }
     }

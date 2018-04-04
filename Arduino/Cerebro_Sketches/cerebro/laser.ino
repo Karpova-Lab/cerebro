@@ -77,6 +77,7 @@ void triggerBoth(){
         integerMessage = *(IntegerPayload*)radio.DATA;
         switch (integerMessage.variable){
           case 'A':
+            sendACK();
             checkForMiss();
             laserEnabled =  turnoff();
             break;

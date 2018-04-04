@@ -31,11 +31,11 @@ SOFTWARE.
 
 #define CHANNEL_ADDRESS 0
 
-const uint8_t VERSION = 53;
+const uint8_t VERSION = 54;
 
 const uint8_t LED = 13;
-const uint8_t TRIGGER_PIN = 5;
-const uint8_t STOP_PIN = 6;
+const uint8_t TRIGGER_PIN = 6;
+const uint8_t STOP_PIN = 5;
 
 uint8_t netID;
 
@@ -62,7 +62,7 @@ void setup() {
   pinMode(LED, OUTPUT);
 
   EEPROM.get(CHANNEL_ADDRESS,netID);
-  radio.radioSetup(1,false,netID); //nodeID, autopower on;
+  radio.radioSetup(1,false,netID); //nodeID, autopower off;
   pinMode(TRIGGER_PIN,INPUT);
   pinMode(STOP_PIN,INPUT);
   startTime = millis();
@@ -75,14 +75,14 @@ void loop() {
     while(digitalRead(TRIGGER_PIN)){
       //wait until signal goes low
     }
-    stopCommandReceived();
+    triggerCommandReceived();
   }
   //if we read a high signal on pin 6, send a stop command to cerebro
   if (digitalRead(STOP_PIN)) {
     while(digitalRead(STOP_PIN)){
       //wait until signal goes low
     }
-    triggerCommandReceived();
+    stopCommandReceived();
   }
 
   ///////////Receive Message From Xavier//////////////////
@@ -106,6 +106,9 @@ void loop() {
     }
     else if (msg=='A'){
       stopCommandReceived();
+    }
+    else if(msg=='M'){
+      requestMissed();
     }
     else if(msg=='N'){
       newSession();
@@ -336,6 +339,19 @@ void sendDiodePowerUpdate(){
   }
 }
 
+void requestMissed(){
+  msgCount++;
+  integerMessage.variable = 'M';
+  integerMessage.value = msgCount;
+  printTime();Serial1.print(msgCount);comma();Serial1.print("Misses Requested");newline();
+  if(radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage),3)){
+    //
+  }
+  else{
+    printTime();Serial1.print(msgCount);comma();Serial1.print("No Miss Request Ack");newline();
+  }
+}
+
 void triggerCommandReceived(){
   uint32_t  tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger>spamFilter || ignoreFilter){
@@ -364,8 +380,15 @@ void stopCommandReceived(){
     integerMessage.variable = 'A';
     integerMessage.value = msgCount;
     printTime();Serial1.print(msgCount);comma();Serial1.print("Abort");newline();
-    radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
-    triggerClock = -spamFilter; //prevents back to back stop signals from being sent
+    if (radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage),3)){
+      triggerClock = -spamFilter; //prevents back to back stop signals from being sent
+    }
+    else{
+      printTime();Serial1.print(msgCount);comma();Serial1.print("No Abort Ack");newline();
+    }
+  }
+  else{
+    printTime();Serial1.print(msgCount);comma();Serial1.print("Spam Filtered Abort");newline();
   }
 }
 
