@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.7.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t3/22/2018";
+        xavierVersion = "3.7.1";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t4/5/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -101,44 +101,49 @@ MainWindow::MainWindow(QWidget *parent)
     equipmentBox->setLayout(equipmentLayout);
 
     //Cerebro Status
+    int infoRow = 0;
+    int paramRow = 2;
+    int battRow = 1;
+    int buttonRow = 3;
+
     cerStatusBox = new QGroupBox("Cerebro Status");
         cerStatusLayout = new QGridLayout();
             serialNumber_lbl = new QLabel("Serial #\n");
             serialNumber_lbl->setAlignment(Qt::AlignCenter);
             serialNumber_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(serialNumber_lbl,0,0);
+        cerStatusLayout->addWidget(serialNumber_lbl,infoRow,0);
             cerFirmware_lbl = new QLabel("Firmware\n");
             cerFirmware_lbl->setAlignment(Qt::AlignCenter);
             cerFirmware_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerFirmware_lbl,0,1);
+        cerStatusLayout->addWidget(cerFirmware_lbl,infoRow,1);
             Lset_lbl = new QLabel("Lset\n");
             Lset_lbl->setAlignment(Qt::AlignCenter);
             Lset_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(Lset_lbl,0,2);
+        cerStatusLayout->addWidget(Lset_lbl,infoRow,3);
             Rset_lbl = new QLabel("Rset\n");
             Rset_lbl->setAlignment(Qt::AlignCenter);
             Rset_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(Rset_lbl,0,3);
+        cerStatusLayout->addWidget(Rset_lbl,infoRow,4);
             cerDelay_lbl = new QLabel("Delay\n");
             cerDelay_lbl->setAlignment(Qt::AlignCenter);
             cerDelay_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerDelay_lbl,0,4);
+        cerStatusLayout->addWidget(cerDelay_lbl,paramRow,0);
             cerOn_lbl = new QLabel("On\n");
             cerOn_lbl->setAlignment(Qt::AlignCenter);
             cerOn_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerOn_lbl,0,5);
+        cerStatusLayout->addWidget(cerOn_lbl,paramRow,1);
             cerOff_lbl = new QLabel("Off\n");
             cerOff_lbl->setAlignment(Qt::AlignCenter);
             cerOff_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerOff_lbl,0,6);
+        cerStatusLayout->addWidget(cerOff_lbl,paramRow,2);
             cerTrain_lbl = new QLabel("Train\n");
             cerTrain_lbl->setAlignment(Qt::AlignCenter);
             cerTrain_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerTrain_lbl,0,7);
+        cerStatusLayout->addWidget(cerTrain_lbl,paramRow,3);
             cerRamp_lbl = new QLabel("Ramp\n");
             cerRamp_lbl->setAlignment(Qt::AlignCenter);
             cerRamp_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerRamp_lbl,0,8);
+        cerStatusLayout->addWidget(cerRamp_lbl,paramRow,4);
             batteryIndicator = new QProgressBar();
             batteryIndicator->setOrientation(Qt::Horizontal);
             batteryIndicator->setAlignment(Qt::AlignHCenter);
@@ -147,12 +152,12 @@ MainWindow::MainWindow(QWidget *parent)
             batteryIndicator->setMinimum(0);
             batteryIndicator->setMaximum(100);
             batteryIndicator->setTextVisible(false);
-            batteryIndicator->setFormat("Battery=%p%");
-        cerStatusLayout->addWidget(batteryIndicator,1,1,1,8);
+            batteryIndicator->setFormat("%p%");
+        cerStatusLayout->addWidget(batteryIndicator,battRow,0,1,5);
             battery_lbl = new QLabel(batteryIndicator->text());
-        cerStatusLayout->addWidget(battery_lbl,1,0,1,1,Qt::AlignRight);
-            getInfo_btn = new QPushButton("Check Wireless Connection / Update Battery Status");
-        cerStatusLayout->addWidget(getInfo_btn,2,0,1,9,Qt::AlignCenter);
+        cerStatusLayout->addWidget(battery_lbl,0,2,1,1,Qt::AlignCenter|Qt::AlignBottom);
+            getInfo_btn = new QPushButton("Check Wireless Connection and Update Battery Status");
+        cerStatusLayout->addWidget(getInfo_btn,buttonRow,0,1,5,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setStyleSheet("");
     cerStatusBox->setEnabled(false);
@@ -168,7 +173,7 @@ MainWindow::MainWindow(QWidget *parent)
             clearBase_btn->setText("Restart Session");
         serialMonitorLayout->addWidget(clearBase_btn,0,1,2,1,Qt::AlignRight);
             baseMonitor = new QPlainTextEdit();
-            baseMonitor->setMinimumHeight(380);
+            baseMonitor->setMinimumHeight(360);
         serialMonitorLayout->addWidget(baseMonitor,2,0,1,2);
             saveMonitor_btn = new QPushButton();
             saveMonitor_btn->setText("Save Session");
@@ -189,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent)
             power_lbl = new QLabel("Power Level");
             power_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
         adjustmentLayout->addWidget(power_lbl,0,0);
-            power_spn = new QSpinBox();
+            power_spn = new QDoubleSpinBox();
             power_spn->setRange(0,65535);
             power_spn->setSingleStep(50);
             power_spn->setAlignment(Qt::AlignCenter);
@@ -203,30 +208,33 @@ MainWindow::MainWindow(QWidget *parent)
         adjustmentLayout->addWidget(pulseTrain,2,1);
             startDelay_checkbox = new QCheckBox("Start Delay");
         adjustmentLayout->addWidget(startDelay_checkbox,3,0,Qt::AlignRight);
-            startDelay_spn = new QSpinBox();
-            startDelay_spn->setRange(0,65535);
-            startDelay_spn->setSingleStep(50);
-            startDelay_spn->setSuffix(" ms");
+            startDelay_spn = new QDoubleSpinBox();
+            startDelay_spn->setDecimals(3);
+            startDelay_spn->setRange(0,65.535);
+            startDelay_spn->setSingleStep(.050);
+            startDelay_spn->setSuffix(" s");
             startDelay_spn->setAlignment(Qt::AlignCenter);
             startDelay_spn->setVisible(false);
         adjustmentLayout->addWidget(startDelay_spn,3,1);
             onTime_lbl = new QLabel("On Time");
             onTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
         adjustmentLayout->addWidget(onTime_lbl,4,0);
-            onTime_spn = new QSpinBox();
-            onTime_spn->setRange(0,65535);
-            onTime_spn->setSingleStep(50);
-            onTime_spn->setSuffix(" ms");
+            onTime_spn = new QDoubleSpinBox();
+            onTime_spn->setDecimals(3);
+            onTime_spn->setRange(0,65.535);
+            onTime_spn->setSingleStep(.050);
+            onTime_spn->setSuffix(" s");
             onTime_spn->setAlignment(Qt::AlignCenter);
         adjustmentLayout->addWidget(onTime_spn,4,1);
             offTime_lbl = new QLabel("Off Time");
             offTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             offTime_lbl->setVisible(false);
         adjustmentLayout->addWidget(offTime_lbl,5,0);
-            offTime_spn = new QSpinBox();
-            offTime_spn->setRange(0,65535);
-            offTime_spn->setSingleStep(50);
-            offTime_spn->setSuffix(" ms");
+            offTime_spn = new QDoubleSpinBox();
+            offTime_spn->setDecimals(3);
+            offTime_spn->setRange(0,65.535);
+            offTime_spn->setSingleStep(.050);
+            offTime_spn->setSuffix(" s");
             offTime_spn->setAlignment(Qt::AlignCenter);
             offTime_spn->setVisible(false);
         adjustmentLayout->addWidget(offTime_spn,5,1);
@@ -238,19 +246,21 @@ MainWindow::MainWindow(QWidget *parent)
             trainDuration_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             trainDuration_lbl->setVisible(false);
         adjustmentLayout->addWidget(trainDuration_lbl,7,0);
-            trainDuration_spn = new QSpinBox();
-            trainDuration_spn->setRange(0,9999999);
-            trainDuration_spn->setSingleStep(250);
-            trainDuration_spn->setSuffix(" ms");
+            trainDuration_spn = new QDoubleSpinBox();
+            trainDuration_spn->setDecimals(3);
+            trainDuration_spn->setRange(0,9999.999);
+            trainDuration_spn->setSingleStep(.250);
+            trainDuration_spn->setSuffix(" s");
             trainDuration_spn->setAlignment(Qt::AlignCenter);
             trainDuration_spn->setVisible(false);
         adjustmentLayout->addWidget(trainDuration_spn,7,1);
             fade_checkbox = new QCheckBox("Ramp Down");
         adjustmentLayout->addWidget(fade_checkbox,8,0,Qt::AlignRight);
-            fade_spn = new QSpinBox();
-            fade_spn->setRange(100,65535);
-            fade_spn->setSingleStep(100);
-            fade_spn->setSuffix(" ms");
+            fade_spn = new QDoubleSpinBox();
+            fade_spn->setDecimals(1);
+            fade_spn->setRange(.1,65.5);
+            fade_spn->setSingleStep(.1);
+            fade_spn->setSuffix(" s");
             fade_spn->setAlignment(Qt::AlignCenter);
             fade_spn->setVisible(false);
         adjustmentLayout->addWidget(fade_spn,8,1);
@@ -479,8 +489,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //Cerebro Parameters
-    connect(onTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
-    connect(offTime_spn,SIGNAL(valueChanged(int)),this,SLOT(trainDur()));
+    connect(onTime_spn,SIGNAL(valueChanged(double)),this,SLOT(trainDur()));
+    connect(offTime_spn,SIGNAL(valueChanged(double)),this,SLOT(trainDur()));
     connect(startDelay_checkbox,SIGNAL(clicked()),this,SLOT(startDelayChecked()));
     connect(fade_checkbox,SIGNAL(clicked()),this,SLOT(fadeChecked()));
     connect(sendSettings_btn,SIGNAL(clicked()),this,SLOT(set()));
@@ -858,16 +868,16 @@ void MainWindow::readFromBase()
             }
         }
         else if (dataFromBaseMsg[0] == "Waveform"){
-            cerDelay_lbl->setText("Delay\n"+dataFromBaseMsg[1]); startDelay_spn->setValue(dataFromBaseMsg[1].toInt());
+            cerDelay_lbl->setText("Delay\n"+dataFromBaseMsg[1]); startDelay_spn->setValue(dataFromBaseMsg[1].toInt()/1000.0);
             if (dataFromBaseMsg[1].toInt()){
                 startDelay_checkbox->setChecked(true);
-                startDelay_spn->setValue(dataFromBaseMsg[1].toInt());
+                startDelay_spn->setValue(dataFromBaseMsg[1].toInt()/1000);
             }
             else{
                 startDelay_checkbox->setChecked(false);
             }
-            cerOn_lbl->setText("On\n"+dataFromBaseMsg[2]); onTime_spn->setValue(dataFromBaseMsg[2].toInt());
-            cerOff_lbl->setText("Off\n"+dataFromBaseMsg[3]); offTime_spn->setValue(dataFromBaseMsg[3].toInt());
+            cerOn_lbl->setText("On\n"+dataFromBaseMsg[2]); onTime_spn->setValue(dataFromBaseMsg[2].toInt()/1000.0);
+            cerOff_lbl->setText("Off\n"+dataFromBaseMsg[3]); offTime_spn->setValue(dataFromBaseMsg[3].toInt()/1000.0);
             cerTrain_lbl->setText("Train\n"+dataFromBaseMsg[4]); int trainDurationData = dataFromBaseMsg[4].toInt();
             if(trainDurationData){
                 pulseTrain->setChecked(true);
@@ -877,11 +887,11 @@ void MainWindow::readFromBase()
                 singleShot->setChecked(true);
                 trainChecked();
             }
-            trainDuration_spn->setValue(trainDurationData);
+            trainDuration_spn->setValue(trainDurationData/1000.0);
             cerRamp_lbl->setText("Ramp\n"+ dataFromBaseMsg[5]);
             if (dataFromBaseMsg[5].toInt()){
                 fade_checkbox->setChecked(true);
-                fade_spn->setValue(dataFromBaseMsg[5].toInt());
+                fade_spn->setValue(dataFromBaseMsg[5].toInt()/1000.0);
             }
             else{
                 fade_checkbox->setChecked(false);
@@ -889,12 +899,13 @@ void MainWindow::readFromBase()
             startDelayChecked();
             fadeChecked();
             updateFilter();
+            qDebug()<<"\n\n---------On Time is "<<onTime_spn->value()<<"-----\n\n";
         }
         else if (dataFromBaseMsg[0] == "Battery"){
 //            qDebug()<<dataFromBaseMsg[1];
             cerStatusBox->setStyleSheet("");
             batteryIndicator->setValue(dataFromBaseMsg[1].toInt());
-            battery_lbl->setText(batteryIndicator->text());
+            battery_lbl->setText(batteryIndicator->text()+" Battery Life");
         }
         else if (dataFromBaseMsg[0] == 'X'){
             cerStatusBox->setStyleSheet("color:#ed0b0b");
@@ -949,30 +960,19 @@ void MainWindow::clearMonitor2()
 void MainWindow::set()
 {
     QString startDelay = "0";
-    QString onTime = QString::number(onTime_spn->value());
+    QString onTime = QString::number(onTime_spn->value()*1000);
     QString offTime = "0";
     QString trainDur = "0";
     QString fadeTime = "0";
     if(startDelay_checkbox->isChecked()){
-        startDelay = QString::number(startDelay_spn->value());
+        startDelay = QString::number(startDelay_spn->value()*1000);
     }
     if(pulseTrain->isChecked()){
-        offTime = QString::number(offTime_spn->value());
-        trainDur = QString::number(trainDuration_spn->value());
+        offTime = QString::number(offTime_spn->value()*1000);
+        trainDur = QString::number(trainDuration_spn->value()*1000);
     }
     if(fade_checkbox->isChecked()){
-        if(fade_spn->value()%100){// throw an error if the fadetime isn't a multiple of 100
-            QMessageBox fadeError;
-                fadeError.setWindowTitle("Parameter Error");
-                fadeError.setIcon(QMessageBox::Critical);
-                fadeError.setStandardButtons(QMessageBox::Ok);
-                fadeError.setText("Ramp Down time must be a multiple of 100");
-            fadeError.exec();
-            return;
-        }
-        else{
-            fadeTime = QString::number(fade_spn->value());
-        }
+        fadeTime = QString::number(fade_spn->value()*1000);
     }
     QString msg = "W,"+ startDelay +","+ onTime +","+ offTime +"," + trainDur + "," + fadeTime+"\n";
     serial->write(msg.toLocal8Bit());
@@ -1084,7 +1084,7 @@ void MainWindow::updateFilter(){
     else{
         baseFilter = startDelay_spn->value()+ trainDuration_spn->value();
     }
-    baseFilter_label->setText("Filter Duration: "+ QString::number(baseFilter) + " ms");
+    baseFilter_label->setText("Filter Duration: "+ QString::number(baseFilter) + " s");
  }
 
 
@@ -1143,10 +1143,10 @@ void MainWindow::gotoAppLocation(){
 
 
 void MainWindow::trainDur(){
-    int total = onTime_spn->value()+offTime_spn->value();
+    float total = onTime_spn->value()+offTime_spn->value();
     trainDuration_spn->setMinimum(total);
     if(total>0){
-        QString freq =  QString::number(1000.0/total,'f',2);
+        QString freq =  QString::number(1.0/total,'f',2);
         QString dutyCycle =  QString::number(onTime_spn->value()*100.0/total,'f',2);
         trainDescription_lbl->setText("(" + freq + " Hz, " + dutyCycle + "% duty cycle)");
     }

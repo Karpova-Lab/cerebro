@@ -56,7 +56,7 @@ private:
     settingsDialog          *settingsDlog;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
     bool                    errorThrown;
-    int                     baseFilter;
+    float                     baseFilter;
     QString                 startTime;
     QString                 saveName1;
     bool                    repeatOn;
@@ -110,7 +110,7 @@ private:
     QGroupBox*              adjustBox;
     QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*fade_label,*power_lbl;
     QRadioButton*           singleShot,*pulseTrain;
-    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn,*power_spn;
+    QDoubleSpinBox*         onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn,*power_spn;
     QPushButton*            newPower_btn,*sendSettings_btn;
     QGridLayout*            adjustmentLayout;
     QCheckBox*              fade_checkbox,*startDelay_checkbox;
