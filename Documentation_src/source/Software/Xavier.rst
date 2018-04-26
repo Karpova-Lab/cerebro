@@ -186,7 +186,8 @@ parameters are automatically set to zero depending on the options selected.
     :scale: 100%
 
 1. Check the Cerebro Status to determine whether the waveform parameters are set as you wish.
-  .. image:: photos/Edit_waveform/check_waveform.png
+
+.. image:: photos/Edit_waveform/check_waveform.png
     :align: center
     :scale: 100%
 
