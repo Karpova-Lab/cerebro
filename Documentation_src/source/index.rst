@@ -35,6 +35,8 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
   Hardware/cerebro.rst
   Hardware/implant.rst
   Hardware/base station.rst
+  Hardware/charging dock.rst
+  Hardware/programmer.rst
   Software/Xavier.rst
 
 

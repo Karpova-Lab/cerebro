@@ -1,18 +1,23 @@
 import pandas as pd
 from sys import argv
 import pyperclip
-
-script = argv
+import xlrd
 
 xlsFile = 'tables.xlsx'
-sheets = ['cerebro','implant','base']
+book = xlrd.open_workbook(xlsFile)
+sheetNames = book.sheet_names()
+notDataNames = []
+for sheet in sheetNames:
+    if sheet.find('_data') < 0:
+        notDataNames.append(sheet)
+
 first  = True
 choice = 0
 
-while choice<1 or choice>len(sheets): 
+while choice<1 or choice>len(notDataNames): 
     if first:
         print("\nChoose a Table to Generate")
-        for i,sheetName in enumerate(sheets):
+        for i,sheetName in enumerate(notDataNames):
             print('{}: {}'.format(i+1,sheetName))
         # print("\nChoose a Table to Generate\n1: Cerebro\n2: Implant\n3: Base Station\n")
         typed = input("Choice = ")
@@ -26,7 +31,7 @@ while choice<1 or choice>len(sheets):
         choice = 0
 
 
-sheet = sheets[choice-1]
+chosenSheet = notDataNames[choice-1]
 
 def getColWidths(table):
     colMax = []
@@ -52,13 +57,15 @@ def printDivider(colWidths,emptyVec=[],doubleDash = False):
     return dividerString
 
 def printContents(table,colWidths,isHeader=False,**kwds):
+    mergeRows = False
     contentString  = "| "
     index = 0
     blankCols = []
     for cols in table:
         content =  cols if isHeader else table.loc[row,cols]
-        if content=="":
-            blankCols.append(True)
+        if content=="nan":
+            blankCols.append(mergeRows)
+            content = ""
         else:
             blankCols.append(False)
         fill = colWidths[index]-len(content)
@@ -68,7 +75,7 @@ def printContents(table,colWidths,isHeader=False,**kwds):
     return contentString,blankCols
 
 
-table = pd.read_excel(xlsFile,usecols=4,sheet_name=sheet).fillna("").astype(str) #read in table from excel file
+table = pd.read_excel(xlsFile,usecols=4,sheet_name=chosenSheet,dtype='str')#read in table from excel file
 widths = getColWidths(table) # get the maximum content width of each column
 
 #print header
@@ -84,4 +91,4 @@ outputString += printDivider(widths) #final divider
 
 #copy string to clipboard
 pyperclip.copy(outputString)
-print("\n\"{}\" sheet copied to clipboard!\n".format(sheet))
+print("\n\"{}\" sheet copied to clipboard!\n".format(chosenSheet))
