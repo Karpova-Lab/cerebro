@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.7.1";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t4/5/2018";
+        xavierVersion = "3.7.2";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t05/02/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -102,8 +102,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Cerebro Status
     int infoRow = 0;
-    int paramRow = 2;
-    int battRow = 1;
+    int battRow = 2;
+    int battLblRow = 1;
     int buttonRow = 3;
 
     cerStatusBox = new QGroupBox("Cerebro Status");
@@ -127,23 +127,23 @@ MainWindow::MainWindow(QWidget *parent)
             cerDelay_lbl = new QLabel("Delay\n");
             cerDelay_lbl->setAlignment(Qt::AlignCenter);
             cerDelay_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerDelay_lbl,paramRow,0);
+        cerStatusLayout->addWidget(cerDelay_lbl,infoRow,6);
             cerOn_lbl = new QLabel("On\n");
             cerOn_lbl->setAlignment(Qt::AlignCenter);
             cerOn_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerOn_lbl,paramRow,1);
+        cerStatusLayout->addWidget(cerOn_lbl,infoRow,7);
             cerOff_lbl = new QLabel("Off\n");
             cerOff_lbl->setAlignment(Qt::AlignCenter);
             cerOff_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerOff_lbl,paramRow,2);
+        cerStatusLayout->addWidget(cerOff_lbl,infoRow,8);
             cerTrain_lbl = new QLabel("Train\n");
             cerTrain_lbl->setAlignment(Qt::AlignCenter);
             cerTrain_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerTrain_lbl,paramRow,3);
+        cerStatusLayout->addWidget(cerTrain_lbl,infoRow,9);
             cerRamp_lbl = new QLabel("Ramp\n");
             cerRamp_lbl->setAlignment(Qt::AlignCenter);
             cerRamp_lbl->setWordWrap(true);
-        cerStatusLayout->addWidget(cerRamp_lbl,paramRow,4);
+        cerStatusLayout->addWidget(cerRamp_lbl,infoRow,10);
             batteryIndicator = new QProgressBar();
             batteryIndicator->setOrientation(Qt::Horizontal);
             batteryIndicator->setAlignment(Qt::AlignHCenter);
@@ -153,11 +153,11 @@ MainWindow::MainWindow(QWidget *parent)
             batteryIndicator->setMaximum(100);
             batteryIndicator->setTextVisible(false);
             batteryIndicator->setFormat("%p%");
-        cerStatusLayout->addWidget(batteryIndicator,battRow,0,1,5);
+        cerStatusLayout->addWidget(batteryIndicator,battRow,0,1,11);
             battery_lbl = new QLabel(batteryIndicator->text());
-        cerStatusLayout->addWidget(battery_lbl,0,2,1,1,Qt::AlignCenter|Qt::AlignBottom);
-            getInfo_btn = new QPushButton("Check Wireless Connection and Update Battery Status");
-        cerStatusLayout->addWidget(getInfo_btn,buttonRow,0,1,5,Qt::AlignCenter);
+        cerStatusLayout->addWidget(battery_lbl,battLblRow,0,1,11,Qt::AlignCenter);
+            getInfo_btn = new QPushButton("Check Wireless Connection and Update Status");
+        cerStatusLayout->addWidget(getInfo_btn,buttonRow,0,1,11,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setStyleSheet("");
     cerStatusBox->setEnabled(false);
@@ -293,7 +293,7 @@ MainWindow::MainWindow(QWidget *parent)
         charLayout->addWidget(combinedTest_btn,2,0,1,4);
             shortTest_btn = new QPushButton("1s Pulse Waveform");
         charLayout->addWidget(shortTest_btn,3,0,1,2);
-            longTest_btn = new QPushButton("3min Train Waveform");
+            longTest_btn = new QPushButton("6min Train Waveform");
         charLayout->addWidget(longTest_btn,3,2,1,2);
     charBox->setLayout(charLayout);
     charBox->setEnabled(false);
@@ -905,7 +905,7 @@ void MainWindow::readFromBase()
 //            qDebug()<<dataFromBaseMsg[1];
             cerStatusBox->setStyleSheet("");
             batteryIndicator->setValue(dataFromBaseMsg[1].toInt());
-            battery_lbl->setText(batteryIndicator->text()+" Battery Life");
+            battery_lbl->setText("\n"+batteryIndicator->text()+" Battery Life");
         }
         else if (dataFromBaseMsg[0] == 'X'){
             cerStatusBox->setStyleSheet("color:#ed0b0b");
@@ -1293,7 +1293,7 @@ void MainWindow::testShort()
 {
     singleShot->setChecked(true);
     startDelay_checkbox->setChecked(false);
-    onTime_spn->setValue(1000);
+    onTime_spn->setValue(1);
     offTime_spn->setValue(0);
     trainDuration_spn->setValue(0);
     fade_checkbox->setChecked(false);
@@ -1304,9 +1304,9 @@ void MainWindow::testLong()
 {
     pulseTrain->setChecked(true);
     startDelay_checkbox->setChecked(false);
-    onTime_spn->setValue(1000);
-    offTime_spn->setValue(3000);
-    trainDuration_spn->setValue(360000);
+    onTime_spn->setValue(1);
+    offTime_spn->setValue(3);
+    trainDuration_spn->setValue(360);
     fade_checkbox->setChecked(false);
     set();
 }
