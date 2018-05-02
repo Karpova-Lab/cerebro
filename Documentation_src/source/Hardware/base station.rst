@@ -1,6 +1,6 @@
-======================
-Base Station Resources
-======================
+============
+Base Station
+============
 
 .. include:: Characters/isogrk1.txt
 
@@ -29,7 +29,8 @@ Bill of Materials
 +-----+-----------------------------+-----------------------------------------------------------------------+-----------------------------------------------------------------------------------+
 
 
-32U4 Driver
------------
-Download Feather Driver: https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/using-with-arduino-ide
+Downloads
+---------
+- `Cypress USB Driver <http://www.cypress.com/documentation/software-and-drivers/usb-serial-software-development-kit>`_ 
+- `Adafruit Feather Driver <https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/using-with-arduino-ide>`_ 
 

@@ -1,6 +1,6 @@
-======================
-Head Implant Resources
-======================
+============
+Head Implant
+============
 .. include:: Characters/isogrk1.txt
 .. include:: Characters/mmlalias.txt
 .. include:: Characters/isopub.txt

@@ -1,6 +1,6 @@
-========================
-Pogo Connector Resources
-========================
+==============
+Pogo Connector
+==============
 
 .. include:: Characters/isogrk1.txt
 .. include:: Characters/mmlalias.txt

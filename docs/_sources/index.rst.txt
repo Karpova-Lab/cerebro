@@ -39,7 +39,18 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
   Hardware/programmer.rst
   Software/Xavier.rst
 
+Commercial Alternatives
+=======================
 
+Here are some commercial products that also provide wireless optogenetics:
+
+  - `Eicom Teleopto <https://eicomusa.com/teleopto/>`_
+  - `Kendall Research Systems <http://www.kendallresearchsys.com/>`_
+  - `Neurolux <http://www.neurolux.org/products/>`_
+  - `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_
+
+Licenses
+========
 
 The MIT License (MIT)
 

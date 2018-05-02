@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cerebro Resources &mdash; Cerebro 2.0.2 documentation</title>
+  <title>Cerebro &mdash; Cerebro 2.0.3 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 2.0.2 documentation" href="../index.html"/>
-        <link rel="next" title="Head Implant Resources" href="implant.html"/>
+    <link rel="top" title="Cerebro 2.0.3 documentation" href="../index.html"/>
+        <link rel="next" title="Head Implant" href="implant.html"/>
         <link rel="prev" title="System Overview" href="../Overview/Overview.html"/> 
 
   
@@ -85,16 +85,16 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Cerebro Resources</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#programming-instructions">Programming Instructions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="charging dock.html">Charging Dock Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="programmer.html">Pogo Connector Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station</a></li>
+<li class="toctree-l1"><a class="reference internal" href="charging dock.html">Charging Dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programmer.html">Pogo Connector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
 </ul>
 
@@ -140,7 +140,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Cerebro Resources</li>
+      <li>Cerebro</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -156,7 +156,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant Resources" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../Overview/Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -168,8 +168,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cerebro-resources">
-<h1>Cerebro Resources<a class="headerlink" href="#cerebro-resources" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="cerebro">
+<h1>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="bill-of-materials">
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -189,8 +189,8 @@
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>Cerebro PCB</td>
-<td><a class="reference download internal" href="../_downloads/cerebro5.6.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">Cerebro</span> <span class="pre">5.6</span></code></a></td>
-<td><a class="reference external" href="https://oshpark.com/projects/sPd5KOMe">OSH Park</a></td>
+<td><a class="reference download internal" href="../_downloads/cerebro5.7.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">Cerebro</span> <span class="pre">5.7</span></code></a></td>
+<td><a class="reference external" href="https://oshpark.com/shared_projects/MiiC2fHG">OSH Park</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>400 mAh Battery</td>
@@ -252,104 +252,109 @@
 <td><a class="reference download internal" href="../_downloads/inductor.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">LQH43CN100K03L</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=490-2519-1-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-odd"><td>2</td>
+<td>2mm Pitch Male Header</td>
+<td><a class="reference download internal" href="../_downloads/header_male_2mm.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">M22-2510805</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=952-1992-nd">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
 <td>Slide Switch</td>
 <td><a class="reference download internal" href="../_downloads/slide_switch.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">AYZ0102AGRLC</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09401-2012-1-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
+<tr class="row-odd"><td>1</td>
 <td>Micro USB vertical plug</td>
 <td><a class="reference download internal" href="../_downloads/usb_plug_vertical.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">ZX20-B-5S-UNIT(30)</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=H125237-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>Micro USB shielding</td>
 <td><a class="reference download internal" href="../_downloads/usb_shielding.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">ZX20-B-SLDC</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=H11496CT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
+<tr class="row-odd"><td>1</td>
 <td>Micro USB horizontal socket</td>
 <td><a class="reference download internal" href="../_downloads/usb_plug_horizontal.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">10118194-0001LF</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=609-4618-1-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>Molex MicroClasp socket</td>
 <td><a class="reference download internal" href="../_downloads/microclasp.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">0559350230</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=wm12296-nd">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
+<tr class="row-odd"><td>1</td>
 <td>Molex MicroClasp plug with wire</td>
 <td>0151360206</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=wm16380-nd">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>Red LED (0603)</td>
 <td><a class="reference download internal" href="../_downloads/led_red.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">LTST-C191KRKT</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=160-1447-1-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
+<tr class="row-odd"><td>1</td>
 <td>Amber LED (0603)</td>
 <td><a class="reference download internal" href="../_downloads/led_amber.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">LNJ437W84RA</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09LNJ437W84RACT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>470 nF Capacitor (0805)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/product-detail/en/avx-corporation/08055C474KAT2A/478-5033-1-ND/1888244">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-odd"><td>2</td>
 <td>1 μF Capacitor (0805)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=1276-1066-1-nd">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>2.2 μF Capacitor (0805)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=587-1286-1">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>3</td>
+<tr class="row-odd"><td>3</td>
 <td>10 μF Capacitor (0805)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/product-detail/en/murata-electronics-north-america/GRM21BR61E106KA73L/490-5523-1-ND/2334919">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-even"><td>1</td>
 <td>0.01 Ω Resistor (1206)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=P0.01BVCT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-odd"><td>2</td>
 <td>12 Ω Resistor (0603)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=P12.00BYCT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>4</td>
+<tr class="row-even"><td>4</td>
 <td>27 Ω Resistor (0603)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=541-27.0SCT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
+<tr class="row-odd"><td>1</td>
 <td>2 kΩ Resistor (0603)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=RNCP0603FTD2K00CT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>2</td>
+<tr class="row-even"><td>2</td>
 <td>4.7 kΩ Resistor (0603)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=311-4.70KHRCT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-odd"><td>2</td>
 <td>12 kΩ Resistor (0805)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=311-12.0KCRCT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>6</td>
+<tr class="row-even"><td>6</td>
 <td>20 kΩ Resistor (0603)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=RNCP0603FTD20K0CT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-odd"><td>2</td>
 <td>100 kΩ Resistor (0603)</td>
-<td>&#160;</td>
+<td>0</td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09311-100KHRCT-ND">Digi-Key</a></td>
 </tr>
 </tbody>
@@ -392,7 +397,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant Resources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../Overview/Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -405,7 +410,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2018, Andy Lustig.
-      Last updated on Apr 26, 2018.
+      Last updated on May 02, 2018.
 
     </p>
   </div>
@@ -427,7 +432,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'2.0.2',
+            VERSION:'2.0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

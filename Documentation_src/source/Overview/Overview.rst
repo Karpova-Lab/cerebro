@@ -22,12 +22,12 @@ Open Source
 Wireless Radio
   * **Low Latency** -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.
   * **2-Way Communication** - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.
-  * **Range** - {x}+ range. Doesn't need line of sight.
+  * **Range** - 20m, doesn't need line of sight. (I haven't had a need to test the limits, but the radio modules that Cerebro uses has been shown to have ranges greater than 500m)
   * **Wirelessly Adjustable Waveforms** - Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
 Laser Diodes
   * **High Power** - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
-  * **Independent Bilateral Control** -  Each laser diode has its own control circuitry. 
+  * **Independent Bilateral Control** -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. 
 
 .. **Technical Specifications**
 .. 
@@ -48,16 +48,6 @@ Laser Diodes
 ..   Input Voltage, , 3.5 to 4.2, V
 ..   Idle Current, ,"28","mA"
 
-Commercial Alternatives
-=======================
-Here are some commercial products that also provide wireless optogenetics:
-
-| `Eicom Teleopto <https://eicomusa.com/teleopto/>`_
-| `Kendall Research Systems <http://www.kendallresearchsys.com/>`_
-| `Neurolux <http://www.neurolux.org/products/>`_
-| `Triangle Biosystems <http://www.trianglebiosystems.com/s-series-systems.html>`_
-|
-
 System Components
 =================
 
@@ -75,9 +65,9 @@ intensity and waveform of the emitted light can be adjusted wirelessly during an
 
 Head Implant
 ------------
-.. .. image:: implant.jpg
-..   :align: center
-..   :scale: 20 %
+.. image:: ../Hardware/photos/implant_cad.png
+  :align: center
+  :scale: 20 %
 
 The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes are accompanied by a phototranistor that is used as feedback
 to maintain a constant light output. The laser diodes can be independently controlled and can output arbitrary waveforms with millisecond resolution.
@@ -103,6 +93,9 @@ a stop signal to be emitted.
 
 Charging Dock
 -------------
+.. image:: charging.jpg
+  :align: center
+  :scale: 50 %
 
 The Charging dock has the battery connectors as Cerebro and can charge up to 6 Cerebro batteries at once.
 
@@ -110,9 +103,8 @@ The Charging dock has the battery connectors as Cerebro and can charge up to 6 C
 
 Xavier
 ------
-.. .. image:: xavier_demo.png
-..     :align: center
-..     :scale: 80 %
+.. image:: ../Software/Xavier.png
+  :align: center
 
 Xavier is a GUI for sending and logging Base Station commands. 
 Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.
