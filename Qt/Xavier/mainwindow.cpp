@@ -60,25 +60,31 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.7.2";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t05/02/2018";
+        xavierVersion = "3.8.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t05/08/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
     //Experimental setup
     equipmentBox = new QGroupBox("Session Setup");
         equipmentLayout = new QGridLayout();
+            cerebroNum_lbl = new QLabel("Cerebro #");
+        equipmentLayout->addWidget(cerebroNum_lbl,0,1);
             rig_lbl = new QPushButton("Rig #");
             rig_lbl->setFlat(true);
-        equipmentLayout->addWidget(rig_lbl,0,1,Qt::AlignCenter);
+        equipmentLayout->addWidget(rig_lbl,0,2,Qt::AlignCenter);
             rat_lbl = new QPushButton("Rat-implant: (LSet/RSet)");
             rat_lbl->setFlat(true);
-        equipmentLayout->addWidget(rat_lbl,0,2,1,2,Qt::AlignCenter);
+        equipmentLayout->addWidget(rat_lbl,0,3,1,2,Qt::AlignCenter);
+            cerebroNum_spin = new QSpinBox();
+            cerebroNum_spin->setAlignment(Qt::AlignCenter);
+            cerebroNum_spin->setRange(1,254);
+        equipmentLayout->addWidget(cerebroNum_spin,1,1);
             rigSelect = new QListWidget();
-        equipmentLayout->addWidget(rigSelect,1,1,4,1,Qt::AlignTop);
+        equipmentLayout->addWidget(rigSelect,1,2,4,1,Qt::AlignTop);
             ratSelect = new QListWidget();
             ratSelect->setMinimumWidth(150);
-        equipmentLayout->addWidget(ratSelect,1,2,4,2,Qt::AlignTop|Qt::AlignHCenter);
+        equipmentLayout->addWidget(ratSelect,1,3,4,2,Qt::AlignTop|Qt::AlignHCenter);
             connectBS_label = new QLabel("Base Station Serial Port");
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
             refresh_btn = new QPushButton("Rescan");
@@ -372,22 +378,33 @@ MainWindow::MainWindow(QWidget *parent)
     //Session Start Dialog
     sessionStartDialog = new QDialog();
         sessionStartLayout = new QGridLayout();
-            retry_btn = new QPushButton("Retry");
+            retry_btn = new QPushButton("Retry Connection");
         sessionStartLayout->addWidget(retry_btn,0,0);
+            newCerebro_btn = new QPushButton("Setup New Cerebro");
+            newCerebro_btn->setEnabled(false);
+        sessionStartLayout->addWidget(newCerebro_btn,0,1);
+            newCerebro_lbl = new QLabel("Serial Number:");
+        sessionStartLayout->addWidget(newCerebro_lbl,1,0,Qt::AlignRight);
+            newCerebro_spin = new QSpinBox();
+            newCerebro_spin->setRange(1,254);
+        sessionStartLayout->addWidget(newCerebro_spin,1,1);
+            setSerial_btn = new QPushButton("Set Serial Number");
+        sessionStartLayout->addWidget(setSerial_btn,2,1);
             sessionStartMonitor = new QPlainTextEdit();
-        sessionStartLayout->addWidget(sessionStartMonitor,1,0);
+            sessionStartMonitor->setMinimumHeight(400);
+        sessionStartLayout->addWidget(sessionStartMonitor,3,0,1,2);
             baseConnected_lbl = new QLabel("Base Station Connected \u2718");
             baseConnected_lbl->setAlignment(Qt::AlignCenter);
-        sessionStartLayout->addWidget(baseConnected_lbl,2,0);
+        sessionStartLayout->addWidget(baseConnected_lbl,4,0,1,2);
             cerebroConnected_lbl = new QLabel("Cerebro Wireless Connection \u2718");
             cerebroConnected_lbl->setAlignment(Qt::AlignCenter);
-        sessionStartLayout->addWidget(cerebroConnected_lbl,3,0);
+        sessionStartLayout->addWidget(cerebroConnected_lbl,5,0,1,2);
             implantSettingsMatch_lbl = new QLabel("Implant Settings Match \u2718");
             implantSettingsMatch_lbl->setAlignment(Qt::AlignCenter);
-        sessionStartLayout->addWidget(implantSettingsMatch_lbl,4,0);
+        sessionStartLayout->addWidget(implantSettingsMatch_lbl,6,0,1,2);
             startSession_btn = new QPushButton("Start Session");
             startSession_btn->setEnabled(true);
-        sessionStartLayout->addWidget(startSession_btn,5,0);
+        sessionStartLayout->addWidget(startSession_btn,7,0,1,2);
         QFont codefont("Arial Unicode MS");
         baseConnected_lbl->setFont(codefont);
         cerebroConnected_lbl->setFont(codefont);
@@ -441,6 +458,7 @@ MainWindow::MainWindow(QWidget *parent)
     onTimeString = "";
     offTimeString = "";
     sessionHasBegun = false;
+    baseChannel = -1;
 
     if(QSysInfo::WindowsVersion==48){ //If Windows XP
         onTimeString = " ms\t\t\nOn Time:\t\t";
@@ -466,6 +484,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(startSession_btn,SIGNAL(clicked()),this,SLOT(startSession()));
     connect(sessionStartDialog,SIGNAL(rejected()),this,SLOT(connectBasePort()));
     connect(retry_btn,SIGNAL(clicked(bool)),this,SLOT(checkForBase()));
+    connect(newCerebro_btn,SIGNAL(clicked()),this,SLOT(setupCerebro()));
+    connect(setSerial_btn,SIGNAL(clicked()),this,SLOT(updateSerial()));
 
     //Port Connections
     connect(rig_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
@@ -648,6 +668,10 @@ void MainWindow::fillCerebroPorts()
 
 void MainWindow::connectBasePort()
 {
+    newCerebro_btn->setEnabled(false);
+    setSerial_btn->setVisible(false);
+    newCerebro_lbl->setVisible(false);
+    newCerebro_spin->setVisible(false);
     baseConnected_lbl->setText("Base Station Connection \u2718");
     baseConnected_lbl->setStyleSheet("color:red");
     cerebroConnected_lbl->setText("Cerebro Wireless Connection \u2718");
@@ -711,20 +735,16 @@ void MainWindow::connectBasePort()
             else{
                 ratNumber = "9999";
                 rigNumber = "7.3";
+                titleLeftPower = 100;
+                titleRightPower = 105;
                 setWindowTitle("Xavier (Debug)");
             }
             clearBase_btn->setEnabled(false);
             baseConnected = true;
             errorThrown = false;
             sessionStartMonitor->clear();
-            if (!debugOn){
-                QTimer::singleShot(750, this, SLOT(checkForBase()));
-                sessionStartDialog->exec();
-            }
-            else{
-                QTimer::singleShot(750, this, SLOT(clearMonitor()));
-                sessionHasBegun=true;
-            }
+            QTimer::singleShot(750, this, SLOT(checkForBase()));
+            sessionStartDialog->exec();
         }
         else{ //disconnect from serial port
             cerStatusBox->setStyleSheet("");
@@ -850,21 +870,21 @@ void MainWindow::readFromBase()
         else if (dataFromBaseMsg[0] == "BaseOn"){
             baseConnected_lbl->setText("Base Station Connection \u2714");
             baseConnected_lbl->setStyleSheet("color:green");
+            newCerebro_btn->setEnabled(true);
         }
         else if (dataFromBaseMsg[0] == "Base Channel"){
-            baseChannel_lbl->setText("Channel: "+ QString::number(dataFromBaseMsg[1].toInt()));
+            baseChannel = dataFromBaseMsg[1].toInt();
+            baseChannel_lbl->setText("Channel: "+ QString::number(baseChannel));
         }
         else if (dataFromBaseMsg[0] == "Diode Powers"){
             Lset_lbl->setText("Lset\n"+dataFromBaseMsg[1]);leftDiode_spn->setValue(dataFromBaseMsg[1].toInt());
             Rset_lbl->setText("Rset\n"+dataFromBaseMsg[2]);rightDiode_spn->setValue(dataFromBaseMsg[2].toInt());
-            if (!debugOn){
-                if ((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower)){
-                    QTimer::singleShot(500, this, SLOT(matchPowers()));
-                }
-                else{
-                    implantSettingsMatch_lbl->setText("Implant Settings Match \u2714");
-                    implantSettingsMatch_lbl->setStyleSheet("color:green");
-                }
+            if ((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower)){
+                QTimer::singleShot(500, this, SLOT(matchPowers()));
+            }
+            else{
+                implantSettingsMatch_lbl->setText("Implant Settings Match \u2714");
+                implantSettingsMatch_lbl->setStyleSheet("color:green");
             }
         }
         else if (dataFromBaseMsg[0] == "Waveform"){
@@ -1107,15 +1127,25 @@ void MainWindow::getBatteryStatus(){
 }
 
 void MainWindow::checkForBase(){
+    newCerebro_btn->setEnabled(false);
     baseConnected_lbl->setText("Base Station Connection \u2718");
     baseConnected_lbl->setStyleSheet("color:red");
     cerebroConnected_lbl->setText("Cerebro Wireless Connection \u2718");
     cerebroConnected_lbl->setStyleSheet("color:red");
     implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
     implantSettingsMatch_lbl->setStyleSheet("color:red");
-    QString msg = "N\n";
-    serial->write(msg.toLocal8Bit());
-    qDebug()<<msg<<"sent";
+
+    if (sessionHasBegun){
+        QString msg = "N\n";
+        serial->write(msg.toLocal8Bit());
+        qDebug()<<msg<<"sent";
+    }
+    else{
+        QString msg = "K,"+ QString::number(cerebroNum_spin->value());
+        serial->write(msg.toLocal8Bit());
+        qDebug()<<"message sent"<<msg;
+    }
+
 }
 
 void MainWindow::getInfo(){
@@ -1336,4 +1366,37 @@ void MainWindow::getCerebroInfoOverSerial(){
     serial2->write(msg.toLocal8Bit());
     qDebug()<<msg<<" Sent";
 
+}
+
+void MainWindow::setupCerebro(){
+    QString msg = "K,0";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<"message sent"<<msg;
+    setSerial_btn->setVisible(true);
+    newCerebro_lbl->setVisible(true);
+    newCerebro_spin->setVisible(true);
+    baseConnected_lbl->setText("Base Station Connection \u2718");
+    baseConnected_lbl->setStyleSheet("color:red");
+    cerebroConnected_lbl->setText("Cerebro Wireless Connection \u2718");
+    cerebroConnected_lbl->setStyleSheet("color:red");
+    implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
+    implantSettingsMatch_lbl->setStyleSheet("color:red");
+}
+
+void MainWindow::updateSerial(){
+    cerebroNum_spin->setValue(newCerebro_spin->value());
+    QString msg = "S,";
+    QString newSerial = QString::number(newCerebro_spin->value());
+    msg = msg + newSerial + "\n";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
+    setSerial_btn->setVisible(false);
+    newCerebro_lbl->setVisible(false);
+    newCerebro_spin->setVisible(false);
+    baseConnected_lbl->setText("Base Station Connection \u2718");
+    baseConnected_lbl->setStyleSheet("color:red");
+    cerebroConnected_lbl->setText("Cerebro Wireless Connection \u2718");
+    cerebroConnected_lbl->setStyleSheet("color:red");
+    implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
+    implantSettingsMatch_lbl->setStyleSheet("color:red");
 }

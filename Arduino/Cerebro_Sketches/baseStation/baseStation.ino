@@ -31,7 +31,7 @@ SOFTWARE.
 
 #define CHANNEL_ADDRESS 0
 
-const uint8_t VERSION = 54;
+const uint8_t VERSION = 55; //2018-05-08
 
 const uint8_t LED = 13;
 const uint8_t TRIGGER_PIN = 6;
@@ -116,7 +116,7 @@ void loop() {
     else if (msg=='K'){
       parseData();
       uint8_t newNetworkID = valsFromParse[0];
-      Serial1.print("New ID:");
+      Serial1.print("\Changing to channel:");
       Serial1.println(newNetworkID);
       EEPROM.update(CHANNEL_ADDRESS, newNetworkID);
       Serial1.println("Restarting...");
@@ -124,7 +124,7 @@ void loop() {
       while(1){}              // do nothing and wait for the reset
     }
     else if(msg=='?'){
-      Serial1.print("Network ID: ");
+      Serial1.print("Channel: ");
       Serial1.println(netID);
       Serial1.print("Base Version,");Serial1.print(VERSION);newline();
     }
@@ -211,7 +211,7 @@ void sendMsgAndVal(char msg,unsigned int val){
   integerMessage.variable = msg;
   integerMessage.value = val;
   Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(integerMessage.value);Serial1.print("...");
-  if (radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage))){
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage),5)){
     Serial1.print("data received");newline();
   }
   else{

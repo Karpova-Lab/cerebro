@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 94;
+const uint8_t VERSION = 95; // 2018-05-08
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -36,7 +36,6 @@ Documentation for this project can be found at https://karpova-lab.github.io/cer
 #include <LaserDiode.h>
 #include <SparkFunBQ27441.h>      //https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library
 #include <Radio.h>                //https://github.com/LowPowerLab/RFM69
-// #include <Adafruit_SleepyDog.h>   //https://github.com/adafruit/Adafruit_SleepyDog
 #include <LowPower.h>             //https://github.com/LowPowerLab/LowPower
 #include <avr/wdt.h>
 
@@ -55,7 +54,9 @@ Feedback diodeStats;
 
 uint16_t meterVal = 0;
 
-const uint8_t indicatorLED = A0; //32u4 pin 36
+const uint8_t amberLED = A0; //32u4 pin 36
+const uint8_t greenLED = 12; //32u4 pin 26
+const uint8_t userBTN = 6; //32u4 pin 27
 LaserDiode right(&DDRB,&PORTB,0,A4);
 LaserDiode left(&DDRD,&PORTD,2,A2);
 
@@ -80,18 +81,20 @@ void setup() {
   // Initialize waveform
   EEPROM.get(WAVEFORM_ADDRESS,waveform);
 
-  // Indicator LED
-  pinMode(indicatorLED,OUTPUT);
-  digitalWrite(indicatorLED,HIGH);
+  // UI setup
+  pinMode(userBTN,INPUT_PULLUP);
+  pinMode(greenLED,OUTPUT);
+  pinMode(amberLED,OUTPUT);
+  digitalWrite(amberLED,HIGH);
 
   //*** Battery Monitor ***//
   if (!lipo.begin()){
 	// If communication fails, print an error message and loop forever.
     Serial.println("Error: Unable to communicate with BQ27441.");
     while(1){ //blink error
-      digitalWrite(indicatorLED,HIGH);
+      digitalWrite(amberLED,HIGH);
       delay(200);
-      digitalWrite(indicatorLED,LOW);
+      digitalWrite(amberLED,LOW);
       delay(200);
     }
   }
@@ -103,7 +106,7 @@ void setup() {
   }
 
   //*** Radio ***//
-  EEPROM.get(CHANNEL_ADDRESS,channel);
+  EEPROM.get(SERIAL_NUMBER_ADDRESS,channel);
   radio.radioSetup(CEREBRO,true,channel); //nodeID, autopower on;
   integerMessage.variable = 'Y';
   integerMessage.value = millis();
@@ -115,23 +118,47 @@ void setup() {
   }
   printChannel();
   reportVersion();
-  digitalWrite(indicatorLED,LOW);
+  digitalWrite(amberLED,LOW);
 }
 
 void loop() {
   //
-  if (Serial.available()){
-    char msg = Serial.read();
-    if (msg=='K'){
-      Serial.print("New Channel:");
-      uint8_t newNetworkID = parseData();
-      Serial.println(newNetworkID);
-      EEPROM.update(CHANNEL_ADDRESS, newNetworkID);
+  if (!digitalRead(userBTN)){ //user button is pushed
+    uint16_t holdCount = 0;
+    uint16_t holdThresh = 5000; //need to hold the button for 5 seconds
+    digitalWrite(greenLED,HIGH);
+    while(!digitalRead(userBTN) && holdCount < holdThresh){
+      delay(1);
+      holdCount++;
+    }
+    if (holdCount >= holdThresh) { //Button was held down for 5 seconds
+      //Reset settings that are in memory
+      EEPROM.update(SERIAL_NUMBER_ADDRESS, 0);
+      waveform = {0,0,1000,0,0,0};
+      EEPROM.put(WAVEFORM_ADDRESS,waveform);  //save new waveform to memory
+      EEPROM.put(LEFT_SETPOINT_ADDRESS,0);
+      EEPROM.put(RIGHT_SETPOINT_ADDRESS,0);
+
+      //blink to indicate button was held long enough and reset has occured
+      uint8_t blinkDelay = 85;
+      digitalWrite(greenLED,LOW);
+      delay(blinkDelay);
+      digitalWrite(greenLED,HIGH);
+      delay(blinkDelay);
+      digitalWrite(greenLED,LOW);
+      delay(blinkDelay);
+      digitalWrite(greenLED,HIGH);
+      delay(blinkDelay);
+
+      //restart MCU so it will 
       Serial.println("Restarting...");
       wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
       while(1){}              // do nothing and wait for the reset
     }
-    else if(msg=='?'){
+  }
+  if (Serial.available()){
+    char msg = Serial.read();
+    if (msg=='?'){
       printChannel();
       Serial.print("Version: ");
       Serial.println(VERSION);
@@ -140,7 +167,7 @@ void loop() {
   }
   //check for any received packets
   if (radio.receiveDone()){
-    uint8_t dlay = 5;
+    uint8_t dlay = 80;
     if (radio.DATALEN==1){ //received a command or a request for data
       sendACK();
       switch (radio.DATA[0]){
@@ -193,13 +220,18 @@ void loop() {
         case 'S': // Receiving a new Cerebro S/N
           EEPROM.update(SERIAL_NUMBER_ADDRESS, integerMessage.value);
           reportVersion();
+          Serial.print("New Serial:");
+          Serial.println(integerMessage.value);
+          Serial.println("Restarting...");
+          wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
+          while(1){}              // do nothing and wait for the reset
           break;
         case 'l': // Receiving a new left setpoint
-          Serial.print("\nTriggering Left @ ");Serial.println(integerMessage.value);
+          // Serial.print("\nTriggering Left @ ");Serial.println(integerMessage.value);
           triggerOne(integerMessage.value,&left);
           break;
         case 'r': // Receiving a new right setpoint
-          Serial.print("\nTriggering Right @");Serial.println(integerMessage.value);
+          // Serial.print("\nTriggering Right @");Serial.println(integerMessage.value);
           triggerOne(integerMessage.value,&right);
           break;
         case 'M':
@@ -213,7 +245,6 @@ void loop() {
     }
   }
   // LowPower.idle(SLEEP_FOREVER,ADC_OFF,TIMER4_OFF,TIMER3_OFF,TIMER1_OFF,TIMER0_ON,SPI_ON,USART1_OFF,TWI_OFF,USB_OFF);
-
 }
 
 void sendACK(){
@@ -246,11 +277,11 @@ void combinedTest(){
 }
 
 void isolationTest(){
-  Serial.print("Before left: ");
+  // Serial.print("Before left: ");
   feedbackReadings();
   triggerOne(left.setPoint,&left);
   delay(1000);
-  Serial.print("Before right: ");
+  // Serial.print("Before right: ");
   feedbackReadings();
   triggerOne(right.setPoint,&right);
 }
@@ -261,54 +292,42 @@ void feedbackReadings(){
   Serial.println(analogRead(right.analogPin));
 }
 
-void reportBattery(){
-  integerMessage.variable = 'B';
-  integerMessage.value = lipo.soc();
-  integerMessage.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage))){
-    //
-  }
-  else{
-    Serial.println("battery info send fail");
-  }
-}
-
 void printMissed(){
   reportBattery();
   delay(200);
   uint16_t missed;
-  Serial.print("missed,");Serial.println(missedCount);
+  // Serial.print("missed,");Serial.println(missedCount);
   integerMessage.variable = 'M';
   integerMessage.value = missedCount;
   if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),3,250)){
-    Serial.print("Sent");Serial.println(missedCount);
+    // Serial.print("Sent");Serial.println(missedCount);
   }
   else{
-    Serial.println("Sending again");
+    // Serial.println("Sending again");
   }
   integerMessage.variable = 'm';
   for (int i = 0; i <missedCount; i++ ){
     EEPROM.get(MISSING_ARRAY_ADDRESS+2*i,missed);
     integerMessage.value = (int)missed;
     if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),3,250)){
-      Serial.println(missed);
+      // Serial.println(missed);
     }
     else{
-      Serial.println("Sending again");
+      // Serial.println("Sending again");
     }
   }
-  Serial.println("done");
+  // Serial.println("done");
 }
 
 void reportVersion(){
   EEPROM.get(SERIAL_NUMBER_ADDRESS,cerebroInfo.serialNumber);
   cerebroInfo.firmware = VERSION;
   cerebroInfo.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&cerebroInfo), sizeof(cerebroInfo),4)){
-    Serial.println("Version sent successfully");
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&cerebroInfo), sizeof(cerebroInfo),4,20)){
+    // Serial.println("Version sent successfully");
   }
   else{
-    Serial.println("Error sending Version");
+    // Serial.println("Error sending Version");
   }
 }
 
@@ -316,21 +335,33 @@ void reportPower(){
   diodePwrs.lSetPoint = left.setPoint;
   diodePwrs.rSetPoint = right.setPoint;
   diodePwrs.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodePwrs), sizeof(diodePwrs),4)){
-    Serial.println("Diode Powers sent successfully");
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodePwrs), sizeof(diodePwrs),4,20)){
+    // Serial.println("Diode Powers sent successfully");
   }
   else{
-    Serial.println("Error sending Diode Powers");
+    // Serial.println("Error sending Diode Powers");
   }
 }
 
 void reportWaveform(){
   waveform.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&waveform), sizeof(waveform),4)){
-    Serial.println("Waveform sent successfully");
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&waveform), sizeof(waveform),4,20)){
+    // Serial.println("Waveform sent successfully");
   }
   else{
-    Serial.println("Error sending Waveform");
+    // Serial.println("Error sending Waveform");
+  }
+}
+
+void reportBattery(){
+  integerMessage.variable = 'B';
+  integerMessage.value = lipo.soc();
+  integerMessage.msgCount = msgCount;
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),2,20)){
+    //
+  }
+  else{
+    // Serial.println("Battery info send fail");
   }
 }
 

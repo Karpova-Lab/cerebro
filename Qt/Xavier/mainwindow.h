@@ -64,6 +64,7 @@ private:
     QString                 ratNumber,rigNumber;
     QString                 xavierVersion;
     bool                    sessionHasBegun;
+    int                     baseChannel;
 
     //Menus
     QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
@@ -75,10 +76,11 @@ private:
     QGridLayout*            equipmentLayout;
     QListWidget*            rigSelect,*ratSelect;
     QComboBox*              serialPortList;
-    QLabel*                 connectBS_label;
+    QLabel*                 connectBS_label,*cerebroNum_lbl;
     QPushButton*            refresh_btn,*connect_btn,*rig_lbl,*rat_lbl;
     QCheckBox*              debugCheckbox;
     QStringList             aliasStringList,rigList,ratList;
+    QSpinBox*               cerebroNum_spin;
 
     //Cerebro Status
     QGroupBox*              cerStatusBox;
@@ -133,10 +135,11 @@ private:
     //Session Start
     QDialog*                sessionStartDialog;
     QGridLayout*            sessionStartLayout;
-    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*implantSettingsMatch_lbl;
+    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*implantSettingsMatch_lbl,*newCerebro_lbl;
     QPlainTextEdit*         sessionStartMonitor;
-    QPushButton*            startSession_btn,*retry_btn;
+    QPushButton*            startSession_btn,*retry_btn,*newCerebro_btn,*setSerial_btn;
     QGridLayout*            mainLayout;
+    QSpinBox*               newCerebro_spin;
 
 private slots:
 
@@ -190,6 +193,9 @@ private slots:
     void testCombined();
     void testLong();
     void testShort();
+
+    void setupCerebro();
+    void updateSerial();
 };
 
 
