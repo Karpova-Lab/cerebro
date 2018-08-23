@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.8.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t05/08/2018";
+        xavierVersion = "3.8.1";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t08/23/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -879,7 +879,7 @@ void MainWindow::readFromBase()
         else if (dataFromBaseMsg[0] == "Diode Powers"){
             Lset_lbl->setText("Lset\n"+dataFromBaseMsg[1]);leftDiode_spn->setValue(dataFromBaseMsg[1].toInt());
             Rset_lbl->setText("Rset\n"+dataFromBaseMsg[2]);rightDiode_spn->setValue(dataFromBaseMsg[2].toInt());
-            if ((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower)){
+            if (((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower))  && !sessionHasBegun){
                 QTimer::singleShot(500, this, SLOT(matchPowers()));
             }
             else{
