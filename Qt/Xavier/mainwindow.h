@@ -85,7 +85,7 @@ private:
     //Cerebro Status
     QGroupBox*              cerStatusBox;
     QGridLayout*            cerStatusLayout;
-    QLabel*                 serialNumber_lbl,*cerFirmware_lbl,*Lset_lbl,*Rset_lbl,*cerDelay_lbl,*cerOn_lbl,*cerOff_lbl,*cerTrain_lbl,*cerRamp_lbl;
+    QLabel*                 implantTitle_lbl,*powerTitle_lbl,*waveformTitle_lbl,*serialNumber_lbl,*cerFirmware_lbl,*Lset_lbl,*Rset_lbl,*cerDelay_lbl,*cerOn_lbl,*cerOff_lbl,*cerTrain_lbl,*cerRamp_lbl;
     QPushButton*            getInfo_btn;
     QProgressBar*           batteryIndicator;
     QLabel*                 battery_lbl;

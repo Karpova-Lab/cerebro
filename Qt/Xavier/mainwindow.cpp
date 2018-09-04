@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.8.1";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t08/23/2018";
+        xavierVersion = "3.8.2";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t09/04/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -107,13 +107,19 @@ MainWindow::MainWindow(QWidget *parent)
     equipmentBox->setLayout(equipmentLayout);
 
     //Cerebro Status
-    int infoRow = 0;
-    int battRow = 2;
-    int battLblRow = 1;
+    int titleRow = 0;
+    int infoRow = 1;
+//    int battLblRow = 2;
+    int battRow =2;
     int buttonRow = 3;
 
     cerStatusBox = new QGroupBox("Cerebro Status");
         cerStatusLayout = new QGridLayout();
+            implantTitle_lbl = new QLabel("Version Info");
+            implantTitle_lbl->setAlignment(Qt::AlignCenter);
+            implantTitle_lbl->setWordWrap(true);
+            implantTitle_lbl->setStyleSheet("font-weight:bold;");
+        cerStatusLayout->addWidget(implantTitle_lbl,titleRow,0,1,2);
             serialNumber_lbl = new QLabel("Serial #\n");
             serialNumber_lbl->setAlignment(Qt::AlignCenter);
             serialNumber_lbl->setWordWrap(true);
@@ -122,14 +128,24 @@ MainWindow::MainWindow(QWidget *parent)
             cerFirmware_lbl->setAlignment(Qt::AlignCenter);
             cerFirmware_lbl->setWordWrap(true);
         cerStatusLayout->addWidget(cerFirmware_lbl,infoRow,1);
-            Lset_lbl = new QLabel("Lset\n");
+            powerTitle_lbl = new QLabel("Laser Diode Power");
+            powerTitle_lbl->setAlignment(Qt::AlignCenter);
+            powerTitle_lbl->setWordWrap(true);
+            powerTitle_lbl->setStyleSheet("font-weight:bold;");
+        cerStatusLayout->addWidget(powerTitle_lbl,titleRow,3,1,2);
+            Lset_lbl = new QLabel("Left\n");
             Lset_lbl->setAlignment(Qt::AlignCenter);
             Lset_lbl->setWordWrap(true);
         cerStatusLayout->addWidget(Lset_lbl,infoRow,3);
-            Rset_lbl = new QLabel("Rset\n");
+            Rset_lbl = new QLabel("Right\n");
             Rset_lbl->setAlignment(Qt::AlignCenter);
             Rset_lbl->setWordWrap(true);
         cerStatusLayout->addWidget(Rset_lbl,infoRow,4);
+            waveformTitle_lbl = new QLabel("Waveform Parameters");
+            waveformTitle_lbl->setAlignment(Qt::AlignCenter);
+            waveformTitle_lbl->setWordWrap(true);
+            waveformTitle_lbl->setStyleSheet("font-weight:bold;");
+        cerStatusLayout->addWidget(waveformTitle_lbl,titleRow,6,1,5);
             cerDelay_lbl = new QLabel("Delay\n");
             cerDelay_lbl->setAlignment(Qt::AlignCenter);
             cerDelay_lbl->setWordWrap(true);
@@ -159,10 +175,11 @@ MainWindow::MainWindow(QWidget *parent)
             batteryIndicator->setMaximum(100);
             batteryIndicator->setTextVisible(false);
             batteryIndicator->setFormat("%p%");
-        cerStatusLayout->addWidget(batteryIndicator,battRow,0,1,11);
+        cerStatusLayout->addWidget(batteryIndicator,battRow,0,1,9);
             battery_lbl = new QLabel(batteryIndicator->text());
-        cerStatusLayout->addWidget(battery_lbl,battLblRow,0,1,11,Qt::AlignCenter);
-            getInfo_btn = new QPushButton("Check Wireless Connection and Update Status");
+            battery_lbl->setAlignment(Qt::AlignJustify);
+        cerStatusLayout->addWidget(battery_lbl,battRow,9,1,2,Qt::AlignCenter);
+            getInfo_btn = new QPushButton("Check Wireless Connection and Update Battery Status");
         cerStatusLayout->addWidget(getInfo_btn,buttonRow,0,1,11,Qt::AlignCenter);
     cerStatusBox->setLayout(cerStatusLayout);
     cerStatusBox->setStyleSheet("");
@@ -877,8 +894,8 @@ void MainWindow::readFromBase()
             baseChannel_lbl->setText("Channel: "+ QString::number(baseChannel));
         }
         else if (dataFromBaseMsg[0] == "Diode Powers"){
-            Lset_lbl->setText("Lset\n"+dataFromBaseMsg[1]);leftDiode_spn->setValue(dataFromBaseMsg[1].toInt());
-            Rset_lbl->setText("Rset\n"+dataFromBaseMsg[2]);rightDiode_spn->setValue(dataFromBaseMsg[2].toInt());
+            Lset_lbl->setText("Left\n"+dataFromBaseMsg[1]);leftDiode_spn->setValue(dataFromBaseMsg[1].toInt());
+            Rset_lbl->setText("Right\n"+dataFromBaseMsg[2]);rightDiode_spn->setValue(dataFromBaseMsg[2].toInt());
             if (((dataFromBaseMsg[1].toInt() != titleLeftPower) || (dataFromBaseMsg[2].toInt() != titleRightPower))  && !sessionHasBegun){
                 QTimer::singleShot(500, this, SLOT(matchPowers()));
             }
@@ -925,7 +942,7 @@ void MainWindow::readFromBase()
 //            qDebug()<<dataFromBaseMsg[1];
             cerStatusBox->setStyleSheet("");
             batteryIndicator->setValue(dataFromBaseMsg[1].toInt());
-            battery_lbl->setText("\n"+batteryIndicator->text()+" Battery Life");
+            battery_lbl->setText(batteryIndicator->text()+" Battery Life");
         }
         else if (dataFromBaseMsg[0] == 'X'){
             cerStatusBox->setStyleSheet("color:#ed0b0b");
