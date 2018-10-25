@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.8.2";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t09/04/2018";
+        xavierVersion = "3.8.3";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/25/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -214,23 +214,13 @@ MainWindow::MainWindow(QWidget *parent)
     //Waveform Adjustment
     adjustBox = new QGroupBox("Waveform Parameters");
         adjustmentLayout = new QGridLayout();
-            power_lbl = new QLabel("Power Level");
-            power_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        adjustmentLayout->addWidget(power_lbl,0,0);
-            power_spn = new QDoubleSpinBox();
-            power_spn->setRange(0,65535);
-            power_spn->setSingleStep(50);
-            power_spn->setAlignment(Qt::AlignCenter);
-        adjustmentLayout->addWidget(power_spn,0,1);
-            newPower_btn = new QPushButton("Send New Power Level");
-        adjustmentLayout->addWidget(newPower_btn,1,0,1,2);
             singleShot = new QRadioButton("Single Shot");
             singleShot->setChecked(true);
-        adjustmentLayout->addWidget(singleShot,2,0,Qt::AlignRight);
+        adjustmentLayout->addWidget(singleShot,0,0,Qt::AlignRight);
             pulseTrain = new QRadioButton("Pulse Train");
-        adjustmentLayout->addWidget(pulseTrain,2,1);
+        adjustmentLayout->addWidget(pulseTrain,0,1);
             startDelay_checkbox = new QCheckBox("Start Delay");
-        adjustmentLayout->addWidget(startDelay_checkbox,3,0,Qt::AlignRight);
+        adjustmentLayout->addWidget(startDelay_checkbox,1,0,Qt::AlignRight);
             startDelay_spn = new QDoubleSpinBox();
             startDelay_spn->setDecimals(3);
             startDelay_spn->setRange(0,65.535);
@@ -238,21 +228,21 @@ MainWindow::MainWindow(QWidget *parent)
             startDelay_spn->setSuffix(" s");
             startDelay_spn->setAlignment(Qt::AlignCenter);
             startDelay_spn->setVisible(false);
-        adjustmentLayout->addWidget(startDelay_spn,3,1);
+        adjustmentLayout->addWidget(startDelay_spn,1,1);
             onTime_lbl = new QLabel("On Time");
             onTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        adjustmentLayout->addWidget(onTime_lbl,4,0);
+        adjustmentLayout->addWidget(onTime_lbl,2,0);
             onTime_spn = new QDoubleSpinBox();
             onTime_spn->setDecimals(3);
             onTime_spn->setRange(0,65.535);
             onTime_spn->setSingleStep(.050);
             onTime_spn->setSuffix(" s");
             onTime_spn->setAlignment(Qt::AlignCenter);
-        adjustmentLayout->addWidget(onTime_spn,4,1);
+        adjustmentLayout->addWidget(onTime_spn,2,1);
             offTime_lbl = new QLabel("Off Time");
             offTime_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             offTime_lbl->setVisible(false);
-        adjustmentLayout->addWidget(offTime_lbl,5,0);
+        adjustmentLayout->addWidget(offTime_lbl,3,0);
             offTime_spn = new QDoubleSpinBox();
             offTime_spn->setDecimals(3);
             offTime_spn->setRange(0,65.535);
@@ -260,15 +250,15 @@ MainWindow::MainWindow(QWidget *parent)
             offTime_spn->setSuffix(" s");
             offTime_spn->setAlignment(Qt::AlignCenter);
             offTime_spn->setVisible(false);
-        adjustmentLayout->addWidget(offTime_spn,5,1);
+        adjustmentLayout->addWidget(offTime_spn,3,1);
             trainDescription_lbl  = new QLabel("");
             trainDescription_lbl->setVisible(false);
             trainDescription_lbl->setAlignment(Qt::AlignRight);
-        adjustmentLayout->addWidget(trainDescription_lbl,6,0,1,2);
+        adjustmentLayout->addWidget(trainDescription_lbl,4,0,1,2);
             trainDuration_lbl = new QLabel("Train Duration");
             trainDuration_lbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             trainDuration_lbl->setVisible(false);
-        adjustmentLayout->addWidget(trainDuration_lbl,7,0);
+        adjustmentLayout->addWidget(trainDuration_lbl,5,0);
             trainDuration_spn = new QDoubleSpinBox();
             trainDuration_spn->setDecimals(3);
             trainDuration_spn->setRange(0,9999.999);
@@ -276,9 +266,9 @@ MainWindow::MainWindow(QWidget *parent)
             trainDuration_spn->setSuffix(" s");
             trainDuration_spn->setAlignment(Qt::AlignCenter);
             trainDuration_spn->setVisible(false);
-        adjustmentLayout->addWidget(trainDuration_spn,7,1);
+        adjustmentLayout->addWidget(trainDuration_spn,5,1);
             fade_checkbox = new QCheckBox("Ramp Down");
-        adjustmentLayout->addWidget(fade_checkbox,8,0,Qt::AlignRight);
+        adjustmentLayout->addWidget(fade_checkbox,6,0,Qt::AlignRight);
             fade_spn = new QDoubleSpinBox();
             fade_spn->setDecimals(1);
             fade_spn->setRange(.1,65.5);
@@ -286,10 +276,10 @@ MainWindow::MainWindow(QWidget *parent)
             fade_spn->setSuffix(" s");
             fade_spn->setAlignment(Qt::AlignCenter);
             fade_spn->setVisible(false);
-        adjustmentLayout->addWidget(fade_spn,8,1);
+        adjustmentLayout->addWidget(fade_spn,6,1);
             sendSettings_btn = new QPushButton("Send New Waveform Parameters");
             sendSettings_btn->setAutoDefault(true);
-        adjustmentLayout->addWidget(sendSettings_btn,9,0,1,2);
+        adjustmentLayout->addWidget(sendSettings_btn,7,0,1,2);
     adjustBox->setLayout(adjustmentLayout);
     adjustBox->setMinimumWidth(300);
     adjustBox->setEnabled(false);
@@ -607,9 +597,6 @@ void MainWindow::applySettings()
         mcubeEnabled = settings.value("mcubeEnabled").toBool();
     settings.endGroup();
 //    toolMenu->setEnabled(pythonEnabled);
-    power_lbl->setVisible(mcubeEnabled);
-    power_spn->setVisible(mcubeEnabled);
-    newPower_btn->setVisible(mcubeEnabled);
 
 
     //Populate COM port Dropdowns
@@ -753,7 +740,7 @@ void MainWindow::connectBasePort()
                 ratNumber = "9999";
                 rigNumber = "7.3";
                 titleLeftPower = 100;
-                titleRightPower = 105;
+                titleRightPower = 100;
                 setWindowTitle("Xavier (Debug)");
             }
             clearBase_btn->setEnabled(false);
