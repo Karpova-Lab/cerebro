@@ -31,7 +31,7 @@ SOFTWARE.
 
 #define CHANNEL_ADDRESS 0
 
-const uint8_t VERSION = 55; //2018-05-08
+const uint8_t VERSION = 56; //2018-11-13
 
 const uint8_t LED = 13;
 const uint8_t TRIGGER_PIN = 6;
@@ -116,7 +116,7 @@ void loop() {
     else if (msg=='K'){
       parseData();
       uint8_t newNetworkID = valsFromParse[0];
-      Serial1.print("\Changing to channel:");
+      Serial1.print("\nChanging to channel:");
       Serial1.println(newNetworkID);
       EEPROM.update(CHANNEL_ADDRESS, newNetworkID);
       Serial1.println("Restarting...");
@@ -269,22 +269,26 @@ void printDiodePowers(DiodePowers printPower,  bool response){
 void printBattery(uint16_t batteryMsgCount, uint8_t batteryStatus){
   printTime();
   Serial1.print("[");Serial1.print(batteryMsgCount);Serial1.print("]");
-  uint32_t theVals[1] = {batteryStatus};
-  sendDataToXavier("Battery",theVals,1);
-  printToBaseMonitor("Battery",theVals,1);
+  uint32_t theVals[] = {batteryStatus};
+  uint8_t numElements = sizeof(theVals)/sizeof(uint32_t);
+
+  sendDataToXavier("Battery",theVals,numElements);
+  printToBaseMonitor("Battery",theVals,numElements);
 }
 
 void printWaveform(WaveformData wave, bool response){
   printTime();
-  uint32_t theVals[5] = {wave.startDelay, wave.onTime, wave.offTime, wave.trainDur, wave.rampDur};
-  sendDataToXavier("Waveform",theVals,5);
+  uint32_t theVals[] = {wave.startDelay, wave.onTime, wave.offTime, wave.trainDur, wave.rampDur};
+  uint8_t numElements = sizeof(theVals)/sizeof(uint32_t);
+
+  sendDataToXavier("Waveform",theVals,numElements);
   if(response){
     Serial1.print("[");Serial1.print(wave.msgCount);Serial1.print(']');
   }
   else{
     Serial1.print(msgCount);
   }
-  printToBaseMonitor("Waveform",theVals,5);
+  printToBaseMonitor("Waveform",theVals,numElements);
 }
 
 void printDiodeStats(){

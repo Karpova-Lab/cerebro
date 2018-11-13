@@ -34,10 +34,10 @@ void setup() {
   }
   Serial.println("connected");
   digitalWrite(amberLED,HIGH);
-  Serial.print("Setting Capacity... ");
+  Serial.print("Setting Capacity...");
   lipo.setCapacity(400);
   Serial.println("set");
-  Serial.print("Waiting for state of charge to initialize... ");
+  Serial.print("Waiting for state of charge to initialize...");
   while(lipo.soc()==0){
     Serial.print(".");
     delay(1);
