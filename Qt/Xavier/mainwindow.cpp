@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.8.3";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t10/25/2018";
+        xavierVersion = "3.8.4";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/27/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -507,7 +507,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(serial,SIGNAL(readyRead()),this,SLOT(readFromBase()));
     connect(serial2,SIGNAL(readyRead()),this,SLOT(readFromCerebro()));
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)),this,SLOT(errorMsg()));
-    connect(clearBase_btn,SIGNAL(clicked()),this,SLOT(checkForBase()));
+    connect(clearBase_btn,SIGNAL(clicked()),this,SLOT(clearMonitor()));
     connect(clearDownload_btn,SIGNAL(clicked()),this,SLOT(clearMonitor2()));
     connect(saveMonitor_btn,SIGNAL(clicked()),this,SLOT(saveFile()));
     connect(queryCerebro_btn,SIGNAL(clicked()),this,SLOT(getCerebroInfoOverSerial()));
