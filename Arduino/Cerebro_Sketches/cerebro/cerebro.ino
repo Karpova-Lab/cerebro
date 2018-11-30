@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-const uint8_t VERSION = 95; // 2018-05-08
+const uint8_t VERSION = 96; // 2018-11-30
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /*
         ______                   __
@@ -107,7 +107,7 @@ void setup() {
 
   //*** Radio ***//
   EEPROM.get(SERIAL_NUMBER_ADDRESS,channel);
-  radio.radioSetup(CEREBRO,true,channel); //nodeID, autopower on;
+  radio.radioSetup(CEREBRO,false,channel); //nodeID, autopower off;
   integerMessage.variable = 'Y';
   integerMessage.value = millis();
   if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),3,250)){
@@ -167,7 +167,7 @@ void loop() {
   }
   //check for any received packets
   if (radio.receiveDone()){
-    uint8_t dlay = 80;
+    uint8_t dlay = 200;
     if (radio.DATALEN==1){ //received a command or a request for data
       sendACK();
       switch (radio.DATA[0]){
@@ -323,7 +323,7 @@ void reportVersion(){
   EEPROM.get(SERIAL_NUMBER_ADDRESS,cerebroInfo.serialNumber);
   cerebroInfo.firmware = VERSION;
   cerebroInfo.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&cerebroInfo), sizeof(cerebroInfo),4,20)){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&cerebroInfo), sizeof(cerebroInfo),4)){
     // Serial.println("Version sent successfully");
   }
   else{
@@ -335,7 +335,7 @@ void reportPower(){
   diodePwrs.lSetPoint = left.setPoint;
   diodePwrs.rSetPoint = right.setPoint;
   diodePwrs.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodePwrs), sizeof(diodePwrs),4,20)){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&diodePwrs), sizeof(diodePwrs),4)){
     // Serial.println("Diode Powers sent successfully");
   }
   else{
@@ -345,7 +345,7 @@ void reportPower(){
 
 void reportWaveform(){
   waveform.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&waveform), sizeof(waveform),4,20)){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&waveform), sizeof(waveform),4)){
     // Serial.println("Waveform sent successfully");
   }
   else{
@@ -357,7 +357,7 @@ void reportBattery(){
   integerMessage.variable = 'B';
   integerMessage.value = lipo.soc();
   integerMessage.msgCount = msgCount;
-  if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),2,20)){
+  if (radio.sendWithRetry(BASESTATION, (const void*)(&integerMessage), sizeof(integerMessage),4)){
     //
   }
   else{
