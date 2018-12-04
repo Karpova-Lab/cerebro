@@ -29,15 +29,14 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Xavier");
     qApp->setStyleSheet("QListWidget::item:selected { background-color: gold; color: black}");
     //Menu bar
+    //File
     fileMenu = menuBar()->addMenu("File");
-        toggleDebug = new QAction(this);
-        toggleDebug->setText("Enter Debug Mode");
-        toggleDebug->setShortcut(QKeySequence(tr("Ctrl+D")));
-    fileMenu->addAction(toggleDebug);
         gotoSettings = new QAction(this);
         gotoSettings->setText("Settings...");
         gotoSettings->setShortcut(QKeySequence(tr("Ctrl+,")));
     fileMenu->addAction(gotoSettings);
+
+    // Go to
     goMenu = menuBar()->addMenu("Go To");
         openDir = new QAction(this);
         openDir->setText("Default Save Directory");
@@ -45,6 +44,14 @@ MainWindow::MainWindow(QWidget *parent)
         gotoApplocation = new QAction(this);
         gotoApplocation->setText("App install directory");
     goMenu->addAction(gotoApplocation);
+
+    //View
+    viewMenu = menuBar()->addMenu("View");
+        viewSummary = new QAction(this);
+        viewSummary->setText("Session Summary");
+    viewMenu->addAction(viewSummary);
+
+    //Help
     helpMenu = menuBar()->addMenu("Help");
         gotoDocs = new QAction(this);
         gotoDocs->setText("User Guide");
@@ -60,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.8.4";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t11/27/2018";
+        xavierVersion = "3.9.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/04/2018";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -483,7 +490,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gotoApplocation,SIGNAL(triggered()),this,SLOT(gotoAppLocation()));
     connect(gotoDocs,SIGNAL(triggered()),this,SLOT(openDocs()));
     connect(about,SIGNAL(triggered(bool)),aboutDialog,SLOT(exec()));
-    connect(toggleDebug,SIGNAL(triggered()),this,SLOT(setDebug()));
+    connect(viewSummary,SIGNAL(triggered()),this,SLOT(getGraphs()));
     connect(debugCheckbox,SIGNAL(clicked(bool)),this,SLOT(setDebug()));
     connect(gotoSettings,SIGNAL(triggered()),settingsDlog,SLOT(openSettings()));
 
@@ -698,7 +705,7 @@ void MainWindow::connectBasePort()
     }
     else{ //  disable and enable components depending on whether we are connecting or disconnecting to the base station
         gotoSettings->setEnabled(baseConnected);
-        toggleDebug->setEnabled(baseConnected);
+        viewSummary->setEnabled(baseConnected);
         rig_lbl->setEnabled(baseConnected);
         rat_lbl->setEnabled(baseConnected);
         rigSelect->setEnabled(baseConnected);
@@ -1085,7 +1092,6 @@ void MainWindow::saveFile()
     }
 }
 
-
 void MainWindow::errorMsg()
 {
     if (((serial->error()==11)|(serial->error()==7)|(serial->error()==8)|(serial->error()==9)&& errorThrown==false)){                //http://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
@@ -1110,7 +1116,6 @@ void MainWindow::updateFilter(){
     }
     baseFilter_label->setText("Filter Duration: "+ QString::number(baseFilter) + " s");
  }
-
 
 void MainWindow::abort(){
     QString msg = "A\n";
@@ -1175,7 +1180,6 @@ void MainWindow::gotoAppLocation(){
     QDesktopServices::openUrl(QUrl::fromLocalFile(saveDirectoryPath));
 }
 
-
 void MainWindow::trainDur(){
     float total = onTime_spn->value()+offTime_spn->value();
     trainDuration_spn->setMinimum(total);
@@ -1194,7 +1198,6 @@ void MainWindow::showDebug(){
         rigSelect->clearSelection();
         ratSelect->clearSelection();
         connect_btn->setText("Connect to Base Station (Debug Mode)");
-        toggleDebug->setText("Exit Debug Mode");
         bugBox->setVisible(true);
         charBox->setVisible(true);
     }
@@ -1202,7 +1205,6 @@ void MainWindow::showDebug(){
         rigSelect->setEnabled(true);
         ratSelect->setEnabled(true);
         connect_btn->setText("Connect to Base Station");
-        toggleDebug->setText("Enter Debug Mode");
         bugBox->setVisible(false);
         charBox->setVisible(false);
     }
@@ -1222,8 +1224,6 @@ void MainWindow::openDocs(){
     QDesktopServices::openUrl(site);
 }
 
-
-
 void MainWindow::getGraphs()
 {
     //get the default save directory
@@ -1231,12 +1231,11 @@ void MainWindow::getGraphs()
     settings.beginGroup("Saving");
     QString saveDirectoryPath = settings.value("DefaultDir").toString();
     settings.endGroup();
-    QString baseData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),saveDirectoryPath,tr("(*station.csv)"));
+    QString baseData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),saveDirectoryPath,tr("(*baseLog.csv)"));
     if (baseData!=""){
         //the cerebro data should be in the same folder, so we have the getOpenFileName dialog start in the the same folder
         QString betterPath = baseData.mid(saveDirectoryPath.length(),baseData.indexOf("/",saveDirectoryPath.length()+1)-saveDirectoryPath.length())+"/";
-        QString cerData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),betterPath,tr("(*cerebroLog.csv)"));
-        if (cerData!=""){
+        if (1){
             //Run python script for creating graph
             QProcess *process = new QProcess(this);
             QString plotArg;
@@ -1249,7 +1248,8 @@ void MainWindow::getGraphs()
                 plotArg = "alignment and histogram";
             }
             QStringList pythonArgs;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/parseLogs.py"<<baseData<<cerData<<plotArg; //pass the two log file locations into the python script
+            qDebug()<<baseData;
+            pythonArgs<<qApp->applicationDirPath()+"/python scripts/graph.py"<<baseData; //pass the two log file locations into the python script
             process->start("python",pythonArgs);
             process->waitForFinished(-1);
             QString errorString = process->readAllStandardError();

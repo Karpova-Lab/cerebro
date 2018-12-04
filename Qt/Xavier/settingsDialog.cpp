@@ -105,7 +105,7 @@ settingsDialog::settingsDialog(QWidget *parent)
     settingsLayout->addWidget(directoryBox);
     settingsLayout->addWidget(sessionListsBox);
 //    settingsLayout->addWidget(portEditBox);
-        usbLabelDlog = new usbLabelDialog();
+    usbLabelDlog = new usbLabelDialog();
     settingsLayout->addWidget(usbLabelDlog);
 //    settingsLayout->addWidget(featuresBox);
     settingsLayout->addWidget(okButton);
@@ -170,9 +170,9 @@ void settingsDialog::removeItem()
 
 void settingsDialog::addListItem()
 {
-    QListWidget *tempList = 0;
-    QLineEdit *tempTxtbox = 0;
-    QStringList *tempStringList = 0;
+    QListWidget *tempList = nullptr;
+    QLineEdit *tempTxtbox = nullptr;
+    QStringList *tempStringList = nullptr;
     if(sender()== add1_btn || sender()== newItem1){
         tempList = rigVals;
         tempTxtbox = newItem1;

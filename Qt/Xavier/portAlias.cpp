@@ -43,7 +43,7 @@ usbLabelDialog::usbLabelDialog(QWidget *parent)
     //alias assignment box
     portEditLayout = new QGridLayout();
         aliasWidget = new QListWidget();
-        aliasWidget->setMinimumHeight(60);
+        aliasWidget->setMinimumHeight(150);
         aliasWidget->setMinimumWidth(300);
     portEditLayout->addWidget(aliasWidget,1,0);
 

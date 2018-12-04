@@ -67,7 +67,7 @@ private:
     int                     baseChannel;
 
     //Menus
-    QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
+    QAction*                gotoSettings,*viewSummary,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
     QMenu*                  fileMenu,*viewMenu,*toolMenu,*goMenu,*helpMenu;
     QMessageBox*            aboutDialog;
 
