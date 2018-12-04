@@ -14,9 +14,9 @@ Bill of Materials
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | Qty | Description                     | Datasheet                                                         | Order Link                                                                                                                               | 
 +=====+=================================+===================================================================+==========================================================================================================================================+
-| 1   | Cerebro PCB                     |  :download:`Cerebro 5.7<Datasheets/cerebro5.7.pdf>`               | `OSH Park <https://oshpark.com/shared_projects/MiiC2fHG>`_                                                                               | 
+| 1   | Cerebro PCB                     |  :download:`Cerebro 5.8<Datasheets/cerebro5.8.pdf>`               | `OSH Park <https://oshpark.com/shared_projects/ASxhDBJv>`_                                                                               | 
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| 1   | 400 mAh Battery                 |  :download:`1570<Datasheets/battery_400mah.pdf>`                  | `Sparkfun <https://www.sparkfun.com/products/13851>`_                                                                                    | 
+| 1   | 400 mAh Battery                 |  :download:`3898<Datasheets/battery_400mah.pdf>`                  | `Adafruit <https://www.adafruit.com/product/3898>`_                                                                                      | 
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | 1   | 915 MHz Radio                   |  :download:`RFM69HCW<Datasheets/radio.pdf>`                       | `LowPowerLab <https://lowpowerlab.com/shop/product/158>`_                                                                                | 
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
@@ -101,11 +101,11 @@ Programming Instructions
 Cerebro is designed to be easily reprogrammed through the onboard micro USB. 
 However when builing a Cerebro from scratch, you must first burn a `bootloader <https://www.arduino.cc/en/Tutorial/ArduinoISP>`_  onto the microcontroller in order to later upload programs through USB. 
 
-To burn a bootloader you need an external programmer that will talk to the microntroller through ICSP. 
+To burn a bootloader you need an external programmer that will talk to the microntroller through the In-Circuit Serial Programmer (ISP). 
 You can use an Arduino as your external ISP and temporarily solder wires to the Cerebro PCB. 
 I recommmend using a `USB microISP <https://www.tindie.com/products/nsayer/usb-isp/?pt=ac_prod_search>`_ along with a :doc:`Pogo Connector <programmer>`.
 
-1. The programmer needs to connect to the ICSP thru-holes (MOSI, MISO, SCK, RST, GND and 3V) on the Cerebro PCB.
+1. The programmer needs to connect to the ISP thru-holes (MOSI, MISO, SCK, RST, GND and 3V) on the Cerebro PCB.
 
 .. figure:: photos/Programmer/programmer.jpg
   :align: center
