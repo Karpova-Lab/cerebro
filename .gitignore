@@ -36,3 +36,4 @@ qrc_myfiles.cpp
 qrc_myfiles.o
 .vscode
 Qt/build-Xavier-Desktop_Qt_5_10_0_clang_64bit3-Release
+Documentation_src/source/_build
