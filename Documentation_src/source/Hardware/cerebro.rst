@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
 =======
 Cerebro 
 =======
@@ -5,9 +6,9 @@ Cerebro
 .. include:: Characters/isogrk1.txt
 .. include:: Characters/mmlalias.txt
 
-.. .. image:: ../Overview/cerebro.jpg
-..   :align: center
-..   :scale: 100 %
+.. image:: photos/cerebro_views.webp
+  :align: center
+  :width: 100 %
 
 Bill of Materials
 =================
@@ -52,7 +53,7 @@ Bill of Materials
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | 1   | Micro USB horizontal socket     |  :download:`10118194-0001LF<Datasheets/usb_plug_horizontal.pdf>`  | `Digi-Key <https://www.digikey.com/products/en?keywords=609-4618-1-ND>`_                                                                 | 
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| 1   | Molex Micro-Lock socket         |  :download:`0559350230<Datasheets/microlock_socket.pdf>`          | `Digi-Key <https://www.digikey.com/products/en?keywords=WM17038CT-ND>`_                                                                  | 
+| 1   | Molex Micro-Lock socket         |  :download:`5055670271<Datasheets/microlock_socket.pdf>`          | `Digi-Key <https://www.digikey.com/products/en?keywords=WM17038CT-ND>`_                                                                  | 
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | 1   | Molex Micro-Lock plug with wire |  :download:`0151360206<Datasheets/microlock_plug.pdf>`            | `Digi-Key <https://www.digikey.com/products/en?keywords=WM17161-ND>`_                                                                    | 
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
@@ -88,15 +89,13 @@ Bill of Materials
 +-----+---------------------------------+-------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 
 
-
-
-Build Instructions
-==================
-
-.. _programmming instructions:
-
 Programming Instructions
 ========================
+
+.. _burn boot:
+
+Burning a Bootloader
+--------------------
 
 Cerebro is designed to be easily reprogrammed through the onboard micro USB. 
 However when builing a Cerebro from scratch, you must first burn a `bootloader <https://www.arduino.cc/en/Tutorial/ArduinoISP>`_  onto the microcontroller in order to later upload programs through USB. 
@@ -109,7 +108,7 @@ I recommmend using a `USB microISP <https://www.tindie.com/products/nsayer/usb-i
 
 .. figure:: photos/Programmer/programmer.jpg
   :align: center
-  :scale: 100%
+  :width: 100%
 
 2. In the Arduino IDE, select Tools->Board->"Adafruit Feather 32u4" 
 3. Select  Tools->Programmer->"USBtinyISP" or Tools->Programmer->"ArduinoISP" if using an Arduino as the programmer
@@ -118,3 +117,10 @@ I recommmend using a `USB microISP <https://www.tindie.com/products/nsayer/usb-i
 .. figure:: photos/Programmer/burn.png
   :align: center
   :scale: 100%
+
+Uploading Test Program
+----------------------
+
+
+Uploading Firmware
+------------------

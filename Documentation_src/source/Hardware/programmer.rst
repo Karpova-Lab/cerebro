@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
 ==============
 Pogo Connector
 ==============
@@ -5,9 +6,6 @@ Pogo Connector
 .. include:: Characters/isogrk1.txt
 .. include:: Characters/mmlalias.txt
 
-.. .. image:: ../Overview/cerebro.jpg
-..   :align: center
-..   :scale: 100 %
 
 Bill of Materials
 =================
@@ -31,4 +29,4 @@ Bill of Materials
 +-----+----------------------+-------------------------------------------------------+------------------------------------------------------------------------+
 
 
-:ref:`Using the connector to program Cerebro <programmming instructions>`
+Use the Pogo connector to :ref:`burn a bootloader onto Cerebro <burn boot>`

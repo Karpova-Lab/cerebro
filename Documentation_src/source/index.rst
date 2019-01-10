@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
 ====================================
 Cerebro Wireless Optogenetics System
 ====================================
@@ -9,7 +10,7 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
 .. raw:: html
 
   <div style="text-align:center; margin-bottom:24px">
-    <a href="https://github.com/Karpova-Lab/cerebro" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">All files available on Github</a>
+    <a href="https://github.com/Karpova-Lab/cerebro" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">Files on GitHub</a>
   </div>
 
 This project was developed by Andy Lustig in the `Karpova Lab at Janelia Research Campus <https://www.janelia.org/lab/karpova-lab>`_.
@@ -19,12 +20,12 @@ If you have any questions you can contact him at lustiga@janelia.hhmi.org
   This documentation is very much a work in progress. Please understand that there will porbably be typos and missing
 
 .. Note::
-  This documentation is for Version 2 of the system.
+  You are currently viewing documentation for the **radio** controlled Version 2 system. To view documentation for **infrared** controlled Version 1 system, click the button below.
 
   .. raw:: html
 
     <div style="text-align:center; margin-bottom:24px">
-      <a href="http://cerebro.readthedocs.io/en/1.0/" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">Click Here for Version 1 Documentation</a>
+      <a href="http://cerebro.readthedocs.io/en/1.0/" style="background-color: #2980b9;border: none;color: white;padding: 15px 15px;text-align:center;text-decoration: none;display: inline-block;font-size: 18px;border-radius:15px">Version 1 Documentation</a>
     </div>
 
 .. toctree::

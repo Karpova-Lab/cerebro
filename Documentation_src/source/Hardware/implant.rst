@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
 ============
 Head Implant
 ============
@@ -5,9 +6,9 @@ Head Implant
 .. include:: Characters/mmlalias.txt
 .. include:: Characters/isopub.txt
 
-.. figure:: photos/implant_cad.png
+.. figure:: photos/implant_cad.jpg
   :align: center
-  :scale: 100%
+  :width: 100%
 
 .. _implantTools:
 
@@ -61,7 +62,7 @@ Prepare Fiber
 
 .. figure:: photos/Implant_construction/make_fiber/strip_fiber.png
   :align: center
-  :scale: 100%
+  :width: 100%
 
 3. Using a fiber cleaver, cut off the end of fiber to make a clean tip
 #. Continue cutting the fiber into ~16mm pieces
@@ -90,7 +91,7 @@ Align Fiber
 
 .. figure:: photos/Implant_construction/align_fiber/settings_combined.png
   :align: center
-  :scale: 100%
+  :width: 100%
 
 8. Click ``Start Log``
 
@@ -118,7 +119,7 @@ The laser cutter speed and power settings may need to be tweaked to get a good f
 
 .. image:: photos/Implant_construction/make_guide/fiber_guide.png
   :align: center
-  :scale: 20 %
+  :width: 100 %
 
 
 Combine PCB, Laser Diodes, and Fiber Guide
@@ -133,6 +134,3 @@ Combine PCB, Laser Diodes, and Fiber Guide
 #. Surround the fibers and laser diodes with epoxy
 #. Place heatshrink tubing around the clear epoxy section of the implant
 #. Place and solder the remaining resistors onto the PCB
-
-Implant Characterization
-========================

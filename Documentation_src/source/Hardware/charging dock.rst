@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
 =============
 Charging Dock 
 =============
@@ -17,7 +18,7 @@ Bill of Materials
 +=====+==============================+==================================================================+===================================================================================================+
 | 1   | Charging Dock PCB            |  :download:`Charging Dock 2.0<Datasheets/charging_dock_2.0.pdf>` | `OSH Park <https://oshpark.com/shared_projects/hz6upCEq>`_                                        | 
 +-----+------------------------------+------------------------------------------------------------------+---------------------------------------------------------------------------------------------------+
-| 6   | Molex MicroClasp socket      |  :download:`0559350230<Datasheets/microclasp.pdf>`               | `Digi-Key <https://www.digikey.com/products/en?keywords=wm12296-nd>`_                             | 
+| 1   | Molex Micro-Lock socket      |  :download:`5055670271<Datasheets/microlock_socket.pdf>`         | `Digi-Key <https://www.digikey.com/products/en?keywords=WM17038CT-ND>`_                           | 
 +-----+------------------------------+------------------------------------------------------------------+---------------------------------------------------------------------------------------------------+
 | 6   | Lipoly Charging IC           |  :download:`MCP73831T-2ACI/OT<Datasheets/lipo_charger.pdf>`      | `Digi-Key <https://www.digikey.com/products/en?keywords=%09MCP73831T-2ACI%2FOTCT-ND>`_            | 
 +-----+------------------------------+------------------------------------------------------------------+---------------------------------------------------------------------------------------------------+

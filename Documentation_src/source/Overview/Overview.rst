@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
 ================
 System Overview
 ================
@@ -22,7 +23,7 @@ Open Source
 Wireless Radio
   * **Low Latency** -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.
   * **2-Way Communication** - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.
-  * **Range** - 20m, doesn't need line of sight. (I haven't had a need to test the limits, but the radio modules that Cerebro uses has been shown to have ranges greater than 500m)
+  * **Range** - 20m, doesn't need line of sight. (I haven't had a need to test the limits, but the radio modules that Cerebro uses has been shown to have ranges greater than 500m with the right antennas)
   * **Wirelessly Adjustable Waveforms** - Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
 Laser Diodes
@@ -55,7 +56,7 @@ Cerebro
 -------
 .. image:: cerebro.jpg
   :align: center
-  :scale: 20 %
+  :width: 100 %
 
 Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
@@ -65,9 +66,9 @@ intensity and waveform of the emitted light can be adjusted wirelessly during an
 
 Head Implant
 ------------
-.. image:: ../Hardware/photos/implant_cad.png
+.. image:: ../Hardware/photos/implant_cad.jpg
   :align: center
-  :scale: 20 %
+  :width: 100 %
 
 The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes are accompanied by a phototranistor that is used as feedback
 to maintain a constant light output. The laser diodes can be independently controlled and can output arbitrary waveforms with millisecond resolution.
@@ -80,7 +81,7 @@ Base Station
 ------------
 .. image:: base.jpg
   :align: center
-  :scale: 50 %
+  :width: 100 %
 
 The Base Station is responsible for communicating wirelessly with Cerebro via radio.
 It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication with Xavier.
@@ -95,9 +96,9 @@ Charging Dock
 -------------
 .. image:: charging.jpg
   :align: center
-  :scale: 50 %
+  :width: 100 %
 
-The Charging dock has the battery connectors as Cerebro and can charge up to 6 Cerebro batteries at once.
+The Charging Dock has the same battery connectors as Cerebro and can charge up to 6 Cerebro lipo batteries at once. 
 
 :doc:`More info... <../Hardware/charging dock>`
 
@@ -105,6 +106,7 @@ Xavier
 ------
 .. image:: ../Software/Xavier.png
   :align: center
+  :width: 100 %
 
 Xavier is a GUI for sending and logging Base Station commands. 
 Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.

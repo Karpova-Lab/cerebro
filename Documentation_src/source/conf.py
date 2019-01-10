@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Cerebro'
-copyright = u'2015-2018, Andy Lustig'
+copyright = u'2015-2019, Andy Lustig'
 author = u'Andy Lustig, Karpova Lab'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -121,8 +121,6 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_theme_options = {
     'display_version': False,
     'prev_next_buttons_location': "both",
-    # 'style_external_links': True,
-    # Toc options
     'collapse_navigation': True,
 }
 
