@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro/tree/1.0
 ======
 Xavier
 ======
@@ -99,7 +100,7 @@ to serial ports, Xavier allows you to label COM Ports.
 
 .. image:: photos/Settings/port_labeling.png
   :align: center
-  :scale: 100%
+  :width: 100%
 
 Adding Labels
 `````````````
@@ -152,7 +153,7 @@ options selected. Once the parameters are sent to and received by Cerebro, they 
 
 .. image:: photos/Edit_waveform/parameter_diagram.png
     :align: center
-    :scale: 100%
+    :width: 100%
 
 .. _pulse change header:
 

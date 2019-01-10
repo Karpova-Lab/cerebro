@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro/tree/1.0
 Utility Shield
 ===============
 .. include:: isogrk1.txt
@@ -80,13 +81,13 @@ Setting up Arduino IDE
 
 .. figure:: photos/Setup_photos/transfer_sketches_hardware.png
     :align: center
-    :scale: 100%
+    :width: 100%
 
 5. Transfer the remaining library folders into the "libraries" folder
 
 .. figure:: photos/Setup_photos/transfer_libraries.png
     :align: center
-    :scale: 100%
+    :width: 100%
 
 .. _utility shield setup:
 
@@ -117,12 +118,12 @@ correct pins on various AVR microcontrollers.
 
 .. figure:: photos/upload.png
     :align: center
-    :scale: 100%
+    :width: 100%
 
 6. Connect the :ref:`utility shield` to your Arduino Uno
 
 .. figure:: photos/Setup_photos/shield_on.jpg
     :align: center
-    :scale: 100%
+    :width: 100%
 
 7. You are ready to start programming :ref:`Cerebro <cerebro upload>` , :ref:`Base Station <base upload>` , :ref:`IR Remote <remote upload>` and :ref:`Charging Dock <dock upload>`

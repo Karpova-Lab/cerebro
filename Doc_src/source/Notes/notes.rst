@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro/tree/1.0
 ====================
 Additional Resources
 ====================
@@ -11,7 +12,7 @@ Through Hole Soldering
 
 .. image:: soldering101.png
   :align: center
-  :scale: 100 %
+  :width: 100 %
 
 Surface Mount Soldering
 -----------------------

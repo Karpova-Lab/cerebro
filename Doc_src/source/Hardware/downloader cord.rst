@@ -1,10 +1,11 @@
+:github_url: https://github.com/Karpova-Lab/cerebro/tree/1.0
 Downloader Cord
 ===============
 .. include:: isogrk1.txt
 
 .. image:: ../Overview/downloader.jpg
   :align: center
-  :scale: 100 %
+  :width: 100 %
 
 Required Tools
 ``````````````

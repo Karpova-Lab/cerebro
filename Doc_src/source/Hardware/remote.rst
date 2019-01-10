@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro/tree/1.0
 =========
 IR Remote
 =========
@@ -5,7 +6,7 @@ IR Remote
 
 .. image:: ../Overview/IR_remote.jpg
 	:align: center
-	:scale: 100 %
+	:width: 100 %
 
 Required Tools
 ==============

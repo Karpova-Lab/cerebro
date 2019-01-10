@@ -1,3 +1,4 @@
+:github_url: https://github.com/Karpova-Lab/cerebro/tree/1.0
 ============
 Head Implant
 ============
@@ -7,7 +8,7 @@ Head Implant
 
 .. figure:: photos/implant_cad.png
   :align: center
-  :scale: 100%
+  :width: 100%
 
 .. csv-table::
   :header: "Item", "Description"
@@ -169,7 +170,7 @@ characterize the relationship between photoresistor voltage and fiber tip light 
 
 .. figure:: photos/Calibration_photos/settings_combined.png
   :align: center
-  :scale: 100%
+  :width: 100%
 
 3. Make sure Cerbero is turned on.
 4. Open up Xavier and start a new session.  :ref:`How to start a session<start session>`
