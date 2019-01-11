@@ -92,7 +92,7 @@ Align Fiber
 
 .. figure:: photos/Implant_construction/align_fiber/settings_combined.png
   :align: center
-  :width: 100%
+  :scale: 100%
 
 8. Click ``Start Log``
 

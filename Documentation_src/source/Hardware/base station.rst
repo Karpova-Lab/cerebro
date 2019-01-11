@@ -6,9 +6,9 @@ Base Station
 
 .. include:: Characters/isogrk1.txt
 
-.. .. image:: ../Overview/base_station.jpg
-..   :align: center
-..   :scale: 15 %
+.. image:: photos/base.jpg
+  :align: center
+  :width: 100 %
 
 
 Bill of Materials

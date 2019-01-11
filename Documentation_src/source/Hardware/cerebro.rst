@@ -121,7 +121,56 @@ I recommmend using a `USB microISP <https://www.tindie.com/products/nsayer/usb-i
 
 Uploading Test Program
 ----------------------
+To test that the components on the PCB are soldered correctly and that all of the required connections are being made, we upload a test program. 
 
+
+1. Open testBoard.ino in the Arduino IDE.
+2. Select Tools->Board->"Adafruit Feather 32u4".
+3. Under the Tools->Port menu look to see what Serial Ports are available. 
+4. Connect a battery to Cerebro.
+5. Connect Cerebro to your computer with a usb cord and switch on Cerebro. A red LED should be lit, indicating that Cerebro is on.
+6. There should now be a new serial port under the Tools->Port menu that wasn't there in step 2. This is the Cerebro seriall port, select it. If there a new serial port didn't appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn't appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.
+7. Click the upload button to upload the the testBoard firmware.
+8. Open up Serial Monitor by click the magnifying glass icon.
+9. Set the Serial Monitor Baud Rate to 1152000 Baud.
+10. Two yellow LEDs on Cerebro should be blinking and text should be appearing in the Serial Monitor.
+11. Follow the instructions on the Serial Monitor. If everything is working properly then the battery monitor should be able to provide a Battery charge %.
 
 Uploading Firmware
 ------------------
+
+1. Open cerebro.ino
+
+Assigning a Serial Number
+=========================
+A serial number is assigned to each Cerebro. When a Base Station connects to Cerebro, it communicates on the radio channel corresponding to Cerebro's serial number. This prevents crosstalk between Base Stations and Cerebros in the case where multiple behavior sessions are being run at the same time in the same room. Each Cerebro being used should setup a unique serial number between 1 and 255 using the process below. 
+
+1. Start an Xavier session in Debug Mode. The Base Station should be connnected, and have a green check mark.
+
+.. image:: photos/serial_number/base_connected.png
+  :align: center
+  :scale: 100 %
+
+2. Click ``Setup New Cerebro`` 
+
+.. image:: photos/serial_number/click_new_cerebro.png
+  :align: center
+  :scale: 100 %
+
+3. Hold down the button labeled "BTN" on Cerebro until the nearby LED blinks twice. A green checkmark should now be next to the "Cerebro Wireless Connection".
+
+.. image:: photos/serial_number/hold.png
+  :align: center
+  :width: 100 %
+
+4. Fill in the "Serial Number" box with the serial number you want to give to Cerebro and then click ``Set Serial Number``.
+
+.. image:: photos/serial_number/give_number.png
+  :align: center
+  :scale: 100 %
+
+5. After a few seconds, click the ``Retry Connection`` button to confirm everything worked. All three indicators should have green check marks. Cerebro now has a serial number saved to its memory, and whenever it is turned on it will try to communicate with a Base Station on a radio channel of the same number.
+
+.. image:: photos/serial_number/good.png
+  :align: center
+  :scale: 100 %

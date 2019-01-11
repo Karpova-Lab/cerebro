@@ -1,7 +1,8 @@
+:github_url: https://github.com/Karpova-Lab/cerebro
+
 ====================
 Additional Resources
 ====================
-
 
 Soldering Tips
 ==============
@@ -11,7 +12,7 @@ Through Hole Soldering
 
 .. image:: soldering101.png
   :align: center
-  :scale: 100 %
+  :width: 100 %
 
 Surface Mount Soldering
 -----------------------
@@ -56,7 +57,7 @@ From a Mac terminal it will look like this:
 
 .. image:: CLI_clone.png
   :align: center
-  :scale: 100 %
+  :width: 100 %
 
 Using SourceTree
 ````````````````

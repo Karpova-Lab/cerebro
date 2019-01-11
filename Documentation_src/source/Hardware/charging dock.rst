@@ -7,9 +7,9 @@ Charging Dock
 .. include:: Characters/isogrk1.txt
 .. include:: Characters/mmlalias.txt
 
-.. .. image:: ../Overview/cerebro.jpg
-..   :align: center
-..   :scale: 100 %
+.. figure:: photos/charging.jpg
+  :align: center
+  :width: 100%
 
 Bill of Materials
 =================

@@ -24,27 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Cerebro 2.0.3 documentation" href="../index.html"/>
-        <link rel="next" title="Head Implant" href="implant.html"/>
-        <link rel="prev" title="System Overview" href="../Overview/Overview.html"/> 
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Head Implant" href="implant.html" />
+    <link rel="prev" title="System Overview" href="../Overview.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -84,11 +76,16 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Overview.html">System Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#programming-instructions">Programming Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#programming-instructions">Programming Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#burning-a-bootloader">Burning a Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uploading-test-program">Uploading Test Program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#assigning-a-serial-number">Assigning a Serial Number</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
@@ -107,7 +104,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Cerebro</a>
@@ -115,10 +112,13 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
 
 
 
@@ -146,7 +146,10 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/Hardware/cerebro.rst.txt" rel="nofollow"> View page source</a>
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
@@ -159,7 +162,7 @@
         <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../Overview/Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
   </div>
   
@@ -170,13 +173,14 @@
             
   <div class="section" id="cerebro">
 <h1>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="../_images/cerebro_views.webp"><img alt="../_images/cerebro_views.webp" class="align-center" src="../_images/cerebro_views.webp" style="width: 100%;" /></a>
 <div class="section" id="bill-of-materials">
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <colgroup>
 <col width="2%" />
 <col width="14%" />
-<col width="28%" />
+<col width="27%" />
 <col width="57%" />
 </colgroup>
 <thead valign="bottom">
@@ -284,7 +288,7 @@
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Molex Micro-Lock socket</td>
-<td><a class="reference download internal" download="" href="../_downloads/c241e1657d07c3e430f609dbc35a0db2/microlock_socket.pdf"><code class="xref download docutils literal notranslate"><span class="pre">0559350230</span></code></a></td>
+<td><a class="reference download internal" download="" href="../_downloads/c241e1657d07c3e430f609dbc35a0db2/microlock_socket.pdf"><code class="xref download docutils literal notranslate"><span class="pre">5055670271</span></code></a></td>
 <td><a class="reference external" href="https://www.digikey.com/products/en?keywords=WM17038CT-ND">Digi-Key</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
@@ -370,11 +374,10 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="build-instructions">
-<h2>Build Instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="programming-instructions">
-<span id="programmming-instructions"></span><h2>Programming Instructions<a class="headerlink" href="#programming-instructions" title="Permalink to this headline">¶</a></h2>
+<h2>Programming Instructions<a class="headerlink" href="#programming-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="burning-a-bootloader">
+<span id="burn-boot"></span><h3>Burning a Bootloader<a class="headerlink" href="#burning-a-bootloader" title="Permalink to this headline">¶</a></h3>
 <p>Cerebro is designed to be easily reprogrammed through the onboard micro USB.
 However when builing a Cerebro from scratch, you must first burn a <a class="reference external" href="https://www.arduino.cc/en/Tutorial/ArduinoISP">bootloader</a>  onto the microcontroller in order to later upload programs through USB.</p>
 <p>To burn a bootloader you need an external programmer that will talk to the microntroller through the In-Circuit Serial Programmer (ISP).
@@ -384,7 +387,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
 <li>The programmer needs to connect to the ISP thru-holes (MOSI, MISO, SCK, RST, GND and 3V) on the Cerebro PCB.</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/programmer.jpg"><img alt="../_images/programmer.jpg" src="../_images/programmer.jpg" style="width: 4032.0px; height: 3024.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/programmer.jpg"><img alt="../_images/programmer.jpg" src="../_images/programmer.jpg" style="width: 100%;" /></a>
 </div>
 <ol class="arabic simple" start="2">
 <li>In the Arduino IDE, select Tools-&gt;Board-&gt;”Adafruit Feather 32u4”</li>
@@ -395,13 +398,59 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
 <a class="reference internal image-reference" href="../_images/burn.png"><img alt="../_images/burn.png" src="../_images/burn.png" style="width: 307.0px; height: 278.0px;" /></a>
 </div>
 </div>
+<div class="section" id="uploading-test-program">
+<h3>Uploading Test Program<a class="headerlink" href="#uploading-test-program" title="Permalink to this headline">¶</a></h3>
+<p>To test that the components on the PCB are soldered correctly and that all of the required connections are being made, we upload a test program.</p>
+<ol class="arabic simple">
+<li>Open testBoard.ino in the Arduino IDE.</li>
+<li>Select Tools-&gt;Board-&gt;”Adafruit Feather 32u4”.</li>
+<li>Under the Tools-&gt;Port menu look to see what Serial Ports are available.</li>
+<li>Connect a battery to Cerebro.</li>
+<li>Connect Cerebro to your computer with a usb cord and switch on Cerebro. A red LED should be lit, indicating that Cerebro is on.</li>
+<li>There should now be a new serial port under the Tools-&gt;Port menu that wasn’t there in step 2. This is the Cerebro seriall port, select it. If there a new serial port didn’t appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn’t appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.</li>
+<li>Click the upload button to upload the the testBoard firmware.</li>
+<li>Open up Serial Monitor by click the magnifying glass icon.</li>
+<li>Set the Serial Monitor Baud Rate to 1152000 Baud.</li>
+<li>Two yellow LEDs on Cerebro should be blinking and text should be appearing in the Serial Monitor.</li>
+<li>Follow the instructions on the Serial Monitor. If everything is working properly then the battery monitor should be able to provide a Battery charge %.</li>
+</ol>
+</div>
+<div class="section" id="uploading-firmware">
+<h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Open cerebro.ino</li>
+</ol>
+</div>
+</div>
+<div class="section" id="assigning-a-serial-number">
+<h2>Assigning a Serial Number<a class="headerlink" href="#assigning-a-serial-number" title="Permalink to this headline">¶</a></h2>
+<p>A serial number is assigned to each Cerebro. When a Base Station connects to Cerebro, it communicates on the radio channel corresponding to Cerebro’s serial number. This prevents crosstalk between Base Stations and Cerebros in the case where multiple behavior sessions are being run at the same time in the same room. Each Cerebro being used should setup a unique serial number between 1 and 255 using the process below.</p>
+<ol class="arabic simple">
+<li>Start an Xavier session in Debug Mode. The Base Station should be connnected, and have a green check mark.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/base_connected.png"><img alt="../_images/base_connected.png" class="align-center" src="../_images/base_connected.png" style="width: 294.0px; height: 116.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Click <code class="docutils literal notranslate"><span class="pre">Setup</span> <span class="pre">New</span> <span class="pre">Cerebro</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/click_new_cerebro.png"><img alt="../_images/click_new_cerebro.png" class="align-center" src="../_images/click_new_cerebro.png" style="width: 294.0px; height: 80.0px;" /></a>
+<ol class="arabic simple" start="3">
+<li>Hold down the button labeled “BTN” on Cerebro until the nearby LED blinks twice. A green checkmark should now be next to the “Cerebro Wireless Connection”.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/hold.png"><img alt="../_images/hold.png" class="align-center" src="../_images/hold.png" style="width: 100%;" /></a>
+<ol class="arabic simple" start="4">
+<li>Fill in the “Serial Number” box with the serial number you want to give to Cerebro and then click <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Serial</span> <span class="pre">Number</span></code>.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/give_number.png"><img alt="../_images/give_number.png" class="align-center" src="../_images/give_number.png" style="width: 294.0px; height: 132.0px;" /></a>
+<ol class="arabic simple" start="5">
+<li>After a few seconds, click the <code class="docutils literal notranslate"><span class="pre">Retry</span> <span class="pre">Connection</span></code> button to confirm everything worked. All three indicators should have green check marks. Cerebro now has a serial number saved to its memory, and whenever it is turned on it will try to communicate with a Base Station on a radio channel of the same number.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/good.png"><img alt="../_images/good.png" class="align-center" src="../_images/good.png" style="width: 296.0px; height: 62.0px;" /></a>
+</div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -410,7 +459,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
         <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../Overview/Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -419,12 +468,12 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2018, Andy Lustig.
-      Last updated on Dec 04, 2018.
+        &copy; Copyright 2015-2019, Andy Lustig
+      Last updated on Jan 11, 2019.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -439,35 +488,23 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'2.0.3',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
