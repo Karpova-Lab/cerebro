@@ -24,3 +24,5 @@ Qt/Xavier/Xavier.pro.user.e18160a
 Qt/Xavier/Xavier.app
 Doc_src/source/Hardware/Datasheets
 Doc_src/build
+Doc_src/.vscode
+.vscode
