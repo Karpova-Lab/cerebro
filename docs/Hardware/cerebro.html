@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cerebro &mdash; Cerebro 1.0.0 documentation</title>
+  <title>Cerebro &mdash; Cerebro 2.0.3 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Head Implant" href="implant.html" />
-    <link rel="prev" title="System Overview" href="../Overview/Overview.html" /> 
+    <link rel="prev" title="System Overview" href="../Overview.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -76,31 +76,23 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Overview.html">System Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cerebro</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#specifications">Specifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cad-files">CAD Files</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pcb">PCB</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#code">Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#required-tools">Required Tools</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pcb-assembly">PCB Assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#programming-instructions">Programming Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#burning-a-bootloader">Burning a Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uploading-test-program">Uploading Test Program</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#assigning-a-serial-number">Assigning a Serial Number</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility shield.html">Utility Shield</a></li>
 <li class="toctree-l1"><a class="reference internal" href="charging dock.html">Charging Dock</a></li>
-<li class="toctree-l1"><a class="reference internal" href="remote.html">IR Remote</a></li>
-<li class="toctree-l1"><a class="reference internal" href="downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programmer.html">Pogo Connector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Notes/notes.html">Additional Resources</a></li>
 </ul>
 
             
@@ -156,7 +148,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/Karpova-Lab/cerebro/tree/1.0" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -170,7 +162,7 @@
         <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../Overview/Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
   </div>
   
@@ -181,330 +173,278 @@
             
   <div class="section" id="cerebro">
 <h1>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="../_images/cerebro.jpg"><img alt="../_images/cerebro.jpg" class="align-center" src="../_images/cerebro.jpg" style="width: 100%;" /></a>
-<div class="section" id="specifications">
-<h2>Specifications<a class="headerlink" href="#specifications" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Test Condition</th>
-<th class="head">Value</th>
-<th class="head">Unit</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Weight</td>
-<td>&#160;</td>
-<td>13.2</td>
-<td>g</td>
-</tr>
-<tr class="row-odd"><td>Dimensions</td>
-<td>Receiver</td>
-<td>0.68 x 0.74 x 0.062</td>
-<td>in</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td>Implant</td>
-<td>1.05 x 0.40 x 0.75</td>
-<td>in</td>
-</tr>
-<tr class="row-odd"><td><a class="reference download internal" download="" href="../_downloads/bf668bc03d23ef2cd9c013c9971e7822/battery new.html"><code class="xref download docutils literal notranslate"><span class="pre">Battery</span> <span class="pre">Life</span></code></a></td>
-<td>520nm, 8mW 3s pulse, 6 pulses/min</td>
-<td>4.25 (1700)</td>
-<td>hours (pulses)</td>
-</tr>
-<tr class="row-even"><td>Recharge time</td>
-<td>&#160;</td>
-<td>1</td>
-<td>hour</td>
-</tr>
-<tr class="row-odd"><td>Light Wavelength</td>
-<td><a class="reference download internal" download="" href="../_downloads/420cb5089f14e12e7e138fb4b57014e7/HL63603TG.pdf"><code class="xref download docutils literal notranslate"><span class="pre">HL63603TG</span></code></a> (Red)</td>
-<td>638</td>
-<td>nm</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><a class="reference download internal" download="" href="../_downloads/2cea0e6b52ce1321890f73c36646f474/PL520_B1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PLT5</span> <span class="pre">520</span></code></a> (Green)</td>
-<td>520</td>
-<td>nm</td>
-</tr>
-<tr class="row-odd"><td>Memory</td>
-<td>&#160;</td>
-<td>8192</td>
-<td>bytes</td>
-</tr>
-<tr class="row-even"><td><a class="reference download internal" download="" href="../_downloads/fa54fb8440217d8174c16e6cc77b73ab/Signal_Breakdown.png"><code class="xref download docutils literal notranslate"><span class="pre">Trigger</span> <span class="pre">Latency</span></code></a></td>
-<td>&#160;</td>
-<td>3.06 ± 0.05</td>
-<td>ms</td>
-</tr>
-<tr class="row-odd"><td>Rise Time</td>
-<td>&#160;</td>
-<td>40 ± 10</td>
-<td>ms</td>
-</tr>
-<tr class="row-even"><td>Fiber Diameter</td>
-<td>&#160;</td>
-<td>200</td>
-<td>μm</td>
-</tr>
-<tr class="row-odd"><td>Light Output (per fiber)</td>
-<td>520 nm diode coupled to 200 μm fiber</td>
-<td>0 to 15 ± 0.5</td>
-<td>mW</td>
-</tr>
-<tr class="row-even"><td>Input Voltage</td>
-<td>&#160;</td>
-<td>2.7 to 4.2</td>
-<td>V</td>
-</tr>
-<tr class="row-odd"><td>Idle Current</td>
-<td>&#160;</td>
-<td>11</td>
-<td>mA</td>
-</tr>
-<tr class="row-even"><td>Peak Current</td>
-<td>Green Laser</td>
-<td>370</td>
-<td>mA</td>
-</tr>
-</tbody>
-</table>
-</div>
+<a class="reference internal image-reference" href="../_images/cerebro_views.webp"><img alt="../_images/cerebro_views.webp" class="align-center" src="../_images/cerebro_views.webp" style="width: 100%;" /></a>
 <div class="section" id="bill-of-materials">
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
-<div class="admonition tip">
-<p class="first admonition-title">Tip</p>
-<p class="last">The pins on the vertical USB plug are very short and fail to protrude from standard thickness (~1.6mm) PCB. Therefore I recommend ordering thinner boards (~0.8mm) to make soldering the connector easier.</p>
-</div>
-<div class="admonition caution">
-<p class="first admonition-title">Caution</p>
-<p class="last">The Adafruit battery linked below has been confirmed to work with Cerebro. Other Li-poly batteries may be used to accommodate different
-weight or session length constraints, just make sure the battery capacity and <a class="reference external" href="https://learn.adafruit.com/all-about-batteries/power-capacity-and-power-capability">C rating</a>
-are capable of handling a peak current of 350 mA.</p>
-</div>
 <table border="1" class="docutils">
 <colgroup>
-<col width="3%" />
-<col width="22%" />
-<col width="38%" />
-<col width="37%" />
+<col width="2%" />
+<col width="14%" />
+<col width="27%" />
+<col width="57%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Qty</th>
 <th class="head">Description</th>
 <th class="head">Datasheet</th>
-<th class="head">Vendor</th>
+<th class="head">Order Link</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>Cerebro PCB</td>
-<td>&#160;</td>
-<td><a class="reference external" href="https://oshpark.com/shared_projects/o9AxFZcx">OSH Park</a></td>
+<td><a class="reference download internal" download="" href="../_downloads/52d23b437532e5689e2a358f0d7ee9ff/cerebro5.8.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Cerebro</span> <span class="pre">5.8</span></code></a></td>
+<td><a class="reference external" href="https://oshpark.com/shared_projects/ASxhDBJv">OSH Park</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>400 mAh Battery</td>
+<td><a class="reference download internal" download="" href="../_downloads/dd6748e271088206ac21e600e123035c/battery_400mah.pdf"><code class="xref download docutils literal notranslate"><span class="pre">3898</span></code></a></td>
+<td><a class="reference external" href="https://www.adafruit.com/product/3898">Adafruit</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>915 MHz Radio</td>
+<td><a class="reference download internal" download="" href="../_downloads/3267266626fd386125c24c13ae97c07e/radio.pdf"><code class="xref download docutils literal notranslate"><span class="pre">RFM69HCW</span></code></a></td>
+<td><a class="reference external" href="https://lowpowerlab.com/shop/product/158">LowPowerLab</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Microcontroller</td>
+<td><a class="reference download internal" download="" href="../_downloads/99656d3084b488f68f24e1d659efee32/MCU_32u4.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ATMEGA32U4-MUR</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=ATMEGA32U4-MURCT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>8 MHz Resonator</td>
+<td><a class="reference download internal" download="" href="../_downloads/a28907c0b2e979adf577d50b42fb351c/resonator_8mhz.pdf"><code class="xref download docutils literal notranslate"><span class="pre">CSTCE8M00G55-R0</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=490-1195-1-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>3.3V Linear Regulator</td>
+<td><a class="reference download internal" download="" href="../_downloads/497e23e1697a979e992c78b3638c1336/regulator_3v_linear.pdf"><code class="xref download docutils literal notranslate"><span class="pre">AP2112K-3.3TRG1</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09AP2112K-3.3TRG1DICT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Fuel Gauge</td>
+<td><a class="reference download internal" download="" href="../_downloads/13ae484442337cdf4c937d694d74c2ad/fuel_gauge.pdf"><code class="xref download docutils literal notranslate"><span class="pre">BQ27441DRZR-G1B</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/product-detail/en/texas-instruments/BQ27441DRZR-G1B/296-39942-1-ND/5177819">Digi-Key</a></td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>105 mAh Battery</td>
-<td><a class="reference download internal" download="" href="../_downloads/6941e8f115557409a8695e10c6b672e5/lipo battery.pdf"><code class="xref download docutils literal notranslate"><span class="pre">1570</span></code></a></td>
-<td><a class="reference external" href="https://www.adafruit.com/products/1570">Adafruit</a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>Microcontroller</td>
-<td><a class="reference download internal" download="" href="../_downloads/090ab7b4dd22694f6473edea1bbbcd90/ATtiny84.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ATTINY84-20SSU</span></code></a></td>
-<td rowspan="26"><a class="reference external" href="https://octopart.com/bom-lookup/biKef905">Octopart</a></td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>IR Sensor</td>
-<td><a class="reference download internal" download="" href="../_downloads/8d9ab4380228ffd630842d749ed59394/TSOP61.pdf"><code class="xref download docutils literal notranslate"><span class="pre">TSOP6138TR</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
 <td>DAC (12-Bit)</td>
-<td><a class="reference download internal" download="" href="../_downloads/78007a05726a012672d558391aaec953/LTC2630.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LTC2630ACSC6-LZ12</span></code></a></td>
+<td><a class="reference download internal" download="" href="../_downloads/fd3be833200aafa362e42c65cd79bb9e/DAC.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LTC2630ACSC6-LZ12#TRMPBF</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/product-detail/en/linear-technology/LTC2630ACSC6-LZ12-TRMPBF/LTC2630ACSC6-LZ12-TRMPBFCT-ND/1643783">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
-<td>EEPROM IC (64K)</td>
-<td><a class="reference download internal" download="" href="../_downloads/986814ce2d64e51423f37a883fafdced/FT24C64A-ULR-T.pdf"><code class="xref download docutils literal notranslate"><span class="pre">FT24C64A-ULR-T</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
+<tr class="row-even"><td>2</td>
 <td>Op Amp</td>
-<td><a class="reference download internal" download="" href="../_downloads/be0683c421dcde0c11a2c1526861b5df/OPA237NA_3K.pdf"><code class="xref download docutils literal notranslate"><span class="pre">OPA237NA/3K</span></code></a></td>
+<td><a class="reference download internal" download="" href="../_downloads/8371dd422d47698b64bee4aea57775b3/opamp.pdf"><code class="xref download docutils literal notranslate"><span class="pre">OPA237NA/3K</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=296-26265-1-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>1</td>
+<tr class="row-odd"><td>2</td>
 <td>NPN Transistor</td>
-<td><a class="reference download internal" download="" href="../_downloads/b6021beda9912127770b4411c2de975d/FJX3904TF.pdf"><code class="xref download docutils literal notranslate"><span class="pre">FJX3904TF</span></code></a></td>
+<td><a class="reference download internal" download="" href="../_downloads/f6d83c6225710fb02e36ac78b40d77ef/npn_transistor.pdf"><code class="xref download docutils literal notranslate"><span class="pre">FJX3904TF</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=FJX3904TFCT-ND">Digi-Key</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
 <td>Boost Converter</td>
-<td><a class="reference download internal" download="" href="../_downloads/1b6752eda3849f176a0570832505a165/MIC2288YD5 TR.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MIC2288YD5</span> <span class="pre">TR</span></code></a></td>
+<td><a class="reference download internal" download="" href="../_downloads/7df2770a778b19f810c4b945c93ed41f/boost_converter.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MIC2288YD5-TR</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=576-1729-1-ND">Digi-Key</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>Slide Switch</td>
-<td><a class="reference download internal" download="" href="../_downloads/9a5402ef1a91d29ae26cd6064deaab23/AYZ0102AGRLC.pdf"><code class="xref download docutils literal notranslate"><span class="pre">AYZ0102AGRLC</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>Momentary Button</td>
-<td><a class="reference download internal" download="" href="../_downloads/c4f04606d0a2ca4b1c719cc45334b323/B3U-1000P.pdf"><code class="xref download docutils literal notranslate"><span class="pre">B3U-1000P</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>Male micro USB vertical plug</td>
-<td><a class="reference download internal" download="" href="../_downloads/b8eccc60a26f47b5f348963ff976b99b/ZX20-B-5S.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ZX20-B-5S-UNIT(30)</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>Male micro USB shielding</td>
-<td><a class="reference download internal" download="" href="../_downloads/b8eccc60a26f47b5f348963ff976b99b/ZX20-B-5S.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ZX20-B-SLDC</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>Female micro USB horizontal socket</td>
-<td><a class="reference download internal" download="" href="../_downloads/6df4ae6e91c342460fcb54eec2ec35a5/10118193-0001LF.pdf"><code class="xref download docutils literal notranslate"><span class="pre">10118193-0001LF</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
 <td>Schottky Diode</td>
-<td><a class="reference download internal" download="" href="../_downloads/86d7ddcd35f99cbe49f92e1b92b8b1eb/MBRM140T3G.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MBRM140T3G</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>10 μH Inductor</td>
-<td><a class="reference download internal" download="" href="../_downloads/1a06fced3b428d6127213c5bada40943/LQH43CN100K03L.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LQH43CN100K03L</span></code></a></td>
+<td><a class="reference download internal" download="" href="../_downloads/e9dcd13e577aa93529b104bfee4cd5bd/schottky.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MBRM140T3G</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=MBRM140T3GOSCT-ND">Digi-Key</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
-<td>0603 Red LED</td>
-<td><a class="reference download internal" download="" href="../_downloads/1e67ef5202504dc3ce318ee5f2a1e381/LTST-C191KRKT.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LTST-C191KRKT</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>0603 Amber LED</td>
-<td><a class="reference download internal" download="" href="../_downloads/91c315f3bfbf89448ef76ccd75ee2835/LNJ437W84RA_E.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LNJ437W84RA</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>0603 0.1 μF Capacitor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>0603 10 μF Capacitor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>0603 2.2 μF Capacitor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>0603 6.8 Ω Resistor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>0603 27 Ω Resistor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>0603 100 Ω Resistor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>0603 2 kΩ Resistor</td>
-<td>&#160;</td>
+<td>10uH Inductor</td>
+<td><a class="reference download internal" download="" href="../_downloads/13c699f6f3e3d9f1af0b6b963e5efb85/inductor.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LQH43CN100K03L</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=490-2519-1-ND">Digi-Key</a></td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>0603 6.8 kΩ Resisor</td>
-<td>&#160;</td>
+<td>2mm Pitch Male Header</td>
+<td><a class="reference download internal" download="" href="../_downloads/a19dd5714bbd05a6fda071cee3c239c2/header_male_2mm.pdf"><code class="xref download docutils literal notranslate"><span class="pre">M22-2510805</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=952-1992-nd">Digi-Key</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
-<td>0603 12 kΩ Resistor</td>
+<td>Slide Switch</td>
+<td><a class="reference download internal" download="" href="../_downloads/6c41d4871073658b30dbb8d673b323db/slide_switch2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PCM12SMTR</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=401-2016-1-nd">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Momentary Button</td>
+<td><a class="reference download internal" download="" href="../_downloads/982be35aebf29e66e0b8b140926355e6/momentary.pdf"><code class="xref download docutils literal notranslate"><span class="pre">B3U-1000P</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=sw1020ct">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Micro USB vertical plug</td>
+<td><a class="reference download internal" download="" href="../_downloads/b15f593188deebbdbda623372f19e471/usb_plug_vertical.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ZX20-B-5S-UNIT(30)</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=H125237-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Micro USB shielding</td>
+<td><a class="reference download internal" download="" href="../_downloads/c562a1bdf9ca314ed07092d360e89d3a/usb_shielding.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ZX20-B-SLDC</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=H11496CT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Micro USB horizontal socket</td>
+<td><a class="reference download internal" download="" href="../_downloads/94225dda068144fa67ec2f65a496a5a0/usb_plug_horizontal.pdf"><code class="xref download docutils literal notranslate"><span class="pre">10118194-0001LF</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=609-4618-1-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Molex Micro-Lock socket</td>
+<td><a class="reference download internal" download="" href="../_downloads/c241e1657d07c3e430f609dbc35a0db2/microlock_socket.pdf"><code class="xref download docutils literal notranslate"><span class="pre">5055670271</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=WM17038CT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Molex Micro-Lock plug with wire</td>
+<td><a class="reference download internal" download="" href="../_downloads/56276c9fe553edb36d639f5deab04c13/microlock_plug.pdf"><code class="xref download docutils literal notranslate"><span class="pre">0151360206</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=WM17161-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Red LED (0603)</td>
+<td><a class="reference download internal" download="" href="../_downloads/9fd5b367853d23542f04130b62332a4f/led_red.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LTST-C191KRKT</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=160-1447-1-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Amber LED (0603)</td>
+<td><a class="reference download internal" download="" href="../_downloads/8d64a61236dc0a169489f7eeba198057/led_amber.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LNJ437W84RA</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09LNJ437W84RACT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Green LED (0603)</td>
+<td><a class="reference download internal" download="" href="../_downloads/136e5c60db7cf731ad2ce984b3c1ddb2/led_green.pdf"><code class="xref download docutils literal notranslate"><span class="pre">SML-D12M8WT86</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=511-1578-1-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>470 nF Capacitor (0805)</td>
 <td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/product-detail/en/avx-corporation/08055C474KAT2A/478-5033-1-ND/1888244">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>1 μF Capacitor (0805)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=1276-1066-1-nd">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>2.2 μF Capacitor (0805)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=587-1286-1">Digi-Key</a></td>
 </tr>
 <tr class="row-odd"><td>3</td>
-<td>0603 20 kΩ Resistor</td>
+<td>10 μF Capacitor (0805)</td>
 <td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/product-detail/en/murata-electronics-north-america/GRM21BR61E106KA73L/490-5523-1-ND/2334919">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>0.01 Ω Resistor (1206)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=P0.01BVCT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>12 Ω Resistor (0603)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=P12.00BYCT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>27 Ω Resistor (0603)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=541-27.0SCT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>2 kΩ Resistor (0603)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=RNCP0603FTD2K00CT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>4.7 kΩ Resistor (0603)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=311-4.70KHRCT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>12 kΩ Resistor (0805)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=311-12.0KCRCT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>20 kΩ Resistor (0603)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=RNCP0603FTD20K0CT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>100 kΩ Resistor (0603)</td>
+<td>&#160;</td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09311-100KHRCT-ND">Digi-Key</a></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="cad-files">
-<h2>CAD Files<a class="headerlink" href="#cad-files" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="pcb">
-<h3>PCB<a class="headerlink" href="#pcb" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference download internal" download="" href="../_downloads/5d7790710f428ef3c815338ff97bc772/Cerebro 4.8.brd"><code class="xref download docutils literal notranslate"><span class="pre">Cerebro</span> <span class="pre">4.8.brd</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/ada49b49ff67dad6a6058299127143f1/Cerebro 4.8.sch"><code class="xref download docutils literal notranslate"><span class="pre">Cerebro</span> <span class="pre">4.8.sch</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/e52bca99c662ee8b01cf03d917b9dbaa/Cerebro 4.8 schematic.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Schematic.pdf</span></code></a></li>
-</ul>
-</div></blockquote>
+<div class="section" id="programming-instructions">
+<h2>Programming Instructions<a class="headerlink" href="#programming-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="burning-a-bootloader">
+<span id="burn-boot"></span><h3>Burning a Bootloader<a class="headerlink" href="#burning-a-bootloader" title="Permalink to this headline">¶</a></h3>
+<p>Cerebro is designed to be easily reprogrammed through the onboard micro USB.
+However when builing a Cerebro from scratch, you must first burn a <a class="reference external" href="https://www.arduino.cc/en/Tutorial/ArduinoISP">bootloader</a>  onto the microcontroller in order to later upload programs through USB.</p>
+<p>To burn a bootloader you need an external programmer that will talk to the microntroller through the In-Circuit Serial Programmer (ISP).
+You can use an Arduino as your external ISP and temporarily solder wires to the Cerebro PCB.
+I recommmend using a <a class="reference external" href="https://www.tindie.com/products/nsayer/usb-isp/?pt=ac_prod_search">USB microISP</a> along with a <a class="reference internal" href="programmer.html"><span class="doc">Pogo Connector</span></a>.</p>
+<ol class="arabic simple">
+<li>The programmer needs to connect to the ISP thru-holes (MOSI, MISO, SCK, RST, GND and 3V) on the Cerebro PCB.</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/programmer.jpg"><img alt="../_images/programmer.jpg" src="../_images/programmer.jpg" style="width: 100%;" /></a>
+</div>
+<ol class="arabic simple" start="2">
+<li>In the Arduino IDE, select Tools-&gt;Board-&gt;”Adafruit Feather 32u4”</li>
+<li>Select  Tools-&gt;Programmer-&gt;”USBtinyISP” or Tools-&gt;Programmer-&gt;”ArduinoISP” if using an Arduino as the programmer</li>
+<li>Select Tools-&gt;Burn Bootloader</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/burn.png"><img alt="../_images/burn.png" src="../_images/burn.png" style="width: 307.0px; height: 278.0px;" /></a>
 </div>
 </div>
-<div class="section" id="code">
-<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference download internal" download="" href="../_downloads/8d66832d14ea2016fb84f25ecabed3ae/cerebro.ino"><code class="xref download docutils literal notranslate"><span class="pre">Cerebro.ino</span></code></a></li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="build-instructions">
-<h2>Build Instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="required-tools">
-<h3>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ul class="simple">
-<li>Soldering iron</li>
-<li>Tweezers</li>
-<li>Flux pen</li>
-<li>Solder wick</li>
-<li>Wire cutters/strippers</li>
-<li>Crazy glue</li>
-<li>Hot glue gun</li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="pcb-assembly">
-<h3>PCB Assembly<a class="headerlink" href="#pcb-assembly" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="uploading-test-program">
+<h3>Uploading Test Program<a class="headerlink" href="#uploading-test-program" title="Permalink to this headline">¶</a></h3>
+<p>To test that the components on the PCB are soldered correctly and that all of the required connections are being made, we upload a test program.</p>
+<ol class="arabic simple">
+<li>Open testBoard.ino in the Arduino IDE.</li>
+<li>Select Tools-&gt;Board-&gt;”Adafruit Feather 32u4”.</li>
+<li>Under the Tools-&gt;Port menu look to see what Serial Ports are available.</li>
+<li>Connect a battery to Cerebro.</li>
+<li>Connect Cerebro to your computer with a usb cord and switch on Cerebro. A red LED should be lit, indicating that Cerebro is on.</li>
+<li>There should now be a new serial port under the Tools-&gt;Port menu that wasn’t there in step 2. This is the Cerebro seriall port, select it. If there a new serial port didn’t appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn’t appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.</li>
+<li>Click the upload button to upload the the testBoard firmware.</li>
+<li>Open up Serial Monitor by click the magnifying glass icon.</li>
+<li>Set the Serial Monitor Baud Rate to 1152000 Baud.</li>
+<li>Two yellow LEDs on Cerebro should be blinking and text should be appearing in the Serial Monitor.</li>
+<li>Follow the instructions on the Serial Monitor. If everything is working properly then the battery monitor should be able to provide a Battery charge %.</li>
+</ol>
 </div>
 <div class="section" id="uploading-firmware">
-<span id="cerebro-upload"></span><h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
-<div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to <a class="reference internal" href="utility shield.html#arduino-setup"><span class="std std-ref">Setting up Arduino IDE</span></a> and/or <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Utility Shield</span></a> before moving on.</p>
-</div>
+<h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Turn on Cerebro and plug it into the Utility Shield as shown below.</li>
+<li>Open cerebro.ino</li>
 </ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/cerebro_upload.png"><img alt="../_images/cerebro_upload.png" src="../_images/cerebro_upload.png" style="width: 307.05px; height: 442.2px;" /></a>
 </div>
+</div>
+<div class="section" id="assigning-a-serial-number">
+<h2>Assigning a Serial Number<a class="headerlink" href="#assigning-a-serial-number" title="Permalink to this headline">¶</a></h2>
+<p>A serial number is assigned to each Cerebro. When a Base Station connects to Cerebro, it communicates on the radio channel corresponding to Cerebro’s serial number. This prevents crosstalk between Base Stations and Cerebros in the case where multiple behavior sessions are being run at the same time in the same room. Each Cerebro being used should setup a unique serial number between 1 and 255 using the process below.</p>
+<ol class="arabic simple">
+<li>Start an Xavier session in Debug Mode. The Base Station should be connnected, and have a green check mark.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/base_connected.png"><img alt="../_images/base_connected.png" class="align-center" src="../_images/base_connected.png" style="width: 294.0px; height: 116.0px;" /></a>
+<ol class="arabic simple" start="2">
+<li>Click <code class="docutils literal notranslate"><span class="pre">Setup</span> <span class="pre">New</span> <span class="pre">Cerebro</span></code></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/click_new_cerebro.png"><img alt="../_images/click_new_cerebro.png" class="align-center" src="../_images/click_new_cerebro.png" style="width: 294.0px; height: 80.0px;" /></a>
 <ol class="arabic simple" start="3">
-<li>Open up the Arduino application and make the following selections under the <strong>Tools</strong> menu:</li>
+<li>Hold down the button labeled “BTN” on Cerebro until the nearby LED blinks twice. A green checkmark should now be next to the “Cerebro Wireless Connection”.</li>
 </ol>
-<div class="line-block">
-<div class="line"><strong>Board:</strong> “Cerebro (ATtiny84)”</div>
-<div class="line"><strong>Port:</strong> “COMXX (Arduino/Genuino Uno)”</div>
-<div class="line"><strong>Programmer</strong>: “Arduino as ISP”</div>
-<div class="line"><br /></div>
-</div>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/tools_attiny84.png"><img alt="../_images/tools_attiny84.png" src="../_images/tools_attiny84.png" style="width: 499.0px; height: 345.0px;" /></a>
-</div>
+<a class="reference internal image-reference" href="../_images/hold.png"><img alt="../_images/hold.png" class="align-center" src="../_images/hold.png" style="width: 100%;" /></a>
+<ol class="arabic simple" start="4">
+<li>Fill in the “Serial Number” box with the serial number you want to give to Cerebro and then click <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Serial</span> <span class="pre">Number</span></code>.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/give_number.png"><img alt="../_images/give_number.png" class="align-center" src="../_images/give_number.png" style="width: 294.0px; height: 132.0px;" /></a>
 <ol class="arabic simple" start="5">
-<li>Burn the bootloader by selecting <strong>Tools -&gt; Burn Bootloader</strong></li>
+<li>After a few seconds, click the <code class="docutils literal notranslate"><span class="pre">Retry</span> <span class="pre">Connection</span></code> button to confirm everything worked. All three indicators should have green check marks. Cerebro now has a serial number saved to its memory, and whenever it is turned on it will try to communicate with a Base Station on a radio channel of the same number.</li>
 </ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/cerebro_bootloader.png"><img alt="../_images/cerebro_bootloader.png" src="../_images/cerebro_bootloader.png" style="width: 499.0px; height: 345.0px;" /></a>
-</div>
-<ol class="arabic simple" start="6">
-<li>Select the firmware that will be uploaded onto Cerebro <strong>File -&gt; Sketchbook -&gt; Cerebro Sketches -&gt; cerebro</strong></li>
-</ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/cerebro_firmware.png"><img alt="../_images/cerebro_firmware.png" src="../_images/cerebro_firmware.png" style="width: 502.0px; height: 226.0px;" /></a>
-</div>
-<ol class="arabic simple" start="7">
-<li>Upload the firmware by clicking the upload arrow</li>
-</ol>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/upload.png"><img alt="../_images/upload.png" src="../_images/upload.png" style="width: 500.0px; height: 100.0px;" /></a>
-</div>
-</div>
+<a class="reference internal image-reference" href="../_images/good.png"><img alt="../_images/good.png" class="align-center" src="../_images/good.png" style="width: 296.0px; height: 62.0px;" /></a>
 </div>
 </div>
 
@@ -519,7 +459,7 @@ are capable of handling a peak current of 350 mA.</p>
         <a href="implant.html" class="btn btn-neutral float-right" title="Head Implant" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../Overview/Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../Overview.html" class="btn btn-neutral" title="System Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -528,8 +468,8 @@ are capable of handling a peak current of 350 mA.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2017, Andy Lustig
-      Last updated on Jan 15, 2019.
+        &copy; Copyright 2015-2019, Andy Lustig
+      Last updated on Jan 11, 2019.
 
     </p>
   </div>

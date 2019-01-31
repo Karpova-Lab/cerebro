@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2017 Andy S. Lustig
+Copyright (c) 2015-2018 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,6 @@ SOFTWARE.
 #include <QSerialPortInfo>
 #include <qtimer.h>
 #include <settingsDialog.h>
-#include "dropbutton.h"
-
-
-class DropButton;
 
 class MainWindow : public QMainWindow
 {
@@ -50,8 +46,7 @@ private:
 
     QString                 usbTag,usbDescription;
     QString                 onTimeString,offTimeString;
-    bool                    baseConnected,downloadConnected;
-    bool                    receivedBaseInfo;
+    bool                    baseConnected,cerebroConnected;
     bool                    inTestloop;
     int                     testCount;
     bool                    startingUp;
@@ -61,80 +56,90 @@ private:
     settingsDialog          *settingsDlog;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
     bool                    errorThrown;
-    int                     baseFilter;
+    float                     baseFilter;
     QString                 startTime;
-    QString                 saveName1,saveName2;
+    QString                 saveName1;
     bool                    repeatOn;
+    int                     titleLeftPower, titleRightPower;
+    QString                 ratNumber,rigNumber;
+    QString                 xavierVersion;
+    bool                    sessionHasBegun;
+    int                     baseChannel;
 
     //Menus
-    QAction*                gotoSettings,*toggleDebug,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
+    QAction*                gotoSettings,*viewSummary,*openDir,*gotoApplocation,*gotoDocs,*about,*graphResults;
     QMenu*                  fileMenu,*viewMenu,*toolMenu,*goMenu,*helpMenu;
     QMessageBox*            aboutDialog;
 
     //Experimental Setup
     QGroupBox*              equipmentBox;
     QGridLayout*            equipmentLayout;
-    QLabel*                 rig_lbl,*rat_lbl,*cerebro_lbl;
-    QListWidget*            rigSelect,*ratSelect,*cerebroSelect;
+    QListWidget*            rigSelect,*ratSelect;
     QComboBox*              serialPortList;
-    QLabel*                 connectBS_label;
-    QPushButton*            refresh_btn,*connect_btn;
+    QLabel*                 connectBS_label,*cerebroNum_lbl;
+    QPushButton*            refresh_btn,*connect_btn,*rig_lbl,*rat_lbl;
     QCheckBox*              debugCheckbox;
-    QStringList             aliasStringList,rigList,ratList,cerebroList;
+    QStringList             aliasStringList,rigList,ratList;
+    QSpinBox*               cerebroNum_spin;
+
+    //Cerebro Status
+    QGroupBox*              cerStatusBox;
+    QGridLayout*            cerStatusLayout;
+    QLabel*                 implantTitle_lbl,*powerTitle_lbl,*waveformTitle_lbl,*serialNumber_lbl,*cerFirmware_lbl,*Lset_lbl,*Rset_lbl,*cerDelay_lbl,*cerOn_lbl,*cerOff_lbl,*cerTrain_lbl,*cerRamp_lbl;
+    QPushButton*            getInfo_btn;
+    QProgressBar*           batteryIndicator;
+    QLabel*                 battery_lbl;
 
     //Base Station Monitor
     QPushButton*            clearBase_btn;
-    QLabel*                 serial_title,*baseFilter_label;
+    QLabel*                 baseFilter_label,*baseChannel_lbl;
     QGridLayout*            serialMonitorLayout;
     QGroupBox*              baseBox;
     QPlainTextEdit*         baseMonitor;
-    QPushButton*            eeprom_btn;
+    QPushButton*            saveMonitor_btn;
+    QString                 baseBuffer;
+
+    //Cerebro Monitor
+    QDialog*                downloaderDialog;
+    QPushButton*            refresh2_btn,*connect2_btn,*clearDownload_btn,*channelSendButton,*queryCerebro_btn;
+    QGridLayout*            connectionLayout2;
+    QComboBox*              serialPortList2;
+    QLabel*                 connectLU_label,*download_title,*channelLabel;
+    QPlainTextEdit*         cerebroMonitor;
+    QSpinBox*               channelSpinBox;
 
     //Waveform Adjustment
     QGroupBox*              adjustBox;
-    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*startDelay_lbl,*fade_label,*power_lbl,*last_settings;
+    QLabel*                 onTime_lbl,*offTime_lbl,*trainDescription_lbl,*trainDuration_lbl,*fade_label;
     QRadioButton*           singleShot,*pulseTrain;
-    QSpinBox*               onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn,*power_spn;
-    QPushButton*            newPower_btn,*sendSettings_btn;
+    QDoubleSpinBox*         onTime_spn,*offTime_spn,*trainDuration_spn,*startDelay_spn,*fade_spn;
+    QPushButton*            sendSettings_btn;
     QGridLayout*            adjustmentLayout;
-    QCheckBox*              fade_checkbox;
+    QCheckBox*              fade_checkbox,*startDelay_checkbox;
 
     //Characterization Commands
     QGroupBox*              charBox;
     QGridLayout*            charLayout;
-    QPushButton*            startImplant_btn,*startDiode_btn,*initialize_btn;
-
-    //Calibration Dialogs
-    QDialog*                sendFadeDialog,*createFadeDialog;
-    QGroupBox*              chooseBox;
-    QPushButton*            createVecBtn,*sendCal_btn;
-    QGridLayout*            sendFadeLayout,*createVecLayout;
-    QPlainTextEdit*         codeTextBox;
-    QLabel*                 slideLabel,*dropLabel,*cerebroNum_lbl,*ldNum_lbl,*orLabel;
-    QLineEdit*              cerebroNum_edit,*ldNum_edit;
-    QCheckBox*              showGraph;
-    QLineEdit*              wantedLevel;
-    DropButton*             selectFile_btn;
-    bool                    isFirstTime;
+    QSpinBox*               leftDiode_spn,*rightDiode_spn;
+    QPushButton*            leftTest_btn,*rightTest_btn,*setDiode_btn,*isolationTest_btn,*combinedTest_btn,*startDiode_btn,*shortTest_btn,*longTest_btn;
 
     //Triggering & Debugging
     QGroupBox*              bugBox;
     QGridLayout*            triggerLayout;
     QCheckBox*              trigger_checkbox;
     QSpinBox*               trials_spn;
-    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*memoryDump_btn,*resetAddress_btn,*macro_btn;;
+    QPushButton*            trigger_btn,*stop_btn,*abort_btn,*batteryStatus_btn,*macro_btn;
     QProgressBar*           testProgress;
     QLineEdit*              macroText;
 
-    //Download Monitor
-    QGroupBox*              downloaderBox;
-    QPushButton*            refresh2_btn,*connect2_btn,*saveMonitor_btn,*clearDownload_btn;
-    QGridLayout*            connectionLayout2;
-    QComboBox*              serialPortList2;
-    QLabel*                 connectLU_label,*download_title;
-    QPlainTextEdit*         downloadMonitor;
-
+    //Session Start
+    QDialog*                sessionStartDialog;
+    QGridLayout*            sessionStartLayout;
+    QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*implantSettingsMatch_lbl,*newCerebro_lbl;
+    QPlainTextEdit*         sessionStartMonitor;
+    QPushButton*            startSession_btn,*retry_btn,*newCerebro_btn,*setSerial_btn;
     QGridLayout*            mainLayout;
+    QSpinBox*               newCerebro_spin;
 
 private slots:
 
@@ -149,49 +154,48 @@ private slots:
     //Connect to ports
     void applySettings();
     void fillBasestationPorts();
-    void fillDownloaderPorts();
+    void fillCerebroPorts();
     void connectBasePort();
-    void connectDownloadPort();
+    void connectCerebroPort();
     void sendTime();
+    void matchPowers();
+    void startSession();
 
     //Monitors
     void errorMsg();
     void clearMonitor();
     void clearMonitor2();
-    void readSerial();
-    void readLog();
+    void readFromBase();
+    void readFromCerebro();
     void updateFilter();
     void saveFile();
+    void getCerebroInfoOverSerial();
+    void updateChannel();
 
     //Debug Commands
     void sendTrigger();
     void abort();
-    void EEPROM();
     void macro();
-    void triggerPushed();
-    void triggerChecked();
-    void resetAddress();
-    void dumpMemory();
+    void getInfo();
+    void getBatteryStatus();
+    void checkForBase();
 
     //Cerebro Parmeters
     void trainChecked();
     void trainDur();
     void fadeChecked();
-    void sendNewPower();
+    void startDelayChecked();
     void set();
-    void powerSending();
 
-    //Calibration
-    void chooseFile();
-    void getCalVals(QString calibrateDataPath);
-    void useDropped(const QMimeData *mimeData);
-    void sendImplantStart();
-    void sendDiodeStart();
-    void sendCalVector();
-    void sendCalGroups();
-    void sendHardwareVals();
+    //Characterization
+    void sendToDiode();
+    void setDiodePower();
+    void testCombined();
+    void testLong();
+    void testShort();
 
-    //    void getJSON();
+    void setupCerebro();
+    void updateSerial();
 };
 
 

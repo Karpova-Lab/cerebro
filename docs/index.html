@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cerebro Wireless Optogenetics System v1 &mdash; Cerebro 1.0.0 documentation</title>
+  <title>Cerebro Wireless Optogenetics System v2 &mdash; Cerebro 2.0.3 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="System Overview" href="Overview/Overview.html" /> 
+    <link rel="next" title="System Overview" href="Overview.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -75,16 +75,13 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/implant.html">Head Implant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/utility shield.html">Utility Shield</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/remote.html">IR Remote</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/programmer.html">Pogo Connector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Software/Xavier.html">Xavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Notes/notes.html">Additional Resources</a></li>
 </ul>
 
             
@@ -132,7 +129,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Cerebro Wireless Optogenetics System v1</li>
+      <li>Cerebro Wireless Optogenetics System v2</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -140,7 +137,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/Karpova-Lab/cerebro/tree/1.0" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -151,7 +148,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="Overview/Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
   </div>
@@ -161,14 +158,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cerebro-wireless-optogenetics-system-v1">
-<h1>Cerebro Wireless Optogenetics System v1<a class="headerlink" href="#cerebro-wireless-optogenetics-system-v1" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="cerebro-wireless-optogenetics-system-v2">
+<h1>Cerebro Wireless Optogenetics System v2<a class="headerlink" href="#cerebro-wireless-optogenetics-system-v2" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This documentation is very much a work in progress. Please understand that there will porbably be typos and missing</p>
+</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>You are currently viewing documentation for the <strong>infrared</strong> controlled Version 1 system.  To view documentation for the <strong>radio</strong> controlled Version 2 system, click the button below.</p>
+<p>You are currently viewing documentation for the <strong>radio</strong> controlled Version 2 system. To view documentation for <strong>infrared</strong> controlled Version 1 system, click the button below.</p>
 <div class="last"><div style="text-align:center; margin-bottom:24px">
-  <a href="https://github.com/Karpova-Lab/cerebro" style="
-  background-color: #2980b9;
+  <a href="http://cerebro.readthedocs.io/en/1.0/" style="background-color: #2980b9;
   border: none;
   color: white;
   padding: 15px 15px;
@@ -176,29 +176,109 @@
   text-decoration: none;
   display: inline-block;
   font-size: 18px;
-  border-radius:15px">
-  Version 2 Documentation</a>
+  border-radius:15px">Version 1 Documentation</a>
 </div></div></div>
 <p>Welcome! This is the hardware and software documentation of a system used for wireless <a class="reference external" href="https://en.wikipedia.org/wiki/Optogenetics">optogenetic</a> stimulation.
 As an <a class="reference external" href="http://www.oshwa.org/definition/">open-source</a> project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.</p>
 <div style="text-align:center; margin-bottom:24px">
-  <a href="https://github.com/Karpova-Lab/cerebro" style="
-  background-color: #2980b9;
-  border: none;color: white;
+  <a href="https://github.com/Karpova-Lab/cerebro" style="background-color: #2980b9;
+  border: none;
+  color: white;
   padding: 15px 15px;
   text-align:center;
   text-decoration: none;
   display: inline-block;
   font-size: 18px;
-  border-radius:15px">
-  File Repository on GitHub</a>
+  border-radius:15px">Files on GitHub</a>
 </div><p>This project was developed by Andy Lustig in the <a class="reference external" href="https://www.janelia.org/lab/karpova-lab">Karpova Lab at Janelia Research Campus</a>.
 If you have any questions you can contact him at <a class="reference external" href="mailto:lustiga&#37;&#52;&#48;janelia&#46;hhmi&#46;org">lustiga<span>&#64;</span>janelia<span>&#46;</span>hhmi<span>&#46;</span>org</a></p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Overview.html">System Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Overview.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Overview.html#system-components">System Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Overview.html#cerebro">Cerebro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Overview.html#head-implant">Head Implant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Overview.html#base-station">Base Station</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Overview.html#charging-dock">Charging Dock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Overview.html#xavier">Xavier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Overview.html#alternative-commerical-systems">Alternative Commerical Systems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#bill-of-materials">Bill of Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#programming-instructions">Programming Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#burning-a-bootloader">Burning a Bootloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#uploading-test-program">Uploading Test Program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#uploading-firmware">Uploading Firmware</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#assigning-a-serial-number">Assigning a Serial Number</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/implant.html">Head Implant</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/implant.html#required-tools">Required Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/implant.html#bill-of-materials">Bill of Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/implant.html#assembly-instructions">Assembly Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/implant.html#prepare-fiber">Prepare Fiber</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/implant.html#align-fiber">Align Fiber</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/implant.html#fiber-guide-construction">Fiber Guide Construction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/implant.html#combine-pcb-laser-diodes-and-fiber-guide">Combine PCB, Laser Diodes, and Fiber Guide</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/base station.html#bill-of-materials">Bill of Materials</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/base station.html#downloads">Downloads</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/charging dock.html#bill-of-materials">Bill of Materials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/programmer.html">Pogo Connector</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/programmer.html#bill-of-materials">Bill of Materials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Software/Xavier.html">Xavier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Software/Xavier.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#system-requirements">System Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#download-instructions">Download Instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Software/Xavier.html#settings">Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#edit-default-save-directory">Edit Default Save Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#edit-session-setup-lists">Edit Session Setup Lists</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Software/Xavier.html#adding-items">Adding Items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Software/Xavier.html#removing-items">Removing Items</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#labeling-com-ports">Labeling COM Ports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Software/Xavier.html#running-an-experiment">Running an Experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#session-setup">Session Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#edit-waveform-parameters">Edit Waveform Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Software/Xavier.html#ending-a-session-and-saving-data">Ending a Session and Saving Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </div>
+</div>
+<div class="section" id="licenses">
+<h2>Licenses<a class="headerlink" href="#licenses" title="Permalink to this headline">¶</a></h2>
 <p>The MIT License (MIT)</p>
-<p>Copyright (c) 2015-2017 Andy Lustig</p>
+<p>Copyright (c) 2015-2019 Andy Lustig</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the “Software”), to deal
 in the Software without restriction, including without limitation the rights
@@ -220,6 +300,7 @@ SOFTWARE.</p>
 <br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Cerebro Wireless Optogenetics System</span> by
 <a xmlns:cc="http://creativecommons.org/ns#" href="https://www.janelia.org/lab/karpova-lab" property="cc:attributionName" rel="cc:attributionURL">
 Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a></div>
+</div>
 
 
            </div>
@@ -229,7 +310,7 @@ Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecomm
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="Overview/Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -239,8 +320,8 @@ Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecomm
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2017, Andy Lustig
-      Last updated on Jan 15, 2019.
+        &copy; Copyright 2015-2019, Andy Lustig
+      Last updated on Jan 11, 2019.
 
     </p>
   </div>

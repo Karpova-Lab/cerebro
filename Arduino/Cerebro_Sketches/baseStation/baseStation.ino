@@ -1,7 +1,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MIT License
 
-Copyright (c) 2015-2016 Andy S. Lustig
+Copyright (c) 2015-2018 Andy S. Lustig
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,270 +22,417 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/*
-Cerebro Base Station(CBS) emits IR signals to communicate with Cerebro.
-CBS has two modes: USB and MBED. In USB mode, CBS can be triggered either by a high signal on pin 3, or through serial
-communication coming from serialSender. In MBED mode, CBS is triggered by serial communication coming from an MBED.
-Based on code from Adafruit IR sensor tutorial: https://learn.adafruit.com/ir-sensor/making-an-intervalometer
-Upload to ATtiny85 at 8MHz for proper timing. ATtiny core for Arduino IDE found here: https://code.google.com/p/arduino-tiny/
-*/
+//Documentation for this project can be found at https://karpova-lab.github.io/cerebro/
 
-#include <EEPROM.h>         //***Burned bootloader should have EESAVE bit (Fuse high bit no 3) set low to prevent EEPROM from being cleared whenever a sketch is uploaded***
-#include <Cerebro.h>
-#include <SoftwareSerial.h>
+#include <Radio.h>  //https://github.com/LowPowerLab/RFM69
+#include <SPI.h>
+#include <EEPROM.h>
 #include <avr/wdt.h>
-Cerebro cerebro(BASESTATION);
-SoftwareSerial mySerial(3,4);
-#define triggerIn_reg PINB
-#define stopIn_reg    PINB
-#define triggerIn   2              //pin 7 on 85
-#define stopIn      0              //pin 5 on 85
-#define CONTINUATION 1
-String startupMsg;
-unsigned long timeOffset;
-byte values[numParameters][6];
-byte version = 24;
-unsigned long powers[7] = {1, 10, 100, 1000, 10000, 100000, 1000000};
-long triggerClock = 0;
-unsigned int spamFilter;  /*Bcontrol is indiscriminately sending stop signals every time the center nose poke is entered.
-                          We don't want Base Station's log file to be filled with "Stop Sent" events that weren't applicable to Cerebro.
-                          Therefore, Base Station filters Bcontrol commands, only emitting stop signals to Cerebro if we think
-                          Cerebro is in the middle of a pulse. Likewise for trigger events, we only emit trigger signals if we do NOT think
-                          Cerebro is in the middle of a pulse*/
 
-void setup()   {
-  MCUSR = 0;  //clear MCU register of previous reset flags
-  wdt_disable();//disable watchdog timer
-  pinMode(triggerIn, INPUT);
-  pinMode(stopIn, INPUT);
-  mySerial.begin(9600);
-  spamFilter = EEPROM.read(0)<<8 | EEPROM.read(1); //recall spamFilter from memory
-  triggerClock = -spamFilter;
+#define CHANNEL_ADDRESS 0
 
-  //setup time synchronization//
-  byte msgLength = 0;
-  while (!mySerial.available()){}       // wait until serial data is available
-  while (mySerial.available()) {        //once available, read and store the message that was sent
-    startupMsg+= (char)mySerial.read();
-    msgLength++;
-    delay(2);
-  }
-  if (msgLength < 2) {                   //if the chip was just reset through software there is going to be a leftover 'R' in the serial buffer. That's not the message we want.
-    startupMsg = "";
-    while (!mySerial.available()) {}
-    while (mySerial.available()) {
-      startupMsg+= (char)mySerial.read();
-      delay(1);
-    }
-  }
-  mySerial.print(startupMsg);
-  mySerial.print(version);
-  mySerial.print(",");
-  mySerial.print(spamFilter);
-  mySerial.print("\r");
-  timeOffset = millis();
+const uint8_t VERSION = 56; //2018-11-13
+
+const uint8_t LED = 13;
+const uint8_t TRIGGER_PIN = 6;
+const uint8_t STOP_PIN = 5;
+
+uint8_t netID;
+
+Radio radio(8,7); //slave select pin, interrupt pin
+WaveformData newWaveform;
+WaveformData currentWaveform;
+DiodePowers newDiodePowers;
+DiodePowers currentDiodePowers;
+IntegerPayload integerMessage;
+Info cerebroInfo;
+Feedback diodeStats;
+
+uint32_t  valsFromParse[5];
+uint32_t  startTime = 0;
+uint32_t  spamFilter = 0;
+uint32_t  triggerClock = 0;
+uint16_t  msgCount = 0;
+bool      ignoreFilter = false;
+bool      warningsOn = true;
+
+void setup() {
+  Serial1.begin(57600);
+  delay(10);
+  pinMode(LED, OUTPUT);
+
+  EEPROM.get(CHANNEL_ADDRESS,netID);
+  radio.radioSetup(1,false,netID); //nodeID, autopower off;
+  pinMode(TRIGGER_PIN,INPUT);
+  pinMode(STOP_PIN,INPUT);
+  startTime = millis();
+  newSession();
 }
-
-
 
 void loop() {
-  //if we read high signal on pin 7, send a trigger to cerebro
-  if (triggerIn_reg & (1<<triggerIn)) {
-    while(triggerIn_reg & (1<<triggerIn)){} //wait until signal goes low
-    triggerFromBase();
+  ////////////Receive Message From Bcontrol
+  if (digitalRead(TRIGGER_PIN)) {
+    while(digitalRead(TRIGGER_PIN)){
+      //wait until signal goes low
+    }
+    triggerCommandReceived();
   }
-  //if we read a high signal on pin 5, send a stop command to cerebro
-  if (stopIn_reg & (1<<stopIn)) {
-    while(stopIn_reg & (1<<stopIn)){}       //wait until signal goes low
-    stopFromBase();
+  //if we read a high signal on pin 6, send a stop command to cerebro
+  if (digitalRead(STOP_PIN)) {
+    while(digitalRead(STOP_PIN)){
+      //wait until signal goes low
+    }
+    stopCommandReceived();
   }
-  //if we get a serial messsage from Xavier
-  if (mySerial.available()) {
-    parseMsg(readMsg());
-  }
-}
 
+  ///////////Receive Message From Xavier//////////////////
+  if (Serial1.available()){
+    char msg = Serial1.read();
+    if (msg=='W'){  //parse data then send new waveform
+      parseData();
+      sendWaveformUpdate();
+    }
+    else if (msg=='D'){  //parse data then send new power
+      parseData();
+      sendDiodePowerUpdate();
+    }
+    else if (msg=='S' || msg == 'L' || msg == 'R' ||  msg == 'l' ||  msg == 'r'){ //parse data then send radio message with integer
+      parseData();
+      delay(500);
+      sendMsgAndVal(msg,valsFromParse[0]);
+    }
+    else if (msg=='T'){
+      triggerCommandReceived();
+    }
+    else if (msg=='A'){
+      stopCommandReceived();
+    }
+    else if(msg=='M'){
+      requestMissed();
+    }
+    else if(msg=='N'){
+      newSession();
+    }
+    else if (msg=='K'){
+      parseData();
+      uint8_t newNetworkID = valsFromParse[0];
+      Serial1.print("\nChanging to channel:");
+      Serial1.println(newNetworkID);
+      EEPROM.update(CHANNEL_ADDRESS, newNetworkID);
+      Serial1.println("Restarting...");
+      wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
+      while(1){}              // do nothing and wait for the reset
+    }
+    else if(msg=='?'){
+      Serial1.print("Channel: ");
+      Serial1.println(netID);
+      Serial1.print("Base Version,");Serial1.print(VERSION);newline();
+    }
+    else if (msg!='\n'){
+      relayMsg(msg);
+    }
+  }
 
-byte readMsg(){
-  byte digitIndex = 0;
-  byte valueIndex = 0;
-  while (mySerial.available()) {
-    char msg = mySerial.read();
-    if (msg == ',') {
-      digitIndex = 0;
-      valueIndex++;
-    }
-    else {
-      values[valueIndex][digitIndex] = msg;
-      digitIndex++;
-      values[valueIndex][5] = digitIndex; //the number of digits that have been read in
-      delay(20);
-    }
-  }
-  return valueIndex;
-}
-
-void parseMsg(byte numValues){
-  //Commands received will be single characters ('T' or 'D' etc.)
-  //In the special case that new parameters are received ('12345,12345,12345,12345,12345'), read in the ascii chacaters that were sent (they represent integers separated by commas).
-  //Each  values[i] has 6 bytes, the first 5 bytes are for the ascii characters representing digits 0-9, the last byte (index 5) is reserved for storing the number of "digits" received.
-  //Later on, cerebro.send() function converts these strings of "digits" to actual integers and then sends them as binary data.
-
-  //received ASCII "T", send trigger to cerebro
-  if (values[0][0] == 'T') {
-    triggerFromBase();
-  }
-  //received ASCII "D", send start then stop for reception test.
-  else if (values[0][0] == 'D') {
-    cerebro.test();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Test Sent\r"));
-  }
-  //received ASCII "S", send stop command to cerebro.
-  else if (values[0][0] == 'S') {
-    stopFromBase();
-  }
-  else if (values[0][0] == 'Q') {
-    cerebro.stop();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Debug Stop Sent\r"));
-  }
-  else if (values[0][0] == 'C') {
-    cerebro.trigger(CONTINUATION);
-    triggerClock = millis();
-    mySerial.print(triggerClock - timeOffset);
-    mySerial.print(F(",Debug Continuation Sent\r"));
-  }
-  //received ASCII "E", send save to EEPROM command to cerebro.
-  else if (values[0][0] == 'E' ){
-    cerebro.saveEEPROM();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Save Sent\r"));
-  }
-  //received ASCII "R", reset MCU.
-  else if (values[0][0] == 'R') {
-    while(mySerial.available()){
-      mySerial.read();
-    }
-    wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
-    while(1){}              // do nothing and wait for the reset
-  }
-  //receiveed ASCII "V", reply with version
-  else if (values[0][0] == 'V') {
-    mySerial.print(F("Base Station Firmware Version,"));
-    mySerial.print(version);
-    mySerial.print("\r");
-  }
-  //receiveed ASCII "L", toggle the IR Lamp
-  else if (values[0][0] == 'L'){
-    if (cerebro.isNormallyOn){
-      cerebro.toggle(0);
-    }
-    else {
-      cerebro.toggle(1);
-    }
-  }
-  //receiveed ASCII "F", update spamFilter value
-  if (values[0][0] == 'F'){
-    spamFilter = 0;
-    for (int i = 0; i < values[1][5]; i++) {
-      spamFilter = spamFilter + (values[1][i] - 48) * powers[values[1][5] - i - 1];
-    }
-    saveVal(spamFilter);
-    mySerial.print(F("Filter updated to "));
-    mySerial.print(spamFilter);
-    mySerial.print(" ms\r");
-  }
-  else if (values[0][0] == 'X') {
-    cerebro.sendBinary(117,7);
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Calibration Vector Sent\r"));
-  }
-  else if (values[0][0] == 'H') {
-    cerebro.sendBinary(97,7);
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Hardware Vector Sent\r"));
-  }
-  else if (values[0][0] == 'M') {
-    cerebro.dumpMemory();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Memory Dump Sent\r"));
-  }
-  else if (values[0][0] == 'A') {
-    cerebro.resetAddress();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Address Reset Sent\r"));
-  }
-  else if (values[0][0] == 'P') {
-    cerebro.sendBinary(36,7); //sends message that sets the powerTest flag
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",New Power Sent\r"));
-  }
-  else if (values[0][0] == 'Z') {
-    cerebro.implantCharacterize();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Implant Characterization Routine Start Sent\r"));
-  }
-  else if (values[0][0] == 'K') {
-    cerebro.diodeCharacterize();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Diode Characterization Routine Start Sent\r"));
-  }
-  //received values to pass along to cerebro. Send 8 bytes of data to cerebro.
-  else if (numValues==numParameters-1){
-    //convert read ascii digits to an integer
-    unsigned int decnum[numParameters];
-    for( int k=0; k<numParameters; k++){
-        decnum[k] = 0;
-        for (int i = 0; i < values[k][5]; i++) {
-          decnum[k] = decnum[k] + (values[k][i] - 48) * powers[values[k][5] - i - 1];
+  ///////////Receive Message From Cerebro///////
+  if (radio.receiveDone()){
+    switch (radio.DATALEN) {
+      case sizeof(cerebroInfo):
+        if (radio.ACKRequested()){
+          radio.sendACK();
         }
+        cerebroInfo = *(Info*)radio.DATA;
+        printCerebroInfo();
+        break;
+      case sizeof(currentDiodePowers):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        currentDiodePowers = *(DiodePowers*)radio.DATA;
+        printDiodePowers(currentDiodePowers,true);
+        break;
+      case sizeof(currentWaveform):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        currentWaveform = *(WaveformData*)radio.DATA;
+        if (currentWaveform.trainDur>0){
+          spamFilter = currentWaveform.startDelay + currentWaveform.trainDur;
+          warningsOn = false;
+        }
+        else{
+          spamFilter = currentWaveform.startDelay + currentWaveform.onTime;
+          warningsOn = true;
+        }
+        printWaveform(currentWaveform,true);
+        break;
+      case sizeof(diodeStats):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        diodeStats = *(Feedback*)radio.DATA;
+        printDiodeStats();
+        break;
+      case  sizeof(integerMessage):
+        if (radio.ACKRequested()){
+          radio.sendACK();
+        }
+        integerMessage = *(IntegerPayload*)radio.DATA;
+        if(integerMessage.variable == 'B'){
+          printBattery(integerMessage.msgCount,integerMessage.value);
+        }
+        else if (integerMessage.variable == 'M'){
+          Serial1.print("Total Missed,");Serial1.print(integerMessage.value);newline();
+        }
+        else if (integerMessage.variable =='m'){
+          Serial1.print("Missed Message Index,");Serial1.print(integerMessage.value);newline();
+        }
+        else if (integerMessage.variable == 'Y'){
+          Serial1.print("Cerebro turned on and connected,");Serial1.print(integerMessage.value);//print time it took to startup and send connection message.
+        }
+        break;
     }
-    mySerial.print(millis() - timeOffset);
-    cerebro.send(decnum);
-    mySerial.print(F(",New Parameters Sent"));
-    for (int i = 0; i<numParameters; i++){
-      mySerial.print(",");
-      mySerial.print(decnum[i]);
-    }
-    mySerial.print("\r");
   }
 }
 
-void triggerFromBase(){
-  unsigned long tSinceTrigger = millis() - triggerClock;
-  if (tSinceTrigger>spamFilter){
-    cerebro.trigger();
-    triggerClock = millis();
-    mySerial.print(triggerClock - timeOffset);
-    mySerial.print(F(",Trigger Sent\r"));
+void parseData(){
+  char msgData[30] = "";
+  Serial1.readBytesUntil('\n',msgData,30);
+  char* msgPointer;
+  msgPointer = strtok(msgData,",");
+  char i = 0;
+  while (msgPointer!=NULL){
+    valsFromParse[i] = atol(msgPointer);
+    msgPointer = strtok(NULL,",");
+    i++;
+  }
+}
+
+void sendMsgAndVal(char msg,unsigned int val){
+  integerMessage.variable = msg;
+  integerMessage.value = val;
+  Serial1.print("\nSending '"); Serial1.print(msg);Serial1.print("' ") ;Serial1.print(integerMessage.value);Serial1.print("...");
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage),5)){
+    Serial1.print("data received");newline();
   }
   else{
-    cerebro.trigger(CONTINUATION);
+    Serial1.print("*X&data send fail");newline();
+  }
+}
+
+void newSession(){
+  startTime = millis();
+  msgCount = 0;
+  Serial1.print("\n*BaseOn&Base Version,");Serial1.print(VERSION);newline();
+  uint32_t theVals[1] = {netID};
+  sendDataToXavier("Base Channel",theVals,1);
+  Serial1.print("Base Channel,");Serial1.print(netID);newline();
+
+  char msg = 'N';
+  if (radio.sendWithRetry(CEREBRO, &msg, 1, 3)){
+    // Serial1.print("Connected!");
+  }
+  else{
+    Serial1.print("*X&Error communicating with Cerebro\n\n");
+  }
+}
+
+void relayMsg(char msg){
+  if (radio.sendWithRetry(CEREBRO, &msg, 1, 0)){  // 0 = only 1 attempt, no retries
+  }
+  else{
+    Serial1.print("*X&");
+    printTime();Serial1.print("Tried Sending ''");Serial1.print(msg);
+    Serial1.print("'', ACK not received");newline();
+  }
+}
+
+void printCerebroInfo(){
+  uint32_t theVals[2] = {cerebroInfo.firmware, cerebroInfo.serialNumber};
+  sendDataToXavier("Cerebro Info",theVals,2);
+  Serial1.print("Cerebro Version,");Serial1.print(cerebroInfo.firmware);newline();
+  Serial1.print("Serial Number,");Serial1.print(cerebroInfo.serialNumber);newline();
+}
+
+void printDiodePowers(DiodePowers printPower,  bool response){
+  printTime();
+  if(response){
+    Serial1.print("[");Serial1.print(printPower.msgCount);Serial1.print(']');
+  }
+  else{
+    Serial1.print(msgCount);
+  }
+  uint32_t theVals[2] = {printPower.lSetPoint, printPower.rSetPoint};
+  sendDataToXavier("Diode Powers",theVals,2);
+  printToBaseMonitor("Diode Powers",theVals,2);
+}
+
+void printBattery(uint16_t batteryMsgCount, uint8_t batteryStatus){
+  printTime();
+  Serial1.print("[");Serial1.print(batteryMsgCount);Serial1.print("]");
+  uint32_t theVals[] = {batteryStatus};
+  uint8_t numElements = sizeof(theVals)/sizeof(uint32_t);
+
+  sendDataToXavier("Battery",theVals,numElements);
+  printToBaseMonitor("Battery",theVals,numElements);
+}
+
+void printWaveform(WaveformData wave, bool response){
+  printTime();
+  uint32_t theVals[] = {wave.startDelay, wave.onTime, wave.offTime, wave.trainDur, wave.rampDur};
+  uint8_t numElements = sizeof(theVals)/sizeof(uint32_t);
+
+  sendDataToXavier("Waveform",theVals,numElements);
+  if(response){
+    Serial1.print("[");Serial1.print(wave.msgCount);Serial1.print(']');
+  }
+  else{
+    Serial1.print(msgCount);
+  }
+  printToBaseMonitor("Waveform",theVals,numElements);
+}
+
+void printDiodeStats(){
+  printTime();
+  Serial1.print("[");Serial1.print(diodeStats.msgCount);Serial1.print("]");
+  uint32_t theVals[6] = {currentDiodePowers.lSetPoint, diodeStats.leftFBK, diodeStats.leftDAC, currentDiodePowers.rSetPoint, diodeStats.rightFBK, diodeStats.rightDAC};
+  printToBaseMonitor("Feedback",theVals,6);
+  if (diodeStats.leftDAC>3000 && warningsOn){
+    Serial1.print("Warning: Left DAC value of ");Serial1.print(diodeStats.leftDAC);Serial1.print(" is suspicously high\n");
+  }
+  if (diodeStats.rightDAC>3000 && warningsOn){
+    Serial1.print("Warning: Right DAC value of ");Serial1.print(diodeStats.rightDAC);Serial1.print(" is suspicously high\n");
+  }
+  int32_t leftDiff = (int32_t)currentDiodePowers.lSetPoint-(int32_t)diodeStats.leftFBK;
+  int32_t rightDiff = (int32_t)currentDiodePowers.rSetPoint-(int32_t)diodeStats.rightFBK;
+  uint8_t diffThresh = 20;
+  if ((abs(leftDiff)>diffThresh) && warningsOn){
+    Serial1.print("Warning: Large difference (");Serial1.print(leftDiff);Serial1.print(") between left diode's set point and feedback\n");   
+  }
+  if ((abs(rightDiff)>diffThresh) && warningsOn){
+    Serial1.print("Warning: Large difference (");Serial1.print(rightDiff);Serial1.print(") between right diode's set point and feedback\n");  
+  }
+}
+
+void sendWaveformUpdate(){
+  newWaveform.startDelay = valsFromParse[0];
+  newWaveform.onTime = valsFromParse[1];
+  newWaveform.offTime = valsFromParse[2];
+  newWaveform.trainDur = valsFromParse[3];
+  newWaveform.rampDur = valsFromParse[4];
+  newWaveform.msgCount = msgCount++;
+  printWaveform(newWaveform,false);
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&newWaveform), sizeof(newWaveform))){
+    currentWaveform = newWaveform;
+    ignoreFilter = true;    
+  }
+  else{
+    Serial1.print("*X&Waveform Update Failed\n");
+  }
+}
+
+void sendDiodePowerUpdate(){
+  newDiodePowers.lSetPoint = valsFromParse[0];
+  newDiodePowers.rSetPoint = valsFromParse[1];
+  newDiodePowers.msgCount = msgCount++;
+  printDiodePowers(newDiodePowers, false);
+  if (radio.sendWithRetry(CEREBRO, (const void*)(&newDiodePowers), sizeof(newDiodePowers))){
+    currentDiodePowers = newDiodePowers;
+  }
+  else{
+    Serial1.print("*X&Diode Power Update Failed\n");
+  }
+}
+
+void requestMissed(){
+  msgCount++;
+  integerMessage.variable = 'M';
+  integerMessage.value = msgCount;
+  printTime();Serial1.print(msgCount);comma();Serial1.print("Misses Requested");newline();
+  if(radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage),3)){
+    //
+  }
+  else{
+    printTime();Serial1.print(msgCount);comma();Serial1.print("No Miss Request Ack");newline();
+  }
+}
+
+void triggerCommandReceived(){
+  uint32_t  tSinceTrigger = millis() - triggerClock;
+  if (tSinceTrigger>spamFilter || ignoreFilter){
+    msgCount++;
+    integerMessage.variable = 'T';
+    integerMessage.value = msgCount;
+    printTime();Serial1.print(msgCount);comma();Serial1.print("Trigger");newline();
+    radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
     triggerClock = millis();
-    mySerial.print(triggerClock - timeOffset);
-    mySerial.print(F(",Continue Sent,"));
-    mySerial.print(tSinceTrigger);
-    mySerial.print("\r");
   }
+  else{
+    msgCount++;
+    integerMessage.variable = 'C';
+    integerMessage.value = msgCount;
+    printTime();Serial1.print(msgCount);comma();Serial1.print("Continue");newline();
+    radio.send(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage));
+    triggerClock = millis();
+  }
+  ignoreFilter = false;
 }
 
-void stopFromBase(){
-  unsigned long tSinceTrigger = millis() - triggerClock;
+void stopCommandReceived(){
+  uint32_t  tSinceTrigger = millis() - triggerClock;
   if (tSinceTrigger<spamFilter){
-    cerebro.stop();
-    mySerial.print(millis() - timeOffset);
-    mySerial.print(F(",Stop Sent,"));
-    mySerial.print(tSinceTrigger);
-    mySerial.print("\r");
-    triggerClock = -spamFilter; //prevents back to back stop signals from being sent
+    msgCount++;
+    integerMessage.variable = 'A';
+    integerMessage.value = msgCount;
+    printTime();Serial1.print(msgCount);comma();Serial1.print("Abort");newline();
+    if (radio.sendWithRetry(CEREBRO, (const void*)(&integerMessage), sizeof(integerMessage),3)){
+      triggerClock = -spamFilter; //prevents back to back stop signals from being sent
+    }
+    else{
+      printTime();Serial1.print(msgCount);comma();Serial1.print("No Abort Ack");newline();
+    }
+  }
+  else{
+    printTime();Serial1.print(msgCount);comma();Serial1.print("Spam Filtered Abort");newline();
   }
 }
 
-void saveVal(int saveValue){
-  EEPROM.write(0,saveValue >> 8);
-  EEPROM.write(1,saveValue & 255);
+void sendDataToXavier(char* parameterName, uint32_t theValues[], uint8_t numValues){
+  Serial1.print("*");Serial1.print(parameterName);tilda();
+  Serial1.print(theValues[0]);
+  for (uint8_t i  = 1; i < numValues; i++){
+    tilda();
+    Serial1.print(theValues[i]);
+  }
+  Serial1.print("&");
 }
 
-void recallVal(){
+void printToBaseMonitor(char* parameterName, uint32_t theValues[], uint8_t numValues){
+  Serial1.print(",");Serial1.print(parameterName);comma();
+  Serial1.print(theValues[0]);
+  for (uint8_t i  = 1; i < numValues; i++){
+    dash();
+    Serial1.print(theValues[i]);
+  }
+  newline();
+}
+
+void printTime(){
+  uint32_t currentTime = millis()-startTime;
+  Serial1.print(currentTime);comma();
+}
+
+void comma(){
+  Serial1.print(",");
+}
+
+void tilda(){
+  Serial1.print("~");
+}
+
+void dash(){
+  Serial1.print("-");
+}
+
+void newline(){
+  Serial1.print("\n");
 }

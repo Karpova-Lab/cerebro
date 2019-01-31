@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Head Implant &mdash; Cerebro 1.0.0 documentation</title>
+  <title>Head Implant &mdash; Cerebro 2.0.3 documentation</title>
   
 
   
@@ -76,24 +76,24 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Head Implant</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#required-tools">Required Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#design-files">Design Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#assembly-instructions">Assembly Instructions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#diode-characterization-and-pairing-for-bilateral-implants-only">Diode Characterization and Pairing (for bilateral implants only)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#implant-characterization">Implant Characterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assembly-instructions">Assembly Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prepare-fiber">Prepare Fiber</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#align-fiber">Align Fiber</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fiber-guide-construction">Fiber Guide Construction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#combine-pcb-laser-diodes-and-fiber-guide">Combine PCB, Laser Diodes, and Fiber Guide</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility shield.html">Utility Shield</a></li>
 <li class="toctree-l1"><a class="reference internal" href="charging dock.html">Charging Dock</a></li>
-<li class="toctree-l1"><a class="reference internal" href="remote.html">IR Remote</a></li>
-<li class="toctree-l1"><a class="reference internal" href="downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programmer.html">Pogo Connector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Notes/notes.html">Additional Resources</a></li>
 </ul>
 
             
@@ -149,7 +149,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/Karpova-Lab/cerebro/tree/1.0" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -175,39 +175,8 @@
   <div class="section" id="head-implant">
 <h1>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h1>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/implant_cad.png"><img alt="../_images/implant_cad.png" src="../_images/implant_cad.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/implant_cad.jpg"><img alt="../_images/implant_cad.jpg" src="../_images/implant_cad.jpg" style="width: 100%;" /></a>
 </div>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="3%" />
-<col width="97%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Item</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>1</td>
-<td>Micro USB Socket</td>
-</tr>
-<tr class="row-odd"><td>2</td>
-<td>Printed Circuit Board (PCB)</td>
-</tr>
-<tr class="row-even"><td>3</td>
-<td>Laser Diode</td>
-</tr>
-<tr class="row-odd"><td>4</td>
-<td>Acrylic fiber guide</td>
-</tr>
-<tr class="row-even"><td>5</td>
-<td>Ferrule</td>
-</tr>
-<tr class="row-odd"><td>6</td>
-<td>Optical Fiber</td>
-</tr>
-</tbody>
-</table>
 <div class="section" id="required-tools">
 <span id="implanttools"></span><h2>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h2>
 <blockquote>
@@ -215,10 +184,12 @@
 <li>Ruler</li>
 <li>Soldering iron</li>
 <li>Tweezers</li>
+<li><a class="reference external" href="https://www.thorlabschina.cn/thorproduct.cfm?partnumber=BFG1">Fiber gripper</a></li>
 <li><a class="reference external" href="https://www.thorlabs.com/thorProduct.cfm?partNumber=T12S21">Fiber stripper</a></li>
 <li><a class="reference external" href="http://www.fiberinstrumentsales.com/fis-lynx-precision-cleaver-with-fiber-basket.html">Fiber cleaver</a></li>
 <li><a class="reference external" href="http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M">3-axis fiber launch system</a></li>
 <li><a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=PM121D">Power meter</a> and <a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=S121C">photodiode sensor</a></li>
+<li><a class="reference external" href="https://www.amazon.com/KORAD-KD3005D-Precision-Adjustable-Regulated/dp/B00FPU6G4E/ref=sr_1_2?s=hi&amp;ie=UTF8&amp;qid=1521832325&amp;sr=1-2&amp;keywords=korad+power+supply&amp;dpID=41CeDR0WTPL&amp;preST=_SY300_QL70_&amp;dpSrc=srch">Adjustable DC Power Supply</a></li>
 <li><a class="reference external" href="https://www.amazon.com/TaoTronics-TT-FL001-Flashlight-Blacklight-Ultraviolet/dp/B00RV8PREI/ref=sr_1_1?ie=UTF8&amp;qid=1484071557&amp;sr=8-1&amp;keywords=B00RV8PREI">Ultraviolet light</a></li>
 </ul>
 </div></blockquote>
@@ -229,167 +200,159 @@
 <colgroup>
 <col width="2%" />
 <col width="13%" />
-<col width="24%" />
-<col width="61%" />
+<col width="29%" />
+<col width="55%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Qty</th>
 <th class="head">Description</th>
 <th class="head">Datasheet</th>
-<th class="head">Vendor</th>
+<th class="head">Order Link</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>Implant PCB</td>
-<td>&#160;</td>
-<td><a class="reference external" href="https://oshpark.com/shared_projects/5K1XYmmy">OSH Park</a></td>
-</tr>
-<tr class="row-odd"><td>2</td>
-<td>Laser Diodes</td>
-<td><a class="reference download internal" download="" href="../_downloads/2cea0e6b52ce1321890f73c36646f474/PL520_B1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PL</span> <span class="pre">520_B1</span></code></a></td>
-<td><a class="reference external" href="http://worldstartech.com/products/description/25/index">World Star Tech</a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>Optical Fiber</td>
-<td><a class="reference download internal" download="" href="../_downloads/8e3b78667d371835734b9c4c39a6c606/FP200URT.pdf"><code class="xref download docutils literal notranslate"><span class="pre">FP200URT</span></code></a></td>
-<td><a class="reference external" href="https://www.thorlabs.com/thorproduct.cfm?partnumber=FP200URT">ThorLabs</a></td>
+<td><a class="reference download internal" download="" href="../_downloads/3f41b32b9aaddc121675b45945ebfab4/implant_5.3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Implant</span> <span class="pre">5.3</span></code></a></td>
+<td><a class="reference external" href="https://oshpark.com/shared_projects/k8Ikpli6">OSH Park</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>Norland Optical Adhesive 68</td>
-<td><a class="reference external" href="https://www.norlandprod.com/adhesives/noa%2068.html">NOA 68</a></td>
+<td>Laser Diode</td>
+<td><a class="reference download internal" download="" href="../_downloads/de36b1555732f40e928a3e3e28c08362/green_laser_diode.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PLT5</span> <span class="pre">520_B1_2_3</span></code></a></td>
+<td><a class="reference external" href="http://www.worldstartech.com/products/laser-diodes/green-laser-diode-osram/">World Star Tech</a></td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Fiber</td>
+<td>F-MBB</td>
+<td><a class="reference external" href="https://www.newport.com/p/F-MBB">Newport</a></td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>UV curing adhesive</td>
+<td><a class="reference download internal" download="" href="../_downloads/69d65e75eac34221514d7ec751613413/uv_adhesive.pdf"><code class="xref download docutils literal notranslate"><span class="pre">NOA</span> <span class="pre">68</span></code></a></td>
 <td><a class="reference external" href="https://www.norlandproducts2.com/adhesives/adproductsdetail_header_removed.asp?Prdid=68">Norland Products</a></td>
 </tr>
-<tr class="row-even"><td>2</td>
+<tr class="row-even"><td>1</td>
 <td>Ferrule</td>
-<td><a class="reference download internal" download="" href="../_downloads/69837e094d3dd1967cc81b8f9d936741/MM-FER2007C-2500.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MM-FER2007C-2500</span></code></a></td>
-<td><a class="reference external" href="http://www.precisionfiberproducts.com/pfp-lc-1-25mm-od-multimode-ceramic-zirconia-ferrules/">Precision Fiber Products</a></td>
+<td><a class="reference download internal" download="" href="../_downloads/f985e117b871390e1852fbaeab09a2a0/ferrule.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MM-FER2007C</span></code></a></td>
+<td><a class="reference external" href="https://precisionfiberproducts.com/pfp-lc-1-25mm-od-multimode-ceramic-zirconia-ferrules/">Precision Fiber Products</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
 <td>Epoxy</td>
-<td><a class="reference download internal" download="" href="../_downloads/9c30001cfb3ceb864b281e9e63903a4e/T120-023-CX.pdf"><code class="xref download docutils literal notranslate"><span class="pre">T120-023-CX</span></code></a></td>
-<td><a class="reference external" href="http://www.fiberinstrumentsales.com/fis-room-cure-epoxy-2-grams.html">FIS</a></td>
+<td><a class="reference download internal" download="" href="../_downloads/5fd92d4b87257251adf808bb6104a330/epoxy.pdf"><code class="xref download docutils literal notranslate"><span class="pre">T120023C</span></code></a></td>
+<td><a class="reference external" href="http://www.fiberinstrumentsales.com/fis-room-cure-epoxy-2-grams.html">Fiber Instrument Sales</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>Liquid electric tape</td>
+<tr class="row-even"><td>2</td>
+<td>Micro USB vertical socket</td>
+<td><a class="reference download internal" download="" href="../_downloads/7ca9c09fa0d3675c990b0b8fd4a4e608/usb_socket_vertical.pdf"><code class="xref download docutils literal notranslate"><span class="pre">1051330011</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=WM10134CT-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Heat shrink tubing</td>
+<td><a class="reference download internal" download="" href="../_downloads/616924325127a83f347c9f69e0a7d03c/heatshrink.pdf"><code class="xref download docutils literal notranslate"><span class="pre">HSTTV12-Y</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?x=0&amp;y=0&amp;lang=en&amp;site=us&amp;keywords=298-11559-ND">Digi-Key</a></td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>0603 10 kΩ Resistor</td>
 <td>&#160;</td>
-<td><a class="reference external" href="http://www.amazon.com/Star-brite-Liquid-Electrical-Tape/dp/B000QUW4EE/ref=sr_1_1?ie=UTF8&amp;qid=1463746324&amp;sr=8-1&amp;keywords=electrical+tape+liquid+tube">Amazon</a></td>
+<td>&#160;</td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>Photoresistor</td>
-<td><a class="reference download internal" download="" href="../_downloads/3be36878bb2a41288ac4ea097e04b61b/PDV-P9005-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDV-P9005-1</span></code></a></td>
-<td rowspan="3"><a class="reference external" href="https://octopart.com/bom-lookup/HBO7aiJs">Octopart</a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>Female micro USB vertical socket</td>
-<td><a class="reference download internal" download="" href="../_downloads/51d6139e1de22396ad5d10fd6c9bd0d8/105133-001.pdf"><code class="xref download docutils literal notranslate"><span class="pre">105133-001</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>1</td>
-<td>0805 6.8 kΩ Resistor</td>
+<td>0603 20 kΩ Resistor</td>
+<td>&#160;</td>
 <td>&#160;</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="design-files">
-<h2>Design Files<a class="headerlink" href="#design-files" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>PCB</dt>
-<dd><ul class="first last simple">
-<li><a class="reference download internal" download="" href="../_downloads/b9220f8e663d2eaf0804859a53f4f8a5/Implant 4.4.brd"><code class="xref download docutils literal notranslate"><span class="pre">Implant</span> <span class="pre">4.4.brd</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/5fc85530393c40d6cefc399ef721736f/Implant 4.4.sch"><code class="xref download docutils literal notranslate"><span class="pre">Implant</span> <span class="pre">4.4.sch</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/cff02c85da85ada12f9c5814c9858b32/Implant 4.4 schematic.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Schematic.pdf</span></code></a></li>
-</ul>
-</dd>
-<dt>Lasercut</dt>
-<dd><ul class="first last simple">
-<li><a class="reference download internal" download="" href="../_downloads/d4a5728d21976624f64f1e8fb2ba1aae/Fiber guide_1,5mm gap.dxf"><code class="xref download docutils literal notranslate"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.dxf</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/fc657be3d354325eb0a8045fdd1d4648/Fiber guide_1,5mm gap.ai"><code class="xref download docutils literal notranslate"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.ai</span></code></a></li>
-</ul>
-</dd>
-</dl>
-</div>
 <div class="section" id="assembly-instructions">
 <h2>Assembly Instructions<a class="headerlink" href="#assembly-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prepare-fiber">
+<h3>Prepare Fiber<a class="headerlink" href="#prepare-fiber" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Strip fiber and cut to length</li>
-<li>Align fiber to laser diode</li>
-<li>Apply Norland Optical Adhesive 68 and cure it with UV light</li>
-<li>Laser cut fiber guide</li>
-<li>Insert ferrules into acrylic to create fiber guide</li>
-<li>Thread coupled fibers through fiber guide</li>
-<li>Surround assembly with epoxy</li>
-<li>Place photoresistor in epoxy</li>
-<li>Cover photoresistor/epoxy with liquid electrical tape</li>
-<li>Solder laser diodes onto implant PCB</li>
-</ol>
-</div>
-<div class="section" id="diode-characterization-and-pairing-for-bilateral-implants-only">
-<span id="diode-char"></span><h2>Diode Characterization and Pairing (for bilateral implants only)<a class="headerlink" href="#diode-characterization-and-pairing-for-bilateral-implants-only" title="Permalink to this headline">¶</a></h2>
-<p>Laser diodes are are not perfectly manufactured to have identical electrical characteristics.
-At a given current and voltage, there is some variation in light output from laser diode to laser diode.
-This can cause problems when making a bilateral implant because the current is split evenly between the two laser diodes.
-If the two laser diodes have drastically different electrical characteristics, this will result in one diode being brighter than the other.
-To try and prevent this unbalanced light ouput, we attempt to characterize each individual laser diode, and pair similar diodes together in each bilateral implant.</p>
-<p>Instructions here.</p>
-</div>
-<div class="section" id="implant-characterization">
-<span id="implant-char"></span><h2>Implant Characterization<a class="headerlink" href="#implant-characterization" title="Permalink to this headline">¶</a></h2>
-<p>We want to know and be able to control the amount of light that we deliver to the brain during experiments.
-The light power produced by the laser diodes is a function of current and case temperature:</p>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/laserDiodeResponse.png"><img alt="../_images/laserDiodeResponse.png" src="../_images/laserDiodeResponse.png" style="width: 258.59999999999997px; height: 324.9px;" /></a>
-</div>
-<p>Cerebro has precise control of the current being delivered to the laser diode, and can monitor the voltage across the photoresistor.
-We can use a feeback loop to maintain a constant photoresistor voltage, and therefore a constant fiber tip light power output
-(assuming the light power at the fiber tip is proportional to the light hitting the photoresistor).</p>
-<p>If the photoresistor had a linear response to light power, we could just make 1 measurement of the light output at a known photoresistor voltage
-and find a proportionality constant. However, the photoresistor doesn’t have a linear response:</p>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/photcellResponse.png"><img alt="../_images/photcellResponse.png" src="../_images/photcellResponse.png" style="width: 377.5px; height: 267.0px;" /></a>
-</div>
-<p>We therefore need to measure the light output at the fiber tip across a range of known photoresistor voltages. Overall, we are trying to
-characterize the relationship between photoresistor voltage and fiber tip light power, resulting in a graph like the following:</p>
-<div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/characterization.png"><img alt="../_images/characterization.png" src="../_images/characterization.png" style="width: 1108.0px; height: 371.0px;" /></a>
-</div>
-<ol class="arabic simple">
-<li>Connect Cerebro to the Head Implant, and secure them in a test fixture with the fibers pointing into a <a class="reference internal" href="#implanttools"><span class="std std-ref">Light Power Meter</span></a></li>
+<li>Tape down the fiber</li>
+<li>Use a fiber stripper to remove the outer blue jacket from the fiber</li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/fixture.jpg"><img alt="../_images/fixture.jpg" src="../_images/fixture.jpg" style="width: 509.09999999999997px; height: 363.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/strip_fiber.png"><img alt="../_images/strip_fiber.png" src="../_images/strip_fiber.png" style="width: 100%;" /></a>
 </div>
-<ol class="arabic simple" start="2">
-<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs’ Power Meter Software</a> and change the following settings:</li>
+<ol class="arabic simple" start="3">
+<li>Using a fiber cleaver, cut off the end of fiber to make a clean tip</li>
+<li>Continue cutting the fiber into ~16mm pieces</li>
+</ol>
+</div>
+<div class="section" id="align-fiber">
+<h3>Align Fiber<a class="headerlink" href="#align-fiber" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Insert laser diode into connector</li>
+<li>Place connector in alignment jig</li>
+<li>Place fiber in alignment jig</li>
+<li>Turn on the power meter and connect to computer over usb</li>
+<li>Open up the <a class="reference external" href="https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=PM100x">Thorlabs’ Power Meter Software</a></li>
+<li>Establish the USB connection with Power meter by selecting the device and clicking “OK”</li>
+</ol>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/establish_usb.png"><img alt="../_images/establish_usb.png" src="../_images/establish_usb.png" style="width: 336.0px; height: 219.0px;" /></a>
+</div>
+<ol class="arabic simple" start="7">
+<li>Adjust the following settings:</li>
 </ol>
 <blockquote>
 <div><ul class="simple">
-<li>Range: 120mW</li>
+<li>Range: 12mW</li>
 <li>Wave: 520nm</li>
 <li>Log Configuration<ul>
-<li>No of Samples: 150000</li>
-<li>Averaging: 1</li>
-<li>Fast logging to file: ✓</li>
+<li>No of Samples: 20,000</li>
+<li>Interval Time: 0.1</li>
 </ul>
 </li>
 </ul>
 </div></blockquote>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/settings_combined.png"><img alt="../_images/settings_combined.png" src="../_images/settings_combined.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/settings_combined.png"><img alt="../_images/settings_combined.png" src="../_images/settings_combined.png" style="width: 499.0px; height: 248.0px;" /></a>
 </div>
-<ol class="arabic simple" start="3">
-<li>Make sure Cerbero is turned on.</li>
-<li>Open up Xavier and start a new session.  <a class="reference internal" href="../Software/Xavier.html#start-session"><span class="std std-ref">How to start a session</span></a></li>
-<li>In the “Cerebro’s Construction Tools” section click <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Implant</span> <span class="pre">Characterization</span></code>. Cerebro’s amber light will turn on to indicate that the characterization routine has begun.</li>
+<ol class="arabic simple" start="8">
+<li>Click <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Log</span></code></li>
 </ol>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_images/sendCalTrigger.png"><img alt="../_images/sendCalTrigger.png" src="../_images/sendCalTrigger.png" style="width: 299.0px; height: 138.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/start_log.png"><img alt="../_images/start_log.png" src="../_images/start_log.png" style="width: 452.0px; height: 103.0px;" /></a>
 </div>
-<ol class="arabic simple" start="6">
-<li>Within 10 seconds, click <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Log</span></code> in the Light Power Meter software to begin recording light power data.</li>
-<li>After about 15 minutes, the data will have been collected.</li>
-<li>When you are ready to setup a Cerebro for use with this implant, follow the instructions for <a class="reference internal" href="../Software/Xavier.html#send-power"><span class="std std-ref">sending power values to Cerebro</span></a></li>
+<ol class="arabic simple" start="9">
+<li>Set the power supply to 8.0 volts with a current limit of 300 mA</li>
+<li>Provide power to the laser diode by pressing the “on/off” button</li>
+<li>While watching the power graph update, use the <a class="reference external" href="http://www.thorlabs.com/thorproduct.cfm?partnumber=MBT612D/M">3-axis fiber launch system</a> to adjust the x, y, and z alignment of the fiber with respect to the laser diode.</li>
+<li>When you are happy with the alignment, apply UV curing adhesive to the fiber/laserdiode junction.</li>
+<li>Cure the adhesive using UV light</li>
 </ol>
+</div>
+<div class="section" id="fiber-guide-construction">
+<h3>Fiber Guide Construction<a class="headerlink" href="#fiber-guide-construction" title="Permalink to this headline">¶</a></h3>
+<p>A fiber guide is needed to ensure that the fibers are at a precise distance apart, and are parallel. The distance will depend on what area of the brain is being targeted. Below are files for 1.5 mm and 2.74 mm gap between fibers.</p>
+<ul class="simple">
+<li><a class="reference download internal" download="" href="../_downloads/d4a5728d21976624f64f1e8fb2ba1aae/Fiber guide_1,5mm gap.dxf"><code class="xref download docutils literal notranslate"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.dxf</span></code></a></li>
+<li><a class="reference download internal" download="" href="../_downloads/fc657be3d354325eb0a8045fdd1d4648/Fiber guide_1,5mm gap.ai"><code class="xref download docutils literal notranslate"><span class="pre">Fiber</span> <span class="pre">guide_1,5mm</span> <span class="pre">gap.ai</span></code></a></li>
+<li><a class="reference download internal" download="" href="../_downloads/54baa7bbb10b6b138b409e341bdaa609/Fiber guide_2,74mm gap.ai"><code class="xref download docutils literal notranslate"><span class="pre">Fiber</span> <span class="pre">guide_2,74mm</span> <span class="pre">gap.ai</span></code></a></li>
+</ul>
+<p>The laser cutter speed and power settings may need to be tweaked to get a good fit for the the ceramic ferrules.</p>
+<ol class="arabic simple">
+<li>Insert the ceramic ferrules into the acrylic fiber guide. The flat side of the ferrules should be flush with the face of the acrylic.</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/fiber_guide.png"><img alt="../_images/fiber_guide.png" class="align-center" src="../_images/fiber_guide.png" style="width: 100%;" /></a>
+</div>
+<div class="section" id="combine-pcb-laser-diodes-and-fiber-guide">
+<h3>Combine PCB, Laser Diodes, and Fiber Guide<a class="headerlink" href="#combine-pcb-laser-diodes-and-fiber-guide" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Solder the vertical microusb connector onto the PCB</li>
+<li>Solder 1 leg of each laser diode onto the PCB</li>
+<li>Bend the laser diodes toward eachother so the tips of the fiber slightly intersect near their tips</li>
+<li>Solder the remaining legs of the laser diodes</li>
+<li>Cut ~10mm of heat shrink tubing and slide it onto one of the laser diodes</li>
+<li>Apply heat to the heat shrink tubing</li>
+<li>Slide the fiber guide onto the two fibers. Adjust the</li>
+<li>Surround the fibers and laser diodes with epoxy</li>
+<li>Place heatshrink tubing around the clear epoxy section of the implant</li>
+<li>Place and solder the remaining resistors onto the PCB</li>
+</ol>
+</div>
 </div>
 </div>
 
@@ -413,8 +376,8 @@ characterize the relationship between photoresistor voltage and fiber tip light 
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2017, Andy Lustig
-      Last updated on Jan 15, 2019.
+        &copy; Copyright 2015-2019, Andy Lustig
+      Last updated on Jan 11, 2019.
 
     </p>
   </div>

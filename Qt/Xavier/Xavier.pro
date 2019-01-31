@@ -14,13 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dropbutton.cpp \
-    settingsDialog.cpp
+    settingsDialog.cpp \
+    portAlias.cpp
 
 HEADERS  += mainwindow.h \
-    dropbutton.h \
-    settingsDialog.h
+    settingsDialog.h \
+    portAlias.h
 
-RESOURCES +=
+RESOURCES += \
+    myfiles.qrc
 
 DISTFILES +=

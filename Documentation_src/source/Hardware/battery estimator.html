@@ -1,0 +1,161 @@
+  <!DOCTYPE html>
+  <html>
+  <body>
+  <center>
+  <form>
+  Number of batteries
+  <input
+    id="battSlider"
+    type="range"
+    min="1"
+    max="3"
+    value = "1"
+    onchange = "showResult()"
+    oninput="changeVal(this)">
+    <span
+      id="battSliderLabel">
+    </span>
+  </form>
+
+  <!-- <form action = "">
+  Number of batteries
+  <input
+    id="b"
+    name = "batteries"
+    type="radio"
+    value = "1"
+    onclick="changeVal(this)">1
+  <input
+    id="c"
+    name = "batteries"
+    type="radio"
+    value = "2"
+    onclick="changeVal(this)">2
+  </form> -->
+
+  <form> Battery Capacity
+    <input
+      id="capacitySlider"
+      type="range"
+      min="0"
+      max="500"
+      step = "5"
+      value = "400"
+      onchange = "showResult()"
+      oninput="changeVal(this)"
+    >
+    <span id="capacitySliderLabel"></span>
+    <span> mAh</span>
+  </form>
+
+
+  <form> Peak Current
+    <input
+      id="peakSlider"
+      type="range"
+      min="0"
+      max="600"
+      step = "10"
+      value = "300"
+      onchange = "showResult()"
+      oninput="changeVal(this)"
+    >
+    <span id="peakSliderLabel"></span>
+    <span> mA</span>
+  </form>
+
+  <form> Idle Current
+    <input
+      id="idleSlider"
+      type="range"
+      min="0"
+      max="40"
+      value = "28"
+      onchange = "showResult()"
+      oninput="changeVal(this)"
+    >
+    <span id="idleSliderLabel"></span>
+    <span> mA</span>
+  </form>
+
+  <form> Pulse Length
+    <input
+      id="pulseSlider"
+      type="range"
+      min="0"
+      max="10"
+      step = "1"
+      value = "3"
+      onchange = "showResult()"
+      oninput="changeVal(this)"
+    >
+    <span id="pulseSliderLabel"></span>
+    <span> seconds</span>
+  </form>
+
+  <form> Avg. time between pulses
+    <input
+      id="gapSlider"
+      type="range"
+      min="0"
+      max="60"
+      step = "1"
+      value = "7"
+      onchange = "showResult()"
+      oninput="changeVal(this)"
+    ><span id="gapSliderLabel"></span>
+    <span> seconds</span>
+  </form>
+
+  <p id = "result"></p>
+  <!-- <p id = "debug"> </p> -->
+
+  <script>
+  window.onload = function() {
+    changeVal(battSlider);
+    changeVal(capacitySlider);
+    changeVal(peakSlider);
+    changeVal(idleSlider);
+    changeVal(pulseSlider);
+    changeVal(gapSlider);
+    showResult();
+  }
+
+  function changeVal(elmnt) {
+      var inpObj = elmnt.value;
+      var labelObj = elmnt.id + "Label";
+      // document.getElementById("debug").innerHTML = Number(inpObj);
+      document.getElementById(labelObj).innerHTML = Number(inpObj);
+      if (elmnt.id == "pulseSlider"){
+        if (gapSlider.value/pulseSlider.value < 2){
+          gapSlider.value = pulseSlider.value*2;
+          document.getElementById("gapSliderLabel").innerHTML = Number(gapSlider.value);
+        }
+      }
+      else if (elmnt.id == "gapSlider"){
+        if (gapSlider.value/pulseSlider.value < 2){
+          pulseSlider.value = gapSlider.value/2;
+          document.getElementById("pulseSliderLabel").innerHTML = Number(pulseSlider.value);
+        }
+      }
+    }
+
+  function showResult(){
+    var totalCapacity = battSlider.value * capacitySlider.value * 3600;
+    var gLength = gapSlider.value;
+    var pLength = pulseSlider.value;
+    var pCurrent = peakSlider.value;
+    var iCurrent = idleSlider.value;
+    var safetyFactor = 1;
+    var maxPulses = Math.floor(totalCapacity/(pLength*pCurrent + gLength*iCurrent)* safetyFactor);
+    var eventLength = Number(gLength) + Number(pLength);
+    var battTime = maxPulses*eventLength/3600;
+
+    document.getElementById("result").innerHTML = "If triggered (on average) once every <b>" + eventLength + "</b> seconds, the battery can emit <b><u>" + maxPulses + "</u> pulses</b> over <b><u>" + battTime.toFixed(2) + "</u> hours</b>" ;
+  }
+
+
+  </script>
+  </center>
+  </body>
+  </html>

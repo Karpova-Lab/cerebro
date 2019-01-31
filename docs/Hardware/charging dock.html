@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Charging Dock &mdash; Cerebro 1.0.0 documentation</title>
+  <title>Charging Dock &mdash; Cerebro 2.0.3 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="IR Remote" href="remote.html" />
-    <link rel="prev" title="Utility Shield" href="utility shield.html" /> 
+    <link rel="next" title="Pogo Connector" href="programmer.html" />
+    <link rel="prev" title="Base Station" href="base station.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -76,26 +76,16 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../Overview/Overview.html">System Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implant.html">Head Implant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utility shield.html">Utility Shield</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Charging Dock</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#required-tools">Required Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#design-files">Design Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#code">Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-instructions">Build Instructions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="remote.html">IR Remote</a></li>
-<li class="toctree-l1"><a class="reference internal" href="downloader cord.html">Downloader Cord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programmer.html">Pogo Connector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Software/Xavier.html">Xavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Notes/notes.html">Additional Resources</a></li>
 </ul>
 
             
@@ -151,7 +141,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/Karpova-Lab/cerebro/tree/1.0" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -162,10 +152,10 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="remote.html" class="btn btn-neutral float-right" title="IR Remote" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="programmer.html" class="btn btn-neutral float-right" title="Pogo Connector" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="utility shield.html" class="btn btn-neutral" title="Utility Shield" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="base station.html" class="btn btn-neutral" title="Base Station" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
   </div>
   
@@ -176,123 +166,78 @@
             
   <div class="section" id="charging-dock">
 <h1>Charging Dock<a class="headerlink" href="#charging-dock" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="../_images/charging_dock.jpg"><img alt="../_images/charging_dock.jpg" class="align-center" src="../_images/charging_dock.jpg" style="width: 394.8px; height: 466.0px;" /></a>
-<div class="section" id="required-tools">
-<h2>Required Tools<a class="headerlink" href="#required-tools" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li>Soldering iron</li>
-</ul>
-</div></blockquote>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/charging.jpg"><img alt="../_images/charging.jpg" src="../_images/charging.jpg" style="width: 100%;" /></a>
 </div>
 <div class="section" id="bill-of-materials">
 <h2>Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <colgroup>
-<col width="3%" />
-<col width="22%" />
-<col width="37%" />
-<col width="38%" />
+<col width="2%" />
+<col width="15%" />
+<col width="33%" />
+<col width="50%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Qty</th>
 <th class="head">Description</th>
 <th class="head">Datasheet</th>
-<th class="head">Vendor</th>
+<th class="head">Order Link</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
 <td>Charging Dock PCB</td>
-<td>&#160;</td>
-<td><a class="reference external" href="https://oshpark.com/shared_projects/796c3lzQ">OSH Park</a></td>
+<td><a class="reference download internal" download="" href="../_downloads/ec469bf41a48be0b9380c3e6b30e938f/charging_dock_2.0.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">2.0</span></code></a></td>
+<td><a class="reference external" href="https://oshpark.com/shared_projects/hz6upCEq">OSH Park</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>OLED display</td>
-<td>&#160;</td>
-<td><a class="reference external" href="https://www.adafruit.com/products/938">Adafruit</a></td>
+<td>Molex Micro-Lock socket</td>
+<td><a class="reference download internal" download="" href="../_downloads/c241e1657d07c3e430f609dbc35a0db2/microlock_socket.pdf"><code class="xref download docutils literal notranslate"><span class="pre">5055670271</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=WM17038CT-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>Microcontroller</td>
-<td><a class="reference download internal" download="" href="../_downloads/fd5121e42cefa01fdb0071b577fdd9e3/ATMEGA328P-AU.pdf"><code class="xref download docutils literal notranslate"><span class="pre">ATMEGA328P-AU</span></code></a></td>
-<td rowspan="12"><a class="reference external" href="https://octopart.com/bom-lookup/sGmVuHz7">Octopart</a></td>
+<tr class="row-even"><td>6</td>
+<td>Lipoly Charging IC</td>
+<td><a class="reference download internal" download="" href="../_downloads/30f4e23d4f6cfbf79972b4be85fe97ac/lipo_charger.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MCP73831T-2ACI/OT</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=%09MCP73831T-2ACI%2FOTCT-ND">Digi-Key</a></td>
 </tr>
 <tr class="row-odd"><td>1</td>
-<td>16 MHz Resonator</td>
-<td><a class="reference download internal" download="" href="../_downloads/61b4988b4928a523257dfbe9123926b8/CSTLS16M0X53-A0.pdf"><code class="xref download docutils literal notranslate"><span class="pre">CSTLS16M0X53-A0</span></code></a></td>
-</tr>
-<tr class="row-even"><td>4</td>
-<td>Multiplexer</td>
-<td><a class="reference download internal" download="" href="../_downloads/e69aeb4893d678e0d387f19b20f22ce7/MAX4674.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MAX4674</span></code></a></td>
-</tr>
-<tr class="row-odd"><td>4</td>
-<td>0805 Red LED</td>
-<td><a class="reference download internal" download="" href="../_downloads/e3d46a7daab893afca9c8636bcf59324/LTST-C171KRKT.pdf"><code class="xref download docutils literal notranslate"><span class="pre">LTST-C171KRKT</span></code></a></td>
+<td>DC Barrel Power Jack</td>
+<td><a class="reference download internal" download="" href="../_downloads/66a9c77bded36eed12b7c493a9f29308/power_jack.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PJ-037A</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=cp-037a-nd">Digi-Key</a></td>
 </tr>
 <tr class="row-even"><td>1</td>
-<td>Momentary Button</td>
-<td><a class="reference download internal" download="" href="../_downloads/c4f04606d0a2ca4b1c719cc45334b323/B3U-1000P.pdf"><code class="xref download docutils literal notranslate"><span class="pre">B3U-1100P</span></code></a></td>
+<td>5V 2.5A Power Supply</td>
+<td><a class="reference download internal" download="" href="../_downloads/ee0d840beceded3faeb04353cce4bbf6/power_supply.pdf"><code class="xref download docutils literal notranslate"><span class="pre">SWI12-5-N-P5R</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/product-detail/en/cui-inc/SWI12-5-N-P5R/102-3425-ND/5287234">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>4</td>
-<td>Female micro USB vertical socket</td>
-<td><a class="reference download internal" download="" href="../_downloads/de735c668a0ff21ee71d224229a1bb70/1051330011.pdf"><code class="xref download docutils literal notranslate"><span class="pre">1051330011</span></code></a></td>
+<tr class="row-odd"><td>6</td>
+<td>Green LED</td>
+<td><a class="reference download internal" download="" href="../_downloads/e7d9e473e666c09b1827e9177a1e57c2/led_3mm_green.pdf"><code class="xref download docutils literal notranslate"><span class="pre">151031VS06000</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=732-5008-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-even"><td>1</td>
-<td>Female micro USB horizontal socket</td>
-<td><a class="reference download internal" download="" href="../_downloads/6df4ae6e91c342460fcb54eec2ec35a5/10118193-0001LF.pdf"><code class="xref download docutils literal notranslate"><span class="pre">10118193-0001LF</span></code></a></td>
+<tr class="row-even"><td>6</td>
+<td>Red LED</td>
+<td><a class="reference download internal" download="" href="../_downloads/ac4bd6c2ad2975e7ebae0f3b4f9bfffb/led_3mm_red.pdf"><code class="xref download docutils literal notranslate"><span class="pre">151031SS06000</span></code></a></td>
+<td><a class="reference external" href="https://www.digikey.com/products/en?keywords=732-5006-ND">Digi-Key</a></td>
 </tr>
-<tr class="row-odd"><td>4</td>
-<td>Lipo charger IC</td>
-<td><a class="reference download internal" download="" href="../_downloads/e41598e3e50c1929c4138defcbe48018/MCP73831T.pdf"><code class="xref download docutils literal notranslate"><span class="pre">MCP73831T</span></code></a></td>
-</tr>
-<tr class="row-even"><td>1</td>
-<td>0805 10 kΩ Resistor</td>
+<tr class="row-odd"><td>12</td>
+<td>0805 470 Ω Resistor</td>
+<td>&#160;</td>
 <td>&#160;</td>
 </tr>
-<tr class="row-odd"><td>4</td>
-<td>0805 27 kΩ Resistor</td>
+<tr class="row-even"><td>6</td>
+<td>0805 2.5 KΩ Resistor</td>
+<td>&#160;</td>
 <td>&#160;</td>
 </tr>
-<tr class="row-even"><td>8</td>
-<td>0805 100 Ω Resistor</td>
-<td>&#160;</td>
-</tr>
-<tr class="row-odd"><td>9</td>
+<tr class="row-odd"><td>12</td>
 <td>0805 10 μF Capacitor</td>
+<td>&#160;</td>
 <td>&#160;</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="design-files">
-<h2>Design Files<a class="headerlink" href="#design-files" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>PCB</dt>
-<dd><ul class="first last simple">
-<li><a class="reference download internal" download="" href="../_downloads/44dd3ac969e81878299d580465b2bbbe/Charging Dock 1.8.brd"><code class="xref download docutils literal notranslate"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">1.8.brd</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/33e196c5171fbb0ad639e86ec900c3dd/Charging Dock 1.8.sch"><code class="xref download docutils literal notranslate"><span class="pre">Charging</span> <span class="pre">Dock</span> <span class="pre">1.8.sch</span></code></a></li>
-<li><a class="reference download internal" download="" href="../_downloads/817790cb72cdfb89f570ece38ac06d36/Charging Dock 1.8 schematic.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Schematic.pdf</span></code></a></li>
-</ul>
-</dd>
-</dl>
-</div>
-<div class="section" id="code">
-<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference download internal" download="" href="../_downloads/26daab3efcea0ae41e411e40cecbff05/chargingDock.ino"><code class="xref download docutils literal notranslate"><span class="pre">chargingDock.ino</span></code></a></li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="build-instructions">
-<h2>Build Instructions<a class="headerlink" href="#build-instructions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="uploading-firmware">
-<span id="dock-upload"></span><h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
-<div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">If you have not yet setup the Arduino environment or the Cerebro Utility Shield, refer to <a class="reference internal" href="utility shield.html#arduino-setup"><span class="std std-ref">Setting up Arduino IDE</span></a> and/or <a class="reference internal" href="utility shield.html#utility-shield-setup"><span class="std std-ref">Setting up Utility Shield</span></a> before moving on.</p>
-</div>
-</div>
 </div>
 </div>
 
@@ -304,10 +249,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="remote.html" class="btn btn-neutral float-right" title="IR Remote" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="programmer.html" class="btn btn-neutral float-right" title="Pogo Connector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="utility shield.html" class="btn btn-neutral" title="Utility Shield" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="base station.html" class="btn btn-neutral" title="Base Station" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -316,8 +261,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2017, Andy Lustig
-      Last updated on Jan 15, 2019.
+        &copy; Copyright 2015-2019, Andy Lustig
+      Last updated on Jan 11, 2019.
 
     </p>
   </div>
