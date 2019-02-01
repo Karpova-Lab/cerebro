@@ -67,32 +67,30 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.9.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t12/04/2018";
+        xavierVersion = "3.10.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t01/31/2019";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
     //Experimental setup
     equipmentBox = new QGroupBox("Session Setup");
         equipmentLayout = new QGridLayout();
-            cerebroNum_lbl = new QLabel("Cerebro #");
-        equipmentLayout->addWidget(cerebroNum_lbl,0,1);
-            rig_lbl = new QPushButton("Rig #");
-            rig_lbl->setFlat(true);
-        equipmentLayout->addWidget(rig_lbl,0,2,Qt::AlignCenter);
-            rat_lbl = new QPushButton("Rat-implant: (LSet/RSet)");
+            cerebro_lbl = new QPushButton("Cerebro #");
+            cerebro_lbl->setFlat(true);
+        equipmentLayout->addWidget(cerebro_lbl,0,2,Qt::AlignCenter);
+            rat_lbl = new QPushButton("Rat-Implant: (LSet/RSet)");
             rat_lbl->setFlat(true);
         equipmentLayout->addWidget(rat_lbl,0,3,1,2,Qt::AlignCenter);
-            cerebroNum_spin = new QSpinBox();
-            cerebroNum_spin->setAlignment(Qt::AlignCenter);
-            cerebroNum_spin->setRange(1,254);
-        equipmentLayout->addWidget(cerebroNum_spin,1,1);
-            rigSelect = new QListWidget();
-        equipmentLayout->addWidget(rigSelect,1,2,4,1,Qt::AlignTop);
-            ratSelect = new QListWidget();
-            ratSelect->setMinimumWidth(150);
+            cerebroSelect = new QComboBox();
+            cerebroSelect->setMaximumWidth(75);
+            cerebroSelect->setMaxVisibleItems(40);
+        equipmentLayout->addWidget(cerebroSelect,1,2,4,1,Qt::AlignTop|Qt::AlignHCenter);
+            ratSelect = new QComboBox();
+            ratSelect->setMaximumWidth(150);
+            ratSelect->setMaxVisibleItems(40);
         equipmentLayout->addWidget(ratSelect,1,3,4,2,Qt::AlignTop|Qt::AlignHCenter);
-            connectBS_label = new QLabel("Base Station Serial Port");
+            connectBS_label = new QPushButton("Base Station Serial Port");
+            connectBS_label->setFlat(true);
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
             refresh_btn = new QPushButton("Rescan");
 //            QPixmap gearIcon(":icons/refresh.svg");
@@ -102,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent)
 //            refresh_btn->setIconSize(QSize(10,10));
         equipmentLayout->addWidget(refresh_btn,1,5);
             serialPortList = new QComboBox();
-            serialPortList->setMinimumWidth(150);
+            serialPortList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
         equipmentLayout->addWidget(serialPortList,1,6,1,2);
             debugCheckbox = new QCheckBox("Debug Mode");
         equipmentLayout->addWidget(debugCheckbox,2,5,1,3,Qt::AlignCenter);
@@ -116,7 +114,6 @@ MainWindow::MainWindow(QWidget *parent)
     //Cerebro Status
     int titleRow = 0;
     int infoRow = 1;
-//    int battLblRow = 2;
     int battRow =2;
     int buttonRow = 3;
 
@@ -392,33 +389,35 @@ MainWindow::MainWindow(QWidget *parent)
     //Session Start Dialog
     sessionStartDialog = new QDialog();
         sessionStartLayout = new QGridLayout();
-            retry_btn = new QPushButton("Retry Connection");
-        sessionStartLayout->addWidget(retry_btn,0,0);
+            blinkBase_btn = new QPushButton("Blink Base Station");
+        sessionStartLayout->addWidget(blinkBase_btn,0,0);
             newCerebro_btn = new QPushButton("Setup New Cerebro");
             newCerebro_btn->setEnabled(false);
         sessionStartLayout->addWidget(newCerebro_btn,0,1);
+            retry_btn = new QPushButton("Retry Connection");
+        sessionStartLayout->addWidget(retry_btn,1,0);
             newCerebro_lbl = new QLabel("Serial Number:");
-        sessionStartLayout->addWidget(newCerebro_lbl,1,0,Qt::AlignRight);
+        sessionStartLayout->addWidget(newCerebro_lbl,2,0,Qt::AlignRight);
             newCerebro_spin = new QSpinBox();
             newCerebro_spin->setRange(1,254);
-        sessionStartLayout->addWidget(newCerebro_spin,1,1);
+        sessionStartLayout->addWidget(newCerebro_spin,2,1);
             setSerial_btn = new QPushButton("Set Serial Number");
-        sessionStartLayout->addWidget(setSerial_btn,2,1);
+        sessionStartLayout->addWidget(setSerial_btn,3,1);
             sessionStartMonitor = new QPlainTextEdit();
             sessionStartMonitor->setMinimumHeight(400);
-        sessionStartLayout->addWidget(sessionStartMonitor,3,0,1,2);
+        sessionStartLayout->addWidget(sessionStartMonitor,4,0,1,2);
             baseConnected_lbl = new QLabel("Base Station Connected \u2718");
             baseConnected_lbl->setAlignment(Qt::AlignCenter);
-        sessionStartLayout->addWidget(baseConnected_lbl,4,0,1,2);
+        sessionStartLayout->addWidget(baseConnected_lbl,5,0,1,2);
             cerebroConnected_lbl = new QLabel("Cerebro Wireless Connection \u2718");
             cerebroConnected_lbl->setAlignment(Qt::AlignCenter);
-        sessionStartLayout->addWidget(cerebroConnected_lbl,5,0,1,2);
+        sessionStartLayout->addWidget(cerebroConnected_lbl,6,0,1,2);
             implantSettingsMatch_lbl = new QLabel("Implant Settings Match \u2718");
             implantSettingsMatch_lbl->setAlignment(Qt::AlignCenter);
-        sessionStartLayout->addWidget(implantSettingsMatch_lbl,6,0,1,2);
+        sessionStartLayout->addWidget(implantSettingsMatch_lbl,7,0,1,2);
             startSession_btn = new QPushButton("Start Session");
             startSession_btn->setEnabled(true);
-        sessionStartLayout->addWidget(startSession_btn,7,0,1,2);
+        sessionStartLayout->addWidget(startSession_btn,8,0,1,2);
         QFont codefont("Arial Unicode MS");
         baseConnected_lbl->setFont(codefont);
         cerebroConnected_lbl->setFont(codefont);
@@ -500,10 +499,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(retry_btn,SIGNAL(clicked(bool)),this,SLOT(checkForBase()));
     connect(newCerebro_btn,SIGNAL(clicked()),this,SLOT(setupCerebro()));
     connect(setSerial_btn,SIGNAL(clicked()),this,SLOT(updateSerial()));
+    connect(blinkBase_btn,SIGNAL(clicked()),this,SLOT(blinkBase()));
 
     //Port Connections
-    connect(rig_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
+    connect(cerebro_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
     connect(rat_lbl,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
+    connect(connectBS_label,SIGNAL(clicked()),settingsDlog,SLOT(openSettings()));
     connect(settingsDlog,SIGNAL(dialogClosed()),this,SLOT(applySettings()));
     connect(refresh_btn,SIGNAL(clicked()),this,SLOT(fillBasestationPorts()));
     connect(refresh2_btn,SIGNAL(clicked()),this,SLOT(fillCerebroPorts()));
@@ -583,19 +584,17 @@ void MainWindow::applySettings()
     //get the Qstringlists from memory
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("sessionLists");
-        rigList = settings.value("rigList").toStringList();
+        cerebroList = settings.value("cerebroList").toStringList();
         ratList = settings.value("ratList").toStringList();
     settings.endGroup();
 
     //populate the list widgets
-    rigSelect->clear();
+    cerebroSelect->clear();
     ratSelect->clear();
-    rigSelect->addItems(rigList);
+    cerebroList.insert(0," "); // add blank line to the start of the dropdown
+    ratList.insert(0," "); // add blank line to the start of the dropdown
+    cerebroSelect->addItems(cerebroList);
     ratSelect->addItems(ratList);
-    int itemHeight = 25;
-    int itemWidth = 75;
-    rigSelect->setMaximumSize(itemWidth,itemHeight*rigSelect->count());
-    ratSelect->setMaximumSize(itemWidth,itemHeight*ratSelect->count());
 
     //
     settings.beginGroup("Features");
@@ -624,6 +623,7 @@ void MainWindow::fillBasestationPorts()
 {
     refresh_btn->setDown(1);
     serialPortList->clear();
+    serialPortList->addItem(" ");
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         if (!info.isBusy()){
@@ -647,6 +647,7 @@ void MainWindow::fillBasestationPorts()
         }
     }
     refresh_btn->setDown(0);
+    serialPortList->updateGeometry();
 }
 
 void MainWindow::fillCerebroPorts()
@@ -689,26 +690,33 @@ void MainWindow::connectBasePort()
     cerebroConnected_lbl->setStyleSheet("color:red");
     implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
     implantSettingsMatch_lbl->setStyleSheet("color:red");
-    if((rigSelect->selectedItems().size()==0) && !baseConnected && !debugOn ){ //didn't select rig
+    if((cerebroSelect->currentIndex()==0) && !baseConnected && !debugOn ){ //didn't select cerebro
         QMessageBox alert;
-        alert.setText("Please select a Rig # to continue");
+        alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
-        alert.setWindowTitle("Missing Rig #");
+        alert.setWindowTitle("Missing Cerebro #");
         alert.exec();
         }
-    else if((ratSelect->selectedItems().size()==0) && !baseConnected && !debugOn){ //didn't select rat
+    else if((ratSelect->currentIndex()==0) && !baseConnected && !debugOn){ //didn't select rat
         QMessageBox alert;
-        alert.setText("Please select a Rat ID to continue");
+        alert.setText("Please select a Rat-Implant to continue");
         alert.setIcon(QMessageBox::Warning);
         alert.setWindowTitle("Missing Rat ID");
+        alert.exec();
+    }
+    else if((serialPortList->currentIndex()==0) && !baseConnected){ //didn't select a base station
+        QMessageBox alert;
+        alert.setText("Please select a Serial Port to connect to");
+        alert.setIcon(QMessageBox::Warning);
+        alert.setWindowTitle("Missing Serial Port");
         alert.exec();
     }
     else{ //  disable and enable components depending on whether we are connecting or disconnecting to the base station
         gotoSettings->setEnabled(baseConnected);
         viewSummary->setEnabled(baseConnected);
-        rig_lbl->setEnabled(baseConnected);
+        cerebro_lbl->setEnabled(baseConnected);
         rat_lbl->setEnabled(baseConnected);
-        rigSelect->setEnabled(baseConnected);
+        cerebroSelect->setEnabled(baseConnected);
         ratSelect->setEnabled(baseConnected);
         connectBS_label->setEnabled(baseConnected);
         serialPortList->setEnabled(baseConnected);
@@ -735,17 +743,17 @@ void MainWindow::connectBasePort()
             qDebug()<<"opening serial"<<serial->open(QIODevice::ReadWrite);
             qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
+            rigNumber = serialPortList->currentText().split(' ')[2];
             if(!debugOn){
-                QStringList ratInfo = ratSelect->currentItem()->text().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
+                QStringList ratInfo = ratSelect->currentText().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
                 qDebug()<<"rat info "<<ratInfo;
                 ratNumber = ratInfo[0];
-                rigNumber = rigSelect->currentItem()->text();
                 titleLeftPower = ratInfo[2].toInt();
                 titleRightPower = ratInfo[3].toInt();
-                setWindowTitle("Rig " + rigNumber + " Rat " + ratInfo[0] );}
+                setWindowTitle("Rig " + rigNumber + " Rat " + ratInfo[0] );
+            }
             else{
                 ratNumber = "9999";
-                rigNumber = "7.3";
                 titleLeftPower = 100;
                 titleRightPower = 100;
                 setWindowTitle("Xavier (Debug)");
@@ -764,6 +772,9 @@ void MainWindow::connectBasePort()
             serial->close();
             setWindowTitle("Xavier");
             debugOn = false;
+            serialPortList->setCurrentIndex(0);
+            cerebroSelect->setCurrentIndex(0);
+            ratSelect->setCurrentIndex(0);
             showDebug();
             baseConnected = false;
             sessionHasBegun = false;
@@ -860,6 +871,7 @@ void MainWindow::readFromBase()
     while(!serial->atEnd()){
         baseBuffer += serial->readAll();
     }
+    qDebug()<<"Raw = "<<baseBuffer;
     int dataStart = baseBuffer.indexOf("*");
     int dataEnd = baseBuffer.indexOf("&");
 //    qDebug()<<"buffer,datastart,dataend"<<baseBuffer<<dataStart<<dataEnd;
@@ -940,6 +952,23 @@ void MainWindow::readFromBase()
         }
         else if (dataFromBaseMsg[0] == 'X'){
             cerStatusBox->setStyleSheet("color:#ed0b0b");
+        }
+        else if (dataFromBaseMsg[0] == "Rig Number"){
+            QString tempString = (dataFromBaseMsg[1]+"."+dataFromBaseMsg[2]);
+            if(rigNumber==tempString){
+                qDebug()<<"equaL!";
+            }
+            else{
+                QMessageBox alert;
+                alert.setText("When you chose " + serialPortList->currentText().split(' ')[3] +
+                               " you thought you were connecting to rig " + rigNumber+
+                               ". However when we checked with the Base Station associated with "
+                               "that COM port, it said it was connected to rig " + (dataFromBaseMsg[1]+"."+dataFromBaseMsg[2]) +
+                               " . Please resolve this discrepency to prevent this warning in the future.");
+                alert.setIcon(QMessageBox::Warning);
+                alert.setWindowTitle("COM Port - Base Station Mismatch");
+                alert.exec();
+            }
         }
     }
     int newLineIndex = baseBuffer.lastIndexOf("\n");
@@ -1082,8 +1111,9 @@ void MainWindow::saveFile()
                     connectBasePort();
                     fillBasestationPorts();
                 }
-                rigSelect->clearSelection();
-                ratSelect->clearSelection();
+                cerebroSelect->setCurrentIndex(0);
+                ratSelect->setCurrentIndex(0);
+                serialPortList->setCurrentIndex(0);
                 baseMonitor->clear();
                 debugOn = false;
                 showDebug();
@@ -1150,7 +1180,7 @@ void MainWindow::checkForBase(){
         qDebug()<<msg<<"sent";
     }
     else{
-        QString msg = "K,"+ QString::number(cerebroNum_spin->value());
+        QString msg = "K,"+ cerebroSelect->currentText();
         serial->write(msg.toLocal8Bit());
         qDebug()<<"message sent"<<msg;
     }
@@ -1193,16 +1223,13 @@ void MainWindow::trainDur(){
 void MainWindow::showDebug(){
     debugCheckbox->setChecked(debugOn);
     if (debugOn){
-        rigSelect->setEnabled(false);
         ratSelect->setEnabled(false);
-        rigSelect->clearSelection();
-        ratSelect->clearSelection();
+        ratSelect->setCurrentIndex(0);
         connect_btn->setText("Connect to Base Station (Debug Mode)");
         bugBox->setVisible(true);
         charBox->setVisible(true);
     }
     else{
-        rigSelect->setEnabled(true);
         ratSelect->setEnabled(true);
         connect_btn->setText("Connect to Base Station");
         bugBox->setVisible(false);
@@ -1231,7 +1258,7 @@ void MainWindow::getGraphs()
     settings.beginGroup("Saving");
     QString saveDirectoryPath = settings.value("DefaultDir").toString();
     settings.endGroup();
-    QString baseData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),saveDirectoryPath,tr("(*baseLog.csv)"));
+    QString baseData = QFileDialog::getOpenFileName(this,tr("Select Base Station Log File"),saveDirectoryPath,tr("Base Log File(*baseLog.csv)"));
     if (baseData!=""){
         //the cerebro data should be in the same folder, so we have the getOpenFileName dialog start in the the same folder
         QString betterPath = baseData.mid(saveDirectoryPath.length(),baseData.indexOf("/",saveDirectoryPath.length()+1)-saveDirectoryPath.length())+"/";
@@ -1388,7 +1415,6 @@ void MainWindow::setupCerebro(){
 }
 
 void MainWindow::updateSerial(){
-    cerebroNum_spin->setValue(newCerebro_spin->value());
     QString msg = "S,";
     QString newSerial = QString::number(newCerebro_spin->value());
     msg = msg + newSerial + "\n";
@@ -1403,4 +1429,12 @@ void MainWindow::updateSerial(){
     cerebroConnected_lbl->setStyleSheet("color:red");
     implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
     implantSettingsMatch_lbl->setStyleSheet("color:red");
+}
+
+
+void MainWindow::blinkBase()
+{
+    QString msg = "P";
+    serial->write(msg.toLocal8Bit());
+    qDebug()<<msg<<" Sent";
 }

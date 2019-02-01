@@ -29,15 +29,19 @@ SOFTWARE.
 #include <EEPROM.h>
 #include <avr/wdt.h>
 
-#define CHANNEL_ADDRESS 0
+#define CHANNEL_ADDRESS 0 //holds uint8_t, 1 byte wide
+#define RIG_ROOM_ADDRESS 1 //holds uint8_t, 1 byte wide
+#define RIG_NUM_ADDRESS 2 //holds uint8_t, 1 byte wide
 
-const uint8_t VERSION = 56; //2018-11-13
+const uint8_t VERSION = 57; //2019-01-31
 
 const uint8_t LED = 13;
 const uint8_t TRIGGER_PIN = 6;
 const uint8_t STOP_PIN = 5;
 
 uint8_t netID;
+uint8_t rigRoom;
+uint8_t rigNum;
 
 Radio radio(8,7); //slave select pin, interrupt pin
 WaveformData newWaveform;
@@ -123,10 +127,31 @@ void loop() {
       wdt_enable(WDTO_15MS);  // turn on the WatchDog timer
       while(1){}              // do nothing and wait for the reset
     }
+    else if (msg=='X'){
+      parseData();
+      rigRoom = valsFromParse[0];
+      rigNum = valsFromParse[1];
+      Serial1.print("\nBase Station is now associated with Rig:");
+      Serial1.print(rigRoom);Serial1.print(".");Serial1.println(rigNum);
+      EEPROM.update(RIG_ROOM_ADDRESS, rigRoom);
+      EEPROM.update(RIG_NUM_ADDRESS, rigNum);
+    }
     else if(msg=='?'){
       Serial1.print("Channel: ");
       Serial1.println(netID);
       Serial1.print("Base Version,");Serial1.print(VERSION);newline();
+    }
+    else if (msg=='P'){ 
+      uint16_t waveDuration = 5000;
+      uint32_t waveClock = millis();
+      Serial1.print("Blinking...");newline();
+      while((millis() - waveClock) < waveDuration){
+        delay(100);
+        digitalWrite(LED,HIGH);
+        delay(100);
+        digitalWrite(LED,LOW);
+      }
+      Serial1.print("....done");newline();
     }
     else if (msg!='\n'){
       relayMsg(msg);
@@ -226,6 +251,11 @@ void newSession(){
   uint32_t theVals[1] = {netID};
   sendDataToXavier("Base Channel",theVals,1);
   Serial1.print("Base Channel,");Serial1.print(netID);newline();
+  
+  EEPROM.get(RIG_ROOM_ADDRESS, rigRoom);
+  EEPROM.get(RIG_NUM_ADDRESS,rigNum);
+  uint32_t rigVals[2] = {rigRoom,rigNum};
+  sendDataToXavier("Rig Number",rigVals,2);
 
   char msg = 'N';
   if (radio.sendWithRetry(CEREBRO, &msg, 1, 3)){

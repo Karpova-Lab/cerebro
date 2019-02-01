@@ -30,7 +30,7 @@ SOFTWARE.
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
-#include <portAlias.h>
+#include "portAlias.h"
 
 
 class settingsDialog : public QDialog
@@ -38,7 +38,7 @@ class settingsDialog : public QDialog
 Q_OBJECT
 
 public:
-    settingsDialog(QWidget *parent = 0);
+    settingsDialog(QWidget *parent = nullptr);
 
 //    QDialog*                settingsDialog;
     QGridLayout*            settingsLayout;
@@ -50,7 +50,7 @@ public:
 
     QGroupBox*              sessionListsBox;
     QGridLayout*            sessionListsLayout;
-    QLabel*                 rigLabel, *ratLabel;
+    QLabel*                 cerebroLabel, *ratLabel;
     QListWidget*            rigVals,*ratVals;
     QPushButton*            add1_btn,*add2_btn;
     QLineEdit*              newItem1,*newItem2;
@@ -60,7 +60,7 @@ public:
     QGridLayout*            featuresLayout;
     QCheckBox*              pythonCheckbox,*mcubeCheckbox,*histogramCheckbox;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
-    QStringList             rigList,ratList;
+    QStringList             cerebroList,ratList;
     QPushButton*            okButton;
 
     usbLabelDialog*         usbLabelDlog;

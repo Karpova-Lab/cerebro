@@ -57,21 +57,21 @@ settingsDialog::settingsDialog(QWidget *parent)
     sessionListsBox = new QGroupBox("Edit Session Setup Lists");
         //1st listbox//
         sessionListsLayout = new QGridLayout();
-            rigLabel = new QLabel("Rig #");
-        sessionListsLayout->addWidget(rigLabel,0,0,1,2,Qt::AlignCenter);
+            cerebroLabel = new QLabel("Cerebro #");
+        sessionListsLayout->addWidget(cerebroLabel,0,0,1,2,Qt::AlignCenter);
             rigVals = new QListWidget();
             rigVals->setMinimumHeight(150);
         sessionListsLayout->addWidget(rigVals,2,0,1,2);
-            add1_btn= new QPushButton("Add Rig #");
+            add1_btn= new QPushButton("Add Cerebro #");
             add1_btn->setFocusPolicy(Qt::NoFocus);
         sessionListsLayout->addWidget(add1_btn,1,1);
             newItem1 = new QLineEdit();
         sessionListsLayout->addWidget(newItem1,1,0);
-            rmv1_btn= new QPushButton("Remove Selected Rig #");
+            rmv1_btn= new QPushButton("Remove Selected Cerebro #");
             rmv1_btn->setFocusPolicy(Qt::NoFocus);
         sessionListsLayout->addWidget(rmv1_btn,3,0,1,2);
         //2nd listbox//
-            ratLabel = new QLabel("Rat-implant: (LSet/RSet)");
+            ratLabel = new QLabel("Rat-Implant: (LSet/RSet)");
         sessionListsLayout->addWidget(ratLabel,0,2,1,2,Qt::AlignCenter);
             ratVals = new QListWidget();
         sessionListsLayout->addWidget(ratVals,2,2,1,2);
@@ -137,7 +137,7 @@ void settingsDialog::saveChanges(){
     //Update the Qsettings with the new values
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("sessionLists");
-        settings.setValue("rigList",rigList);
+        settings.setValue("cerebroList",cerebroList);
         settings.setValue("ratList",ratList);
     settings.endGroup();
 
@@ -156,7 +156,7 @@ void settingsDialog::removeItem()
 {
     if(sender()==rmv1_btn && rigVals->count()>0){
         if(rigVals->selectedItems().size()!=0){
-            rigList.removeOne(rigVals->currentItem()->text());
+            cerebroList.removeOne(rigVals->currentItem()->text());
             delete rigVals->currentItem();
         }
     }
@@ -176,7 +176,7 @@ void settingsDialog::addListItem()
     if(sender()== add1_btn || sender()== newItem1){
         tempList = rigVals;
         tempTxtbox = newItem1;
-        tempStringList = &rigList;
+        tempStringList = &cerebroList;
     }
     else if(sender()== add2_btn || sender()== newItem2){
         tempList = ratVals;
@@ -201,14 +201,14 @@ void settingsDialog::openSettings()
     //get the Qstringlists from memory
     QSettings settings("Bobcat Engineering","CCS");
     settings.beginGroup("sessionLists");
-        rigList = settings.value("rigList").toStringList();
+        cerebroList = settings.value("cerebroList").toStringList();
         ratList = settings.value("ratList").toStringList();
     settings.endGroup();
     // populate the listwidgets in the settings dialog with the items in the lists we got from memory
     rigVals->clear();
     ratVals->clear();
-    for (int i = 0;i< rigList.count(); i++){
-        rigVals->addItem(rigList.value(i));
+    for (int i = 0;i< cerebroList.count(); i++){
+        rigVals->addItem(cerebroList.value(i));
     }
     for (int i = 0;i< ratList.count(); i++){
         ratVals->addItem(ratList.value(i));

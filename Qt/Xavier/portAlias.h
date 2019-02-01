@@ -44,7 +44,7 @@ class usbLabelDialog : public QGroupBox
 {
 Q_OBJECT
 public:
-    usbLabelDialog(QWidget *parent = 0);
+    usbLabelDialog(QWidget *parent = nullptr);
 
     QGridLayout*            settingsLayout;
 
@@ -63,8 +63,6 @@ public:
     QLineEdit*              editText;
     QLabel*                 newLabel;
     QPushButton*            changeLabel_btn,*cancelChange_btn;
-
-    QPushButton*            okButton;
 
     QMap<QString, QString>  portLabelMap;
 

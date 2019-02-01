@@ -29,7 +29,7 @@ SOFTWARE.
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
 #include <qtimer.h>
-#include <settingsDialog.h>
+#include "settingsDialog.h"
 
 class MainWindow : public QMainWindow
 {
@@ -39,7 +39,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 public:
-    MainWindow(QWidget *parent = 0);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
@@ -56,7 +56,7 @@ private:
     settingsDialog          *settingsDlog;
     bool                    pythonEnabled,mcubeEnabled,showHistogram;
     bool                    errorThrown;
-    float                     baseFilter;
+    float                   baseFilter;
     QString                 startTime;
     QString                 saveName1;
     bool                    repeatOn;
@@ -74,13 +74,10 @@ private:
     //Experimental Setup
     QGroupBox*              equipmentBox;
     QGridLayout*            equipmentLayout;
-    QListWidget*            rigSelect,*ratSelect;
-    QComboBox*              serialPortList;
-    QLabel*                 connectBS_label,*cerebroNum_lbl;
-    QPushButton*            refresh_btn,*connect_btn,*rig_lbl,*rat_lbl;
+    QComboBox*              serialPortList,*ratSelect,*cerebroSelect;
+    QPushButton*            refresh_btn,*connect_btn,*cerebro_lbl,*rat_lbl,*connectBS_label;
     QCheckBox*              debugCheckbox;
-    QStringList             aliasStringList,rigList,ratList;
-    QSpinBox*               cerebroNum_spin;
+    QStringList             aliasStringList,cerebroList,ratList;
 
     //Cerebro Status
     QGroupBox*              cerStatusBox;
@@ -137,7 +134,7 @@ private:
     QGridLayout*            sessionStartLayout;
     QLabel*                 baseConnected_lbl,*cerebroConnected_lbl,*implantSettingsMatch_lbl,*newCerebro_lbl;
     QPlainTextEdit*         sessionStartMonitor;
-    QPushButton*            startSession_btn,*retry_btn,*newCerebro_btn,*setSerial_btn;
+    QPushButton*            startSession_btn,*retry_btn,*newCerebro_btn,*setSerial_btn,*blinkBase_btn;
     QGridLayout*            mainLayout;
     QSpinBox*               newCerebro_spin;
 
@@ -196,6 +193,7 @@ private slots:
 
     void setupCerebro();
     void updateSerial();
+    void blinkBase();
 };
 
 

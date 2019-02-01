@@ -71,7 +71,6 @@ usbLabelDialog::usbLabelDialog(QWidget *parent)
     connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
     connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
     connect(cancelChange_btn,SIGNAL(clicked()),editLabelDialog,SLOT(close()));
-    connect(okButton,SIGNAL(clicked()),this,SLOT(close()));
 }
 
 void usbLabelDialog::open_USB_Label_dialog(){
