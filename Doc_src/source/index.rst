@@ -2,28 +2,30 @@
 
 .. include:: isogrk1.txt
 
-========================================
-Cerebro Wireless Optogenetics System v1
-========================================
-
-.. Note::
+.. Warning::
   You are currently viewing documentation for the **infrared** controlled Version 1 system.  To view documentation for the **radio** controlled Version 2 system, click the button below.
 
   .. raw:: html
 
     <div style="text-align:center; margin-bottom:24px">
-      <a href="https://github.com/Karpova-Lab/cerebro" style="
-      background-color: #2980b9;
+      <a href="https://karpova-lab.github.io/cerebro/" style="
+      background-color: #efb282;
       border: none;
       color: white;
-      padding: 15px 15px;
+      padding: 10px 10px;
       text-align:center;
       text-decoration: none;
       display: inline-block;
-      font-size: 18px;
+      font-size: 40px;
+      font-weight: bold;
+      line-height: 1.1;
       border-radius:15px">
-      Version 2 Documentation</a>
+      New Version 2 Documentation</a>
     </div>
+
+========================================
+Cerebro Wireless Optogenetics System v1
+========================================
 
 Welcome! This is the hardware and software documentation of a system used for wireless `optogenetic <https://en.wikipedia.org/wiki/Optogenetics>`_ stimulation.
 As an `open-source <http://www.oshwa.org/definition/>`_ project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
@@ -32,7 +34,7 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
 .. raw:: html
 
   <div style="text-align:center; margin-bottom:24px">
-    <a href="https://github.com/Karpova-Lab/cerebro" style="
+    <a href="https://github.com/Karpova-Lab/cerebro/tree/1.0" style="
     background-color: #2980b9;
     border: none;color: white;
     padding: 15px 15px;
@@ -41,7 +43,7 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
     display: inline-block;
     font-size: 18px;
     border-radius:15px">
-    File Repository on GitHub</a>
+    Version 1 (infrared system) files on Github</a>
   </div>
 
 This project was developed by Andy Lustig in the `Karpova Lab at Janelia Research Campus <https://www.janelia.org/lab/karpova-lab>`_.
