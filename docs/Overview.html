@@ -78,6 +78,7 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">System Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#block-diagram">Block Diagram</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#system-components">System Components</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cerebro">Cerebro</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#head-implant">Head Implant</a></li>
@@ -196,18 +197,22 @@
 </dd>
 <dt>Laser Diodes</dt>
 <dd><ul class="first last simple">
-<li><strong>High Power</strong> - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.</li>
-<li><strong>Independent Bilateral Control</strong> -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities.</li>
+<li><strong>High Power</strong> - Laser diodes are more powerful than LEDs. Instead of using an LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.</li>
+<li><strong>Independent Bilateral Control of Intensity</strong> -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. Intensity ramp-downs can be used to prevent post illumination rebounds in neural activity (<a class="reference external" href="https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf">https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf</a>).</li>
 </ul>
 </dd>
 </dl>
+</div>
+<div class="section" id="block-diagram">
+<h2>Block Diagram<a class="headerlink" href="#block-diagram" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/diagram.jpg"><img alt="_images/diagram.jpg" class="align-center" src="_images/diagram.jpg" style="width: 100%;" /></a>
 </div>
 <div class="section" id="system-components">
 <h2>System Components<a class="headerlink" href="#system-components" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cerebro">
 <h3>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="_images/cerebro.jpg"><img alt="_images/cerebro.jpg" class="align-center" src="_images/cerebro.jpg" style="width: 100%;" /></a>
-<p>Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span class="std std-ref">Base Station</span></a> and delivers power to
+<p>Cerebro is a rechargable battery powered wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span class="std std-ref">Base Station</span></a> and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
 intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="Software/Xavier.html#waveform-parameters"><span class="std std-ref">Edit Waveform Parameters</span></a>).</p>
 <p><a class="reference internal" href="Hardware/cerebro.html"><span class="doc">More info…</span></a></p>
@@ -239,7 +244,7 @@ a stop signal to be emitted.</p>
 <h3>Xavier<a class="headerlink" href="#xavier" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="_images/Xavier.png"><img alt="_images/Xavier.png" class="align-center" src="_images/Xavier.png" style="width: 639.0px; height: 861.0px;" /></a>
 <p>Xavier is a GUI for sending and logging Base Station commands.
-Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.</p>
+Xavier provides an easy interface for sending parameter changes and can also be used as a debugging tool.</p>
 <p><a class="reference internal" href="Software/Xavier.html"><span class="doc">More info…</span></a></p>
 </div>
 </div>
@@ -278,7 +283,7 @@ Xavier provides an easy interface for sending parameter changes and can also be 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2019, Andy Lustig
-      Last updated on Jan 11, 2019.
+      Last updated on Mar 28, 2019.
 
     </p>
   </div>
@@ -303,6 +308,7 @@ Xavier provides an easy interface for sending parameter changes and can also be 
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
 
   

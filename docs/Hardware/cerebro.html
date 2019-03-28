@@ -80,6 +80,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#programming-instructions">Programming Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setup-arduino-ide">Setup Arduino IDE</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#burning-a-bootloader">Burning a Bootloader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#uploading-test-program">Uploading Test Program</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#uploading-firmware">Uploading Firmware</a></li>
@@ -376,13 +377,17 @@
 </div>
 <div class="section" id="programming-instructions">
 <h2>Programming Instructions<a class="headerlink" href="#programming-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="setup-arduino-ide">
+<span id="burn-boot"></span><h3>Setup Arduino IDE<a class="headerlink" href="#setup-arduino-ide" title="Permalink to this headline">¶</a></h3>
+<p>Follow these instructions : <a class="reference external" href="https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/arduino-ide-setup">https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/arduino-ide-setup</a></p>
+</div>
 <div class="section" id="burning-a-bootloader">
-<span id="burn-boot"></span><h3>Burning a Bootloader<a class="headerlink" href="#burning-a-bootloader" title="Permalink to this headline">¶</a></h3>
+<h3>Burning a Bootloader<a class="headerlink" href="#burning-a-bootloader" title="Permalink to this headline">¶</a></h3>
 <p>Cerebro is designed to be easily reprogrammed through the onboard micro USB.
 However when builing a Cerebro from scratch, you must first burn a <a class="reference external" href="https://www.arduino.cc/en/Tutorial/ArduinoISP">bootloader</a>  onto the microcontroller in order to later upload programs through USB.</p>
 <p>To burn a bootloader you need an external programmer that will talk to the microntroller through the In-Circuit Serial Programmer (ISP).
 You can use an Arduino as your external ISP and temporarily solder wires to the Cerebro PCB.
-I recommmend using a <a class="reference external" href="https://www.tindie.com/products/nsayer/usb-isp/?pt=ac_prod_search">USB microISP</a> along with a <a class="reference internal" href="programmer.html"><span class="doc">Pogo Connector</span></a>.</p>
+I recommmend using a <a class="reference external" href="https://www.tindie.com/products/nsayer/usb-uisp/">USB microISP</a> along with a <a class="reference internal" href="programmer.html"><span class="doc">Pogo Connector</span></a>.</p>
 <ol class="arabic simple">
 <li>The programmer needs to connect to the ISP thru-holes (MOSI, MISO, SCK, RST, GND and 3V) on the Cerebro PCB.</li>
 </ol>
@@ -407,10 +412,10 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
 <li>Under the Tools-&gt;Port menu look to see what Serial Ports are available.</li>
 <li>Connect a battery to Cerebro.</li>
 <li>Connect Cerebro to your computer with a usb cord and switch on Cerebro. A red LED should be lit, indicating that Cerebro is on.</li>
-<li>There should now be a new serial port under the Tools-&gt;Port menu that wasn’t there in step 2. This is the Cerebro seriall port, select it. If there a new serial port didn’t appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn’t appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.</li>
+<li>There should now be a new serial port under the Tools-&gt;Port menu that wasn’t there in step 2. This is the Cerebro serial port, select it. If there a new serial port didn’t appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn’t appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.</li>
 <li>Click the upload button to upload the the testBoard firmware.</li>
 <li>Open up Serial Monitor by click the magnifying glass icon.</li>
-<li>Set the Serial Monitor Baud Rate to 1152000 Baud.</li>
+<li>Set the Serial Monitor Baud Rate to 115200 Baud.</li>
 <li>Two yellow LEDs on Cerebro should be blinking and text should be appearing in the Serial Monitor.</li>
 <li>Follow the instructions on the Serial Monitor. If everything is working properly then the battery monitor should be able to provide a Battery charge %.</li>
 </ol>
@@ -418,7 +423,9 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
 <div class="section" id="uploading-firmware">
 <h3>Uploading Firmware<a class="headerlink" href="#uploading-firmware" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Open cerebro.ino</li>
+<li>Open cerebro.ino in the Arduino IDE.</li>
+<li>Select Tools-&gt;Board-&gt;”Adafruit Feather 32u4”.</li>
+<li>Click the upload button to upload the the Cerebro firmware.</li>
 </ol>
 </div>
 </div>
@@ -469,7 +476,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2019, Andy Lustig
-      Last updated on Jan 11, 2019.
+      Last updated on Mar 28, 2019.
 
     </p>
   </div>
@@ -494,6 +501,7 @@ I recommmend using a <a class="reference external" href="https://www.tindie.com/
         <script type="text/javascript" src="../_static/jquery.js"></script>
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
     
 
   

@@ -6,6 +6,8 @@ System Overview
 .. include:: isogrk1.txt
 .. include:: mmlalias.txt
 
+
+
 Features
 ========
 Open Source
@@ -28,9 +30,9 @@ Wireless Radio
   * **Wirelessly Adjustable Waveforms** - Cerebro can be produce :ref:`customizable waveforms<waveform parameters>` with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.
 
 Laser Diodes
-  * **High Power** - Laser diodes are more powerful than LEDs. Instead of using a LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
-  * **Independent Bilateral Control** -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. 
-
+  * **High Power** - Laser diodes are more powerful than LEDs. Instead of using an LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.
+  * **Independent Bilateral Control of Intensity** -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. Intensity ramp-downs can be used to prevent post illumination rebounds in neural activity (https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf).
+  
 .. **Technical Specifications**
 .. 
 .. .. csv-table::
@@ -51,16 +53,22 @@ Laser Diodes
 ..   Idle Current, ,"28","mA"
 
 
+Block Diagram
+=============
+
+.. image:: Hardware/photos/Block_diagram/diagram.jpg
+  :align: center
+  :width: 100 %
+
 System Components
 =================
-
 Cerebro
 -------
 .. image:: Hardware/photos/cerebro.jpg
   :align: center
   :width: 100 %
 
-Cerebro is a rechargable wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
+Cerebro is a rechargable battery powered wireless receiver that connects to a head implant assembly. Cerebro receives commands from a :ref:`base station` and delivers power to
 the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
 intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (:ref:`Edit Waveform Parameters <waveform parameters>`).
 
@@ -111,7 +119,7 @@ Xavier
   :scale: 100 %
 
 Xavier is a GUI for sending and logging Base Station commands. 
-Xavier provides an easy interface for sending parameter changes and can also be used a debugging tool.
+Xavier provides an easy interface for sending parameter changes and can also be used as a debugging tool.
 
 :doc:`More info... <../Software/Xavier>`
 

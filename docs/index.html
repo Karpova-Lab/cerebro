@@ -162,22 +162,12 @@
 <h1>Cerebro Wireless Optogenetics System v2<a class="headerlink" href="#cerebro-wireless-optogenetics-system-v2" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This documentation is very much a work in progress. Please understand that there will porbably be typos and missing</p>
+<p class="last">This documentation is a work in progress. Please understand that there will porbably be typos and missing</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>You are currently viewing documentation for the <strong>radio</strong> controlled Version 2 system. To view documentation for <strong>infrared</strong> controlled Version 1 system, click the button below.</p>
-<div class="last"><div style="text-align:center; margin-bottom:24px">
-  <a href="http://cerebro.readthedocs.io/en/1.0/" style="background-color: #2980b9;
-  border: none;
-  color: white;
-  padding: 15px 15px;
-  text-align:center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 18px;
-  border-radius:15px">Version 1 Documentation</a>
-</div></div></div>
+<p class="last">You are currently viewing documentation for the <strong>radio</strong> controlled Version 2 system. Documentation for the <strong>infrared</strong> controlled Version 1 system can be found <a class="reference external" href="https://cerebro.readthedocs.io/en/1.0/">here</a>.</p>
+</div>
 <p>Welcome! This is the hardware and software documentation of a system used for wireless <a class="reference external" href="https://en.wikipedia.org/wiki/Optogenetics">optogenetic</a> stimulation.
 As an <a class="reference external" href="http://www.oshwa.org/definition/">open-source</a> project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.</p>
@@ -190,15 +180,16 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
   text-decoration: none;
   display: inline-block;
   font-size: 18px;
-  border-radius:15px">Files on GitHub</a>
+  border-radius:15px">View files on GitHub</a>
 </div><p>This project was developed by Andy Lustig in the <a class="reference external" href="https://www.janelia.org/lab/karpova-lab">Karpova Lab at Janelia Research Campus</a>.
-If you have any questions you can contact him at <a class="reference external" href="mailto:lustiga&#37;&#52;&#48;janelia&#46;hhmi&#46;org">lustiga<span>&#64;</span>janelia<span>&#46;</span>hhmi<span>&#46;</span>org</a></p>
+If you have any questions you may contact him at <a class="reference external" href="mailto:lustiga&#37;&#52;&#48;janelia&#46;hhmi&#46;org">lustiga<span>&#64;</span>janelia<span>&#46;</span>hhmi<span>&#46;</span>org</a></p>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Overview.html">System Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Overview.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Overview.html#block-diagram">Block Diagram</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Overview.html#system-components">System Components</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Overview.html#cerebro">Cerebro</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Overview.html#head-implant">Head Implant</a></li>
@@ -213,6 +204,7 @@ If you have any questions you can contact him at <a class="reference external" h
 <li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#programming-instructions">Programming Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#setup-arduino-ide">Setup Arduino IDE</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#burning-a-bootloader">Burning a Bootloader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#uploading-test-program">Uploading Test Program</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Hardware/cerebro.html#uploading-firmware">Uploading Firmware</a></li>
@@ -321,7 +313,7 @@ Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecomm
   <div role="contentinfo">
     <p>
         &copy; Copyright 2015-2019, Andy Lustig
-      Last updated on Jan 11, 2019.
+      Last updated on Mar 28, 2019.
 
     </p>
   </div>
@@ -346,6 +338,7 @@ Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecomm
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
 
   

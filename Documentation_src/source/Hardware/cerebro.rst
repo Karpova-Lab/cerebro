@@ -95,6 +95,10 @@ Programming Instructions
 
 .. _burn boot:
 
+Setup Arduino IDE
+-----------------
+Follow these instructions : https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/arduino-ide-setup
+
 Burning a Bootloader
 --------------------
 
@@ -103,7 +107,7 @@ However when builing a Cerebro from scratch, you must first burn a `bootloader <
 
 To burn a bootloader you need an external programmer that will talk to the microntroller through the In-Circuit Serial Programmer (ISP). 
 You can use an Arduino as your external ISP and temporarily solder wires to the Cerebro PCB. 
-I recommmend using a `USB microISP <https://www.tindie.com/products/nsayer/usb-isp/?pt=ac_prod_search>`_ along with a :doc:`Pogo Connector <programmer>`.
+I recommmend using a `USB microISP <https://www.tindie.com/products/nsayer/usb-uisp/>`_ along with a :doc:`Pogo Connector <programmer>`.
 
 1. The programmer needs to connect to the ISP thru-holes (MOSI, MISO, SCK, RST, GND and 3V) on the Cerebro PCB.
 
@@ -123,23 +127,23 @@ Uploading Test Program
 ----------------------
 To test that the components on the PCB are soldered correctly and that all of the required connections are being made, we upload a test program. 
 
-
 1. Open testBoard.ino in the Arduino IDE.
 2. Select Tools->Board->"Adafruit Feather 32u4".
 3. Under the Tools->Port menu look to see what Serial Ports are available. 
 4. Connect a battery to Cerebro.
 5. Connect Cerebro to your computer with a usb cord and switch on Cerebro. A red LED should be lit, indicating that Cerebro is on.
-6. There should now be a new serial port under the Tools->Port menu that wasn't there in step 2. This is the Cerebro seriall port, select it. If there a new serial port didn't appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn't appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.
+6. There should now be a new serial port under the Tools->Port menu that wasn't there in step 2. This is the Cerebro serial port, select it. If there a new serial port didn't appear in the menu, make sure Cerebro is turned on and connected via USB. If it still doesn't appear in the menu, the bootloader may have not been burned correctly, so try burning the bootloader again.
 7. Click the upload button to upload the the testBoard firmware.
 8. Open up Serial Monitor by click the magnifying glass icon.
-9. Set the Serial Monitor Baud Rate to 1152000 Baud.
+9. Set the Serial Monitor Baud Rate to 115200 Baud.
 10. Two yellow LEDs on Cerebro should be blinking and text should be appearing in the Serial Monitor.
 11. Follow the instructions on the Serial Monitor. If everything is working properly then the battery monitor should be able to provide a Battery charge %.
 
 Uploading Firmware
 ------------------
-
-1. Open cerebro.ino
+1. Open cerebro.ino in the Arduino IDE.
+2. Select Tools->Board->"Adafruit Feather 32u4".
+3. Click the upload button to upload the the Cerebro firmware.
 
 Assigning a Serial Number
 =========================

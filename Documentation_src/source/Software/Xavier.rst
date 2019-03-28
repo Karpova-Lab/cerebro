@@ -136,7 +136,7 @@ Session Setup
     :align: center
     :width: 100%
 
-4. A startup sequence dialog box will appear. Xavier will try to establish a connections with Base Station and Cerebro. Once connected, Xavier will make sure that the laser diode power settings on Cerebro match laser diode powers for the rat/implant that was selected in step 1. If there are red X's, make sure the correct Serial Port was selected, make sure Cerebro has been turned on, and then click ``Retry``.
+4. A startup sequence dialog box will appear. Xavier will try to establish a connection between Base Station and Cerebro. Once connected, Xavier will make sure that the laser diode power settings on Cerebro match laser diode powers for the rat/implant that was selected in step 1. If there are red X's, make sure the correct Serial Port was selected, make sure Cerebro has been turned on, and then click ``Retry``.
 
 .. image:: photos/Start_session/startup_seq_error.png
     :align: center

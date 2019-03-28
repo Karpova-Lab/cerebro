@@ -75,7 +75,8 @@ def printContents(table,colWidths,isHeader=False,**kwds):
     return contentString,blankCols
 
 
-table = pd.read_excel(xlsFile,usecols=4,sheet_name=chosenSheet,dtype='str')#read in table from excel file
+table = pd.read_excel(xlsFile,usecols=[0,1,2,3,],sheet_name=chosenSheet,dtype='str')#read in table from excel file
+table.fillna("",inplace=True)
 widths = getColWidths(table) # get the maximum content width of each column
 
 #print header

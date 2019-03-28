@@ -5,28 +5,14 @@ Cerebro Wireless Optogenetics System v2
 ========================================
 
 .. Warning::
-  This documentation is very much a work in progress. Please understand that there will porbably be typos and missing
+  This documentation is a work in progress. Please understand that there will porbably be typos and missing
 
 .. Note::
-  You are currently viewing documentation for the **radio** controlled Version 2 system. To view documentation for **infrared** controlled Version 1 system, click the button below.
-
-  .. raw:: html
-
-    <div style="text-align:center; margin-bottom:24px">
-      <a href="http://cerebro.readthedocs.io/en/1.0/" style="background-color: #2980b9;
-      border: none;
-      color: white;
-      padding: 15px 15px;
-      text-align:center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 18px;
-      border-radius:15px">Version 1 Documentation</a>
-    </div>
+  You are currently viewing documentation for the **radio** controlled Version 2 system. Documentation for the **infrared** controlled Version 1 system can be found `here <https://cerebro.readthedocs.io/en/1.0/>`_. 
 
 Welcome! This is the hardware and software documentation of a system used for wireless `optogenetic <https://en.wikipedia.org/wiki/Optogenetics>`_ stimulation.
 As an `open-source <http://www.oshwa.org/definition/>`_ project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
-study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.
+study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System. 
 
 .. raw:: html
 
@@ -39,11 +25,11 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
     text-decoration: none;
     display: inline-block;
     font-size: 18px;
-    border-radius:15px">Files on GitHub</a>
+    border-radius:15px">View files on GitHub</a>
   </div>
 
 This project was developed by Andy Lustig in the `Karpova Lab at Janelia Research Campus <https://www.janelia.org/lab/karpova-lab>`_.
-If you have any questions you can contact him at lustiga@janelia.hhmi.org
+If you have any questions you may contact him at lustiga@janelia.hhmi.org
 
 
 Contents
