@@ -32,10 +32,8 @@ Bill of Materials
 | 2   | 0805 51 k\ |OHgr| Resistor  |                                                                       |                                                                                    | 
 +-----+-----------------------------+-----------------------------------------------------------------------+------------------------------------------------------------------------------------+
 
-
-
 Downloads
----------
+=================
 - `Cypress USB Driver <http://www.cypress.com/documentation/software-and-drivers/usb-serial-software-development-kit>`_ 
 - `Adafruit Feather Driver <https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/using-with-arduino-ide>`_ 
 

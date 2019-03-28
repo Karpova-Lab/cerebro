@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cerebro Wireless Optogenetics System v2 &mdash; Cerebro 2.0.3 documentation</title>
+  <title>Cerebro Wireless Optogenetics System v2 &mdash; Cerebro Wireless Optogenetics System 2.0.4 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="System Overview" href="Overview.html" /> 
+    <link rel="next" title="Cerebro" href="Hardware/cerebro.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -47,7 +47,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Cerebro
+            <a href="#" class="icon icon-home"> Cerebro Wireless Optogenetics System
           
 
           
@@ -75,7 +75,6 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="Overview.html">System Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/implant.html">Head Implant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a></li>
@@ -96,7 +95,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Cerebro</a>
+          <a href="#">Cerebro Wireless Optogenetics System</a>
         
       </nav>
 
@@ -148,7 +147,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Hardware/cerebro.html" class="btn btn-neutral float-right" title="Cerebro" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
   </div>
@@ -183,24 +182,94 @@ study, replicate, share, improve and contribute back to the Cerebro Wireless Opt
   border-radius:15px">View files on GitHub</a>
 </div><p>This project was developed by Andy Lustig in the <a class="reference external" href="https://www.janelia.org/lab/karpova-lab">Karpova Lab at Janelia Research Campus</a>.
 If you have any questions you may contact him at <a class="reference external" href="mailto:lustiga&#37;&#52;&#48;janelia&#46;hhmi&#46;org">lustiga<span>&#64;</span>janelia<span>&#46;</span>hhmi<span>&#46;</span>org</a></p>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="features">
+<span id="overview"></span><h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Open Source</dt>
+<dd><ul class="first last simple">
+<li><strong>Flexible</strong> - All code and CAD is available so you can make changes and improvements to anything you want!</li>
+<li><strong>Low Cost</strong> - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.</li>
+</ul>
+</dd>
+</dl>
+<dl class="docutils">
+<dt>Wireless Radio</dt>
+<dd><ul class="first last simple">
+<li><strong>Low Latency</strong> -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.</li>
+<li><strong>2-Way Communication</strong> - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.</li>
+<li><strong>Good Signal Range</strong> - At least 20m, doesn’t need line of sight. (The radio module that Cerebro uses has been shown to have ranges greater than 500m with the right antennas <a class="reference external" href="https://lowpowerlab.com/forum/rf-range-antennas-rfm69-library/rfm69hw-range-test!/">https://lowpowerlab.com/forum/rf-range-antennas-rfm69-library/rfm69hw-range-test!/</a>)</li>
+<li><strong>Wirelessly Adjustable Waveforms</strong> - Cerebro can produce <a class="reference internal" href="Software/Xavier.html#waveform-parameters"><span class="std std-ref">customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</li>
+</ul>
+</dd>
+<dt>Laser Diodes</dt>
+<dd><ul class="first last simple">
+<li><strong>High Power</strong> - Laser diodes are more powerful than LEDs. Instead of using an LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.</li>
+<li><strong>Independent Bilateral Control of Intensity</strong> -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. Intensity ramp-downs can be used to prevent post illumination rebounds in neural activity (<a class="reference external" href="https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf">https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf</a>).</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="block-diagram">
+<h2>Block Diagram<a class="headerlink" href="#block-diagram" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/diagram.jpg"><img alt="_images/diagram.jpg" class="align-center" src="_images/diagram.jpg" style="width: 100%;" /></a>
+</div>
+<div class="section" id="system-components">
+<h2>System Components<a class="headerlink" href="#system-components" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cerebro">
+<h3>Cerebro<a class="headerlink" href="#cerebro" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/cerebro.jpg"><img alt="_images/cerebro.jpg" class="align-center" src="_images/cerebro.jpg" style="width: 100%;" /></a>
+<p>Cerebro is a rechargable battery powered wireless receiver that connects to a head implant assembly. Cerebro receives commands from a <a class="reference internal" href="#base-station"><span class="std std-ref">Base Station</span></a> and delivers power to
+the laser diodes on the head implant, resulting in light being emitted through the optical fibers into the brain. The
+intensity and waveform of the emitted light can be adjusted wirelessly during an experiment (<a class="reference internal" href="Software/Xavier.html#waveform-parameters"><span class="std std-ref">Edit Waveform Parameters</span></a>).</p>
+<p><a class="reference internal" href="Hardware/cerebro.html"><span class="doc">More info…</span></a></p>
+</div>
+<div class="section" id="head-implant">
+<h3>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/implant_cad.jpg"><img alt="_images/implant_cad.jpg" class="align-center" src="_images/implant_cad.jpg" style="width: 100%;" /></a>
+<p>The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes are accompanied by a phototranistor that is used as feedback
+to maintain a constant light output. The laser diodes can be independently controlled and can output arbitrary waveforms with millisecond resolution.</p>
+<p><a class="reference internal" href="Hardware/implant.html"><span class="doc">More info…</span></a></p>
+</div>
+<div class="section" id="base-station">
+<span id="id1"></span><h3>Base Station<a class="headerlink" href="#base-station" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/base.jpg"><img alt="_images/base.jpg" class="align-center" src="_images/base.jpg" style="width: 100%;" /></a>
+<p>The Base Station is responsible for communicating wirelessly with Cerebro via radio.
+It is connected by USB to a Windows computer, where commands can be sent and events can be logged using serial communication with Xavier.
+Base Station can also be controlled directly by <a class="reference external" href="https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels">TTL</a> signals going into
+its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger command to be sent, and a high TTL signal on pin2 causes
+a stop command to be sent.</p>
+<p><a class="reference internal" href="Hardware/base station.html"><span class="doc">More info…</span></a></p>
+</div>
+<div class="section" id="charging-dock">
+<h3>Charging Dock<a class="headerlink" href="#charging-dock" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/charging.jpg"><img alt="_images/charging.jpg" class="align-center" src="_images/charging.jpg" style="width: 100%;" /></a>
+<p>The Charging Dock has the same battery connectors as Cerebro and can charge up to 6 Cerebro lipo batteries at once.</p>
+<p><a class="reference internal" href="Hardware/charging dock.html"><span class="doc">More info…</span></a></p>
+</div>
+<div class="section" id="xavier-software">
+<h3>Xavier Software<a class="headerlink" href="#xavier-software" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/Xavier.png"><img alt="_images/Xavier.png" class="align-center" src="_images/Xavier.png" style="width: 639.0px; height: 861.0px;" /></a>
+<p>Xavier is a GUI for sending and logging Base Station commands.
+Xavier provides an easy interface for sending parameter changes and can also be used as a debugging tool.</p>
+<p><a class="reference internal" href="Software/Xavier.html"><span class="doc">More info…</span></a></p>
+</div>
+</div>
+<div class="section" id="alternative-commerical-systems">
+<h2>Alternative Commerical Systems<a class="headerlink" href="#alternative-commerical-systems" title="Permalink to this headline">¶</a></h2>
+<p>Here are some commercial products that also provide wireless optogenetics:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://doriclenses.com/life-sciences/304-optogenetically-synchronized-electrophysiology">Doric OSE System</a></li>
+<li><a class="reference external" href="https://eicomusa.com/teleopto/">Eicom Teleopto</a></li>
+<li><a class="reference external" href="http://www.neurolux.org/">Neurolux</a></li>
+<li><a class="reference external" href="http://www.trianglebiosystems.com/s-series-systems.html">Triangle Biosystems</a></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="documentation-outline">
+<h2>Documentation Outline<a class="headerlink" href="#documentation-outline" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Overview.html">System Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Overview.html#features">Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Overview.html#block-diagram">Block Diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Overview.html#system-components">System Components</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Overview.html#cerebro">Cerebro</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Overview.html#head-implant">Head Implant</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Overview.html#base-station">Base Station</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Overview.html#charging-dock">Charging Dock</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Overview.html#xavier">Xavier</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="Overview.html#alternative-commerical-systems">Alternative Commerical Systems</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#bill-of-materials">Bill of Materials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#programming-instructions">Programming Instructions</a><ul>
@@ -226,10 +295,8 @@ If you have any questions you may contact him at <a class="reference external" h
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Hardware/base station.html#bill-of-materials">Bill of Materials</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Hardware/base station.html#downloads">Downloads</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/base station.html#bill-of-materials">Bill of Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/base station.html#downloads">Downloads</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a><ul>
@@ -302,7 +369,7 @@ Andy Lustig </a> is licensed under a  <a rel="license" href="http://creativecomm
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="Overview.html" class="btn btn-neutral float-right" title="System Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Hardware/cerebro.html" class="btn btn-neutral float-right" title="Cerebro" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
