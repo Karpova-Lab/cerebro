@@ -10,6 +10,12 @@ Base Station
   :align: center
   :width: 100 %
 
+.. figure:: photos/PCB_photos/basestation2.5.png
+  :align: center
+  :width: 100%
+
+  `Click Here for Design Files <https://github.com/Karpova-Lab/cerebro/tree/master/PCB%20Files/Base%20Station%202.5>`_ 
+
 
 Bill of Materials
 =================

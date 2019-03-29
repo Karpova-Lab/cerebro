@@ -11,6 +11,12 @@ Cerebro
   :align: center
   :width: 100 %
 
+.. figure:: photos/PCB_photos/cerebro5.8.png
+  :align: center
+  :width: 100%
+
+  `Click Here for Design Files <https://github.com/Karpova-Lab/cerebro/tree/master/PCB%20Files/Cerebro%205.8>`_ 
+
 Bill of Materials
 =================
 +-----+---------------------------------+-------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+

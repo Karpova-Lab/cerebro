@@ -11,6 +11,12 @@ Head Implant
   :align: center
   :width: 100%
 
+.. figure:: photos/PCB_photos/implant5.3.png
+  :align: center
+  :width: 100%
+
+  `Click Here for Design Files <https://github.com/Karpova-Lab/cerebro/tree/master/PCB%20Files/Implant%205.3>`_ 
+
 .. _implantTools:
 
 Required Tools

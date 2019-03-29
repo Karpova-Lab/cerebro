@@ -11,6 +11,13 @@ Charging Dock
   :align: center
   :width: 100%
 
+.. figure:: photos/PCB_photos/dock2.1.png
+  :align: center
+  :width: 100%
+
+  `Click Here for Design Files <https://github.com/Karpova-Lab/cerebro/tree/master/PCB%20Files/Charging%20Dock%202.1>`_ 
+
+
 Bill of Materials
 =================
 

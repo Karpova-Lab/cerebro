@@ -7,6 +7,16 @@ Pogo Connector
 .. include:: Characters/isogrk1.txt
 .. include:: Characters/mmlalias.txt
 
+.. figure:: photos/pogo.jpg
+  :align: center
+  :width: 100%
+
+.. figure:: photos/PCB_photos/pogo1.2.png
+  :align: center
+  :width: 100%
+
+  `Click Here for Design Files <https://github.com/Karpova-Lab/cerebro/tree/master/PCB%20Files/Cerebro%20ICSP%201.2>`_ 
+
 
 Bill of Materials
 =================
