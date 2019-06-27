@@ -49,7 +49,7 @@ usbLabelDialog::usbLabelDialog(QWidget *parent)
 
     editLabelDialog = new QDialog();
         editLayout = new QGridLayout();
-            newLabel = new QLabel("New Label:");
+            newLabel = new QLabel("Rig # :");
         editLayout->addWidget(newLabel,0,0,Qt::AlignRight);
             editText = new QLineEdit();
         editLayout->addWidget(editText,0,1);
@@ -66,7 +66,7 @@ usbLabelDialog::usbLabelDialog(QWidget *parent)
     editLabelDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);//removes "?" from dialog box
 
     this->setLayout(portEditLayout);
-    this->setTitle("Edit COM Port Labels");
+    this->setTitle("Associate COM Port with Rig #");
 
     connect(aliasWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(editLabel()));
     connect(changeLabel_btn,SIGNAL(clicked()),this,SLOT(addAlias()));
@@ -88,8 +88,8 @@ void usbLabelDialog::open_USB_Label_dialog(){
         if(info.manufacturer().contains("Cypress")){
             list << info.portName();
             if(portLabelMap.contains(info.portName())){
-                aliasWidget->addItem(portLabelMap.value(info.portName())+ " (" + info.portName() + ")");
-                aliasList<<portLabelMap.value(info.portName())+ " (" + info.portName() + ")";
+                aliasWidget->addItem("Rig " + portLabelMap.value(info.portName())+ " (" + info.portName() + ")");
+                aliasList<<"Rig " + portLabelMap.value(info.portName())+ " (" + info.portName() + ")";
             }
             else{
                 aliasWidget->addItem(info.portName());
@@ -103,9 +103,10 @@ void usbLabelDialog::editLabel(){
     //isolate the COMXX part of the port name
     QString COMbeingEdited = aliasWidget->currentItem()->text();
     if(COMbeingEdited.contains("(")){
-        editText->setText(COMbeingEdited.left(COMbeingEdited.indexOf(" (")));
+        editText->setText(COMbeingEdited.left(COMbeingEdited.indexOf(" (")).mid(4));
         COMbeingEdited.remove(0,COMbeingEdited.indexOf("("+usbTag)+1);
         COMbeingEdited.remove(QChar (')'));
+
     }
     else{
         editText->clear();
@@ -126,7 +127,7 @@ void usbLabelDialog::addAlias()
     editLabelDialog->close();
 
     QString oldAlias = aliasWidget->currentItem()->text();
-    QString newAlias = labelText + " (" + tempCOM +")";
+    QString newAlias = "Rig " + labelText + " (" + tempCOM +")";
     delete aliasWidget->currentItem();
     aliasList.removeOne(oldAlias);
     if (!labelText.isEmpty()){ //if there's something in the textedit box...

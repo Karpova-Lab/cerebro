@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
         openDir->setText("Default Save Directory");
     goMenu->addAction(openDir);
         gotoApplocation = new QAction(this);
-        gotoApplocation->setText("App install directory");
+        gotoApplocation->setText("App Install Directory");
     goMenu->addAction(gotoApplocation);
 
     //View
@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.10.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t01/31/2019";
+        xavierVersion = "3.11.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t06/27/2019";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -395,7 +395,7 @@ MainWindow::MainWindow(QWidget *parent)
             newCerebro_btn->setEnabled(false);
         sessionStartLayout->addWidget(newCerebro_btn,0,1);
             retry_btn = new QPushButton("Retry Connection");
-        sessionStartLayout->addWidget(retry_btn,1,0);
+        sessionStartLayout->addWidget(retry_btn,1,0,1,2);
             newCerebro_lbl = new QLabel("Serial Number:");
         sessionStartLayout->addWidget(newCerebro_lbl,2,0,Qt::AlignRight);
             newCerebro_spin = new QSpinBox();
@@ -664,7 +664,7 @@ void MainWindow::fillCerebroPorts()
 //            qDebug()<<info.productIdentifier();
 //            qDebug()<<info.serialNumber();
             if (!aliasStringList.filter(info.portName()).isEmpty()){
-                qDebug()<<aliasStringList.filter(info.portName())[0]<<"added";
+//                qDebug()<<aliasStringList.filter(info.portName())[0]<<"added";
                 list << aliasStringList.filter(info.portName())[0];
                 serialPortList2->addItem(list.first(), list);
             }
@@ -743,7 +743,7 @@ void MainWindow::connectBasePort()
             qDebug()<<"opening serial"<<serial->open(QIODevice::ReadWrite);
             qDebug()<<serial->errorString();
             connect_btn->setText("Disconnect");
-            rigNumber = serialPortList->currentText().split(' ')[2];
+            rigNumber = serialPortList->currentText().split(' ')[1];
             if(!debugOn){
                 QStringList ratInfo = ratSelect->currentText().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
                 qDebug()<<"rat info "<<ratInfo;
@@ -960,7 +960,7 @@ void MainWindow::readFromBase()
             }
             else{
                 QMessageBox alert;
-                alert.setText("When you chose " + serialPortList->currentText().split(' ')[3] +
+                alert.setText("When you chose " + serialPortList->currentText().split(' ')[2] +
                                " you thought you were connecting to rig " + rigNumber+
                                ". However when we checked with the Base Station associated with "
                                "that COM port, it said it was connected to rig " + (dataFromBaseMsg[1]+"."+dataFromBaseMsg[2]) +
