@@ -164,14 +164,18 @@ Here are some commercial products that also provide wireless optogenetics:
 Documentation Outline
 =====================
 .. toctree::
+  :caption: Hardware
 
   Hardware/cerebro.rst
   Hardware/implant.rst
   Hardware/base station.rst
   Hardware/charging dock.rst
   Hardware/programmer.rst
-  Software/Xavier.rst
 
+.. toctree::
+  :caption: Software
+
+  Software/Xavier.rst
 
 Licenses
 ========
