@@ -3,7 +3,7 @@
 This repository contains all files needed to replicate a wireless optogenetics system that was developed in the [Karpova Lab ](https://www.janelia.org/lab/karpova-lab) at HHMI's Janelia Research Campus.
 
 ## Documentation
-Go to [https://karpova-lab.github.io/cerebro/](https://karpova-lab.github.io/cerebro/) for detailed documentation.
+Go to [https://cerebro.readthedocs.io/en/1.0/](https://cerebro.readthedocs.io/en/1.0/) for detailed documentation.
 
 ## Hardware License
 
