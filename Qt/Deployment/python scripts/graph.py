@@ -22,10 +22,10 @@ import matplotlib.pyplot as plt
 import matplotlib.style as style 
 #######################################  BOKEH   ####################################################
 from bokeh.plotting import figure, reset_output,output_notebook,output_file,show,save,ColumnDataSource
-from bokeh.models import WheelZoomTool
+from bokeh.models import WheelZoomTool, Legend
 from bokeh.models.annotations import Title
 
-scriptVersion = 5
+scriptVersion = 6
 
 def getHeaderInfo(dataFile):
     numSetupVars = 8
@@ -73,12 +73,14 @@ def createRawLogDF(dataFile,_logStart):
     missedSummaryMask = missedTable['Description']=='Missed Message Index'
     totalMask = missedTable['Description']=='Total Missed'
     
-    totalMissed = int(missedTable[totalMask][['Description','Value']]['Value'])
+    try:
+        totalMissed = int(missedTable[totalMask][['Description','Value']]['Value'])
+    except:
+        totalMissed=-1
     missedSummary = missedTable[missedSummaryMask][['Description','Value']]
-    
     if len(missedSummary) != totalMissed:
-        print(len(missedSummary),"!=",totalMissed)
-        print("WARNING: Missed Length isn't the same as total missed")
+        print('\t',len(missedSummary),"!=",totalMissed)
+        print("\tWARNING: Missed Length isn't the same as total missed")   
     
     return logEntries,missedSummary
 
@@ -259,7 +261,7 @@ TOOLTIPS = [
 
 p = figure(
     plot_width=1600,
-    plot_height=250,
+    plot_height=325,
     y_range=['trigger','continue','abort','feedback'],
     tools="xpan,xwheel_pan,reset",
     tooltips=TOOLTIPS,
@@ -283,9 +285,9 @@ continue_good,continue_miss = getDataSets('Continue')
 goodContinueSource = create_ColumnDataSource(continue_good,'continue')
 badContinueSource = create_ColumnDataSource(continue_miss,'continue')
 
-filtered_good,filtered_miis = getDataSets('Spam Filtered Abort')      
+filtered_good,filtered_miss = getDataSets('Spam Filtered Abort')      
 filtered_source = create_ColumnDataSource(filtered_good,'abort')
-filtered_miss_source = create_ColumnDataSource(filtered_miis,'abort')
+filtered_miss_source = create_ColumnDataSource(filtered_miss,'abort')
 
 abort_good,abort_miss = getDataSets('Abort')      
 goodAbortSource = create_ColumnDataSource(abort_good,'abort')
@@ -305,32 +307,50 @@ markerSize = 30
 #trigger
 p.triangle('time', 'y', size=markerSize, source=goodTrigSource,color='green',fill_color='white',fill_alpha=0)
 if badTrigSource:
-    p.triangle('time', 'y', size=markerSize, source=badTrigSource,color='green',fill_color='red')
+    badTrigg=p.triangle('time', 'y', size=markerSize, source=badTrigSource,color='green',fill_color='red')
 
 #continue
 p.diamond('time', 'y', size=markerSize, source=goodContinueSource,color='green',fill_color='white',fill_alpha=0)
 if badContinueSource:
-    p.diamond('time', 'y', size=markerSize, source=badContinueSource,color='green',fill_color='red')
+    badC=p.diamond('time', 'y', size=markerSize, source=badContinueSource,color='green',fill_color='red')
 
 #abort
-p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
+filteredA = p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
 if filtered_miss_source:
     p.square_x('time', 'y', size=markerSize, source=filtered_miss_source,color='green',fill_color='red',alpha=0.3)
 p.square('time', 'y', size=markerSize, source=goodAbortSource,color='green',fill_color='white',fill_alpha=0)
 if badAbortSource:
-    p.square('time', 'y', size=markerSize, source=badAbortSource,color='green',fill_color='red')
+    badA = p.square('time', 'y', size=markerSize, source=badAbortSource,color='green',fill_color='red')
 
 #feeback
 p.circle('time', 'y', size=markerSize, source=good_feedsource,fill_color='white',fill_alpha=0)
 if bad_feedsource:
-    p.circle('time', 'y', size=markerSize, source=bad_feedsource,fill_color='orange',fill_alpha=0.3)
+    badF = p.circle('time', 'y', size=markerSize, source=bad_feedsource,fill_color='orange',fill_alpha=0.3)
 
 t = Title()
-t.text = "Missed Messages: {}     Bad Feedback: {}".format(
+t.text = "Missed Messages: {}/{} ({}%)     Feedback Warnings: {}/{} ({}%)  ".format(
     len(missedDF),
-    suspiciousMask.sum()
+    len(sentDF),
+    round(len(missedDF)/len(sentDF)*100,1),
+    suspiciousMask.sum(),
+    sum(sentDF['Msg']=='Trigger'),
+    round(suspiciousMask.sum()/sum(sentDF['Msg']=='Trigger')*100,1)
 )
 t.align = 'center'
+from bokeh.models.glyphs import Oval
+glyph = Oval(width=0.4, height=0.6, angle=-0.7, fill_color="#1d91d0")
+
+glyphSize = 50
+legend = Legend(items=[
+    ("Trigger Missed", [badTrigg]),
+    ("Continue Missed", [badC]),
+    ("Abort Missed", [badA]),
+    ("Filtered Abort", [filteredA]),
+    ("Feedback Warning", [badF])
+], location="top_center",orientation='horizontal',spacing=glyphSize,glyph_height=glyphSize,glyph_width=glyphSize)
+
+p.add_layout(legend, 'above')
+
 p.title = t
 show(p)
 
@@ -385,7 +405,7 @@ ax2.text(s=battery_summary,x=1.15,y=.5,
          bbox=bbox_props,ha='center',va='center',color='green')  
 
 
-ax2.set_title("Animal: {}     Session: {}".format(info['Rat'],info['Start_datetime']))
+ax2.set_title("Animal: {}     Session: {}     Cerebro: {}     Rig: {}".format(info['Rat'],info['Start_datetime'],info['Cerebro_serial'],info['Rig']))
 
 matlabSaveName = 'temp/summary.png'
 plt.savefig(matlabSaveName,bbox_inches = "tight")
@@ -412,8 +432,8 @@ html_string = '''
 saveName = 'temp/feedback.html'
 with open(saveName, 'w') as f:
     f.write(html_string.format(table=feedbackDF.to_html(classes='mystyle')))
-webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
-sleep(1)
+# webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
+# sleep(1)
 
 
 # In[ ]:
@@ -436,8 +456,8 @@ html_string = '''
 saveName = 'temp/raw.html'
 with open(saveName, 'w') as f:
     f.write(html_string.format(table=rawDF.to_html(classes='mystyle')))
-webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
-sleep(1)
+# webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
+# sleep(1)
 
 
 # In[ ]:
