@@ -304,15 +304,18 @@ bad_feedsource = create_ColumnDataSource(bad_feedbackDF,'feedback')
 #############################################
 markerSize = 30
 
+my_legend_items = []
 #trigger
 p.triangle('time', 'y', size=markerSize, source=goodTrigSource,color='green',fill_color='white',fill_alpha=0)
 if badTrigSource:
     badTrigg=p.triangle('time', 'y', size=markerSize, source=badTrigSource,color='green',fill_color='red')
+    my_legend_items.append(("Trigger Missed", [badTrigg]))
 
 #continue
 p.diamond('time', 'y', size=markerSize, source=goodContinueSource,color='green',fill_color='white',fill_alpha=0)
 if badContinueSource:
     badC=p.diamond('time', 'y', size=markerSize, source=badContinueSource,color='green',fill_color='red')
+    my_legend_items.append(("Continue Missed", [badC]))
 
 #abort
 filteredA = p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
@@ -321,11 +324,13 @@ if filtered_miss_source:
 p.square('time', 'y', size=markerSize, source=goodAbortSource,color='green',fill_color='white',fill_alpha=0)
 if badAbortSource:
     badA = p.square('time', 'y', size=markerSize, source=badAbortSource,color='green',fill_color='red')
+    my_legend_items.append(("Filtered Abort", [filteredA]))
 
 #feeback
 p.circle('time', 'y', size=markerSize, source=good_feedsource,fill_color='white',fill_alpha=0)
 if bad_feedsource:
     badF = p.circle('time', 'y', size=markerSize, source=bad_feedsource,fill_color='orange',fill_alpha=0.3)
+    my_legend_items.append(("Feedback Warning", [badF]))
 
 t = Title()
 t.text = "Missed Messages: {}/{} ({}%)     Feedback Warnings: {}/{} ({}%)  ".format(
@@ -337,18 +342,9 @@ t.text = "Missed Messages: {}/{} ({}%)     Feedback Warnings: {}/{} ({}%)  ".for
     round(suspiciousMask.sum()/sum(sentDF['Msg']=='Trigger')*100,1)
 )
 t.align = 'center'
-from bokeh.models.glyphs import Oval
-glyph = Oval(width=0.4, height=0.6, angle=-0.7, fill_color="#1d91d0")
 
 glyphSize = 50
-legend = Legend(items=[
-    ("Trigger Missed", [badTrigg]),
-    ("Continue Missed", [badC]),
-    ("Abort Missed", [badA]),
-    ("Filtered Abort", [filteredA]),
-    ("Feedback Warning", [badF])
-], location="top_center",orientation='horizontal',spacing=glyphSize,glyph_height=glyphSize,glyph_width=glyphSize)
-
+legend = Legend(items=my_legend_items, location="top_center",orientation='horizontal',spacing=glyphSize,glyph_height=glyphSize,glyph_width=glyphSize)
 p.add_layout(legend, 'above')
 
 p.title = t
@@ -357,9 +353,6 @@ show(p)
 
 # In[ ]:
 
-
-# plotBattery(battDF)
-# plotFeedback(feedbackDF)
 
 times = np.array(feedbackDF['Timestamp'],dtype=np.uint64)/10**9/3600
 
@@ -471,11 +464,15 @@ html_file_location = save(p)
 with open(bokehGraphName, 'r+') as fd:
     contents = fd.readlines()
     for i,j in enumerate(contents):
+        if(j.find('<script type="text/javascript" src="https://')>0):
+            cdnIndex = i
         if (j.find('<body>')>0):
-            bodyStarts = i+1
+            bodyStarts = i+1        
 
+    contents[cdnIndex] = '        <script type="text/javascript" src="bokeh-1.3.4.min.js"></script>\n'
     contents.insert(bodyStarts, '<center><img src="{}"></center>'.format('summary.png'))  # new_string should end in a newline
     fd.seek(0)  # readlines consumes the iterator, so we need to start over
+    
     fd.writelines(contents)  # No need to truncate as we are increasing filesize
     
 import webbrowser
