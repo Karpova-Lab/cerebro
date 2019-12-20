@@ -318,15 +318,17 @@ if badContinueSource:
     my_legend_items.append(("Continue Missed", [badC]))
 
 #abort
-filteredA = p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
-if filtered_miss_source:
-    p.square_x('time', 'y', size=markerSize, source=filtered_miss_source,color='green',fill_color='red',alpha=0.3)
+if filtered_source or filtered_miss_source:
+    filteredA = p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
+    my_legend_items.append(("Blocked Abort Command (Never Sent to Cerebro)", [filteredA]))
+    p.square_x('time', 'y', size=markerSize, source=filtered_miss_source,color='green',fill_color='yellow',alpha=0.3)
+
 p.square('time', 'y', size=markerSize, source=goodAbortSource,color='green',fill_color='white',fill_alpha=0)
 if badAbortSource:
     badA = p.square('time', 'y', size=markerSize, source=badAbortSource,color='green',fill_color='red')
-    my_legend_items.append(("Filtered Abort", [filteredA]))
+    my_legend_items.append(("Abort Missed", [badA]))
 
-#feeback
+#feedback
 p.circle('time', 'y', size=markerSize, source=good_feedsource,fill_color='white',fill_alpha=0)
 if bad_feedsource:
     badF = p.circle('time', 'y', size=markerSize, source=bad_feedsource,fill_color='orange',fill_alpha=0.3)
