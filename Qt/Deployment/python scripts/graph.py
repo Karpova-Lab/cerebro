@@ -318,10 +318,12 @@ if badContinueSource:
     my_legend_items.append(("Continue Missed", [badC]))
 
 #abort
-if filtered_source or filtered_miss_source:
+if filtered_source:
     filteredA = p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
-    my_legend_items.append(("Blocked Abort Command (Never Sent to Cerebro)", [filteredA]))
+if filtered_miss_source:
     p.square_x('time', 'y', size=markerSize, source=filtered_miss_source,color='green',fill_color='yellow',alpha=0.3)
+if filtered_source or filtered_miss_source:
+    my_legend_items.append(("Blocked Abort Command (Never Sent to Cerebro)", [filteredA]))
 
 p.square('time', 'y', size=markerSize, source=goodAbortSource,color='green',fill_color='white',fill_alpha=0)
 if badAbortSource:
