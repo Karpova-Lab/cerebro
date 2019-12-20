@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.11.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t06/27/2019";
+        xavierVersion = "3.12.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t2019/12/20";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -745,7 +745,7 @@ void MainWindow::connectBasePort()
             connect_btn->setText("Disconnect");
             rigNumber = serialPortList->currentText().split(' ')[1];
             if(!debugOn){
-                QStringList ratInfo = ratSelect->currentText().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts);
+                QStringList ratInfo = ratSelect->currentText().split(QRegExp("[:,\\-()\\s\\/]"),QString::SkipEmptyParts); // [:,\-()\s\/] on https://regexr.com/
                 qDebug()<<"rat info "<<ratInfo;
                 ratNumber = ratInfo[0];
                 titleLeftPower = ratInfo[2].toInt();
@@ -1117,6 +1117,23 @@ void MainWindow::saveFile()
                 baseMonitor->clear();
                 debugOn = false;
                 showDebug();
+
+                // show summary graph
+                QProcess *process = new QProcess(this);
+                QStringList pythonArgs;
+                qDebug()<<saveName1;
+                pythonArgs<<qApp->applicationDirPath()+"/python scripts/graph.py"<<saveName1; //pass the log file location into the python script
+                process->start("python",pythonArgs);
+                process->waitForFinished(-1);
+                QString errorString = process->readAllStandardError();
+                QString printedString = process->readAll();
+                //Display summary in a popup message
+                QMessageBox alert;
+                if (!errorString.isEmpty()){
+                    alert.setWindowTitle("Python Error");
+                    alert.setText(errorString);
+                    alert.exec();
+                }
             }
         }
     }
@@ -1262,38 +1279,27 @@ void MainWindow::getGraphs()
     if (baseData!=""){
         //the cerebro data should be in the same folder, so we have the getOpenFileName dialog start in the the same folder
         QString betterPath = baseData.mid(saveDirectoryPath.length(),baseData.indexOf("/",saveDirectoryPath.length()+1)-saveDirectoryPath.length())+"/";
-        if (1){
-            //Run python script for creating graph
-            QProcess *process = new QProcess(this);
-            QString plotArg;
-            if (debugOn){
-                plotArg = "alignment and histogram and outcsv";
-                debugOn = false;
-                showDebug();
-            }
-            else{
-                plotArg = "alignment and histogram";
-            }
-            QStringList pythonArgs;
-            qDebug()<<baseData;
-            pythonArgs<<qApp->applicationDirPath()+"/python scripts/graph.py"<<baseData; //pass the two log file locations into the python script
-            process->start("python",pythonArgs);
-            process->waitForFinished(-1);
-            QString errorString = process->readAllStandardError();
-            QString printedString = process->readAll();
-            //Display summary in a popup message
-            QMessageBox alert;
-            if (!errorString.isEmpty()){
-                alert.setWindowTitle("Python Error");
-                alert.setText(errorString);
-                alert.exec();
-            }
-            else{
-                alert.setWindowTitle("Sesssion Summary");
-                alert.setText(printedString);
-                alert.exec();
-            }
+        //Run python script for creating graph
+        QProcess *process = new QProcess(this);
+        QStringList pythonArgs;
+        qDebug()<<baseData;
+        pythonArgs<<qApp->applicationDirPath()+"/python scripts/graph.py"<<baseData; //pass the log file location into the python script
+        process->start("python",pythonArgs);
+        process->waitForFinished(-1);
+        QString errorString = process->readAllStandardError();
+        QString printedString = process->readAll();
+        //Display summary in a popup message
+        QMessageBox alert;
+        if (!errorString.isEmpty()){
+            alert.setWindowTitle("Python Error");
+            alert.setText(errorString);
+            alert.exec();
         }
+        // else{
+        //     alert.setWindowTitle("Sesssion Summary");
+        //     alert.setText(printedString);
+        //     alert.exec();
+        // }
     }
 }
 
