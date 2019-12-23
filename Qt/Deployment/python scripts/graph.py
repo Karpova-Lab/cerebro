@@ -185,7 +185,7 @@ combinedDict = {'info':infoDict,
                 'powerDF':powerDF.to_json(),                
                }
 
-jsonSaveName = 'temp/clean{}.json'.format(infoDict[‘Rat’])
+jsonSaveName = 'temp/clean{}.json'.format(infoDict['Rat'])
 with open(jsonSaveName,'w') as saveJSON:
     json.dump(combinedDict,saveJSON,indent=2,sort_keys=True)
 
