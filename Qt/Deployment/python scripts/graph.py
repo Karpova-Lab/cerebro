@@ -185,7 +185,7 @@ combinedDict = {'info':infoDict,
                 'powerDF':powerDF.to_json(),                
                }
 
-jsonSaveName = 'temp/clean.json'
+jsonSaveName = 'temp/clean{}.json'.format(infoDict[‘Rat’])
 with open(jsonSaveName,'w') as saveJSON:
     json.dump(combinedDict,saveJSON,indent=2,sort_keys=True)
 
@@ -404,7 +404,7 @@ ax2.text(s=battery_summary,x=1.15,y=.5,
 
 ax2.set_title("Animal: {}     Session: {}     Cerebro: {}     Rig: {}".format(info['Rat'],info['Start_datetime'],info['Cerebro_serial'],info['Rig']))
 
-matlabSaveName = 'temp/summary.png'
+matlabSaveName = 'temp/summary{}.png'.format(info['Rat'])
 plt.savefig(matlabSaveName,bbox_inches = "tight")
 # plt.show()
 
@@ -426,7 +426,7 @@ html_string = '''
 '''
 
 # OUTPUT AN HTML FILE
-saveName = 'temp/feedback.html'
+saveName = 'temp/feedback{}.html'.format(info['Rat'])
 with open(saveName, 'w') as f:
     f.write(html_string.format(table=feedbackDF.to_html(classes='mystyle')))
 # webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
@@ -450,7 +450,7 @@ html_string = '''
 '''
 
 # OUTPUT AN HTML FILE
-saveName = 'temp/raw.html'
+saveName = 'temp/raw{}.html'.format(info['Rat'])
 with open(saveName, 'w') as f:
     f.write(html_string.format(table=rawDF.to_html(classes='mystyle')))
 # webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
@@ -461,7 +461,7 @@ with open(saveName, 'w') as f:
 
 
 reset_output()
-bokehGraphName = 'temp/Summary.html'
+bokehGraphName = 'temp/Summary{}.html'.format(info['Rat'])
 output_file(bokehGraphName)
 html_file_location = save(p)
 
