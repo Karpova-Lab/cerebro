@@ -474,7 +474,7 @@ with open(bokehGraphName, 'r+') as fd:
             bodyStarts = i+1        
 
     contents[cdnIndex] = '        <script type="text/javascript" src="bokeh-1.3.4.min.js"></script>\n'
-    contents.insert(bodyStarts, '<center><img src="{}"></center>'.format('summary.png'))  # new_string should end in a newline
+    contents.insert(bodyStarts, '<center><img src="summary{}.png"></center>'.format(info['Rat']))  # new_string should end in a newline
     fd.seek(0)  # readlines consumes the iterator, so we need to start over
     
     fd.writelines(contents)  # No need to truncate as we are increasing filesize
