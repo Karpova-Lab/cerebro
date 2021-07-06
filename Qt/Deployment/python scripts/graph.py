@@ -22,10 +22,10 @@ import matplotlib.pyplot as plt
 import matplotlib.style as style 
 #######################################  BOKEH   ####################################################
 from bokeh.plotting import figure, reset_output,output_notebook,output_file,show,save,ColumnDataSource
-from bokeh.models import WheelZoomTool
+from bokeh.models import WheelZoomTool, Legend
 from bokeh.models.annotations import Title
 
-scriptVersion = 5
+scriptVersion = 6
 
 def getHeaderInfo(dataFile):
     numSetupVars = 8
@@ -73,12 +73,14 @@ def createRawLogDF(dataFile,_logStart):
     missedSummaryMask = missedTable['Description']=='Missed Message Index'
     totalMask = missedTable['Description']=='Total Missed'
     
-    totalMissed = int(missedTable[totalMask][['Description','Value']]['Value'])
+    try:
+        totalMissed = int(missedTable[totalMask][['Description','Value']]['Value'])
+    except:
+        totalMissed=-1
     missedSummary = missedTable[missedSummaryMask][['Description','Value']]
-    
     if len(missedSummary) != totalMissed:
-        print(len(missedSummary),"!=",totalMissed)
-        print("WARNING: Missed Length isn't the same as total missed")
+        print('\t',len(missedSummary),"!=",totalMissed)
+        print("\tWARNING: Missed Length isn't the same as total missed")   
     
     return logEntries,missedSummary
 
@@ -183,7 +185,7 @@ combinedDict = {'info':infoDict,
                 'powerDF':powerDF.to_json(),                
                }
 
-jsonSaveName = 'temp/clean.json'
+jsonSaveName = 'temp/clean{}.json'.format(infoDict['Rat'])
 with open(jsonSaveName,'w') as saveJSON:
     json.dump(combinedDict,saveJSON,indent=2,sort_keys=True)
 
@@ -259,7 +261,7 @@ TOOLTIPS = [
 
 p = figure(
     plot_width=1600,
-    plot_height=250,
+    plot_height=325,
     y_range=['trigger','continue','abort','feedback'],
     tools="xpan,xwheel_pan,reset",
     tooltips=TOOLTIPS,
@@ -283,9 +285,9 @@ continue_good,continue_miss = getDataSets('Continue')
 goodContinueSource = create_ColumnDataSource(continue_good,'continue')
 badContinueSource = create_ColumnDataSource(continue_miss,'continue')
 
-filtered_good,filtered_miis = getDataSets('Spam Filtered Abort')      
+filtered_good,filtered_miss = getDataSets('Spam Filtered Abort')      
 filtered_source = create_ColumnDataSource(filtered_good,'abort')
-filtered_miss_source = create_ColumnDataSource(filtered_miis,'abort')
+filtered_miss_source = create_ColumnDataSource(filtered_miss,'abort')
 
 abort_good,abort_miss = getDataSets('Abort')      
 goodAbortSource = create_ColumnDataSource(abort_good,'abort')
@@ -302,44 +304,59 @@ bad_feedsource = create_ColumnDataSource(bad_feedbackDF,'feedback')
 #############################################
 markerSize = 30
 
+my_legend_items = []
 #trigger
 p.triangle('time', 'y', size=markerSize, source=goodTrigSource,color='green',fill_color='white',fill_alpha=0)
 if badTrigSource:
-    p.triangle('time', 'y', size=markerSize, source=badTrigSource,color='green',fill_color='red')
+    badTrigg=p.triangle('time', 'y', size=markerSize, source=badTrigSource,color='green',fill_color='red')
+    my_legend_items.append(("Trigger Missed", [badTrigg]))
 
 #continue
 p.diamond('time', 'y', size=markerSize, source=goodContinueSource,color='green',fill_color='white',fill_alpha=0)
 if badContinueSource:
-    p.diamond('time', 'y', size=markerSize, source=badContinueSource,color='green',fill_color='red')
+    badC=p.diamond('time', 'y', size=markerSize, source=badContinueSource,color='green',fill_color='red')
+    my_legend_items.append(("Continue Missed", [badC]))
 
 #abort
-p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
+if filtered_source:
+    filteredA = p.square_x('time', 'y', size=markerSize, source=filtered_source,color='green',fill_color='yellow',alpha=0.3)
 if filtered_miss_source:
-    p.square_x('time', 'y', size=markerSize, source=filtered_miss_source,color='green',fill_color='red',alpha=0.3)
+    p.square_x('time', 'y', size=markerSize, source=filtered_miss_source,color='green',fill_color='yellow',alpha=0.3)
+if filtered_source or filtered_miss_source:
+    my_legend_items.append(("Blocked Abort Command (Never Sent to Cerebro)", [filteredA]))
+
 p.square('time', 'y', size=markerSize, source=goodAbortSource,color='green',fill_color='white',fill_alpha=0)
 if badAbortSource:
-    p.square('time', 'y', size=markerSize, source=badAbortSource,color='green',fill_color='red')
+    badA = p.square('time', 'y', size=markerSize, source=badAbortSource,color='green',fill_color='red')
+    my_legend_items.append(("Abort Missed", [badA]))
 
-#feeback
+#feedback
 p.circle('time', 'y', size=markerSize, source=good_feedsource,fill_color='white',fill_alpha=0)
 if bad_feedsource:
-    p.circle('time', 'y', size=markerSize, source=bad_feedsource,fill_color='orange',fill_alpha=0.3)
+    badF = p.circle('time', 'y', size=markerSize, source=bad_feedsource,fill_color='orange',fill_alpha=0.3)
+    my_legend_items.append(("Feedback Warning", [badF]))
 
 t = Title()
-t.text = "Missed Messages: {}     Bad Feedback: {}".format(
+t.text = "Missed Messages: {}/{} ({}%)     Feedback Warnings: {}/{} ({}%)  ".format(
     len(missedDF),
-    suspiciousMask.sum()
+    len(sentDF),
+    round(len(missedDF)/len(sentDF)*100,1),
+    suspiciousMask.sum(),
+    sum(sentDF['Msg']=='Trigger'),
+    round(suspiciousMask.sum()/sum(sentDF['Msg']=='Trigger')*100,1)
 )
 t.align = 'center'
+
+glyphSize = 50
+legend = Legend(items=my_legend_items, location="top_center",orientation='horizontal',spacing=glyphSize,glyph_height=glyphSize,glyph_width=glyphSize)
+p.add_layout(legend, 'above')
+
 p.title = t
 show(p)
 
 
 # In[ ]:
 
-
-# plotBattery(battDF)
-# plotFeedback(feedbackDF)
 
 times = np.array(feedbackDF['Timestamp'],dtype=np.uint64)/10**9/3600
 
@@ -385,9 +402,9 @@ ax2.text(s=battery_summary,x=1.15,y=.5,
          bbox=bbox_props,ha='center',va='center',color='green')  
 
 
-ax2.set_title("Animal: {}     Session: {}".format(info['Rat'],info['Start_datetime']))
+ax2.set_title("Animal: {}     Session: {}     Cerebro: {}     Rig: {}".format(info['Rat'],info['Start_datetime'],info['Cerebro_serial'],info['Rig']))
 
-matlabSaveName = 'temp/summary.png'
+matlabSaveName = 'temp/summary{}.png'.format(info['Rat'])
 plt.savefig(matlabSaveName,bbox_inches = "tight")
 # plt.show()
 
@@ -409,11 +426,11 @@ html_string = '''
 '''
 
 # OUTPUT AN HTML FILE
-saveName = 'temp/feedback.html'
+saveName = 'temp/feedback{}.html'.format(info['Rat'])
 with open(saveName, 'w') as f:
     f.write(html_string.format(table=feedbackDF.to_html(classes='mystyle')))
-webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
-sleep(1)
+# webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
+# sleep(1)
 
 
 # In[ ]:
@@ -433,29 +450,33 @@ html_string = '''
 '''
 
 # OUTPUT AN HTML FILE
-saveName = 'temp/raw.html'
+saveName = 'temp/raw{}.html'.format(info['Rat'])
 with open(saveName, 'w') as f:
     f.write(html_string.format(table=rawDF.to_html(classes='mystyle')))
-webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
-sleep(1)
+# webbrowser.open('file:///{}/{}'.format(getcwd(),saveName))
+# sleep(1)
 
 
 # In[ ]:
 
 
 reset_output()
-bokehGraphName = 'temp/Summary.html'
+bokehGraphName = 'temp/Summary{}.html'.format(info['Rat'])
 output_file(bokehGraphName)
 html_file_location = save(p)
 
 with open(bokehGraphName, 'r+') as fd:
     contents = fd.readlines()
     for i,j in enumerate(contents):
+        if(j.find('<script type="text/javascript" src="https://')>0):
+            cdnIndex = i
         if (j.find('<body>')>0):
-            bodyStarts = i+1
+            bodyStarts = i+1        
 
-    contents.insert(bodyStarts, '<center><img src="{}"></center>'.format('summary.png'))  # new_string should end in a newline
+    contents[cdnIndex] = '        <script type="text/javascript" src="bokeh-1.3.4.min.js"></script>\n'
+    contents.insert(bodyStarts, '<center><img src="summary{}.png"></center>'.format(info['Rat']))  # new_string should end in a newline
     fd.seek(0)  # readlines consumes the iterator, so we need to start over
+    
     fd.writelines(contents)  # No need to truncate as we are increasing filesize
     
 import webbrowser
