@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
     */
     aboutDialog = new QMessageBox();
         aboutDialog->setWindowTitle("About");
-        xavierVersion = "3.12.0";
-        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t2019/12/20";
+        xavierVersion = "3.13.0";
+        QString aboutString = "\t"+xavierVersion+"\nUpdated:\t2022/06/06";
         aboutDialog->setText("Version:"+aboutString);
         aboutDialog->setStandardButtons(QMessageBox::Close);
 
@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
         equipmentLayout->addWidget(cerebro_lbl,0,2,Qt::AlignCenter);
             rat_lbl = new QPushButton("Rat-Implant: (LSet/RSet)");
             rat_lbl->setFlat(true);
-        equipmentLayout->addWidget(rat_lbl,0,3,1,2,Qt::AlignCenter);
+//        equipmentLayout->addWidget(rat_lbl,0,3,1,2,Qt::AlignCenter);
             cerebroSelect = new QComboBox();
             cerebroSelect->setMaximumWidth(75);
             cerebroSelect->setMaxVisibleItems(40);
@@ -88,7 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
             ratSelect = new QComboBox();
             ratSelect->setMaximumWidth(150);
             ratSelect->setMaxVisibleItems(40);
-        equipmentLayout->addWidget(ratSelect,1,3,4,2,Qt::AlignTop|Qt::AlignHCenter);
+//        equipmentLayout->addWidget(ratSelect,1,3,4,2,Qt::AlignTop|Qt::AlignHCenter);
             connectBS_label = new QPushButton("Base Station Serial Port");
             connectBS_label->setFlat(true);
         equipmentLayout->addWidget(connectBS_label,0,5,1,3,Qt::AlignCenter);
@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
             serialPortList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
         equipmentLayout->addWidget(serialPortList,1,6,1,2);
             debugCheckbox = new QCheckBox("Debug Mode");
-        equipmentLayout->addWidget(debugCheckbox,2,5,1,3,Qt::AlignCenter);
+//        equipmentLayout->addWidget(debugCheckbox,2,5,1,3,Qt::AlignCenter);
             connect_btn = new QPushButton("Start Session");
             connect_btn->setCheckable(true);
         equipmentLayout->addWidget(connect_btn,3,5,1,3);
@@ -612,7 +612,7 @@ void MainWindow::applySettings()
     fillBasestationPorts();
     fillCerebroPorts();
 
-    debugOn = false;
+    debugOn = true;
     showDebug();
     if (cerebroConnected){
         connectCerebroPort(); //disconnect download port after settings change
@@ -690,7 +690,7 @@ void MainWindow::connectBasePort()
     cerebroConnected_lbl->setStyleSheet("color:red");
     implantSettingsMatch_lbl->setText("Implant Settings Match \u2718");
     implantSettingsMatch_lbl->setStyleSheet("color:red");
-    if((cerebroSelect->currentIndex()==0) && !baseConnected && !debugOn ){ //didn't select cerebro
+    if((cerebroSelect->currentIndex()==0) && !baseConnected){ //didn't select cerebro
         QMessageBox alert;
         alert.setText("Please select a Cerebro # to continue");
         alert.setIcon(QMessageBox::Warning);
@@ -771,10 +771,10 @@ void MainWindow::connectBasePort()
             baseMonitor->textCursor().insertText(time);
             serial->close();
             setWindowTitle("Xavier");
-            debugOn = false;
-            serialPortList->setCurrentIndex(0);
-            cerebroSelect->setCurrentIndex(0);
-            ratSelect->setCurrentIndex(0);
+//            debugOn = false;
+//            serialPortList->setCurrentIndex(0);
+//            cerebroSelect->setCurrentIndex(0);
+//            ratSelect->setCurrentIndex(0);
             showDebug();
             baseConnected = false;
             sessionHasBegun = false;
@@ -1242,7 +1242,7 @@ void MainWindow::showDebug(){
     if (debugOn){
         ratSelect->setEnabled(false);
         ratSelect->setCurrentIndex(0);
-        connect_btn->setText("Connect to Base Station (Debug Mode)");
+        connect_btn->setText("Connect to Base Station");
         bugBox->setVisible(true);
         charBox->setVisible(true);
     }
