@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Pogo Connector" href="../Hardware/programmer.html" /> 
@@ -78,15 +80,15 @@
               
             
             
-              <p class="caption"><span class="caption-text">Hardware</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Hardware</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/implant.html">Head Implant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Hardware/base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Hardware/charging dock.html">Charging Dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/base%20station.html">Base Station</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware/charging%20dock.html">Charging Dock</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Hardware/programmer.html">Pogo Connector</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Software</span></p>
+<p class="caption" role="heading"><span class="caption-text">Software</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Xavier</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
@@ -168,7 +170,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> View GitHub Repo</a>
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Cerebro on GitHub</a>
             
           
         
@@ -198,22 +200,22 @@
 <h3>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
-<li>Windows XP or newer</li>
+<li><p>Windows XP or newer</p></li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="download-instructions">
 <span id="setup-default"></span><h3>Download Instructions<a class="headerlink" href="#download-instructions" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Download and install the <a class="reference external" href="http://www.cypress.com/documentation/software-and-drivers/usb-serial-software-development-kit">USB-Serial Windows Driver Installer</a></li>
-<li>Download and unzip <a class="reference download internal" download="" href="../_downloads/8339317cb948a241f0cccdaacffd641b/Deployment.zip"><code class="xref download docutils literal notranslate"><span class="pre">Xavier</span> <span class="pre">Deployment</span> <span class="pre">Folder</span></code></a></li>
-<li>Open up Xavier.exe</li>
+<li><p>Download and install the <a class="reference external" href="http://www.cypress.com/documentation/software-and-drivers/usb-serial-software-development-kit">USB-Serial Windows Driver Installer</a></p></li>
+<li><p>Download and unzip <a class="reference download internal" download="" href="../_downloads/92ad62e74aed9fe9be8717e887db1aaa/Deployment.zip"><code class="xref download docutils literal notranslate"><span class="pre">Xavier</span> <span class="pre">Deployment</span> <span class="pre">Folder</span></code></a></p></li>
+<li><p>Open up Xavier.exe</p></li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/Xavier_open.png"><img alt="../_images/Xavier_open.png" src="../_images/Xavier_open.png" style="width: 487.5px; height: 371.25px;" /></a>
 </div>
 <ol class="arabic simple" start="4">
-<li>Setup a <a class="reference internal" href="#edit-default-directory"><span class="std std-ref">default directory</span></a> that data will be saved to.</li>
+<li><p>Setup a <a class="reference internal" href="#edit-default-directory"><span class="std std-ref">default directory</span></a> that data will be saved to.</p></li>
 </ol>
 </div>
 </div>
@@ -224,25 +226,25 @@
 <a class="reference internal image-reference" href="../_images/settings_dialog.png"><img alt="../_images/settings_dialog.png" src="../_images/settings_dialog.png" style="width: 307.0px; height: 133.0px;" /></a>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Settings cannot be changed in the middle of a session</p>
+<p class="admonition-title">Note</p>
+<p>Settings cannot be changed in the middle of a session</p>
 </div>
 <div class="section" id="edit-default-save-directory">
 <span id="edit-default-directory"></span><h3>Edit Default Save Directory<a class="headerlink" href="#edit-default-save-directory" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">Directory</span></code> to setup a new save location.</li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">Directory</span></code> to setup a new save location.</p></li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/change_directory.png"><img alt="../_images/change_directory.png" src="../_images/change_directory.png" style="width: 463.0px; height: 133.0px;" /></a>
 </div>
 <ol class="arabic simple" start="2">
-<li>Navigate to an existing folder or create a new folder for future data.</li>
+<li><p>Navigate to an existing folder or create a new folder for future data.</p></li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/new_folder.png"><img alt="../_images/new_folder.png" src="../_images/new_folder.png" style="width: 576.0px; height: 360.0px;" /></a>
 </div>
 <ol class="arabic simple" start="3">
-<li>Finally, click <strong>Select Folder</strong>. The “Current Directory” will reflect updated save path</li>
+<li><p>Finally, click <strong>Select Folder</strong>. The “Current Directory” will reflect updated save path</p></li>
 </ol>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="../_images/rename_and_select.png"><img alt="../_images/rename_and_select.png" src="../_images/rename_and_select.png" style="width: 576.0px; height: 360.0px;" /></a>
@@ -270,8 +272,8 @@
 to serial ports, Xavier allows you to label COM Ports.</p>
 <a class="reference internal image-reference" href="../_images/port_labeling.png"><img alt="../_images/port_labeling.png" class="align-center" src="../_images/port_labeling.png" style="width: 100%;" /></a>
 <ol class="arabic simple">
-<li>Double-click the labeled COM Port from the list that you want to edit. A label editing dialog will appear.</li>
-<li>Type the new label into the textbox and click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">Label</span></code>.</li>
+<li><p>Double-click the labeled COM Port from the list that you want to edit. A label editing dialog will appear.</p></li>
+<li><p>Type the new label into the textbox and click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">Label</span></code>.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/make_label.gif"><img alt="../_images/make_label.gif" class="align-center" src="../_images/make_label.gif" style="width: 642.0px; height: 764.0px;" /></a>
 </div>
@@ -281,31 +283,31 @@ to serial ports, Xavier allows you to label COM Ports.</p>
 <div class="section" id="session-setup">
 <span id="start-session"></span><h3>Session Setup<a class="headerlink" href="#session-setup" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>Fill out experimental setup information.</li>
+<li><p>Fill out experimental setup information.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/rat_info.png"><img alt="../_images/rat_info.png" class="align-center" src="../_images/rat_info.png" style="width: 100%;" /></a>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The rig and rat lists can be <a class="reference internal" href="#add-items"><span class="std std-ref">edited</span></a></p>
+<p class="admonition-title">Note</p>
+<p>The rig and rat lists can be <a class="reference internal" href="#add-items"><span class="std std-ref">edited</span></a></p>
 </div>
 <ol class="arabic simple" start="2">
-<li>Select a Base Station Serial Port.</li>
+<li><p>Select a Base Station Serial Port.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/com_port.png"><img alt="../_images/com_port.png" class="align-center" src="../_images/com_port.png" style="width: 100%;" /></a>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The COM port drowdown list can be <a class="reference internal" href="#label-ports"><span class="std std-ref">labeled</span></a></p>
+<p class="admonition-title">Note</p>
+<p>The COM port drowdown list can be <a class="reference internal" href="#label-ports"><span class="std std-ref">labeled</span></a></p>
 </div>
 <ol class="arabic simple" start="3">
-<li>Click <code class="docutils literal notranslate"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Base</span> <span class="pre">Station</span></code>.</li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">Connect</span> <span class="pre">to</span> <span class="pre">Base</span> <span class="pre">Station</span></code>.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/connect_to_base.png"><img alt="../_images/connect_to_base.png" class="align-center" src="../_images/connect_to_base.png" style="width: 100%;" /></a>
 <ol class="arabic simple" start="4">
-<li>A startup sequence dialog box will appear. Xavier will try to establish a connection between Base Station and Cerebro. Once connected, Xavier will make sure that the laser diode power settings on Cerebro match laser diode powers for the rat/implant that was selected in step 1. If there are red X’s, make sure the correct Serial Port was selected, make sure Cerebro has been turned on, and then click <code class="docutils literal notranslate"><span class="pre">Retry</span></code>.</li>
+<li><p>A startup sequence dialog box will appear. Xavier will try to establish a connection between Base Station and Cerebro. Once connected, Xavier will make sure that the laser diode power settings on Cerebro match laser diode powers for the rat/implant that was selected in step 1. If there are red X’s, make sure the correct Serial Port was selected, make sure Cerebro has been turned on, and then click <code class="docutils literal notranslate"><span class="pre">Retry</span></code>.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/startup_seq_error.png"><img alt="../_images/startup_seq_error.png" class="align-center" src="../_images/startup_seq_error.png" style="width: 294.0px; height: 320.0px;" /></a>
 <ol class="arabic simple" start="5">
-<li>If everything on the list has green checkmarks, click <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Session</span></code> to begin the session.</li>
+<li><p>If everything on the list has green checkmarks, click <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Session</span></code> to begin the session.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/start_session.png"><img alt="../_images/start_session.png" class="align-center" src="../_images/start_session.png" style="width: 294.0px; height: 367.0px;" /></a>
 </div>
@@ -316,21 +318,21 @@ The user can make changes using either a <strong>Single Shot</strong> mode with 
 parameters are automatically set to zero depending on the options selected.</p>
 <a class="reference internal image-reference" href="../_images/parameter_diagram.png"><img alt="../_images/parameter_diagram.png" class="align-center" src="../_images/parameter_diagram.png" style="width: 100%;" /></a>
 <ol class="arabic simple">
-<li>Check the Cerebro Status to determine whether the waveform parameters are set as you wish.</li>
+<li><p>Check the Cerebro Status to determine whether the waveform parameters are set as you wish.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/check_waveform.png"><img alt="../_images/check_waveform.png" class="align-center" src="../_images/check_waveform.png" style="width: 100%;" /></a>
 <ol class="arabic simple" start="2">
-<li>If you would like to modify the parameters, select “Single Shot” or “Pulse Train”, then modify the parameters in the “Waveform Parameters” section.</li>
+<li><p>If you would like to modify the parameters, select “Single Shot” or “Pulse Train”, then modify the parameters in the “Waveform Parameters” section.</p></li>
 </ol>
 <a class="reference internal image-reference" href="../_images/parameter_change.png"><img alt="../_images/parameter_change.png" class="align-center" src="../_images/parameter_change.png" style="width: 100%;" /></a>
 <ol class="arabic simple" start="3">
-<li>Click <code class="docutils literal notranslate"><span class="pre">Send</span> <span class="pre">New</span> <span class="pre">Waveform</span> <span class="pre">Parameters</span></code>.</li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">Send</span> <span class="pre">New</span> <span class="pre">Waveform</span> <span class="pre">Parameters</span></code>.</p></li>
 </ol>
 </div>
 <div class="section" id="ending-a-session-and-saving-data">
 <h3>Ending a Session and Saving Data<a class="headerlink" href="#ending-a-session-and-saving-data" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>When you are ready to end the session click <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">Session</span></code>.</li>
+<li><p>When you are ready to end the session click <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">Session</span></code>.</p></li>
 </ol>
 </div>
 </div>
@@ -354,9 +356,9 @@ parameters are automatically set to zero depending on the options selected.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2019, Andy Lustig
+        &copy; Copyright 2015-2022, Andy Lustig
       <span class="lastupdated">
-        Last updated on Dec 11, 2019.
+        Last updated on Jun 13, 2022.
       </span>
 
     </p>

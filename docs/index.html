@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cerebro" href="Hardware/cerebro.html" /> 
@@ -78,15 +80,15 @@
               
             
             
-              <p class="caption"><span class="caption-text">Hardware</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Hardware</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/implant.html">Head Implant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/base%20station.html">Base Station</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/charging%20dock.html">Charging Dock</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/programmer.html">Pogo Connector</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Software</span></p>
+<p class="caption" role="heading"><span class="caption-text">Software</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Software/Xavier.html">Xavier</a></li>
 </ul>
@@ -145,7 +147,7 @@
             
             
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> View GitHub Repo</a>
+              <a href="https://github.com/Karpova-Lab/cerebro" class="fa fa-github"> Cerebro on GitHub</a>
             
           
         
@@ -168,52 +170,47 @@
             
   <div class="section" id="cerebro-wireless-optogenetics-system-v2">
 <h1>Cerebro Wireless Optogenetics System v2<a class="headerlink" href="#cerebro-wireless-optogenetics-system-v2" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This documentation is a work in progress. Please understand that there will porbably be typos and missing</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">You are currently viewing documentation for the <strong>radio</strong> controlled Version 2 system. Documentation for the <strong>infrared</strong> controlled Version 1 system can be found <a class="reference external" href="https://cerebro.readthedocs.io/en/1.0/">here</a>.</p>
-</div>
 <p>Welcome! This is the hardware and software documentation of a system used for wireless <a class="reference external" href="https://en.wikipedia.org/wiki/Optogenetics">optogenetic</a> stimulation.
 As an <a class="reference external" href="http://www.oshwa.org/definition/">open-source</a> project, this documentation is intended to provide exhaustive resources and detailed instructions to enable anyone to
 study, replicate, share, improve and contribute back to the Cerebro Wireless Optogenetics System.</p>
+<p>This project was developed by Andy Lustig in the <a class="reference external" href="https://www.janelia.org/lab/karpova-lab">Karpova Lab</a> at HHMI’s Janelia Research Campus. If you have questions or comments, you can post them on the <a class="reference external" href="https://github.com/Karpova-Lab/cerebro/discussions">discussions page</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You are currently viewing documentation for the <strong>radio controlled Version 2 system</strong>.
+To view documentation for the <strong>infrared controlled Version 1 system</strong>, click the button below.</p>
 <div style="text-align:center; margin-bottom:24px">
-  <a href="https://github.com/Karpova-Lab/cerebro" style="background-color: #2980b9;
+  <a href="https://cerebro.readthedocs.io/en/1.0/" style="
+  background-color: #6ab0de;
   border: none;
   color: white;
-  padding: 15px 15px;
+  padding: 10px 10px;
   text-align:center;
   text-decoration: none;
   display: inline-block;
-  font-size: 18px;
-  border-radius:15px">View files on GitHub</a>
-</div><p>This project was developed by Andy Lustig in the <a class="reference external" href="https://www.janelia.org/lab/karpova-lab">Karpova Lab at Janelia Research Campus</a>.
-If you have any questions you may contact him at <a class="reference external" href="mailto:lustiga&#37;&#52;&#48;janelia&#46;hhmi&#46;org">lustiga<span>&#64;</span>janelia<span>&#46;</span>hhmi<span>&#46;</span>org</a></p>
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.1;
+  border-radius:15px">
+  Version 1 (infrared) documentation</a>
+</div></div>
 <div class="section" id="features">
 <span id="overview"></span><h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Open Source</dt>
-<dd><ul class="first last simple">
-<li><strong>Flexible</strong> - All code and CAD is available so you can make changes and improvements to anything you want!</li>
-<li><strong>Low Cost</strong> - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.</li>
+<dl class="simple">
+<dt>Wireless Radio</dt><dd><ul class="simple">
+<li><p><strong>Low Latency</strong> -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.</p></li>
+<li><p><strong>2-Way Communication</strong> - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.</p></li>
+<li><p><strong>Good Signal Range</strong> - At least 20m, doesn’t need line of sight. (The radio module that Cerebro uses has been shown to have ranges greater than 500m with the right antennas <a class="reference external" href="https://lowpowerlab.com/forum/rf-range-antennas-rfm69-library/rfm69hw-range-test!/">https://lowpowerlab.com/forum/rf-range-antennas-rfm69-library/rfm69hw-range-test!/</a>)</p></li>
+<li><p><strong>Wirelessly Adjustable Waveforms</strong> - Cerebro can produce <a class="reference internal" href="Software/Xavier.html#waveform-parameters"><span class="std std-ref">customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="docutils">
-<dt>Wireless Radio</dt>
-<dd><ul class="first last simple">
-<li><strong>Low Latency</strong> -  Less than 1.5 ms latency between a trigger command being sent and the laser diodes being powered on.</li>
-<li><strong>2-Way Communication</strong> - Base Station can send messages to start, extend, or interrupt light stimulation on Cerebro. Cerebro can send acknowledgment messages that commands are received, as well as battery status updates.</li>
-<li><strong>Good Signal Range</strong> - At least 20m, doesn’t need line of sight. (The radio module that Cerebro uses has been shown to have ranges greater than 500m with the right antennas <a class="reference external" href="https://lowpowerlab.com/forum/rf-range-antennas-rfm69-library/rfm69hw-range-test!/">https://lowpowerlab.com/forum/rf-range-antennas-rfm69-library/rfm69hw-range-test!/</a>)</li>
-<li><strong>Wirelessly Adjustable Waveforms</strong> - Cerebro can produce <a class="reference internal" href="Software/Xavier.html#waveform-parameters"><span class="std std-ref">customizable waveforms</span></a> with 1ms resolution. The waveform parameters can be adjusted wirelessly, even while the animal is behaving.</li>
+<dt>Laser Diodes</dt><dd><ul class="simple">
+<li><p><strong>High Power</strong> - Laser diodes are more powerful than LEDs. Instead of using an LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.</p></li>
+<li><p><strong>Independent Bilateral Control of Intensity</strong> -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. Intensity ramp-downs can be used to prevent post illumination rebounds in neural activity (<a class="reference external" href="https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf">https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf</a>).</p></li>
 </ul>
 </dd>
-<dt>Laser Diodes</dt>
-<dd><ul class="first last simple">
-<li><strong>High Power</strong> - Laser diodes are more powerful than LEDs. Instead of using an LED coupled to a large fiber, you can use a laser diode coupled to smaller fiber and get equivalent light power output but with reduced brain tissue damage.</li>
-<li><strong>Independent Bilateral Control of Intensity</strong> -  Each laser diode has its own control circuitry, enabling you to turn on either diode at different times and/or different intensities. Intensity ramp-downs can be used to prevent post illumination rebounds in neural activity (<a class="reference external" href="https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf">https://www.cell.com/neuron/pdf/S0896-6273(17)30602-5.pdf</a>).</li>
+<dt>Open Source</dt><dd><ul class="simple">
+<li><p><strong>Flexible</strong> - All code and CAD is available so you can make changes and improvements to anything you want!</p></li>
+<li><p><strong>Low Cost</strong> - Hardware BOMs are provided, with a total estimated material cost of ~$200 (~$40 per Cerebro, ~$120 per bilateral head implant, ~$40 per Base Station). The software is free.</p></li>
 </ul>
 </dd>
 </dl>
@@ -235,7 +232,7 @@ intensity and waveform of the emitted light can be adjusted wirelessly during an
 <div class="section" id="head-implant">
 <h3>Head Implant<a class="headerlink" href="#head-implant" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="_images/implant_cad.jpg"><img alt="_images/implant_cad.jpg" class="align-center" src="_images/implant_cad.jpg" style="width: 100%;" /></a>
-<p>The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes are accompanied by a phototranistor that is used as feedback
+<p>The head implant assembly consists of two laser diodes coupled to optical fibers. Both laser diodes include an integrated phototranistor that is used as feedback
 to maintain a constant light output. The laser diodes can be independently controlled and can output arbitrary waveforms with millisecond resolution.</p>
 <p><a class="reference internal" href="Hardware/implant.html"><span class="doc">More info…</span></a></p>
 </div>
@@ -247,13 +244,13 @@ It is connected by USB to a Windows computer, where commands can be sent and eve
 Base Station can also be controlled directly by <a class="reference external" href="https://learn.sparkfun.com/tutorials/logic-levels#ttl-logic-levels">TTL</a> signals going into
 its RJ45 connector. A high TTL signal on pin3 of the RJ45 causes a trigger command to be sent, and a high TTL signal on pin2 causes
 a stop command to be sent.</p>
-<p><a class="reference internal" href="Hardware/base station.html"><span class="doc">More info…</span></a></p>
+<p><a class="reference internal" href="Hardware/base%20station.html"><span class="doc">More info…</span></a></p>
 </div>
 <div class="section" id="charging-dock">
 <h3>Charging Dock<a class="headerlink" href="#charging-dock" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="_images/charging.jpg"><img alt="_images/charging.jpg" class="align-center" src="_images/charging.jpg" style="width: 100%;" /></a>
 <p>The Charging Dock has the same battery connectors as Cerebro and can charge up to 6 Cerebro lipo batteries at once.</p>
-<p><a class="reference internal" href="Hardware/charging dock.html"><span class="doc">More info…</span></a></p>
+<p><a class="reference internal" href="Hardware/charging%20dock.html"><span class="doc">More info…</span></a></p>
 </div>
 <div class="section" id="xavier-software">
 <h3>Xavier Software<a class="headerlink" href="#xavier-software" title="Permalink to this headline">¶</a></h3>
@@ -266,19 +263,17 @@ Xavier provides an easy interface for sending parameter changes and can also be 
 <div class="section" id="alternative-commerical-systems">
 <h2>Alternative Commerical Systems<a class="headerlink" href="#alternative-commerical-systems" title="Permalink to this headline">¶</a></h2>
 <p>Here are some commercial products that also provide wireless optogenetics:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference external" href="http://doriclenses.com/life-sciences/304-optogenetically-synchronized-electrophysiology">Doric OSE System</a></li>
-<li><a class="reference external" href="https://eicomusa.com/teleopto/">Eicom Teleopto</a></li>
-<li><a class="reference external" href="http://www.neurolux.org/">Neurolux</a></li>
-<li><a class="reference external" href="http://www.trianglebiosystems.com/s-series-systems.html">Triangle Biosystems</a></li>
+<ul class="simple">
+<li><p><a class="reference external" href="https://neuro.doriclenses.com/collections/wireless-recording">Doric OSE System</a></p></li>
+<li><p><a class="reference external" href="https://eicomusa.com/teleopto/">Eicom Teleopto</a></p></li>
+<li><p><a class="reference external" href="http://www.neurolux.org/">Neurolux</a></p></li>
+<li><p><a class="reference external" href="https://www.multichannelsystems.com/products/wireless-systems">Multichannel Systems</a></p></li>
 </ul>
-</div></blockquote>
 </div>
 <div class="section" id="documentation-outline">
 <h2>Documentation Outline<a class="headerlink" href="#documentation-outline" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Hardware</span></p>
+<p class="caption" role="heading"><span class="caption-text">Hardware</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/cerebro.html">Cerebro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Hardware/cerebro.html#bill-of-materials">Bill of Materials</a></li>
@@ -304,13 +299,13 @@ Xavier provides an easy interface for sending parameter changes and can also be 
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/base station.html">Base Station</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Hardware/base station.html#bill-of-materials">Bill of Materials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Hardware/base station.html#downloads">Downloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/base%20station.html">Base Station</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/base%20station.html#bill-of-materials">Bill of Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/base%20station.html#downloads">Downloads</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Hardware/charging dock.html">Charging Dock</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Hardware/charging dock.html#bill-of-materials">Bill of Materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Hardware/charging%20dock.html">Charging Dock</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Hardware/charging%20dock.html#bill-of-materials">Bill of Materials</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Hardware/programmer.html">Pogo Connector</a><ul>
@@ -320,7 +315,7 @@ Xavier provides an easy interface for sending parameter changes and can also be 
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Software</span></p>
+<p class="caption" role="heading"><span class="caption-text">Software</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Software/Xavier.html">Xavier</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Software/Xavier.html#installation">Installation</a><ul>
@@ -349,26 +344,6 @@ Xavier provides an easy interface for sending parameter changes and can also be 
 </ul>
 </div>
 </div>
-<div class="section" id="hardware-license">
-<h2>Hardware License<a class="headerlink" href="#hardware-license" title="Permalink to this headline">¶</a></h2>
-<p>Janelia Open-Source Hardware (Non-commercial)</p>
-<p>By downloading, using and/or viewing these designs, documentation and related data and information, and all content in the foregoing (collectively, the “Designs”), you agree to the following:</p>
-<p>You may use, copy, modify, display and distribute the Designs for any non-commercial research or educational purpose.</p>
-<p>THE DESIGNS ARE PROTOTYPES AND ARE EXPERIMENTAL IN NATURE AND SHOULD BE USED WITH PRUDENCE AND APPROPRIATE CAUTION, AS NOT ALL OF THE CHARACTERISTICS ARE KNOWN. THE DESIGNS ARE PROVIDED “AS-IS” WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES OF ANY KIND (INCLUDING, BUT NOT LIMITED TO, ANY IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, TITLE, ACCURACY, OR FITNESS FOR A PARTICULAR PURPOSE, AND ANY WARRANTIES ARISING FROM COURSE OF PERFORMANCE, COURSE OF DEALING, COURSE OF CONDUCT, OR USAGE OF TRADE) OR CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED OR STATUTORY. NO OPINION, ADVICE OR STATEMENT OF THE HOWARD HUGHES MEDICAL INSTITUTE (“HHMI”) OR ITS TRUSTEES, EMPLOYEES, AGENTS, LICENSORS OR SUPPLIERS, WHETHER MADE WITHIN THE DESIGNS OR OTHERWISE, SHALL CREATE ANY WARRANTY. HHMI MAKES NO WARRANTY THAT THE DESIGNS WILL BE ACCURATE, CURRENT OR RELIABLE. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF CERTAIN WARRANTIES OR CONDITIONS, AND AS A CONSEQUENCE SOME OF THE ABOVE DISCLAIMERS MAY NOT APPLY TO YOU.</p>
-<p>IN NO EVENT SHALL HHMI OR ITS TRUSTEES, EMPLOYEES, AGENTS, LICENSORS OR SUPPLIERS (THE “HHMI PARTIES”) BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR PUNITIVE DAMAGES OR LOSSES OF ANY KIND (INCLUDING, BUT NOT LIMITED TO, ANY PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, BUSINESS, GOODWILL, DATA, REVENUE, OR PROFITS; REASONABLE ROYALTIES; BUSINESS INTERRUPTION; OR OTHER INTANGIBLE LOSSES) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, TORT (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE) OR OTHERWISE, ARISING IN ANY WAY OUT OF THE USE OF, OR INABILITY TO USE, THE DESIGNS, OR FOR ANY OTHER CLAIM RELATED IN ANY WAY TO YOUR USE OF THE DESIGNS OR YOUR INTERACTIONS WITH HHMI, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE OR LOSS, AND NOTWITHSTANDING THE FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY. YOU ACKNOWLEDGE THAT THESE LIMITATIONS ARE REASONABLE, THAT THEY ARE AN ESSENTIAL ELEMENT HEREOF, AND THAT ABSENT SUCH LIMITATIONS, HHMI WOULD NOT MAKE THE DESIGNS AVAILABLE TO YOU OR ENTER INTO THESE TERMS AND CONDITIONS. YOU REMAIN RESPONSIBLE FOR ALL LEGAL COMPLIANCE WITH RESPECT TO YOUR USAGE OF THE DESIGNS. SOME JURISDICTIONS DO NOT ALLOW THE LIMITATION OF LIABILITY FOR INCIDENTAL OR CONSEQUENTIAL DAMAGES, AND AS A CONSEQUENCE SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU; IN SUCH JURISDICTIONS, THE LIABILITY OF THE HHMI PARTIES SHALL BE LIMITED TO THE FULLEST EXTENT PERMITTED BY LAW.</p>
-<p>Any redistribution of the Designs must contain or reference these terms.</p>
-</div>
-<div class="section" id="software-license">
-<h2>Software License<a class="headerlink" href="#software-license" title="Permalink to this headline">¶</a></h2>
-<p>Janelia Open-Source Software</p>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul class="simple">
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-<li>Neither the name of HHMI nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-</div>
 </div>
 
 
@@ -389,9 +364,9 @@ Xavier provides an easy interface for sending parameter changes and can also be 
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015-2019, Andy Lustig
+        &copy; Copyright 2015-2022, Andy Lustig
       <span class="lastupdated">
-        Last updated on Dec 11, 2019.
+        Last updated on Jun 13, 2022.
       </span>
 
     </p>

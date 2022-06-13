@@ -137,7 +137,11 @@ Combine PCB, Laser Diodes, and Fiber Guide
 #. Solder the remaining legs of the laser diodes
 #. Cut ~10mm of heat shrink tubing and slide it onto one of the laser diodes
 #. Apply heat to the heat shrink tubing
-#. Slide the fiber guide onto the two fibers. Adjust the 
+
+.. Warning::
+   Heat can weaken the UV glue that is used to attach the fiber. Be careful not to apply too much heat for too long as you may risk weakening the glue, causing the fiber to move out of alignment or detach completely.
+
+7. Slide the fiber guide onto the two fibers. Adjust the 
 #. Surround the fibers and laser diodes with epoxy
 #. Place heatshrink tubing around the clear epoxy section of the implant
 #. Place and solder the remaining resistors onto the PCB

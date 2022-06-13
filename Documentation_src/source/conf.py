@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Cerebro Wireless Optogenetics System'
-copyright = u'2015-2019, Andy Lustig'
+copyright = u'2015-2022, Andy Lustig'
 author = u'Andy Lustig, Karpova Lab'
 
 # The version info for the project you're documenting, acts as replacement for
